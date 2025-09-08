@@ -55,7 +55,7 @@ export default function CeoPage() {
         >
           <HeroSection
             title={heroTitle}
-            backgroundImage="/images/ceo_hero.png"
+            backgroundImage="/images/sub_banner/ceo_hero.png"
           />
         </div>
 

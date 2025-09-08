@@ -61,7 +61,7 @@ export default function App() {
         >
           <HeroSection
             title={hero.title}
-            backgroundImage="/images/business_hero.png"
+            backgroundImage="/images/sub_banner/business_hero.png"
           />
         </div>
 

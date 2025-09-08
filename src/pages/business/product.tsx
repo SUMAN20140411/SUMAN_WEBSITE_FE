@@ -50,7 +50,7 @@ export default function ServicePage() {
           >
             <HeroSection
               title={lang === "KOR" ? "제품 소개" : "Product"}
-              backgroundImage="/images/business_hero.png"
+              backgroundImage="/images/sub_banner/business_hero.png"
             />
           </div>
 
