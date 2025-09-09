@@ -5,7 +5,7 @@ export const homeContentKor = {
 //                   KOR
 //--------------------------------------------  
     section1Text: {
-      title: '해당 홈페이지는 내용 리뉴얼 중입니다.',
+      title: '꿈은 꿈꾸는 자에게만 허락되며, 그 꿈은 분명히 현실이 될 수 있으며, 도전하고 실행하는 꿈은 분명 현실이 됩니다.',
       subtitle: '문의하기는 추후 정식 운영될 예정이며 현재는 미운영 중입니다.',
     },
     
@@ -82,7 +82,7 @@ export const homeContentKor = {
 export const homeContentEng = {
     
     section1Text: {
-      title: 'This website is currently undergoing a content renewal.',
+      title: 'Dreams are only granted to those who dream, and those dreams can certainly become reality. Dreams that are challenged and executed will surely become reality.',
       subtitle: 'Contact Us sections will be officially available in the future.',
     },
     section2: {
