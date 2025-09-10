@@ -97,7 +97,7 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="text-3xl md:text-5xl font-bold mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide whitespace-pre-line"
+              className="text-2xl md:text-4xl font-bold mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide whitespace-pre-line"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2 }}
