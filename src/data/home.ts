@@ -7,7 +7,7 @@ export const homeContentKor = {
     section1Text: {
       title: `꿈은 꿈꾸는 자에게만 허락되며
             그 꿈은 분명히 현실이 될 수 있으며
-          도전하고 실행하는 꿈은 분명 현실이 됩니다.`,
+          도전하고 실행하는 꿈은 분명 현실이 됩니다`,
   // subtitle: ,
   },
     
@@ -84,7 +84,9 @@ export const homeContentKor = {
 export const homeContentEng = {
     
     section1Text: {
-      title: 'Dreams are only granted to those who dream, and those dreams can definitely become reality. Dreams that are challenged and executed definitely become reality.',
+      title: `Dreams are only granted to those who dream
+            and those dreams can definitely become reality
+      Dreams that are challenged and executed definitely become reality.`,
       //subtitle: 'Dreams are only granted to those who dream, and those dreams can definitely become reality. Dreams that are challenged and executed definitely become reality.',
     },
     section2: {
