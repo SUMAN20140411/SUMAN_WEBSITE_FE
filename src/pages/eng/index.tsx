@@ -106,7 +106,7 @@ export default function HomePage({ content }: HomePageProps) {
               {content.section1Text.title}
             </motion.h2>
             <motion.p
-              className="text-base md:text-xl text-gray-300 px-4 md:px-6 text-center max-w-screen-lg mx-auto"
+              className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl lg:max-w-none lg:whitespace-nowrap mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.4 }}
