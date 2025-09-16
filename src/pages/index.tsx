@@ -98,8 +98,8 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="text-4xl md:text-6xl font-bold mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center"
-              style={{ fontFamily: '"Apple SD Gothic Neo", sans-serif' }}
+              className="text-3xl md:text-5xl font-light mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center"
+              style={{ fontFamily: '"Apple SD Gothic Neo KR", sans-serif KR' }}
               initial="hidden"
               animate="visible"
               variants={{

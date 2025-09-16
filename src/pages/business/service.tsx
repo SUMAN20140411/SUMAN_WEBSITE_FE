@@ -30,10 +30,14 @@ export default function ServicePage() {
     "/images/business/process/service_test.png",
     "/images/business/process/service_deliver.png",
   ];
-
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 1 } as Transition },
+    const processImageVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const content = {
@@ -227,7 +231,7 @@ export default function ServicePage() {
               </h2>
               <motion.div
                 className="w-full"
-                variants={fadeIn}
+                variants={processImageVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
