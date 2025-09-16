@@ -161,3 +161,4 @@ export const visionRndText = {
     rightBoxDesc: "Phased ITEM Launching / Commercialization",
   },
 };
+

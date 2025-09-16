@@ -112,7 +112,7 @@ export default function App() {
                 <motion.div variants={cardHover}>
                   <div className="relative h-64">
                     <Image
-                      src="https://images.unsplash.com/photo-1583737097428-af53774819a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzZW1pY29uZHVjdG9yJTIwbWFudWZhY3R1cmluZyUyMGVxdWlwbWVudCUyMGZhY3Rvcnl8ZW58MXx8fHwxNzU2MzcyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                      src="/images/business/rnd/semiconductor.png"
                       alt="Semiconductor Equipment"
                       className="w-full h-full object-cover"
                     />
@@ -206,7 +206,7 @@ export default function App() {
                 <motion.div variants={cardHover}>
                   <div className="relative h-64">
                     <Image
-                      src="https://images.unsplash.com/photo-1590038667005-7d82ac6f864b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdXRvbm9tb3VzJTIwbW9iaWxlJTIwcm9ib3QlMjB3YXJlaG91c2V8ZW58MXx8fHwxNzU2MzcyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                      src="/images/business/rnd/mobilerobot.png"
                       alt="Mobility Robot"
                       className="w-full h-full object-cover"
                     />

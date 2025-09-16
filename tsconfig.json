@@ -17,6 +17,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","src/components/Header.tsxsrc/components/Header.tsxc/components/Headeeer.tsx.disabled", "src/components/Footer.tsx.disabled", "src/pages/eng/IndexFigEnd.tsx.disabled", "src/components/Headerrburger.tsx.disabled", "src/data/wellnessData.ts", "src/pages/company/history.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","src/components/Header.tsxsrc/components/Header.tsxc/components/Headeeer.tsx.disabled", "src/components/Footer.tsx.disabled", "src/pages/eng/IndexFigEnd.tsx.disabled", "src/components/Headerrburger.tsx.disabled", "src/data/wellnessData.ts", "src/pages/company/history.tsx", "src/pages/admin/faq.qtsx", "src/pages/admin/faq.tsx"],
   "exclude": ["node_modules"]
 }

@@ -13,7 +13,7 @@ export const businessAreasData = {
   KOR: {
     semiconductor: {
       title: "반도체 제조 장비",
-      subtitle: "Semiconductor 2nd Battery",
+      subtitle: "Semiconductor / Second Generation Battery",
       services: [
         "정밀 가공 부품 설계",
         "모듈 및 Assembly 설계/조립/제작",
@@ -52,7 +52,7 @@ export const businessAreasData = {
   ENG: {
     semiconductor: {
       title: "Semiconductor Manufacturing Equipment",
-      subtitle: "Semiconductor 2nd Battery",
+      subtitle: "Semiconductor / Second Generation Battery",
       services: [
         "Precision machined parts design",
         "Module and Assembly design/assembly/manufacturing",

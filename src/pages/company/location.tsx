@@ -21,7 +21,7 @@ const kakaoMapConfigs: {
     level: 3,
     address: "대전광역시 대덕구 문평동 43-10",
   },
-  천안지부: {
+  천안지사: {
     latitude: 36.848807,
     longitude: 127.122367,
     level: 3,
@@ -48,9 +48,9 @@ const locationsData = [
     },
   },
   {
-    key: "천안지부",
+    key: "천안지사",
     title: {
-      KOR: "천안지부",
+      KOR: "천안지사",
       ENG: "Cheonan Branch",
     },
     addressSnippet: {

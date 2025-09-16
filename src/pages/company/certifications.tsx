@@ -156,7 +156,7 @@ export default function CertificationsPage() {
                         <div key={i} className="group text-center">
                           <button
                             title={lang === "KOR" ? cert.labelKOR : cert.labelENG}
-                            className="w-full py-3 px-5 bg-white shadow rounded-full text-lg font-semibold text-gray-800 hover:shadow-lg transition truncate tracking-wide group-hover:hidden"
+                            className="w-full py-3 px-5 bg-white shadow rounded-full text-lg font-semibold text-gray-800 hover:shadow-lg transition truncate tracking-wide"
                           >
                             {lang === "KOR" ? cert.labelKOR : cert.labelENG}
                           </button>
@@ -191,7 +191,7 @@ export default function CertificationsPage() {
                         <div key={i} className="group text-center col-span-1">
                           <button
                             title={lang === "KOR" ? cert.labelKOR : cert.labelENG}
-                            className="w-full py-3 px-5 bg-white shadow rounded-full text-lg font-semibold text-gray-800 hover:shadow-lg transition truncate tracking-wide group-hover:hidden"
+                            className="w-full py-3 px-5 bg-white shadow rounded-full text-lg font-semibold text-gray-800 hover:shadow-lg transition truncate tracking-wide"
                           >
                             {lang === "KOR" ? cert.labelKOR : cert.labelENG}
                           </button>

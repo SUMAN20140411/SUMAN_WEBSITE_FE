@@ -9,6 +9,7 @@ import { homeContentKor } from "@/data/home";
 import { GetStaticProps } from "next";
 import type { HomePageProps } from "@/types/home";
 
+
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
@@ -97,13 +98,27 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="text-4xl md:text-6xl font-bold mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide whitespace-pre-line"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2 }}
+              className="text-4xl md:text-6xl font-bold mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center"
+              style={{ fontFamily: '"Apple SD Gothic Neo", sans-serif' }}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.3 } },
+              }}
               viewport={{ once: true }}
             >
-              {content.section1Text.title}
+              {content.section1Text.title.split("\n").map((line, i) => (
+                <motion.span
+                  key={i}
+                  className="block"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
+                  {line.trim()}
+                </motion.span>
+              ))}
             </motion.h2>
             <motion.p
               className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl mx-auto"
@@ -143,7 +158,7 @@ export default function HomePage({ content }: HomePageProps) {
               Core Value
             </p>
             <div className="flex-grow" />
-            <Link href="/company/vision">
+            <Link href="/company/vision2">
               <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
                 {content.section2.buttonLabel}
               </button>

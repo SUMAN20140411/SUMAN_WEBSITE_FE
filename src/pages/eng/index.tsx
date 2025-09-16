@@ -8,6 +8,9 @@ import Link from "next/link";
 import { homeContentEng } from "@/data/home";
 import { GetStaticProps } from "next";
 import type { HomePageProps } from "@/types/home";
+import { Open_Sans } from "next/font/google";
+
+const openSans = Open_Sans({ subsets: ["latin"] });
 
 export const getStaticProps: GetStaticProps = async () => {
   return {
@@ -97,14 +100,28 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="text-2xl sm:text-3xl md:text-4xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide whitespace-pre-line text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2 }}
+            className={`${openSans.className} text-2xl sm:text-3xl md:text-4xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center`}
+            initial="hidden"
+            animate="visible"
+            variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.3 } },
+            }}
               viewport={{ once: true }}
-            >
-              {content.section1Text.title}
-            </motion.h2>
+              >
+                {content.section1Text.title.split('\n').map((line, i) => (
+                  <motion.span
+                  key={i}
+                  className="block"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                  >
+                    {line}
+                    </motion.span>
+                  ))}
+                  </motion.h2>
+
             {/*<motion.p
               className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl lg:max-w-none lg:whitespace-nowrap mx-auto"
               initial={{ opacity: 0, y: 20 }}
