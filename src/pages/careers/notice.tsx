@@ -162,7 +162,7 @@ const RecruitmentDownloadBanner: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
-                    <Sparkles className="h-6 w-6 text-amber-300" />
+                    {/*<Sparkles className="h-6 w-6 text-amber-300" />*/}
                   </span>
                   <h2 className="text-2xl font-bold sm:text-3xl">{noticeContent.heading}</h2>
                 </div>
@@ -171,7 +171,7 @@ const RecruitmentDownloadBanner: React.FC = () => {
 
               <div className="flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white/80">
-                  <Sparkles className="h-4 w-4 text-amber-300" />
+                  {/*<Sparkles className="h-4 w-4 text-amber-300" />*/}
                   {noticeContent.tag}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
@@ -308,7 +308,7 @@ const DocumentDownloadBanner: React.FC = () => {
           <div className="relative z-10 flex flex-col gap-8">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#1D3762]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-[#1D3762]/70">
-                <Sparkles className="h-4 w-4 text-[#1D3762]" />
+                {/*<Sparkles className="h-4 w-4 text-[#1D3762]" />*/}
                 {sectionCopy.highlight}
               </span>
               <h2 className="text-2xl font-bold text-[#0A1633] sm:text-3xl">{sectionCopy.heading}</h2>

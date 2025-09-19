@@ -18,6 +18,70 @@ export const serviceContent = {
         ],
       },
     ],
+    technologyOverview: {
+      badge: "기술 역량",
+      title: "정밀가공기술, 모듈화, 장비 기술성과 노하우를 보유한 강소기업",
+      subtitle: "정밀가공 · 모듈화 · 장비 기술",
+      description:
+        "정밀 부품 설계부터 맞춤형 장비 제작까지 축적된 기술력을 기반으로 고객 요구에 맞춘 통합 솔루션을 제공합니다.",
+      coreMessage: "축적된 공정 데이터와 현장 경험을 바탕으로 최적의 결과를 구현합니다.",
+      highlights: [
+        {
+          title: "정밀주물 가공 / 장비 제작 기술",
+          description: "복잡한 형상의 주물과 설비를 안정적으로 제작할 수 있는 공정을 구축했습니다.",
+          features: [
+            "중·대형 주조물 가공 및 후처리 기술",
+            "장비 제작 공정의 표준화와 품질 관리",
+          ],
+          icon: "manufacturing",
+        },
+        {
+          title: "정밀 부품·모듈 설계 기술",
+          description: "고정밀 부품과 모듈 구조를 설계하여 미래 산업에 필요한 솔루션을 제안합니다.",
+          features: [
+            "요구사항을 반영한 최적 설계 및 시뮬레이션",
+            "생산성과 유지보수를 고려한 설계 자산 확보",
+          ],
+          icon: "design",
+        },
+        {
+          title: "정밀 가공 Jig 개발 제작 기술",
+          description: "가공 품질을 보장하는 Jig와 고정구를 자체 설계·제작합니다.",
+          features: [
+            "공정 최적화를 위한 맞춤형 Jig 개발",
+            "양산 공정에 최적화된 치공구 제작",
+          ],
+          icon: "jig",
+        },
+        {
+          title: "Custom 모듈 제작 기술",
+          description: "복잡한 시스템을 모듈화하여 신속한 조립과 안정적인 운영을 지원합니다.",
+          features: [
+            "모듈 간 인터페이스 표준화 및 테스트",
+            "현장 적용 중심의 조립·검증 프로세스",
+          ],
+          icon: "integration",
+        },
+        {
+          title: "주문형 장비 / 설비 제작 기술",
+          description: "고객 요구에 맞춘 자동화 장비와 생산 설비를 설계·제작합니다.",
+          features: [
+            "요구 사항 분석을 통한 맞춤형 설비 엔지니어링",
+            "생산성 향상을 위한 자동화 솔루션 구축",
+          ],
+          icon: "equipment",
+        },
+        {
+          title: "고신뢰성 측정 / 분석 기술",
+          description: "정밀 계측 장비와 데이터 분석으로 품질을 체계적으로 관리합니다.",
+          features: [
+            "3D 측정, 투영기 등 다양한 계측 장비 운용",
+            "데이터 기반의 피드백과 품질 개선",
+          ],
+          icon: "quality",
+        },
+      ],
+    },
     // 생산가공/ 조립 영역
     equipmentList: [
       { name: "MCT", image: "/images/business/equipment/mct.png" },
@@ -97,6 +161,77 @@ export const serviceContent = {
         ],
       },
     ],
+    technologyOverview: {
+      badge: "Core Capabilities",
+      title:
+        "A specialized company with proven expertise in precision machining, modularization, and equipment technologies",
+      subtitle: "Precision Machining · Modularization · Equipment Engineering",
+      description:
+        "From precision part design to tailor-made equipment manufacturing, we deliver integrated solutions that meet each customer's requirements.",
+      coreMessage:
+        "Delivering optimal outcomes with accumulated process data and on-site experience.",
+      highlights: [
+        {
+          title: "Precision Casting & Equipment Manufacturing",
+          description:
+            "We build stable processes to produce complex cast components and equipment.",
+          features: [
+            "Machining and finishing know-how for mid-to-large cast parts",
+            "Standardized manufacturing process and quality control",
+          ],
+          icon: "manufacturing",
+        },
+        {
+          title: "Precision Parts & Module Design",
+          description:
+            "Our engineering team proposes future-ready solutions through optimized designs.",
+          features: [
+            "Requirement-driven design optimization and simulation",
+            "Design assets that consider productivity and maintainability",
+          ],
+          icon: "design",
+        },
+        {
+          title: "Precision Jig Development",
+          description:
+            "We design and manufacture our own jigs and fixtures to secure machining quality.",
+          features: [
+            "Custom jig development for process optimization",
+            "Tooling tailored for mass-production lines",
+          ],
+          icon: "jig",
+        },
+        {
+          title: "Custom Module Integration",
+          description: "Modularize complex systems for quick assembly and reliable operation.",
+          features: [
+            "Standardized interfaces and validation between modules",
+            "Assembly and verification processes focused on field deployment",
+          ],
+          icon: "integration",
+        },
+        {
+          title: "Tailor-made Equipment Engineering",
+          description:
+            "Design and build automation equipment and production systems for each customer.",
+          features: [
+            "Engineering based on in-depth requirement analysis",
+            "Automation solutions that maximize productivity",
+          ],
+          icon: "equipment",
+        },
+        {
+          title: "High-Reliability Measurement & Analysis",
+          description:
+            "We manage quality systematically using precision measurement and data analytics.",
+          features: [
+            "Operate 3D measurement and optical inspection systems",
+            "Data-driven feedback for continuous quality improvement",
+          ],
+          icon: "quality",
+        },
+      ],
+    },
     equipmentList: [
       { name: "MCT", image: "/images/business/equipment/mct.png" },
       { name: "CNC Lathe", image: "/images/business/equipment/cnc.png" },

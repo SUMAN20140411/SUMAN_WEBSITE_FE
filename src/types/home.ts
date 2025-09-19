@@ -2,8 +2,8 @@
 export interface HomePageProps {
   content:{
     section1Text: {
-      title: string;
-      subtitle: string;
+       lines: string[];
+      subtitle?: string;
     };
     section2: {
       title: string;

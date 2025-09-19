@@ -8,9 +8,6 @@ import Link from "next/link";
 import { homeContentEng } from "@/data/home";
 import { GetStaticProps } from "next";
 import type { HomePageProps } from "@/types/home";
-import { Open_Sans } from "next/font/google";
-
-const openSans = Open_Sans({ subsets: ["latin"] });
 
 export const getStaticProps: GetStaticProps = async () => {
   return {
@@ -43,6 +40,51 @@ export default function HomePage({ content }: HomePageProps) {
       transition: { duration: 0.6, ease: "easeOut" } as Transition,
     },
   };
+    const heroContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.18,
+      },
+    },
+  };
+
+  const heroLineVariants = {
+    hidden: (index: number) => ({
+      opacity: 0,
+      y: 48,
+      x: index % 2 === 0 ? -28 : 28,
+      scale: 0.94,
+      filter: "blur(8px)",
+    }),
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      x: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.9,
+        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.08,
+      } as Transition,
+    }),
+  };
+
+  const heroSheenVariants = {
+    hidden: { x: "-120%", opacity: 0 },
+    visible: (index: number) => ({
+      x: "120%",
+      opacity: [0, 0.65, 0],
+      transition: {
+        duration: 1.1,
+        ease: "easeInOut",
+        delay: index * 0.08 + 0.26,
+      } as Transition,
+    }),
+  };
+
+
 
   return (
     <>
@@ -100,27 +142,29 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-            className={`${openSans.className} text-2xl sm:text-3xl md:text-4xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center`}
-            initial="hidden"
-            animate="visible"
-            variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.3 } },
-            }}
+            className="font-songmyung text-2xl sm:text-3xl md:text-4xl font-normal mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center drop-shadow-[0_8px_18px_rgba(0,0,0,0.25)]"
+              animate="visible"
+              variants={heroContainerVariants}
               viewport={{ once: true }}
               >
-                {content.section1Text.title.split('\n').map((line, i) => (
+              {content.section1Text.lines.map((line, index) => (
+                <motion.span
+                  key={`${line}-${index}`}
+                  className="relative block overflow-hidden py-1"
+                  custom={index}
+                  variants={heroLineVariants}
+                   >
+                   <span className="relative z-10 block">{line}</span>
                   <motion.span
-                  key={i}
-                  className="block"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: 'easeOut' }}
-                  >
-                    {line}
-                    </motion.span>
-                  ))}
-                  </motion.h2>
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] -translate-y-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 mix-blend-screen skew-x-12"
+                    custom={index}
+                    variants={heroSheenVariants}
+                  />
+                </motion.span>
+              ))}
+            </motion.h2>
+
 
             {/*<motion.p
               className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl lg:max-w-none lg:whitespace-nowrap mx-auto"

@@ -41,6 +41,50 @@ export default function HomePage({ content }: HomePageProps) {
       transition: { duration: 0.6, ease: "easeOut" } as Transition,
     },
   };
+   const heroContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.18,
+      },
+    },
+  };
+
+  const heroLineVariants = {
+    hidden: (index: number) => ({
+      opacity: 0,
+      y: 52,
+      x: index % 2 === 0 ? -32 : 32,
+      scale: 0.94,
+      filter: "blur(8px)",
+    }),
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      x: 0,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.9,
+        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.08,
+      } as Transition,
+    }),
+  };
+
+  const heroSheenVariants = {
+    hidden: { x: "-120%", opacity: 0 },
+    visible: (index: number) => ({
+      x: "120%",
+      opacity: [0, 0.65, 0],
+      transition: {
+        duration: 1.2,
+        ease: "easeInOut",
+        delay: index * 0.08 + 0.28,
+      } as Transition,
+    }),
+  };
+
 
   return (
     <>
@@ -98,28 +142,30 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="text-3xl md:text-5xl font-light mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center"
-              style={{ fontFamily: '"Apple SD Gothic Neo KR", sans-serif KR' }}
+              className="font-songmyung text-4xl md:text-6xl font-normal mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center drop-shadow-[0_8px_18px_rgba(0,0,0,0.25)]"
               initial="hidden"
               animate="visible"
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.3 } },
-              }}
+              variants={heroContainerVariants}
               viewport={{ once: true }}
             >
-              {content.section1Text.title.split("\n").map((line, i) => (
+              {content.section1Text.lines.map((line, index) => (
                 <motion.span
-                  key={i}
-                  className="block"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  key={`${line}-${index}`}
+                  className="relative block overflow-hidden py-1"
+                  custom={index}
+                  variants={heroLineVariants}
                 >
-                  {line.trim()}
+                  <span className="relative z-10 block">{line}</span>
+                  <motion.span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] -translate-y-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 mix-blend-screen skew-x-12"
+                    custom={index}
+                    variants={heroSheenVariants}
+                  />
                 </motion.span>
               ))}
             </motion.h2>
+            {/*
             <motion.p
               className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
@@ -128,7 +174,7 @@ export default function HomePage({ content }: HomePageProps) {
               viewport={{ once: true }}
             >
               {content.section1Text.subtitle}
-            </motion.p>
+            </motion.p>*/}
           </div>
         </section>
 
@@ -299,27 +345,29 @@ export default function HomePage({ content }: HomePageProps) {
         </motion.section>
 
         <section className="relative z-30 bg-white px-4 md:px-6">
-          <motion.div
-            className="text-center text-black mb-10 max-w-7xl mx-auto md:mx-[120px] text-base sm:text-lg lg:text-2xl font-semibold tracking-wide"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInVariants}
-          >
-            <p className={`${labelClass} mt-12`}>Service</p>
-            <h2 className="mt-5 mb-5 text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal">
-              고객 맞춤형 장비/제조 서비스를 제조합니다
-            </h2>
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
+            <motion.div
+              className="text-center text-black mb-10 w-full max-w-3xl text-base sm:text-lg lg:text-2xl font-semibold tracking-wide"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={fadeInVariants}
+            >
+              <p className={`${labelClass} mt-12`}>Service</p>
+              <h2 className="mt-5 mb-5 text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal">
+                고객 맞춤형 장비/제조 서비스를 제조합니다
+              </h2>
 
-            <p className="mb-8 text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed">
-              수만은 고객의 특정한 요구사항을 면밀히 분석하여 최적화된 맞춤형 장비 및 설비,
-              최고 품질의 정밀 가공 부품을 제공함으로써 혁신적인 솔루션과 지속적인 기술 지원을 통해
-              고객 비즈니스의 성공을 이끌어갑니다.
-            </p>
-          </motion.div>
+              <p className="mb-8 text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed">
+                수만은 고객의 특정한 요구사항을 면밀히 분석하여 최적화된 맞춤형 장비 및 설비,
+                최고 품질의 정밀 가공 부품을 제공함으로써 혁신적인 솔루션과 지속적인 기술 지원을 통해
+                고객 비즈니스의 성공을 이끌어갑니다.
+              </p>
+            </motion.div>
 
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
+            <div className="w-full max-w-5xl flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
             <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+
               <motion.div
                 className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
                 initial="hidden"
@@ -376,6 +424,7 @@ export default function HomePage({ content }: HomePageProps) {
                   정밀 가공 부품
                 </h3>
               </motion.div>
+              </div>
             </div>
           </div>
         </section>

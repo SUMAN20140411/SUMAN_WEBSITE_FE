@@ -211,7 +211,7 @@ export default function Vision2Page() {
       <Head>
         <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-      <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
+      <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px] pb-24">
         <motion.div
           className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
           animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
@@ -256,7 +256,7 @@ export default function Vision2Page() {
                     variants={fadeInUp}
                     className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-sky-600"
                   >
-                    <Sparkles className="h-4 w-4" />
+                    {/*<Sparkles className="h-4 w-4" />*/}
                     {overview.topLabel}
                   </motion.div>
                   <motion.h1
@@ -640,7 +640,7 @@ export default function Vision2Page() {
           </motion.section>
         </div>
       </main>
-      <hr className="my-8 border-gray-200 w-full" />
+      <hr className="my-6 border-gray-200 w-full" />
     </Layout>
   );
 }
