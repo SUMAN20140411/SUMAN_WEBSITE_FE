@@ -1,8 +1,107 @@
+
 export const serviceContent = {
   // ----------------------------------------------
   //                       KOR
   // ----------------------------------------------
   KOR: {
+
+    title: "참고할 디자인",
+    centerText: {
+      line1: "지능형 AMR &",
+      line2: "무인 물류 구현",
+      line3: "",
+      subtitle: "차세대 무인배송 요소기술"
+    },
+    sections: {
+      automated: {
+        title: "자율주행 알고리즘",
+        subtitle: "기술",
+        images: [
+          "/images/capability/auto1.jpg",
+          "/images/capability/auto2.jpg", 
+          "/images/capability/auto3.jpg"
+        ],
+        features: [
+          "3D HD 맵 제작/매칭 기반 위치 인식",
+          "실시간 장애물 회피, 경로계획"
+        ]
+      },
+      realtime: {
+        title: "실내외 협업 추행",
+        subtitle: "기술",
+        images: [
+          "/images/capability/real1.jpg",
+          "/images/capability/real2.jpg"
+        ],
+        features: [
+          "실시간 하중변형 바퀴/링크 제어 기술",
+          "단차 및 경사로 주행 성능 검증"
+        ]
+      },
+      architecture: {
+        title: "시스템 아키텍처 기술",
+        subtitle: "",
+        images: [
+          "/images/capability/arch1.jpg",
+          "/images/capability/arch2.jpg"
+        ],
+        features: [
+          "출차출입경 로봇 및 로컬허브 플랫폼 인터페이스",
+          "로봇 및 로컬물류거점 API 개발",
+          "구성요소간 상호작업, 통신, 데이터 등 시스템 통합 기술"
+        ]
+      },
+      performance: {
+        title: "고신뢰성 특성분석 평가 기술",
+        subtitle: "",
+        images: [
+          "/images/capability/perf1.jpg",
+          "/images/capability/perf2.jpg"
+        ],
+        features: [
+          "헬스 기반 시뮬레이션 분석 및 평가 기술",
+          "환경특성, 구동특성 등 분석",
+          "물리/역학 분석 등 정밀설계 사전 특성/평가 기술"
+        ]
+      },
+      manufacturing: {
+        title: "시스템 제작 기술",
+        subtitle: "",
+        images: [
+          "/images/capability/manuf1.jpg",
+          "/images/capability/manuf2.jpg",
+          "/images/capability/manuf3.jpg",
+          "/images/capability/manuf4.jpg"
+        ],
+        features: [
+          "지능형 자율주행 로봇 구동부 및 제어부 정밀설계",
+          "로컬거점 정밀 설계 및 제작 기술",
+          "2D/3D 정밀 설계 및 오류검근, 시뮬레이션 분석 및 평가"
+        ]
+      },
+      deeplearning: {
+        title: "딥러닝기반 최적화 기술",
+        subtitle: "",
+        images: [
+          "/images/capability/deep1.jpg",
+          "/images/capability/deep2.jpg"
+        ],
+        features: [
+          "시뮬레이션 트레이닝 데이터 확보 및 딥러닝 기반 강화학습 통한 최적제어"
+        ]
+      },
+      modularization: {
+        title: "주문형 장비/설비 제작기술",
+        subtitle: "",
+        images: [
+          "/images/capability/mod1.jpg",
+          "/images/capability/mod2.jpg"
+        ],
+        features: [
+          "고객 맞춤형 장비/설비 제작 기술 - 측정장비, 자동장비 등"
+        ]
+      }
+    },
     // 각 섹션 타이틀
     sectionList: [
       {
@@ -140,6 +239,103 @@ export const serviceContent = {
   //                       ENG
   // ----------------------------------------------
   ENG: {
+    title: "Reference Design",
+    centerText: {
+      line1: "Intelligent AMR &",
+      line2: "Unmanned Logistics Implementation",
+      line3: "",
+      subtitle: "Next-generation Unmanned Delivery Core Technology"
+    },
+    sections: {
+      automated: {
+        title: "Autonomous Driving Algorithm",
+        subtitle: "Technology",
+        images: [
+          "/images/capability/auto1.jpg",
+          "/images/capability/auto2.jpg", 
+          "/images/capability/auto3.jpg"
+        ],
+        features: [
+          "3D HD map creation/matching based positioning",
+          "Real-time obstacle avoidance and path planning"
+        ]
+      },
+      realtime: {
+        title: "Indoor/Outdoor Collaborative",
+        subtitle: "Technology",
+        images: [
+          "/images/capability/real1.jpg",
+          "/images/capability/real2.jpg"
+        ],
+        features: [
+          "Real-time load deformation wheel/link control technology",
+          "Step and slope driving performance verification"
+        ]
+      },
+      architecture: {
+        title: "System Architecture Technology",
+        subtitle: "",
+        images: [
+          "/images/capability/arch1.jpg",
+          "/images/capability/arch2.jpg"
+        ],
+        features: [
+          "Robot and local hub platform interface",
+          "Robot and local logistics hub API development",
+          "System integration technology for component interaction, communication, and data"
+        ]
+      },
+      performance: {
+        title: "High Reliability Characteristic Analysis",
+        subtitle: "Evaluation Technology",
+        images: [
+          "/images/capability/perf1.jpg",
+          "/images/capability/perf2.jpg"
+        ],
+        features: [
+          "Health-based simulation analysis and evaluation technology",
+          "Environmental characteristics, driving characteristics analysis",
+          "Physics/dynamics analysis for precise design preliminary characteristics/evaluation"
+        ]
+      },
+      manufacturing: {
+        title: "System Manufacturing Technology",
+        subtitle: "",
+        images: [
+          "/images/capability/manuf1.jpg",
+          "/images/capability/manuf2.jpg",
+          "/images/capability/manuf3.jpg",
+          "/images/capability/manuf4.jpg"
+        ],
+        features: [
+          "Intelligent autonomous robot drive and control unit precision design",
+          "Local hub precision design and manufacturing technology",
+          "2D/3D precision design and error detection, simulation analysis and evaluation"
+        ]
+      },
+      deeplearning: {
+        title: "Deep Learning Based Optimization",
+        subtitle: "Technology",
+        images: [
+          "/images/capability/deep1.jpg",
+          "/images/capability/deep2.jpg"
+        ],
+        features: [
+          "Simulation training data acquisition and deep learning-based reinforcement learning optimal control"
+        ]
+      },
+      modularization: {
+        title: "Custom Equipment/Facility Manufacturing",
+        subtitle: "Technology",
+        images: [
+          "/images/capability/mod1.jpg",
+          "/images/capability/mod2.jpg"
+        ],
+        features: [
+          "Customer-customized equipment/facility manufacturing technology - measuring equipment, automation equipment, etc."
+        ]
+      }
+    },
     sectionList: [
       {
         maintitle: "good for production",

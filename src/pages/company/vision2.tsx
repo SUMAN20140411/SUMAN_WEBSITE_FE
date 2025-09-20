@@ -211,7 +211,7 @@ export default function Vision2Page() {
       <Head>
         <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-      <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px] pb-24">
+            <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
         <motion.div
           className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
           animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
@@ -640,7 +640,7 @@ export default function Vision2Page() {
           </motion.section>
         </div>
       </main>
-      <hr className="my-6 border-gray-200 w-full" />
+      <hr className="w-full border-gray-200 mt-0 mb-0" />
     </Layout>
   );
 }
