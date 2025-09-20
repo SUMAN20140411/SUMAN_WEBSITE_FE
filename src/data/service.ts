@@ -5,7 +5,7 @@ export const serviceContent = {
   // ----------------------------------------------
   KOR: {
 
-    title: "참고할 디자인",
+    title: "참정밀가공 기술, 모듈화, 장비 기술력과 노하우를 보유한 강소기업",
     centerText: {
       line1: "지능형 AMR &",
       line2: "무인 물류 구현",
@@ -239,7 +239,7 @@ export const serviceContent = {
   //                       ENG
   // ----------------------------------------------
   ENG: {
-    title: "Reference Design",
+    title: "A TRUSTED SPECIALIST WITH ADVANCED PRECISION-MACHINING, MODULARIZATION, AND EQUIPMENT TECHNOLOGY KNOW-HOW",
     centerText: {
       line1: "Intelligent AMR &",
       line2: "Unmanned Logistics Implementation",

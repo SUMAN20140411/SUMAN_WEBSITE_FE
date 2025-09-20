@@ -111,7 +111,6 @@ const RecruitmentDownloadBanner: React.FC = () => {
           tagline: "현재 진행 중 채용 정보를 한눈에 확인하세요.",
           tag: "[TEST][채용공고]",
           title: "PLC 제어 부문 신입 및 경력직 채용",
-          postedOn: "게시일 2025.00.00",
           description:
             "PLC 제어 분야에서 새로운 혁신을 함께 만들어 갈 인재를 찾고 있습니다. 첨부된 공고문에서 지원 자격과 근무 환경을 확인하세요.",
           note: "다운로드 후 안내에 따라 지원 절차를 진행해 주세요.",
@@ -125,7 +124,6 @@ const RecruitmentDownloadBanner: React.FC = () => {
           tagline: "Stay informed about SUMAN's current opening at a glance.",
           tag: "[TEST][Recruitment Notice]",
           title: "Entry-Level and Experienced Positions in PLC Control",
-          postedOn: "Posted on 2025.00.00",
           description:
             "We are looking for PLC control specialists ready to innovate with SUMAN. Review the attached notice for qualifications and working conditions.",
           note: "Download the notice to review every requirement before applying.",
@@ -176,7 +174,7 @@ const RecruitmentDownloadBanner: React.FC = () => {
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
                   <CalendarDays className="h-4 w-4 text-sky-200" />
-                  {noticeContent.postedOn}
+                  {/*{noticeContent.postedOn}*/}
                 </span>
               </div>
 
@@ -254,7 +252,7 @@ const DocumentDownloadBanner: React.FC = () => {
           },
           {
             id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(HWP).docx",
+            href: "/images/입사지원서 양식 다운로드(한글).hwp",
             title: "입사지원서 양식 (HWP)",
             description: "한글 전용 문서 편집기에 최적화된 양식입니다.",
             badge: "HWP",
@@ -274,7 +272,7 @@ const DocumentDownloadBanner: React.FC = () => {
           },
           {
             id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(HWP).docx",
+            href: "/images/입사지원서 양식 다운로드(한글).hwp",
             title: "Application Form Template (HWP)",
             description: "Hangul word processor version of the application form.",
             badge: "HWP",
