@@ -9,153 +9,78 @@ import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
-import { Settings, PenTool, Package, Layers, ClipboardCheck, Gauge } from "lucide-react";
 
 export default function ServicePage() {
   const { lang } = useLangStore();
   const { equipmentList, measurementEquipmentList } = serviceContent[lang];
   const section = serviceContent[lang].sectionList?.[0];
-  const technologyOverview = serviceContent[lang].technologyOverview;
 
   const capabilities = [
     {
-      title: "중대형 구조물 가공/제작 기술",
-      subtitle: "중대형 구조물 설계, 가공, 제작",
-      position: "top",
+      title: "정밀 가공/제작 기술",
+      subtitle:
+        lang === "KOR"
+          ? "중대형 구조물 가공, 제작 기술과 고정밀 정밀 가공 기술을 보유하고 있습니다."
+          : "Designing and manufacturing mid/large structures with precision machining.",
       angle: 0,
     },
     {
-      title: "실내외 협지 주행 기술",
-      subtitle: "실시간 하중변형 바퀴/링크 제어",
-      position: "topRight",
+      title: "실내외 협치 주행 기술",
+      subtitle:
+        lang === "KOR"
+          ? "실시간 하중변경 바퀴/링크 제어 시스템과 지능형 협업 기술."
+          : "Indoor/outdoor cooperative driving with real-time wheel/link control.",
       angle: 60,
     },
     {
-      title: "시스템 아킠텍처 기술",
-      subtitle: "실시간 하중변형 바퀴/링크 제어",
-      position: "bottomRight",
+      title: "시스템 아키텍처 기술",
+      subtitle:
+        lang === "KOR"
+          ? "실시간 하중변경 바퀴/바닥 제어와 통합 시스템 아키텍처."
+          : "Integrated system architecture with real-time load variation control.",
       angle: 120,
     },
     {
       title: "구조물 가공/제작 기술",
-      subtitle: "저동형 자율주행 모듈 구성, 적재용량 최적화",
-      position: "bottom",
+      subtitle:
+        lang === "KOR"
+          ? "저동형 자율주행 모듈 구성과 적재용량 최적화."
+          : "Modular structures for mobile robots and payload optimization.",
       angle: 180,
     },
     {
       title: "고정밀 Jig 개발/제작 기술",
-      subtitle: "공정 맞춤형 Jig 설계/제작 기술",
-      position: "bottomLeft",
+      subtitle:
+        lang === "KOR"
+          ? "공정 맞춤형 Jig 설계/개발/제작으로 정밀도와 효율성 극대화."
+          : "Custom jigs for processes to maximize precision and efficiency.",
       angle: 240,
     },
     {
-      title: "시스템 아킠텍처 기술",
-      subtitle: "실시간 하중변형 바퀴/링크 제어",
-      position: "topLeft",
+      title: "지능형 시스템 기술",
+      subtitle:
+        lang === "KOR"
+          ? "실시간 하중변경 바퀴/바닥 제어 지능형 로봇 시스템."
+          : "Intelligent robot systems with real-time control.",
       angle: 300,
     },
-  ];
+  ] as const;
 
   const getPositionFromAngle = (angle: number, radius: number) => {
-    const radian = (angle * Math.PI) / 180;
-    const x = Math.cos(radian) * radius;
-    const y = Math.sin(radian) * radius;
-    return { x, y };
+    const rad = (angle * Math.PI) / 180;
+    return { x: Math.cos(rad) * radius, y: Math.sin(rad) * radius };
   };
 
-  const containerVariants = {
+  /** Page & element animations (v11-safe) */
+  const pageVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.12 },
     },
   };
 
-  const centerVariants = {
-    hidden: { scale: 0, rotate: -180, opacity: 0 },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      opacity: 1,
-      transition: {
-        duration: 1.2,
-        ease: cubicBezier(0.16, 1, 0.3, 1),
-      },
-    },
-  };
-
-  const ccardVariants = {
-    hidden: (angle: number) => ({
-      scale: 0,
-      opacity: 0,
-      x: Math.cos((angle * Math.PI) / 180) * -100,
-      y: Math.sin((angle * Math.PI) / 180) * -100,
-    }),
-    visible: {
-      scale: 1,
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: cubicBezier(0.16, 1, 0.3, 1),
-      },
-    },
-  };
-
-  const floatingAnimation = {
-    y: [-5, 5, -5],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: easeInOut,
-    },
-  };
-
-  const processImages = [
-    "/images/business/process/service_design.png",
-    "/images/business/process/service_order.png",
-    "/images/business/process/service_product.png",
-    "/images/business/process/service_test.png",
-    "/images/business/process/service_deliver.png",
-  ];
-
-  const processImageVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.8, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
-    },
-  };
-
-  const iconComponents = {
-    manufacturing: Package,
-    design: PenTool,
-    jig: Settings,
-    integration: Layers,
-    equipment: ClipboardCheck,
-    quality: Gauge,
-  } as const;
-
-  const content = {
-    KOR: { image: "/images/business/process/gambarKorean.png", alt: "조직도", pageTitle: "조직도" },
-    ENG: { image: "/images/business/process/gambarEng.png", alt: "Organization Chart", pageTitle: "Organization" },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
-    },
-  };
-
-  const cardVariants = {
+  const fadeUp: Record<"hidden" | "visible", any> = {
     hidden: { opacity: 0, y: 24 },
     visible: {
       opacity: 1,
@@ -164,19 +89,26 @@ export default function ServicePage() {
     },
   };
 
+  const ringPulse = {
+    scale: [1, 1.02, 1],
+    opacity: [0.15, 0.35, 0.15],
+    transition: { duration: 4, repeat: Infinity, ease: easeInOut },
+  };
+
   const CM_TO_PX = 37.8;
   const HERO_TRIM_PX = Math.round(CM_TO_PX);
 
-  const leftAlignTextVariants = {
-    hidden: { opacity: 0, y: 20 },
+  const processImageVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.98 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
+      scale: 1,
+      transition: { duration: 0.7, ease: cubicBezier(0.2, 0.8, 0.2, 1) } as Transition,
     },
   };
 
-  const currentContent = content[lang as keyof typeof content];
+  const orbitRadius = 320;
 
   return (
     <Layout>
@@ -195,219 +127,246 @@ export default function ServicePage() {
           <BreadcrumbSection path={lang === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"} />
         </div>
 
-        {/* Capability Diagram */}
-        {/*<div className="px-4 sm:px-6 lg:px-8 my-12">
-          <CapabilityDiagram />
-        </div>*/}
-        <div className="flex justify-center items-center py-20 relative overflow-hidden">
-          {/* Background Tech Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-10 left-10 w-32 h-32 border border-navy-600 rounded-full"></div>
-            <div className="absolute top-20 right-20 w-24 h-24 border border-navy-600 rounded-full"></div>
-            <div className="absolute bottom-10 left-20 w-40 h-40 border border-navy-600 rounded-full"></div>
-            <div className="absolute bottom-20 right-10 w-28 h-28 border border-navy-600 rounded-full"></div>
-          </div>
+        {/* ===== Capability Orbit (matches attached design) ===== */}
+        <section className="relative overflow-hidden py-20">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a1630] via-[#0f1e3e] to-[#0a1630]" />
 
           <motion.div
-            className="relative w-[800px] h-[800px]"
-            variants={containerVariants}
+            className="relative mx-auto h-[920px] w-full max-w-[1200px]"
+            variants={pageVariants}
             initial="hidden"
-            animate="visible"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
           >
-            {/* Orbiting Ring */}
+            {/* subtle stars */}
+            <div className="absolute inset-0">
+              <div className="absolute left-6 top-10 h-1 w-1 rounded-full bg-white/30" />
+              <div className="absolute right-12 top-24 h-1 w-1 rounded-full bg-white/30" />
+              <div className="absolute bottom-32 left-10 h-1 w-1 rounded-full bg-white/30" />
+              <div className="absolute bottom-20 right-24 h-1 w-1 rounded-full bg-white/30" />
+            </div>
+
+            {/* orbits */}
+            {[420, 560, 700].map((size, i) => (
+              <motion.div
+                key={size}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+                style={{ width: size, height: size }}
+                animate={ringPulse}
+              />
+            ))}
+
+            {/* rotating thin ring */}
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-gray-200 opacity-20"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
+              style={{ width: 640, height: 640 }}
               animate={{ rotate: 360 }}
               transition={{ duration: 60, repeat: Infinity, ease: (t: number) => t }}
             />
 
-            {/* Center Circle */}
+            {/* center orb */}
             <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full flex items-center justify-center overflow-hidden"
+              className="absolute left-1/2 top-1/2 z-10 flex h-[230px] w-[230px] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full"
+              variants={fadeUp}
+              whileHover={{ scale: 1.04 }}
               style={{
-                background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-                border: "4px solid white",
-                boxShadow: "0 20px 40px rgba(15, 23, 42, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)",
+                boxShadow:
+                  "0 25px 60px rgba(13,25,49,0.45), inset 0 2px 6px rgba(255,255,255,0.12)",
               }}
-              variants={centerVariants}
-              animate={floatingAnimation}
-              whileHover={{ scale: 1.05 }}
             >
-              {/* Center Circle Glow Effect */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/10 to-indigo-400/10 animate-pulse"></div>
-
-              <div className="text-center text-white px-4 relative z-10">
-                <motion.div
-                  className="font-bold text-lg leading-tight"
-                  animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  정밀가공/모듈화
-                </motion.div>
-                <motion.div
-                  className="font-bold text-lg leading-tight"
-                  animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                >
-                  /장비 기술
-                </motion.div>
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(116,76,255,0.35),transparent_60%),radial-gradient(circle_at_70%_70%,rgba(46,165,255,0.35),transparent_55%)]" />
+              <div className="absolute inset-[6px] rounded-full bg-gradient-to-b from-[#0f1e3e] to-[#0a142b] border border-white/10" />
+              <div className="relative z-10 text-center text-white drop-shadow">
+                <div className="text-xl font-extrabold tracking-tight">
+                  {lang === "KOR" ? "정밀가공/모듈화" : "Precision Machining"}
+                </div>
+                <div className="mt-1 text-xs opacity-80">
+                  {lang === "KOR" ? "＆ 장비 기술" : "& Systems"}
+                </div>
               </div>
             </motion.div>
 
-            {/* Capability Cards (no animations, simple hover scale + color change) */}
-            {capabilities.map((capability, index) => {
-              const position = getPositionFromAngle(capability.angle - 90, 300);
+            {/* capability cards */}
+            {capabilities.map((cap, idx) => {
+              const { x, y } = getPositionFromAngle(cap.angle - 90, orbitRadius);
               return (
-                <div
-                  key={index}
-                  className="
-                    absolute w-[280px] h-[120px] rounded-xl p-4 shadow-lg cursor-pointer
-                    bg-gradient-to-br from-slate-700 to-slate-800
-                    border border-white/10
-                    transition-all duration-200 ease-linear
-                    hover:scale-105 hover:shadow-2xl hover:from-slate-600 hover:to-slate-700
-                  "
+                <motion.div
+                  key={cap.title}
+                  className="absolute w-[360px] max-w-[42vw]"
                   style={{
-                    left: `calc(50% + ${position.x}px - 140px)`,
-                    top: `calc(50% + ${position.y}px - 60px)`,
+                    left: `calc(50% + ${x}px - 180px)`,
+                    top: `calc(50% + ${y}px - 80px)`,
                   }}
+                  variants={fadeUp}
                 >
-                  <div className="flex h-full items-center">
-                    {/* Static icon blocks (kept simple) */}
-                    <div className="flex flex-col gap-1 mr-4">
-                      <div className="w-[45px] h-[45px] bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg border border-white/10 flex items-center justify-center" />
-                      <div className="w-[45px] h-[20px] bg-gradient-to-r from-gray-700 to-gray-800 rounded border border-white/10" />
+                  <div
+                    className={[
+                      "group relative rounded-2xl border border-white/10 bg-gradient-to-br",
+                      "from-slate-800/70 to-slate-900/70 backdrop-blur",
+                      "shadow-[0_15px_35px_rgba(5,11,25,0.5)]",
+                      "transition-transform duration-200 ease-linear hover:scale-[1.03]",
+                    ].join(" ")}
+                  >
+                    {/* decorative corner dots */}
+                    <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-cyan-300/70 group-hover:bg-cyan-200" />
+                    <span className="absolute right-8 top-4 h-2 w-2 rounded-full bg-cyan-300/30 group-hover:bg-cyan-200/60" />
+                    {/* content */}
+                    <div className="flex gap-4 p-5">
+                      {/* tiny thumbnail grid to mimic figma shots */}
+                      <div className="mt-1 grid h-[46px] w-[46px] grid-cols-2 gap-1 rounded-md bg-slate-700/30 p-1">
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-sky-400/40 to-indigo-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-emerald-400/40 to-teal-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-fuchsia-400/40 to-pink-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-amber-400/40 to-orange-400/40" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="text-white text-lg font-extrabold leading-tight">
+                          {cap.title}
+                        </div>
+                        <p className="mt-1 text-sm leading-snug text-slate-200/80">
+                          {cap.subtitle}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Text content */}
-                    <div className="flex-1 text-white">
-                      <h4 className="font-bold text-sm mb-2 leading-tight">{capability.title}</h4>
-                      <p className="text-xs text-gray-300 leading-tight">{capability.subtitle}</p>
-                    </div>
+                    {/* bottom gradient bar on hover */}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[6px] scale-x-0 rounded-b-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-400 opacity-90 transition-transform duration-200 group-hover:scale-x-100" />
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-
-            {/* Pulsing Tech Rings */}
-            {[400, 500, 600].map((size, index) => (
-              <motion.div
-                key={size}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-blue-400/10"
-                style={{ width: size, height: size }}
-                animate={{
-                  scale: [1, 1.02, 1],
-                  opacity: [0.1, 0.3, 0.1],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  delay: index * 0.5,
-                }}
-              />
-            ))}
           </motion.div>
-        </div>
+        </section>
 
-        {/* 1. Main Equipment Section */}
-        <div className="bg-white py-12 md:py-20 px-4">
-          <div className="max-w-7xl mx-auto">
+        {/* ===== Main Equipment ===== */}
+        <section className="bg-white py-12 md:py-20 px-4">
+          <div className="mx-auto max-w-7xl">
             <motion.h2
               className="text-base sm:text-lg lg:text-2xl font-semibold tracking-wide mb-6 md:mb-10"
+              variants={fadeUp}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={leftAlignTextVariants}
+              viewport={{ once: true, amount: 0.25 }}
             >
               Main Equipment
             </motion.h2>
+
             <motion.p
               className="text-xl md:text-2xl lg:text-4xl font-bold tracking-wide leading-[1.3]"
+              variants={fadeUp}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={leftAlignTextVariants}
+              viewport={{ once: true, amount: 0.25 }}
             >
               {section?.maintitle}
               <br />
               {section?.mainsubtitle}
             </motion.p>
           </div>
-        </div>
+        </section>
 
-        {/* 2. 생산가공 / 측정장비 Section */}
-        <div className="relative z-0 bg-[#000B24] pt-12 md:pt-20 pb-6 md:pb-8 px-4">
+        {/* ===== 생산가공 / 측정장비 ===== */}
+        <section className="relative z-0 bg-[#0a132e] pt-12 md:pt-20 pb-6 md:pb-8 px-4">
           <div className="absolute inset-0 pointer-events-none">
-            <Image src="/images/business/layer.png" alt="배경 이미지" fill style={{ objectFit: "cover", objectPosition: "top" }} priority />
+            <Image
+              src="/images/business/layer.png"
+              alt="배경 이미지"
+              fill
+              style={{ objectFit: "cover", objectPosition: "top" }}
+              priority
+            />
           </div>
 
-          <div className="max-w-7xl mx-auto">
-            <motion.div className="relative transition-all duration-500 ease-in-out">
+          <div className="mx-auto max-w-7xl">
+            <motion.div
+              className="relative transition-all"
+              variants={pageVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {/* 생산가공 / 조립 */}
-              <motion.button
-                className="text-base sm:text-lg bg-[#505050]/40 text-white rounded-full px-6 py-1 mb-10 md:mb-16"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={leftAlignTextVariants}
+              <motion.span
+                className="inline-block text-base sm:text-lg bg-white/10 text-white rounded-full px-6 py-1 mb-10 md:mb-16"
+                variants={fadeUp}
               >
                 {section?.production}
-              </motion.button>
+              </motion.span>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {equipmentList.map((equipment: any, index: number) => (
                   <motion.div
                     key={`prod-${index}`}
-                    className="relative bg-white/10 rounded-lg overflow-hidden shadow-lg w-full p-2 border-2 border-gray-400/10 h-[calc(10rem+114px)] md:h-[calc(12.5rem+114px)]"
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    className="group relative h-[calc(10rem+114px)] w-full overflow-hidden rounded-xl border-2 border-white/5 bg-white/5 p-2 shadow-lg transition-transform duration-200 hover:scale-[1.02] md:h-[calc(12.5rem+114px)]"
+                    variants={fadeUp}
                   >
-                    <div className="w-full h-[calc(5rem+95px)] md:h-[calc(7rem+95px)] relative mb-0">
-                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="object-cover rounded-[10px]" />}
+                    <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
                     </div>
 
-                    <div className="absolute bottom-0 left-0 w-full h-10 md:h-12 bg-[#1F2432]/70 px-3 flex items-center justify-center border border-gray-500/10">
-                      <p className="text-sm md:text-base font-medium text-white line-clamp-1">{equipment.name}</p>
+                    <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
                     </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-cyan-400 to-indigo-400 transition-transform duration-200 group-hover:scale-x-100" />
                   </motion.div>
                 ))}
               </div>
 
               {/* 신뢰성 (측정 / 분석) */}
-              <button className="text-base sm:text-lg bg-[#505050]/40 text-white rounded-full px-6 py-1 mb-10 md:mb-16 mt-16 md:mt-28">
+              <motion.span
+                className="mt-16 inline-block text-base sm:text-lg rounded-full bg-white/10 px-6 py-1 text-white md:mt-28 md:mb-16"
+                variants={fadeUp}
+              >
                 {section?.measurement}
-              </button>
+              </motion.span>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 {measurementEquipmentList.map((equipment: any, index: number) => (
                   <motion.div
                     key={`meas-${index}`}
-                    className="relative bg-white/10 rounded-lg overflow-hidden shadow-lg w-full p-2 border-2 border-gray-400/10 h-[calc(10rem+114px)] md:h-[calc(12.5rem+114px)]"
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    className="group relative h-[calc(10rem+114px)] w-full overflow-hidden rounded-xl border-2 border-white/5 bg-white/5 p-2 shadow-lg transition-transform duration-200 hover:scale-[1.02] md:h-[calc(12.5rem+114px)]"
+                    variants={fadeUp}
                   >
-                    <div className="w-full h-[calc(5rem+95px)] md:h-[calc(7rem+95px)] relative mb-0">
-                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="object-cover rounded-[10px]" />}
+                    <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
                     </div>
 
-                    <div className="absolute bottom-0 left-0 w-full h-10 md:h-12 bg-[#1F2432]/70 px-3 flex items-center justify-center">
-                      <p className="text-sm md:text-base font-medium text-white line-clamp-1">{equipment.name}</p>
+                    <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
                     </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-teal-400 to-emerald-400 transition-transform duration-200 group-hover:scale-x-100" />
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           </div>
-        </div>
+        </section>
 
-        {/* 3. Process Section */}
-        <div className="content-wrapper py-20 px-4 md:px-8 bg-white flex justify-center items-center">
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
-            <h2 className="self-start w-full text-left text-sm sm:text-base lg:text-2xl font-semibold tracking-wide mb-4 md:mb-6">
+        {/* ===== PROCESS image ===== */}
+        <section className="content-wrapper bg-white py-20 px-4 md:px-8">
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center">
+            <h2 className="mb-4 w-full self-start text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
               PROCESS
             </h2>
             <motion.div
@@ -415,23 +374,23 @@ export default function ServicePage() {
               variants={processImageVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.25 }}
             >
-              <div className="relative w-full h-auto overflow-hidden rounded-lg px-[7.5%] md:px-[15%] lg:px-[20%]">
+              <div className="relative w-full overflow-hidden rounded-lg px-[7.5%] md:px-[15%] lg:px-[20%]">
                 <Image
-                  src={currentContent.image}
-                  alt={currentContent.alt}
+                  src={lang === "KOR" ? "/images/business/process/gambarKorean.png" : "/images/business/process/gambarEng.png"}
+                  alt={lang === "KOR" ? "조직도" : "Organization Chart"}
                   width={1400}
                   height={1000}
-                  className="w-full h-auto"
+                  className="h-auto w-full"
                   priority
                 />
               </div>
             </motion.div>
           </div>
-        </div>
+        </section>
 
-        <hr className="my-6 border-gray-200 w-full" />
+        <hr className="my-6 w-full border-gray-200" />
       </main>
     </Layout>
   );
