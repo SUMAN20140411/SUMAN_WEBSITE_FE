@@ -11,6 +11,174 @@ import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
 export default function ServicePage() {
+  function ProcessFlow({ lang }: { lang: "KOR" | "ENG" }) {
+  // coords use a 0..100 canvas for easy responsiveness
+  type Node = {
+    id: string;
+    type: "rect" | "diamond";
+    x: number; y: number; w: number; h: number;
+    title: string; subtitle?: string;
+  };
+
+  const T = (ko: string, en: string) => (lang === "KOR" ? ko : en);
+
+  const nodes: Node[] = [
+    { id: "customer", type: "rect", x: 4,  y: 12, w: 18, h: 12, title: T("Customer", "Customer") },
+    { id: "concept",  type: "rect", x: 26, y: 12, w: 22, h: 12, title: T("Concept 설계", "Concept Design") },
+    { id: "dr",       type: "diamond", x: 50, y: 12, w: 10, h: 12, title: "D/R" },
+
+    { id: "develop",  type: "rect", x: 68, y: 12, w: 22, h: 12, title: T("개발/가공 설계", "Dev/Machining Design") },
+    { id: "review",   type: "diamond", x: 68, y: 30, w: 12, h: 12, title: T("검토승인", "Review") },
+
+    { id: "order",    type: "rect", x: 68, y: 48, w: 22, h: 12, title: T("발주(소재/부품)", "Order (Material/Parts)") },
+    { id: "inspect",  type: "diamond", x: 56, y: 52, w: 12, h: 12, title: T("수입검사", "Incoming Insp.") },
+    { id: "partner",  type: "rect", x: 78, y: 30, w: 18, h: 12, title: T("협력사", "Partner") },
+
+    { id: "machine",  type: "rect", x: 38, y: 48, w: 22, h: 12, title: T("가공/제작", "Machining/Fabrication") },
+    { id: "assmchk",  type: "diamond", x: 26, y: 56, w: 14, h: 14, title: T("출하 및\n조립/측정검사", "Assembly/Inspection") },
+
+    { id: "pack",     type: "rect", x: 16, y: 76, w: 20, h: 12, title: T("포장", "Packing") },
+    { id: "deliver",  type: "rect", x: 38, y: 76, w: 20, h: 12, title: T("고객사 납품", "Delivery") },
+    { id: "feedback", type: "diamond", x: 58, y: 76, w: 12, h: 12, title: T("고객 Feedback", "Customer Feedback") },
+    { id: "reorder",  type: "rect", x: 74, y: 76, w: 22, h: 12, title: T("Re-Order 개선/반영", "Re-Order & Improvements") },
+  ];
+
+  const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+
+  const edge = (n: Node, side: "l" | "r" | "t" | "b") => {
+    const cx = n.x + n.w / 2, cy = n.y + n.h / 2;
+    if (side === "l") return [n.x, cy];
+    if (side === "r") return [n.x + n.w, cy];
+    if (side === "t") return [cx, n.y];
+    return [cx, n.y + n.h];
+  };
+
+  type Link = { from: [string, "l"|"r"|"t"|"b"]; to: [string, "l"|"r"|"t"|"b"]; curved?: boolean; label?: string; };
+  const links: Link[] = [
+    { from: ["customer","r"], to: ["concept","l"] },
+    { from: ["concept","r"], to: ["dr","l"] },
+    { from: ["dr","r"],      to: ["develop","l"] },
+
+    { from: ["develop","b"], to: ["review","t"] },
+    { from: ["review","b"],  to: ["order","t"] },
+
+    { from: ["order","l"],   to: ["machine","r"] },
+    { from: ["inspect","l"], to: ["machine","r"] },
+    { from: ["inspect","t"], to: ["partner","b"] },
+
+    { from: ["machine","b"], to: ["assmchk","t"] },
+    { from: ["assmchk","b"], to: ["pack","t"] },
+    { from: ["pack","r"],    to: ["deliver","l"] },
+    { from: ["deliver","r"], to: ["feedback","l"] },
+    { from: ["feedback","r"],to: ["reorder","l"] },
+
+    // NG loops (curved)
+    { from: ["dr","t"],      to: ["concept","t"], curved: true, label: "NG" },
+    { from: ["review","t"],  to: ["develop","t"], curved: true, label: "NG" },
+    { from: ["assmchk","l"], to: ["machine","t"], curved: true, label: "NG" },
+  ];
+
+  const arrowColor = "rgba(255,255,255,0.9)";
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1, y: 0,
+      transition: { duration: 0.5, ease: (t: number) => t },
+    },
+  };
+
+  return (
+    <div className="relative mx-auto w-full max-w-6xl">
+      {/* Canvas keeps aspect so lines stay aligned */}
+      <div className="relative w-full rounded-xl border border-white/10 bg-gradient-to-br from-[#0a1630] via-[#0f1e3e] to-[#0a1630] p-4 shadow-xl">
+        <div className="relative aspect-[16/9]">
+          {/* connectors */}
+          <svg className="absolute inset-0 h-full w-full">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill={arrowColor} />
+              </marker>
+            </defs>
+            {links.map((lk, i) => {
+              const s = edge(byId[lk.from[0]], lk.from[1]);
+              const e = edge(byId[lk.to[0]], lk.to[1]);
+              const [sx, sy, ex, ey] = [s[0], s[1], e[0], e[1]];
+
+              let d = `M ${sx} ${sy} L ${ex} ${ey}`;
+              if (lk.curved) {
+                // simple outward curve; control points shift vertically
+                const mx = (sx + ex) / 2;
+                const cp1 = `${mx} ${sy - 10}`;
+                const cp2 = `${mx} ${ey - 10}`;
+                d = `M ${sx} ${sy} C ${cp1}, ${cp2}, ${ex} ${ey}`;
+              }
+
+              return (
+                <g key={i}>
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke={arrowColor}
+                    strokeWidth="1.8"
+                    markerEnd="url(#arrow)"
+                    vectorEffect="non-scaling-stroke"
+                    style={{ opacity: 0.9 }}
+                  />
+                  {lk.label && (
+                    <text x={(sx + ex) / 2} y={(sy + ey) / 2 - 2} fontSize="4" fill="#ef4444" fontWeight={700}>
+                      {lk.label}
+                    </text>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* nodes */}
+          {nodes.map((n) => (
+            <motion.div
+              key={n.id}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              className="absolute"
+              style={{ left: `${n.x}%`, top: `${n.y}%`, width: `${n.w}%`, height: `${n.h}%` }}
+            >
+              {n.type === "rect" ? (
+                <div
+                  className="group flex h-full w-full items-center justify-center rounded-[18px] bg-gradient-to-br from-[#0b2a63] to-[#0a1f4a] text-white shadow-[0_12px_30px_rgba(6,12,28,0.5)] transition-transform duration-200 hover:scale-[1.03] hover:from-[#11377f] hover:to-[#0f2b60]"
+                >
+                  <div className="px-4 text-center">
+                    <div className="text-[min(1.05rem,3.5vw)] font-extrabold leading-tight">{n.title}</div>
+                    {n.subtitle && <div className="mt-1 text-[min(0.85rem,3vw)] opacity-85">{n.subtitle}</div>}
+                  </div>
+                </div>
+              ) : (
+                <div className="relative h-full w-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div
+                      className="group relative flex h-[85%] w-[85%] -rotate-45 items-center justify-center rounded-lg bg-slate-200 text-slate-800 shadow-md transition-transform duration-200 hover:scale-[1.05]"
+                    >
+                      <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-black/5" />
+                      <div className="rotate-45 px-2 text-center text-[min(0.85rem,3vw)] font-semibold leading-tight">
+                        {n.title.split("\n").map((line, i) => (
+                          <div key={i}>{line}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
   const { lang } = useLangStore();
   const { equipmentList, measurementEquipmentList } = serviceContent[lang];
   const section = serviceContent[lang].sectionList?.[0];
@@ -362,34 +530,15 @@ export default function ServicePage() {
             </motion.div>
           </div>
         </section>
-
-        {/* ===== PROCESS image ===== */}
+        {/* ===== PROCESS (Flow UI) ===== */}
         <section className="content-wrapper bg-white py-20 px-4 md:px-8">
-          <div className="mx-auto flex w-full max-w-7xl flex-col items-center">
-            <h2 className="mb-4 w-full self-start text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
+          <div className="mx-auto w-full max-w-7xl">
+            <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
               PROCESS
-            </h2>
-            <motion.div
-              className="w-full"
-              variants={processImageVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-            >
-              <div className="relative w-full overflow-hidden rounded-lg px-[7.5%] md:px-[15%] lg:px-[20%]">
-                <Image
-                  src={lang === "KOR" ? "/images/business/process/gambarKorean.png" : "/images/business/process/gambarEng.png"}
-                  alt={lang === "KOR" ? "조직도" : "Organization Chart"}
-                  width={1400}
-                  height={1000}
-                  className="h-auto w-full"
-                  priority
-                />
+              </h2>
+              <ProcessFlow lang={lang as "KOR" | "ENG"} />
               </div>
-            </motion.div>
-          </div>
-        </section>
-
+              </section>
         <hr className="my-6 w-full border-gray-200" />
       </main>
     </Layout>
