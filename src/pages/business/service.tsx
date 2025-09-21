@@ -12,7 +12,7 @@ import { serviceContent } from "@/data/service";
 
 export default function ServicePage() {
   function ProcessFlow({ lang }: { lang: "KOR" | "ENG" }) {
-  // coords use a 0..100 canvas for easy responsiveness
+  // 0..100 logical canvas
   type Node = {
     id: string;
     type: "rect" | "diamond";
@@ -44,7 +44,6 @@ export default function ServicePage() {
   ];
 
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
-
   const edge = (n: Node, side: "l" | "r" | "t" | "b") => {
     const cx = n.x + n.w / 2, cy = n.y + n.h / 2;
     if (side === "l") return [n.x, cy];
@@ -53,127 +52,139 @@ export default function ServicePage() {
     return [cx, n.y + n.h];
   };
 
-  type Link = { from: [string, "l"|"r"|"t"|"b"]; to: [string, "l"|"r"|"t"|"b"]; curved?: boolean; label?: string; };
+  type Link = {
+    from: [string, "l"|"r"|"t"|"b"];
+    to:   [string, "l"|"r"|"t"|"b"];
+    curved?: boolean;
+    label?: string;
+  };
+
   const links: Link[] = [
     { from: ["customer","r"], to: ["concept","l"] },
-    { from: ["concept","r"], to: ["dr","l"] },
-    { from: ["dr","r"],      to: ["develop","l"] },
+    { from: ["concept","r"],  to: ["dr","l"] },
+    { from: ["dr","r"],       to: ["develop","l"] },
 
-    { from: ["develop","b"], to: ["review","t"] },
-    { from: ["review","b"],  to: ["order","t"] },
+    { from: ["develop","b"],  to: ["review","t"] },
+    { from: ["review","b"],   to: ["order","t"] },
 
-    { from: ["order","l"],   to: ["machine","r"] },
-    { from: ["inspect","l"], to: ["machine","r"] },
-    { from: ["inspect","t"], to: ["partner","b"] },
+    { from: ["order","l"],    to: ["machine","r"] },
+    { from: ["inspect","l"],  to: ["machine","r"] },
+    { from: ["inspect","t"],  to: ["partner","b"] },
 
-    { from: ["machine","b"], to: ["assmchk","t"] },
-    { from: ["assmchk","b"], to: ["pack","t"] },
-    { from: ["pack","r"],    to: ["deliver","l"] },
-    { from: ["deliver","r"], to: ["feedback","l"] },
-    { from: ["feedback","r"],to: ["reorder","l"] },
+    { from: ["machine","b"],  to: ["assmchk","t"] },
+    { from: ["assmchk","b"],  to: ["pack","t"] },
+    { from: ["pack","r"],     to: ["deliver","l"] },
+    { from: ["deliver","r"],  to: ["feedback","l"] },
+    { from: ["feedback","r"], to: ["reorder","l"] },
 
-    // NG loops (curved)
-    { from: ["dr","t"],      to: ["concept","t"], curved: true, label: "NG" },
-    { from: ["review","t"],  to: ["develop","t"], curved: true, label: "NG" },
-    { from: ["assmchk","l"], to: ["machine","t"], curved: true, label: "NG" },
+    // NG loops
+    { from: ["dr","t"],       to: ["concept","t"],  curved: true, label: "NG" },
+    { from: ["review","t"],   to: ["develop","t"],  curved: true, label: "NG" },
+    { from: ["assmchk","l"],  to: ["machine","t"],  curved: true, label: "NG" },
   ];
 
-  const arrowColor = "rgba(255,255,255,0.9)";
+  const arrow = "rgba(15, 23, 42, 0.9)"; // slate-900-ish
 
   const fadeUp = {
-    hidden: { opacity: 0, y: 16 },
+    hidden: { opacity: 0, y: 12 },
     visible: {
       opacity: 1, y: 0,
-      transition: { duration: 0.5, ease: (t: number) => t },
+      transition: { duration: 0.45, ease: (t: number) => t },
     },
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-6xl">
-      {/* Canvas keeps aspect so lines stay aligned */}
-      <div className="relative w-full rounded-xl border border-white/10 bg-gradient-to-br from-[#0a1630] via-[#0f1e3e] to-[#0a1630] p-4 shadow-xl">
-        <div className="relative aspect-[16/9]">
-          {/* connectors */}
-          <svg className="absolute inset-0 h-full w-full">
-            <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill={arrowColor} />
-              </marker>
-            </defs>
-            {links.map((lk, i) => {
-              const s = edge(byId[lk.from[0]], lk.from[1]);
-              const e = edge(byId[lk.to[0]], lk.to[1]);
-              const [sx, sy, ex, ey] = [s[0], s[1], e[0], e[1]];
+    <div className="relative mx-auto w-full max-w-6xl rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="relative aspect-[16/9]">
+        {/* connectors */}
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M0 0 L10 5 L0 10 Z" fill={arrow} />
+            </marker>
+          </defs>
 
-              let d = `M ${sx} ${sy} L ${ex} ${ey}`;
-              if (lk.curved) {
-                // simple outward curve; control points shift vertically
-                const mx = (sx + ex) / 2;
-                const cp1 = `${mx} ${sy - 10}`;
-                const cp2 = `${mx} ${ey - 10}`;
-                d = `M ${sx} ${sy} C ${cp1}, ${cp2}, ${ex} ${ey}`;
-              }
+          {links.map((lk, i) => {
+            const s = edge(byId[lk.from[0]], lk.from[1]);
+            const e = edge(byId[lk.to[0]],   lk.to[1]);
+            const [sx, sy, ex, ey] = [s[0], s[1], e[0], e[1]];
 
-              return (
-                <g key={i}>
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke={arrowColor}
-                    strokeWidth="1.8"
-                    markerEnd="url(#arrow)"
-                    vectorEffect="non-scaling-stroke"
-                    style={{ opacity: 0.9 }}
-                  />
-                  {lk.label && (
-                    <text x={(sx + ex) / 2} y={(sy + ey) / 2 - 2} fontSize="4" fill="#ef4444" fontWeight={700}>
-                      {lk.label}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
+            let d: string;
+            if (lk.curved) {
+              const mx = (sx + ex) / 2;
+              const lift = 10; // curve height
+              const cp1 = `${mx} ${sy - lift}`;
+              const cp2 = `${mx} ${ey - lift}`;
+              d = `M ${sx} ${sy} C ${cp1}, ${cp2}, ${ex} ${ey}`;
+            } else {
+              // small horizontal/vertical “soft” elbow (Cubic) to look neat
+              const dx = (ex - sx) * 0.3;
+              const dy = (ey - sy) * 0.3;
+              d = `M ${sx} ${sy} C ${sx + dx} ${sy}, ${ex - dx} ${ey}, ${ex} ${ey}`;
+            }
 
-          {/* nodes */}
-          {nodes.map((n) => (
-            <motion.div
-              key={n.id}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="absolute"
-              style={{ left: `${n.x}%`, top: `${n.y}%`, width: `${n.w}%`, height: `${n.h}%` }}
-            >
-              {n.type === "rect" ? (
-                <div
-                  className="group flex h-full w-full items-center justify-center rounded-[18px] bg-gradient-to-br from-[#0b2a63] to-[#0a1f4a] text-white shadow-[0_12px_30px_rgba(6,12,28,0.5)] transition-transform duration-200 hover:scale-[1.03] hover:from-[#11377f] hover:to-[#0f2b60]"
-                >
-                  <div className="px-4 text-center">
-                    <div className="text-[min(1.05rem,3.5vw)] font-extrabold leading-tight">{n.title}</div>
-                    {n.subtitle && <div className="mt-1 text-[min(0.85rem,3vw)] opacity-85">{n.subtitle}</div>}
-                  </div>
+            return (
+              <g key={i}>
+                <path
+                  d={d}
+                  fill="none"
+                  stroke={arrow}
+                  strokeWidth={1.4}
+                  strokeLinecap="round"
+                  markerEnd="url(#arrow)"
+                  vectorEffect="non-scaling-stroke"
+                />
+                {lk.label && (
+                  <text
+                    x={(sx + ex) / 2}
+                    y={(sy + ey) / 2 - 2}
+                    fontSize={3.5}
+                    fontWeight={700}
+                    fill="#ef4444"
+                  >
+                    {lk.label}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* nodes */}
+        {nodes.map((n) => (
+          <motion.div
+            key={n.id}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="absolute"
+            style={{ left: `${n.x}%`, top: `${n.y}%`, width: `${n.w}%`, height: `${n.h}%` }}
+          >
+            {n.type === "rect" ? (
+              <div
+                className="group flex h-full w-full items-center justify-center rounded-[18px] bg-gradient-to-br from-[#0b2a63] to-[#0a1f4a] text-white shadow-[0_10px_24px_rgba(2,6,23,0.25)] transition-transform duration-150 hover:scale-[1.03] hover:from-[#11377f] hover:to-[#0f2b60]"
+              >
+                <div className="px-4 text-center">
+                  <div className="text-[min(1.05rem,3.5vw)] font-extrabold leading-tight">{n.title}</div>
+                  {n.subtitle && <div className="mt-1 text-[min(0.85rem,3vw)] opacity-85">{n.subtitle}</div>}
                 </div>
-              ) : (
-                <div className="relative h-full w-full">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div
-                      className="group relative flex h-[85%] w-[85%] -rotate-45 items-center justify-center rounded-lg bg-slate-200 text-slate-800 shadow-md transition-transform duration-200 hover:scale-[1.05]"
-                    >
-                      <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-black/5" />
-                      <div className="rotate-45 px-2 text-center text-[min(0.85rem,3vw)] font-semibold leading-tight">
-                        {n.title.split("\n").map((line, i) => (
-                          <div key={i}>{line}</div>
-                        ))}
-                      </div>
+              </div>
+            ) : (
+              <div className="relative h-full w-full">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div
+                    className="group relative flex h-[85%] w-[85%] -rotate-45 items-center justify-center rounded-lg bg-slate-100 text-slate-800 shadow-md ring-1 ring-slate-200 transition-transform duration-150 hover:scale-[1.05]"
+                  >
+                    <div className="rotate-45 px-2 text-center text-[min(0.82rem,3vw)] font-semibold leading-tight whitespace-pre-line">
+                      {n.title}
                     </div>
                   </div>
                 </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
+              </div>
+            )}
+          </motion.div>
+        ))}
       </div>
     </div>
   );
@@ -530,15 +541,16 @@ export default function ServicePage() {
             </motion.div>
           </div>
         </section>
-        {/* ===== PROCESS (Flow UI) ===== */}
-        <section className="content-wrapper bg-white py-20 px-4 md:px-8">
+        {/* ===== PROCESS (Flow UI on white bg) ===== */}
+        <section className="bg-white py-20 px-4 md:px-8">
           <div className="mx-auto w-full max-w-7xl">
             <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
-              PROCESS
-              </h2>
+              PROCESS</h2>
               <ProcessFlow lang={lang as "KOR" | "ENG"} />
               </div>
               </section>
+
+
         <hr className="my-6 w-full border-gray-200" />
       </main>
     </Layout>
