@@ -11,182 +11,205 @@ import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
 export default function ServicePage() {
-  function ProcessFlow({ lang }: { lang: "KOR" | "ENG" }) {
-  // 0..100 logical canvas
-  type Node = {
-    id: string;
-    type: "rect" | "diamond";
-    x: number; y: number; w: number; h: number;
-    title: string; subtitle?: string;
-  };
 
+
+/** Exact flowchart that scales perfectly and supports KOR/ENG */
+function ProcessFlowExact({ lang }: { lang: "KOR" | "ENG" }) {
   const T = (ko: string, en: string) => (lang === "KOR" ? ko : en);
 
-  const nodes: Node[] = [
-    { id: "customer", type: "rect", x: 4,  y: 12, w: 18, h: 12, title: T("Customer", "Customer") },
-    { id: "concept",  type: "rect", x: 26, y: 12, w: 22, h: 12, title: T("Concept 설계", "Concept Design") },
-    { id: "dr",       type: "diamond", x: 50, y: 12, w: 10, h: 12, title: "D/R" },
+  // Canvas reference size — keeps all geometry aligned while scaling
+  const W = 1600;
+  const H = 900;
 
-    { id: "develop",  type: "rect", x: 68, y: 12, w: 22, h: 12, title: T("개발/가공 설계", "Dev/Machining Design") },
-    { id: "review",   type: "diamond", x: 68, y: 30, w: 12, h: 12, title: T("검토승인", "Review") },
+  // Colors / sizes
+  const navy = "#0b2a63";
+  const navyDark = "#0a1f4a";
+  const line = "#12386e";
+  const diamondFill = "#E8EBF0"; // soft light gray
+  const textWhite = "#ffffff";
 
-    { id: "order",    type: "rect", x: 68, y: 48, w: 22, h: 12, title: T("발주(소재/부품)", "Order (Material/Parts)") },
-    { id: "inspect",  type: "diamond", x: 56, y: 52, w: 12, h: 12, title: T("수입검사", "Incoming Insp.") },
-    { id: "partner",  type: "rect", x: 78, y: 30, w: 18, h: 12, title: T("협력사", "Partner") },
+  /** helpers */
+  const rect = (
+    id: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    label: string
+  ) => (
+    <g key={id} style={{ filter: "drop-shadow(0 10px 18px rgba(2,6,23,0.25))" }}>
+      <rect
+        x={x}
+        y={y}
+        rx={28}
+        ry={28}
+        width={w}
+        height={h}
+        fill={`url(#${id}-grad)`}
+        stroke="none"
+      />
+      {/* gradient per-rect for subtle depth */}
+      <defs>
+        <linearGradient id={`${id}-grad`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={navy} />
+          <stop offset="100%" stopColor={navyDark} />
+        </linearGradient>
+      </defs>
+      <text
+        x={x + w / 2}
+        y={y + h / 2}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={textWhite}
+        fontWeight={800}
+        fontSize="44"
+      >
+        {label}
+      </text>
+    </g>
+  );
 
-    { id: "machine",  type: "rect", x: 38, y: 48, w: 22, h: 12, title: T("가공/제작", "Machining/Fabrication") },
-    { id: "assmchk",  type: "diamond", x: 26, y: 56, w: 14, h: 14, title: T("출하 및\n조립/측정검사", "Assembly/Inspection") },
-
-    { id: "pack",     type: "rect", x: 16, y: 76, w: 20, h: 12, title: T("포장", "Packing") },
-    { id: "deliver",  type: "rect", x: 38, y: 76, w: 20, h: 12, title: T("고객사 납품", "Delivery") },
-    { id: "feedback", type: "diamond", x: 58, y: 76, w: 12, h: 12, title: T("고객 Feedback", "Customer Feedback") },
-    { id: "reorder",  type: "rect", x: 74, y: 76, w: 22, h: 12, title: T("Re-Order 개선/반영", "Re-Order & Improvements") },
-  ];
-
-  const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
-  const edge = (n: Node, side: "l" | "r" | "t" | "b") => {
-    const cx = n.x + n.w / 2, cy = n.y + n.h / 2;
-    if (side === "l") return [n.x, cy];
-    if (side === "r") return [n.x + n.w, cy];
-    if (side === "t") return [cx, n.y];
-    return [cx, n.y + n.h];
+  // diamond from bounding box
+  const diamond = (
+    id: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    label: string
+  ) => {
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const pts = `${cx},${y} ${x + w},${cy} ${cx},${y + h} ${x},${cy}`;
+    const lines = label.split("\n");
+    return (
+      <g key={id} style={{ filter: "drop-shadow(0 6px 12px rgba(2,6,23,0.18))" }}>
+        <polygon points={pts} fill={diamondFill} />
+        <text
+          x={cx}
+          y={cy - (lines.length - 1) * 18}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="#2b2f37"
+          fontWeight={700}
+          fontSize="34"
+        >
+          {lines.map((ln, i) => (
+            <tspan key={i} x={cx} dy={i === 0 ? 0 : 36}>
+              {ln}
+            </tspan>
+          ))}
+        </text>
+      </g>
+    );
   };
 
-  type Link = {
-    from: [string, "l"|"r"|"t"|"b"];
-    to:   [string, "l"|"r"|"t"|"b"];
-    curved?: boolean;
-    label?: string;
-  };
+  /** Nodes (positions tuned to match your image) */
+  const nodes = [
+    rect("customer", 140, 170, 340, 100, T("Customer", "Customer")),
+    rect("concept",  520, 170, 380, 100, T("Concept 설계", "Concept Design")),
+    diamond("dr",    935, 160, 140, 120, "D/R"),
+    rect("develop", 1120, 170, 380, 100, T("개발/가공 설계", "Dev / Machining Design")),
 
-  const links: Link[] = [
-    { from: ["customer","r"], to: ["concept","l"] },
-    { from: ["concept","r"],  to: ["dr","l"] },
-    { from: ["dr","r"],       to: ["develop","l"] },
+    rect("partner",  900, 330, 380, 100, T("협력사", "Partner")),
+    diamond("review",1125, 370, 190, 130, T("검토승인", "Review Approval")),
 
-    { from: ["develop","b"],  to: ["review","t"] },
-    { from: ["review","b"],   to: ["order","t"] },
+    rect("order",   1140, 520, 380, 100, T("발주(소재/부품)", "Order (Material/Parts)")),
+    diamond("ininsp", 900, 540, 170, 130, T("수입검사", "Incoming Inspection")),
+    rect("machine",  620, 520, 380, 100, T("가공/제작", "Machining / Fabrication")),
+    diamond("assm",  300, 520, 260, 160, T("출하 및\n조립/측정검사", "Shipping &\nAssembly / Inspection")),
 
-    { from: ["order","l"],    to: ["machine","r"] },
-    { from: ["inspect","l"],  to: ["machine","r"] },
-    { from: ["inspect","t"],  to: ["partner","b"] },
-
-    { from: ["machine","b"],  to: ["assmchk","t"] },
-    { from: ["assmchk","b"],  to: ["pack","t"] },
-    { from: ["pack","r"],     to: ["deliver","l"] },
-    { from: ["deliver","r"],  to: ["feedback","l"] },
-    { from: ["feedback","r"], to: ["reorder","l"] },
-
-    // NG loops
-    { from: ["dr","t"],       to: ["concept","t"],  curved: true, label: "NG" },
-    { from: ["review","t"],   to: ["develop","t"],  curved: true, label: "NG" },
-    { from: ["assmchk","l"],  to: ["machine","t"],  curved: true, label: "NG" },
+    rect("pack",     220, 720, 360, 100, T("포장", "Packing")),
+    rect("deliver",  620, 720, 360, 100, T("고객사 납품", "Delivery to Customer")),
+    diamond("cfeed", 1000, 720, 180, 130, T("고객 Feedback", "Customer Feedback")),
+    rect("reorder", 1210, 720, 360, 100, T("Re-Order 개선/반영", "Re-Order / Improve")),
   ];
 
-  const arrow = "rgba(15, 23, 42, 0.9)"; // slate-900-ish
+  /** Links (arrows + NG loops) */
+  const links = [
+    // top row
+    { d: `M 480 220 L 520 220`, label: "" },                          // Customer -> Concept
+    { d: `M 900 220 L 935 220`, label: "" },                          // Concept -> D/R
+    { d: `M 1075 220 L 1120 220`, label: "" },                        // D/R -> Develop
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 12 },
-    visible: {
-      opacity: 1, y: 0,
-      transition: { duration: 0.45, ease: (t: number) => t },
-    },
+    // D/R NG: up -> left -> down to Concept top
+    { d: `M 1005 160 L 1005 90 L 710 90 L 710 170`, label: "NG", lx: 860, ly: 70 },
+
+    // Develop -> Review (vertical)
+    { d: `M 1310 270 L 1310 370`, label: "" },
+    { d: `M 1310 500 L 1310 520`, label: "" },                        // Review -> Order (down)
+
+    // Review NG loop: Review top -> right up -> over -> down to Develop top
+    { d: `M 1310 370 L 1480 370 L 1480 140 L 1310 140 L 1310 170`, label: "NG", lx: 1460, ly: 150 },
+
+    // Order -> Incoming Insp (left)
+    { d: `M 1140 570 L 985 570`, label: "" },
+    // Incoming Insp -> Partner (up)
+    { d: `M 985 540 L 985 430`, label: "NG", lx: 1005, ly: 470, small: true },
+    // Incoming Insp -> Machine (left)
+    { d: `M 900 570 L 1000 570 L 1000 570 M 900 570 L 740 570`, label: "" },
+
+    // Machine -> Assm/Inspection (left)
+    { d: `M 620 570 L 435 570`, label: "" },
+
+    // Assm -> Pack (down)
+    { d: `M 300 680 L 300 720`, label: "" },
+
+    // Assm NG loop: Assm top -> up -> across -> down to Machine top
+    { d: `M 300 520 L 300 400 L 810 400 L 810 520`, label: "NG", lx: 560, ly: 380 },
+
+    // Pack -> Deliver -> Feedback -> Reorder
+    { d: `M 580 770 L 620 770`, label: "" },
+    { d: `M 980 770 L 1000 770`, label: "" },
+    { d: `M 1090 770 L 1210 770`, label: "" },
+  ] as Array<{ d: string; label: string; lx?: number; ly?: number; small?: boolean }>;
+
+  // simple fade-in for the whole chart
+  const appear = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.6, ease: easeInOut } },
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-6xl rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-      <div className="relative aspect-[16/9]">
-        {/* connectors */}
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto" markerUnits="userSpaceOnUse">
-              <path d="M0 0 L10 5 L0 10 Z" fill={arrow} />
-            </marker>
-          </defs>
+    <motion.svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="w-full rounded-xl border border-gray-200 bg-white shadow-sm"
+      variants={appear}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.25 }}
+    >
+      {/* Arrow marker */}
+      <defs>
+        <marker id="arrow-blue" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="12" markerHeight="12" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill={line} />
+        </marker>
+      </defs>
 
-          {links.map((lk, i) => {
-            const s = edge(byId[lk.from[0]], lk.from[1]);
-            const e = edge(byId[lk.to[0]],   lk.to[1]);
-            const [sx, sy, ex, ey] = [s[0], s[1], e[0], e[1]];
-
-            let d: string;
-            if (lk.curved) {
-              const mx = (sx + ex) / 2;
-              const lift = 10; // curve height
-              const cp1 = `${mx} ${sy - lift}`;
-              const cp2 = `${mx} ${ey - lift}`;
-              d = `M ${sx} ${sy} C ${cp1}, ${cp2}, ${ex} ${ey}`;
-            } else {
-              // small horizontal/vertical “soft” elbow (Cubic) to look neat
-              const dx = (ex - sx) * 0.3;
-              const dy = (ey - sy) * 0.3;
-              d = `M ${sx} ${sy} C ${sx + dx} ${sy}, ${ex - dx} ${ey}, ${ex} ${ey}`;
-            }
-
-            return (
-              <g key={i}>
-                <path
-                  d={d}
-                  fill="none"
-                  stroke={arrow}
-                  strokeWidth={1.4}
-                  strokeLinecap="round"
-                  markerEnd="url(#arrow)"
-                  vectorEffect="non-scaling-stroke"
-                />
-                {lk.label && (
-                  <text
-                    x={(sx + ex) / 2}
-                    y={(sy + ey) / 2 - 2}
-                    fontSize={3.5}
-                    fontWeight={700}
-                    fill="#ef4444"
-                  >
-                    {lk.label}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* nodes */}
-        {nodes.map((n) => (
-          <motion.div
-            key={n.id}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            className="absolute"
-            style={{ left: `${n.x}%`, top: `${n.y}%`, width: `${n.w}%`, height: `${n.h}%` }}
-          >
-            {n.type === "rect" ? (
-              <div
-                className="group flex h-full w-full items-center justify-center rounded-[18px] bg-gradient-to-br from-[#0b2a63] to-[#0a1f4a] text-white shadow-[0_10px_24px_rgba(2,6,23,0.25)] transition-transform duration-150 hover:scale-[1.03] hover:from-[#11377f] hover:to-[#0f2b60]"
+      {/* Connectors */}
+      <g stroke={line} strokeWidth={6} fill="none" markerEnd="url(#arrow-blue)" strokeLinecap="round">
+        {links.map((l, i) => (
+          <g key={i}>
+            <path d={l.d} />
+            {l.label && (
+              <text
+                x={l.lx ?? 0}
+                y={l.ly ?? 0}
+                fontSize={l.small ? 30 : 36}
+                fontWeight={800}
+                fill="#ef4444"
+                textAnchor="middle"
               >
-                <div className="px-4 text-center">
-                  <div className="text-[min(1.05rem,3.5vw)] font-extrabold leading-tight">{n.title}</div>
-                  {n.subtitle && <div className="mt-1 text-[min(0.85rem,3vw)] opacity-85">{n.subtitle}</div>}
-                </div>
-              </div>
-            ) : (
-              <div className="relative h-full w-full">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div
-                    className="group relative flex h-[85%] w-[85%] -rotate-45 items-center justify-center rounded-lg bg-slate-100 text-slate-800 shadow-md ring-1 ring-slate-200 transition-transform duration-150 hover:scale-[1.05]"
-                  >
-                    <div className="rotate-45 px-2 text-center text-[min(0.82rem,3vw)] font-semibold leading-tight whitespace-pre-line">
-                      {n.title}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                {l.label}
+              </text>
             )}
-          </motion.div>
+          </g>
         ))}
-      </div>
-    </div>
+      </g>
+
+      {/* Nodes */}
+      {nodes}
+    </motion.svg>
   );
 }
 
@@ -541,14 +564,16 @@ export default function ServicePage() {
             </motion.div>
           </div>
         </section>
-        {/* ===== PROCESS (Flow UI on white bg) ===== */}
-        <section className="bg-white py-20 px-4 md:px-8">
-          <div className="mx-auto w-full max-w-7xl">
-            <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
-              PROCESS</h2>
-              <ProcessFlow lang={lang as "KOR" | "ENG"} />
-              </div>
-              </section>
+
+        {/* ===== PROCESS (exact flowchart) ===== */}
+<section className="bg-white py-20 px-4 md:px-8">
+  <div className="mx-auto w-full max-w-7xl">
+    <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
+      PROCESS
+    </h2>
+    <ProcessFlowExact lang={lang as "KOR" | "ENG"} />
+  </div>
+</section>
 
 
         <hr className="my-6 w-full border-gray-200" />
