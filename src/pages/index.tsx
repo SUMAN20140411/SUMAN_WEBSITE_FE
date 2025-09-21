@@ -142,8 +142,7 @@ export default function HomePage({ content }: HomePageProps) {
               {/*SUMAN*/}
             </motion.h1>
             <motion.h2
-              className="font-danjo text-3xl sm:text-4xl md:text-4xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center drop-shadow-[0_8px_18px_rgba(0,0,0,0.25)]"
-              initial="hidden"
+              className="font-danjo text-5xl sm:text-6xl md:text-6xl font-normal mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center drop-shadow-[0_8px_18px_rgba(0,0,0,0.25)]"
               animate="visible"
               variants={heroContainerVariants}
               viewport={{ once: true }}
