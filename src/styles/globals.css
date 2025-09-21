@@ -1,7 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Song+Myung&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import "tailwindcss";
-
+@font-face {
+  font-family: 'Danjo-bold-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/DanjoBold-Regular.woff2')
+      format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -37,6 +43,10 @@ body {
 .font-songmyung {
   font-family: 'Song Myung', 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic',
     'Times New Roman', serif;
+}
+.font-danjo {
+  font-family: 'Danjo-bold-Regular', 'Song Myung', 'Pretendard',
+    'Apple SD Gothic Neo', 'Malgun Gothic', 'Times New Roman', serif;
 }
 .hide-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */

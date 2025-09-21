@@ -254,102 +254,38 @@ export default function ServicePage() {
               </div>
             </motion.div>
 
-            {/* Capability Cards */}
+            {/* Capability Cards (no animations, simple hover scale + color change) */}
             {capabilities.map((capability, index) => {
               const position = getPositionFromAngle(capability.angle - 90, 300);
               return (
-                <motion.div
+                <div
                   key={index}
-                  className="absolute w-[280px] h-[120px] rounded-xl p-4 shadow-lg cursor-pointer"
+                  className="
+                    absolute w-[280px] h-[120px] rounded-xl p-4 shadow-lg cursor-pointer
+                    bg-gradient-to-br from-slate-700 to-slate-800
+                    border border-white/10
+                    transition-all duration-200 ease-linear
+                    hover:scale-105 hover:shadow-2xl hover:from-slate-600 hover:to-slate-700
+                  "
                   style={{
                     left: `calc(50% + ${position.x}px - 140px)`,
                     top: `calc(50% + ${position.y}px - 60px)`,
-                    background: "linear-gradient(135deg, #334155 0%, #1e293b 100%)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                  }}
-                  variants={cardVariants}
-                  custom={capability.angle}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 25px 50px rgba(15, 23, 42, 0.4)",
-                    background: "linear-gradient(135deg, #475569 0%, #334155 100%)",
-                  }}
-                  animate={{
-                    y: [-2, 2, -2],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 3 + index * 0.2,
-                      repeat: Infinity,
-                      ease: easeInOut,
-                      delay: index * 0.3,
-                    },
                   }}
                 >
-                  {/* Card Glow Effect */}
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-
-                  <div className="flex h-full items-center relative z-10">
-                    {/* Tech Icons */}
+                  <div className="flex h-full items-center">
+                    {/* Static icon blocks (kept simple) */}
                     <div className="flex flex-col gap-1 mr-4">
-                      <motion.div
-                        className="w-[45px] h-[45px] bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg border border-white/10 flex items-center justify-center"
-                        whileHover={{ scale: 1.1, rotate: 5 }}
-                      >
-                        <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded opacity-80"></div>
-                      </motion.div>
-                      <motion.div
-                        className="w-[45px] h-[20px] bg-gradient-to-r from-gray-700 to-gray-800 rounded border border-white/10 flex items-center justify-center"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <div className="w-4 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-80"></div>
-                      </motion.div>
+                      <div className="w-[45px] h-[45px] bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg border border-white/10 flex items-center justify-center" />
+                      <div className="w-[45px] h-[20px] bg-gradient-to-r from-gray-700 to-gray-800 rounded border border-white/10" />
                     </div>
 
-                    {/* Text Content */}
+                    {/* Text content */}
                     <div className="flex-1 text-white">
-                      <motion.h4 className="font-bold text-sm mb-2 leading-tight" whileHover={{ x: 2 }}>
-                        {capability.title}
-                      </motion.h4>
-                      <motion.p className="text-xs text-gray-300 leading-tight" whileHover={{ x: 2 }}>
-                        {capability.subtitle}
-                      </motion.p>
-                    </div>
-
-                    {/* Connection Indicators */}
-                    <div className="flex flex-col gap-2 ml-4">
-                      {[1, 2, 3].map((dotIndex) => (
-                        <motion.div
-                          key={dotIndex}
-                          className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"
-                          animate={{
-                            opacity: [0.3, 1, 0.3],
-                            scale: [0.8, 1.2, 0.8],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            delay: dotIndex * 0.3 + index * 0.1,
-                          }}
-                        />
-                      ))}
+                      <h4 className="font-bold text-sm mb-2 leading-tight">{capability.title}</h4>
+                      <p className="text-xs text-gray-300 leading-tight">{capability.subtitle}</p>
                     </div>
                   </div>
-
-                  {/* Connection Line to Center */}
-                  <motion.div
-                    className="absolute w-0.5 h-[100px] bg-gradient-to-b from-transparent via-blue-400/30 to-transparent"
-                    style={{
-                      left: "50%",
-                      top: capability.angle < 180 ? "100%" : "-100px",
-                      transformOrigin: "center",
-                      transform: `translateX(-50%) rotate(${capability.angle - 90}deg)`,
-                    }}
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: 1 + index * 0.1, duration: 0.8 }}
-                  />
-                </motion.div>
+                </div>
               );
             })}
 
@@ -474,7 +410,13 @@ export default function ServicePage() {
             <h2 className="self-start w-full text-left text-sm sm:text-base lg:text-2xl font-semibold tracking-wide mb-4 md:mb-6">
               PROCESS
             </h2>
-            <motion.div className="w-full" variants={processImageVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
+            <motion.div
+              className="w-full"
+              variants={processImageVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+            >
               <div className="relative w-full h-auto overflow-hidden rounded-lg px-[7.5%] md:px-[15%] lg:px-[20%]">
                 <Image
                   src={currentContent.image}
