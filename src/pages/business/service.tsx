@@ -237,143 +237,106 @@ function DataFlowVisualizer({ className = "" }: { className?: string }) {
 }
 
 function ProcessFlowChart() {
+  // ----- DESIGN STAGE (fixed design size; auto-scaled to container) -----
+  const DESIGN_W = 3200;
+  const DESIGN_H = 520;
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      const w = el.clientWidth;
+      const s = Math.min(w / DESIGN_W, 1); // jangan membesar > 1 biar blur tidak terjadi
+      setScale(s);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // ---------- TYPES ----------
+  type Anchor = "left" | "right" | "top" | "bottom";
   type NodeState = "default" | "active" | "warning";
-  type NodeType = "step" | "decision";
-
-  // ====== GRID & SCALES ======
-  const CELL_W = 320;    // lebar 1 kolom
-  const CELL_H = 160;    // tinggi 1 baris
-  const GAP_X  = 64;     // jarak antar kolom
-  const GAP_Y  = 48;     // jarak antar baris
-  const PADDING = 24;    // padding area gambar
-
-  // helper untuk dapatkan posisi pixel dari row/col
-  const toXY = (row: number, col: number) => ({
-    x: PADDING + col * (CELL_W + GAP_X),
-    y: PADDING + row * (CELL_H + GAP_Y),
-  });
-
-  // ====== NODES (atur di sini supaya match gambar kamu) ======
-  // Snake 3 baris:
-  // Row 0: Customer → Concept → D/R → Development
-  // Turun di kanan → Review → Order → Partner
-  // Turun → Incoming Insp → Machining → Shipping/Assembly → Packing → Delivery → Feedback
-  // Naik → Re-Order → balik ke Concept (loop perbaikan)
-  const FLOW_NODES: Array<{
+  interface FlowNode {
     id: string;
-    title: string | React.ReactNode;
-    type: NodeType;
-    row: number;
-    col: number;
-    w?: number; // opsional, default 280..360
-    h?: number; // opsional
-    pillNG?: boolean;
-  }> = [
-    { id: "customer",   title: "Customer",                 type: "step",     row: 0, col: 0 },
-    { id: "concept",    title: "Concept 설계",            type: "step",     row: 0, col: 1 },
-    { id: "dr",         title: "D/R",                      type: "decision", row: 0, col: 2, pillNG: true },
-    { id: "dev",        title: "개발/기공 설계",           type: "step",     row: 0, col: 3 },
-
-    { id: "review",     title: "검토승인",                 type: "decision", row: 1, col: 3 },
-    { id: "order",      title: "발주(소재/부품)",          type: "step",     row: 1, col: 4 },
-    { id: "partner",    title: (<>협력사<br/><span className="text-xs opacity-80">Partner</span></>), type: "step", row: 1, col: 5, pillNG: true },
-
-    { id: "inspIn",     title: "수입검사",                 type: "step",     row: 2, col: 5, pillNG: true },
-    { id: "machining",  title: "가공/제작",                type: "step",     row: 2, col: 4 },
-    { id: "shipping",   title: "출하 및 조립/품질검사",     type: "decision", row: 2, col: 3, pillNG: true },
-    { id: "packing",    title: "포장",                     type: "step",     row: 2, col: 2 },
-    { id: "delivery",   title: "고객사 납품",              type: "step",     row: 2, col: 1 },
-    { id: "feedback",   title: "고객 Feedback",            type: "decision", row: 2, col: 0 },
-    { id: "reorder",    title: "Re-Order 개선/반영",       type: "step",     row: 1, col: 0 },
-  ];
-
-  // ====== EDGES (arah panah; straight / elbow / curve / loop) ======
-  type EdgeKind = "straight" | "elbow" | "curve";
-  const FLOW_EDGES: Array<{
+    label: string | React.ReactNode;
+    type?: "step" | "decision";
+    x: number; // left in design px
+    y: number; // top in design px
+    w?: number; // default 280
+    h?: number; // default 110
+    state?: NodeState;
+  }
+  interface Waypoint { x: number; y: number; }
+  interface FlowEdge {
+    id?: string;
     from: string;
     to: string;
-    kind?: EdgeKind;
-    // untuk "elbow": arah belok ("h" lalu "v" atau sebaliknya)
-    elbowHV?: "hv" | "vh";
+    fromAnchor?: Anchor; // auto if not set
+    toAnchor?: Anchor;   // auto if not set
+    via?: Waypoint[];    // elbow/route points (in design px)
+    animated?: boolean;
     dashed?: boolean;
-    glow?: boolean;
-  }> = [
-    { from: "customer", to: "concept" },
-    { from: "concept",  to: "dr" },
-    { from: "dr",       to: "dev" },
-    { from: "dev",      to: "review", kind: "straight" },           // vertikal (beda row, same col)
-    { from: "review",   to: "order" },
-    { from: "order",    to: "partner" },
-    { from: "partner",  to: "inspIn", kind: "straight" },           // vertikal
-    { from: "inspIn",   to: "machining" },
-    { from: "machining",to: "shipping" },
-    { from: "shipping", to: "packing" },
-    { from: "packing",  to: "delivery" },
-    { from: "delivery", to: "feedback" },
+    showNGPill?: boolean; // “NG” pill di tengah edge
+    label?: string;       // optional label teks di tengah edge
+    curve?: boolean;      // kalau true dan tanpa via => pakai quad curve
+  }
 
-    // loop naik: feedback → reorder (vertikal)
-    { from: "feedback", to: "reorder", kind: "straight", dashed: true, glow: true },
+  // ---------- FLOW CONFIG (EDIT THIS TO MATCH YOUR IMAGE) ----------
+  // 👉 EDIT DI SINI: Atur koordinat node & edges agar sama persis seperti gambar.
+  const NODES: FlowNode[] = [
+    { id: "customer",  label: "Customer",                x: 60,   y: 20,  type: "step" },
+    { id: "concept",   label: "Concept 설계",           x: 420,  y: 20,  type: "step" },
+    { id: "dr",        label: "D/R",                     x: 800,  y: 20,  type: "decision" },
+    { id: "dev",       label: "개발/기공 설계",          x: 1080, y: 20,  type: "step" },
 
-    // reorder → concept (siku/“L”): kanan lalu atas (elbow "hv")
-    { from: "reorder",  to: "concept", kind: "elbow", elbowHV: "hv", dashed: true, glow: true },
+    { id: "review",    label: "검토승인",                x: 1480, y: 180, type: "decision" },
+    { id: "order",     label: "발주(소재/부품)",         x: 1780, y: 180, type: "step" },
+    { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Partner</span></>, x: 2080, y: 180, type: "step", w: 220, h: 90 },
+
+    { id: "incoming",  label: "수입검사",                x: 300,  y: 380, type: "step" },
+    { id: "machining", label: "가공/제작",               x: 600,  y: 380, type: "step" },
+    { id: "assyqa",    label: "출하 및 조립/품질검사",   x: 900,  y: 380, type: "decision" },
+    { id: "packing",   label: "포장",                    x: 1260, y: 380, type: "step" },
+    { id: "delivery",  label: "고객사 납품",             x: 1540, y: 380, type: "step" },
+    { id: "feedback",  label: "고객 Feedback",           x: 1840, y: 380, type: "decision" },
+    { id: "reorder",   label: <>Re-Order<br/>개선/반영</>, x: 2140, y: 380, type: "step" },
   ];
 
-  // ====== STATE (klik card untuk highlight) ======
-  const [activeId, setActiveId] = React.useState<string | null>(null);
-  const isActive = (id: string): NodeState => (activeId === id ? "active" : "default");
+  const EDGES: FlowEdge[] = [
+    // top row
+    { from: "customer", to: "concept",  animated: true },
+    { from: "concept",  to: "dr",       animated: true },
+    { from: "dr",       to: "concept",  dashed: true, showNGPill: true, label: "NG", curve: true, fromAnchor: "bottom", toAnchor: "top" },
+    { from: "dr",       to: "dev",      animated: true },
 
-  // ====== MAP id → pos (center) ======
-  const nodePos = FLOW_NODES.reduce<Record<string, { x: number; y: number }>>((acc, n) => {
-    const { x, y } = toXY(n.row, n.col);
-    // center titik untuk panah (card default 280x110 dari komponenmu)
-    const w = n.w ?? 280;
-    const h = n.h ?? 110;
-    acc[n.id] = { x: x + w / 2, y: y + h / 2 };
-    return acc;
-  }, {});
+    // down to middle row
+    { from: "dev", to: "review", animated: true, fromAnchor: "bottom", toAnchor: "top", via: [{ x: 1190, y: 130 }] },
 
-  // ====== LAYOUT SIZE ======
-  const maxCol = Math.max(...FLOW_NODES.map(n => n.col));
-  const maxRow = Math.max(...FLOW_NODES.map(n => n.row));
-  const contentW = PADDING * 2 + (maxCol + 1) * (CELL_W + GAP_X) - GAP_X;
-  const contentH = PADDING * 2 + (maxRow + 1) * (CELL_H + GAP_Y) - GAP_Y;
+    { from: "review", to: "order", animated: true },
+    { from: "order",  to: "partner", animated: true },
 
-  // ====== Edge drawing helpers ======
-  const arrowId = React.useId();
-  const glowId  = React.useId();
+    // partner down to incoming (vertical)
+    { from: "partner", to: "incoming", animated: true, fromAnchor: "bottom", toAnchor: "top", via: [{ x: 2190, y: 300 }, { x: 410, y: 300 }] , dashed: true, label: "입고" },
 
-  const edgePath = (e: typeof FLOW_EDGES[number]) => {
-    const a = nodePos[e.from];
-    const b = nodePos[e.to];
-    if (!a || !b) return "";
+    // bottom row (left → right)
+    { from: "incoming", to: "machining", animated: true },
+    { from: "machining", to: "assyqa", animated: true },
+    { from: "assyqa", to: "packing", animated: true },
+    { from: "packing", to: "delivery", animated: true },
+    { from: "delivery", to: "feedback", animated: true },
+    { from: "feedback", to: "reorder", animated: true },
 
-    if (e.kind === "elbow") {
-      // elbow hv: horizontal lalu vertical; vh: sebaliknya
-      if (e.elbowHV === "vh") {
-        const midY = b.y;
-        return `M ${a.x} ${a.y} V ${midY} H ${b.x}`;
-      }
-      // default "hv"
-      const midX = b.x;
-      return `M ${a.x} ${a.y} H ${midX} V ${b.y}`;
-    }
+    // main improvement loop back to review/concept (choose one)
+    { from: "reorder", to: "concept", dashed: true, label: "Continuous Improvement", curve: true, fromAnchor: "top", toAnchor: "bottom" },
+  ];
 
-    if (e.kind === "curve") {
-      const mx = (a.x + b.x) / 2;
-      return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
-    }
+  // ---------- STATE ----------
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [realTimeData, setRealTimeData] = useState({ throughput: 87, efficiency: 94, quality: 99.2 });
 
-    // straight: kalau col sama → vertical; kalau row sama → horizontal; kalau diagonal → line
-    return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
-  };
-
-  // ====== Realtime chips (dipertahankan) ======
-  const [realTimeData, setRealTimeData] = React.useState({
-    throughput: 87,
-    efficiency: 94,
-    quality: 99.2,
-  });
-  React.useEffect(() => {
+  useEffect(() => {
     const t = setInterval(() => {
       setRealTimeData({
         throughput: Math.floor(Math.random() * 10) + 85,
@@ -384,15 +347,59 @@ function ProcessFlowChart() {
     return () => clearInterval(t);
   }, []);
 
+  // ---------- HELPERS ----------
+  const getNode = (id: string) => NODES.find(n => n.id === id)!;
+  const defaultW = 280, defaultH = 110;
+
+  function anchorPoint(n: FlowNode, anchor?: Anchor): { x: number; y: number } {
+    const w = n.w ?? defaultW;
+    const h = n.h ?? defaultH;
+    const cx = n.x + w / 2;
+    const cy = n.y + h / 2;
+    switch (anchor) {
+      case "left": return { x: n.x, y: cy };
+      case "right": return { x: n.x + w, y: cy };
+      case "top": return { x: cx, y: n.y };
+      case "bottom": return { x: cx, y: n.y + h };
+      default: {
+        // auto: pilih sisi terdekat berdasarkan delta
+        return { x: cx, y: cy };
+      }
+    }
+  }
+
+  function autoAnchors(a: FlowNode, b: FlowNode): [Anchor, Anchor] {
+    const ac = { x: a.x + (a.w ?? defaultW) / 2, y: a.y + (a.h ?? defaultH) / 2 };
+    const bc = { x: b.x + (b.w ?? defaultW) / 2, y: b.y + (b.h ?? defaultH) / 2 };
+    const dx = bc.x - ac.x;
+    const dy = bc.y - ac.y;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      return dx >= 0 ? ["right", "left"] : ["left", "right"];
+    } else {
+      return dy >= 0 ? ["bottom", "top"] : ["top", "bottom"];
+    }
+  }
+
+  function midOf(points: { x: number; y: number }[]) {
+    if (points.length === 2) {
+      return { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 };
+    }
+    const midIdx = Math.floor(points.length / 2);
+    return points[midIdx];
+  }
+
+  // ---------- RENDER ----------
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-xl">
+    <div className="relative h-[760px] w-full overflow-hidden rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
+      {/* glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-cyan-900/20" />
+
       {/* header */}
       <div className="relative z-10 bg-gradient-to-b from-slate-900/50 to-transparent py-8 text-center backdrop-blur-sm">
         <h2 className="mb-3 bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-3xl font-bold text-transparent">
           차세대 반도체 제조 프로세스
         </h2>
         <p className="mb-4 text-lg text-cyan-200/80">Next-Generation Semiconductor Manufacturing Process</p>
-
         <div className="flex justify-center gap-6 text-sm">
           <div className="rounded-lg border border-cyan-500/30 bg-slate-800/50 px-3 py-1 backdrop-blur-sm">
             <span className="text-cyan-400">Throughput:</span>
@@ -409,84 +416,157 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* scrollable rail */}
-      <div className="relative z-10 overflow-x-auto overflow-y-hidden px-8 pb-8">
+      {/* scrollable rail that scales the fixed design stage */}
+      <div ref={containerRef} className="relative z-10 h-[560px] overflow-x-auto overflow-y-hidden px-8">
         <div
-          className="relative"
-          style={{ width: Math.max(contentW, 1200), height: Math.max(contentH, 520) }}
+          className="relative origin-top-left"
+          style={{
+            width: DESIGN_W,
+            height: DESIGN_H,
+            transform: `scale(${scale})`,
+          }}
         >
-          {/* SVG edges layer */}
-          <svg className="absolute inset-0" width={Math.max(contentW, 1200)} height={Math.max(contentH, 520)}>
+          {/* GRID BG + particles */}
+          <div className="pointer-events-none absolute inset-0 opacity-10">
+            <svg width={DESIGN_W} height={DESIGN_H} className="text-cyan-400">
+              <defs>
+                <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#gridPattern)" />
+            </svg>
+          </div>
+
+          {/* EDGES (SVG) */}
+          <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
-              <marker id={arrowId} markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
-                <polygon points="0 0, 12 5, 0 10" fill="currentColor" />
+              <marker id="arrow" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+                <polygon points="0 0, 10 4, 0 8" className="fill-cyan-400" />
               </marker>
-              <filter id={glowId}>
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
 
-            {FLOW_EDGES.map((e, i) => {
-              const d = edgePath(e);
-              if (!d) return null;
+            {EDGES.map((e, idx) => {
+              const a = getNode(e.from);
+              const b = getNode(e.to);
+              const [fa, ta] = [e.fromAnchor, e.toAnchor] ?? autoAnchors(a, b);
+              const start = anchorPoint(a, e.fromAnchor ?? fa);
+              const end = anchorPoint(b, e.toAnchor ?? ta);
+              const pts: { x: number; y: number }[] = [start, ...(e.via ?? []), end];
+
+              // path: straight / polyline / quad curve
+              if (e.curve && (!e.via || e.via.length === 0)) {
+                const cx = (start.x + end.x) / 2;
+                const cy = Math.min(start.y, end.y) - 80; // arch
+                const d = `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`;
+                return (
+                  <g key={e.id ?? idx}>
+                    <path
+                      d={d}
+                      fill="none"
+                      stroke="url(#edgeGrad)"
+                      strokeWidth={2}
+                      markerEnd="url(#arrow)"
+                      className={[
+                        e.dashed ? "stroke-[2px] [stroke-dasharray:8_6]" : "",
+                        e.animated ? "[animation:dashMove_2s_linear_infinite]" : "",
+                      ].join(" ")}
+                      style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.5))" }}
+                    />
+                    {e.label && (
+                      <text x={(start.x + end.x) / 2} y={cy - 6} textAnchor="middle" className="fill-cyan-300 text-[12px]">
+                        {e.label}
+                      </text>
+                    )}
+                    {e.showNGPill && (
+                      <foreignObject
+                        x={(start.x + end.x) / 2 - 18}
+                        y={cy - 26}
+                        width="80"
+                        height="26"
+                      >
+                        <div className="pointer-events-none">
+                          <NGPill />
+                        </div>
+                      </foreignObject>
+                    )}
+                    {/* gradient per all edges (single) */}
+                    <defs>
+                      <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#0ea5e9" />
+                        <stop offset="50%" stopColor="#22d3ee" />
+                        <stop offset="100%" stopColor="#0ea5e9" />
+                      </linearGradient>
+                    </defs>
+                  </g>
+                );
+              }
+
+              // polyline (with via)
+              const pathD = `M ${pts[0].x} ${pts[0].y}` + pts.slice(1).map(p => ` L ${p.x} ${p.y}`).join("");
+              const mid = midOf(pts);
+
               return (
-                <path
-                  key={i}
-                  d={d}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  style={{ color: e.glow ? "#06b6d4" : "#67e8f9" }}
-                  markerEnd={`url(#${arrowId})`}
-                  strokeDasharray={e.dashed ? "8 6" : undefined}
-                  className={e.dashed ? "animate-[dash_2.4s_linear_infinite]" : "animate-[dash_2s_linear_infinite]"}
-                  filter={e.glow ? `url(#${glowId})` : undefined}
-                />
+                <g key={e.id ?? idx}>
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="url(#edgeGrad2)"
+                    strokeWidth={2}
+                    markerEnd="url(#arrow)"
+                    className={[
+                      e.dashed ? "stroke-[2px] [stroke-dasharray:8_6]" : "",
+                      e.animated ? "[animation:dashMove_2s_linear_infinite]" : "",
+                    ].join(" ")}
+                    style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.5))" }}
+                  />
+                  {e.label && (
+                    <text x={mid.x} y={mid.y - 8} textAnchor="middle" className="fill-cyan-300 text-[12px]">
+                      {e.label}
+                    </text>
+                  )}
+                  {e.showNGPill && (
+                    <foreignObject x={mid.x - 20} y={mid.y - 40} width="80" height="26">
+                      <div className="pointer-events-none">
+                        <NGPill />
+                      </div>
+                    </foreignObject>
+                  )}
+
+                  <defs>
+                    <linearGradient id="edgeGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#12386E" />
+                      <stop offset="50%" stopColor="#22d3ee" />
+                      <stop offset="100%" stopColor="#12386E" />
+                    </linearGradient>
+                  </defs>
+                </g>
               );
             })}
           </svg>
 
-          {/* Nodes layer */}
-          {FLOW_NODES.map((n) => {
-            const { x, y } = toXY(n.row, n.col);
-            const w = n.w ?? 280;
-            const h = n.h ?? 110;
-
+          {/* NODES */}
+          {NODES.map((n) => {
+            const w = n.w ?? defaultW;
+            const h = n.h ?? defaultH;
             return (
-              <div
-                key={n.id}
-                className="absolute"
-                style={{ left: x, top: y, width: w, height: h }}
-              >
-                <div className="relative">
-                  <ProcessCard
-                    type={n.type}
-                    state={isActive(n.id)}
-                    onClick={() => setActiveId(n.id)}
-                    processingTime={1500}
-                    className="!w-full !h-full"
-                  >
-                    {typeof n.title === "string" ? <span>{n.title}</span> : n.title}
-                  </ProcessCard>
-
-                  {n.pillNG && (
-                    <div className="absolute -top-10 right-2">
-                      {/* pakai NGPill milikmu */}
-                      <NGPill />
-                    </div>
-                  )}
-                </div>
+              <div key={n.id} style={{ position: "absolute", left: n.x, top: n.y, width: w, height: h }}>
+                <ProcessCard
+                  type={n.type ?? "step"}
+                  state={activeCard === n.id ? "active" : n.state ?? "default"}
+                  onClick={() => setActiveCard(n.id)}
+                  processingTime={1600}
+                  className="!w-full !h-full"
+                >
+                  <div className="flex items-center gap-2">{n.label}</div>
+                </ProcessCard>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* live status footer */}
+      {/* footer live chip */}
       <div className="relative z-10 py-4 text-center">
         <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-slate-800/50 px-6 py-3 backdrop-blur-sm">
           <div className="flex items-center gap-2">
@@ -504,17 +584,16 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* keyframes untuk animasi garis */}
+      {/* keyframes for animated dash */}
       <style jsx>{`
-        @keyframes dash {
-          to { stroke-dashoffset: -56; }
+        @keyframes dashMove {
+          0% { stroke-dashoffset: 0; }
+          100% { stroke-dashoffset: -200; }
         }
       `}</style>
     </div>
   );
 }
-
-
 
 
 /* =========================
