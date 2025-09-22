@@ -237,10 +237,12 @@ function DataFlowVisualizer({ className = "" }: { className?: string }) {
 }
 
 function ProcessFlowChart() {
-  // ===== Stage tetap (auto-scale), tapi stroke tidak ikut scale =====
-  const DESIGN_W = 3700; // lebar panggung, muat hingga Re-Order
+  // ===== Stage (auto-scale) dengan stroke non-scaling =====
+  const DESIGN_W = 3700;
   const DESIGN_H = 560;
-  const GRID = 20;       // grid-snap
+  const GRID = 20;
+  const ARCH_HEIGHT = 72;       // tinggi arc seragam (NG pendek)
+  const LONG_ARCH_HEIGHT = 140; // loop Re-Order → Concept
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
 
@@ -266,22 +268,22 @@ function ProcessFlowChart() {
   interface FlowEdge {
     from: string; to: string;
     fromAnchor?: Anchor; toAnchor?: Anchor;
-    via?: Waypoint[];      // rute ortogonal (H→V→H), akan di-snap ke grid
+    via?: Waypoint[];
     dashed?: boolean; animated?: boolean;
     label?: "OK" | string;
-    archUp?: boolean;      // untuk loop melengkung rapi (Re-Order → Concept)
+    archUp?: boolean;
     showNGPill?: boolean;
   }
 
-  // ===== Dimensi & baris standar (rapi) =====
+  // ===== Dimensi & baris standar =====
   const CARD_W = 300;
   const CARD_H = 108;
   const TOP_Y = 36;
   const BOT_Y = 340;
-  const X0 = 40;         // mulai kiri baris atas
-  const GAP = 340;       // GAP = CARD_W (300) + 40px jeda
+  const X0 = 40;
+  const GAP = 340;
 
-  // ===== Posisi node — serba sejajar & jarak konsisten =====
+  // ===== Posisi node (grid-snap, jarak konsisten) =====
   const NODES: FlowNode[] = [
     { id: "customer",  label: "Customer", x: X0 + GAP * 0, y: TOP_Y, w: CARD_W, h: CARD_H, type: "step" },
     { id: "concept",   label: <>Concept 설계<br/><span className="text-xs opacity-80">Concept Design</span></>, x: X0 + GAP * 1, y: TOP_Y, type: "step" },
@@ -290,10 +292,10 @@ function ProcessFlowChart() {
     { id: "review",    label: <>검토승인<br/><span className="text-xs opacity-80">Review Approval</span></>, x: X0 + GAP * 4, y: TOP_Y, type: "decision" },
     { id: "order",     label: <>발주(소재/부품)<br/><span className="text-xs opacity-80">Place Order: Materials/Parts</span></>, x: X0 + GAP * 5, y: TOP_Y, type: "step" },
 
-    // supplier (untuk loop NG dari 수입검사)
+    // supplier (loop NG dari 수입검사)
     { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Supplier</span></>, x: X0 + GAP * 6 + 20, y: 210, w: 220, h: 90, type: "step" },
 
-    // baris bawah (rapi satu garis)
+    // baris bawah
     { id: "incoming",  label: <>수입검사<br/><span className="text-xs opacity-80">Incoming Inspection</span></>, x: X0 + GAP * 4, y: BOT_Y, type: "decision" },
     { id: "machining", label: <>가공/제작<br/><span className="text-xs opacity-80">Processing / Manufacturing</span></>, x: X0 + GAP * 5 - 20, y: BOT_Y, type: "step" },
     { id: "assyqa",    label: <>조립/측정검사<br/><span className="text-xs opacity-80">Assembly & Measurement Inspection</span></>, x: X0 + GAP * 6, y: BOT_Y, type: "decision" },
@@ -303,7 +305,7 @@ function ProcessFlowChart() {
     { id: "reorder",   label: <>Re-Order 개선/반영<br/><span className="text-xs opacity-80">Re-Order & Improvement</span></>, x: X0 + GAP * 10, y: BOT_Y, type: "step" },
   ];
 
-  // ===== Helper posisi anchor & snap-to-grid =====
+  // ===== Helpers =====
   const nodeById = (id: string) => NODES.find(n => n.id === id)!;
   const anchor = (n: FlowNode, where: Anchor) => {
     const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
@@ -315,67 +317,64 @@ function ProcessFlowChart() {
   };
   const snap = (v: number) => Math.round(v / GRID) * GRID;
 
-  // ===== Rute ortogonal rapi (H→V→H), semua di-snap =====
+  // rute ortogonal (H→V→H)
   const hvh = (a: {x:number;y:number}, b: {x:number;y:number}, midX?: number, midY?: number) => {
     const mX = midX !== undefined ? snap(midX) : snap((a.x + b.x) / 2);
     const mY = midY !== undefined ? snap(midY) : undefined;
     if (mY !== undefined) {
-      // H → V (ke mY) → H
       return [`M ${snap(a.x)} ${snap(a.y)}`,
               `L ${snap(mX)} ${snap(a.y)}`,
               `L ${snap(mX)} ${snap(mY)}`,
               `L ${snap(b.x)} ${snap(mY)}`,
               `L ${snap(b.x)} ${snap(b.y)}`].join(" ");
     }
-    // H → V → H (midX di tengah)
     return [`M ${snap(a.x)} ${snap(a.y)}`,
             `L ${snap(mX)} ${snap(a.y)}`,
             `L ${snap(mX)} ${snap(b.y)}`,
             `L ${snap(b.x)} ${snap(b.y)}`].join(" ");
   };
 
-  // ===== Edges OK (lurus & sejajar), NG (putus-putus) =====
+  // ===== Edges =====
   const EDGES: FlowEdge[] = [
-    // TOP (horizontal bersih)
-    { from: "customer", to: "concept",    fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "concept",  to: "dr",         fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "dr",       to: "dev",        fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
-    { from: "dev",      to: "review",     fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "review",   to: "order",      fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
+    // TOP
+    { from: "customer", to: "concept",    fromAnchor: "right", toAnchor: "left" },
+    { from: "concept",  to: "dr",         fromAnchor: "right", toAnchor: "left" },
+    { from: "dr",       to: "dev",        fromAnchor: "right", toAnchor: "left", label: "OK" },
+    { from: "dev",      to: "review",     fromAnchor: "right", toAnchor: "left" },
+    { from: "review",   to: "order",      fromAnchor: "right", toAnchor: "left", label: "OK" },
 
-    // Turun rapi: Order → Incoming (pakai lorong X & Y tetap)
-    { from: "order", to: "incoming", fromAnchor: "bottom", toAnchor: "top", animated: true,
+    // turun: Order → Incoming
+    { from: "order", to: "incoming", fromAnchor: "bottom", toAnchor: "top",
       via: [{ x: snap(nodeById("order").x + CARD_W / 2), y: 260 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 260 }] },
 
-    // BOTTOM (horizontal bersih)
-    { from: "incoming", to: "machining", fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
-    { from: "machining", to: "assyqa",   fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "assyqa",   to: "packing",   fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
-    { from: "packing",  to: "delivery",  fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "delivery", to: "feedback",  fromAnchor: "right", toAnchor: "left", animated: true },
-    { from: "feedback", to: "reorder",   fromAnchor: "right", toAnchor: "left", animated: true },
+    // BOTTOM
+    { from: "incoming", to: "machining", fromAnchor: "right", toAnchor: "left", label: "OK" },
+    { from: "machining", to: "assyqa",   fromAnchor: "right", toAnchor: "left" },
+    { from: "assyqa",   to: "packing",   fromAnchor: "right", toAnchor: "left", label: "OK" },
+    { from: "packing",  to: "delivery",  fromAnchor: "right", toAnchor: "left" },
+    { from: "delivery", to: "feedback",  fromAnchor: "right", toAnchor: "left" },
+    { from: "feedback", to: "reorder",   fromAnchor: "right", toAnchor: "left" },
 
-    // Continuous improvement: Re-Order → Concept (arch ke atas, halus & putus-putus)
+    // loop panjang
     { from: "reorder", to: "concept", fromAnchor: "top", toAnchor: "bottom", dashed: true, archUp: true, label: "Improve & Re-Order" },
 
-    // ===== NG LOOPS rapi =====
-    // D/R NG → Concept (arch pendek ke atas)
-    { from: "dr", to: "concept", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
+    // NG loops
+    { from: "dr",     to: "concept", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
+    { from: "review", to: "dev",     fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
 
-    // 검토승인 NG → 개발/가공 설계 (arch pendek ke atas)
-    { from: "review", to: "dev", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
-
-    // 수입검사 NG → 협력사 (ortogonal kanan), lalu balik Re-test → 수입검사
     { from: "incoming", to: "partner", fromAnchor: "right", toAnchor: "left", dashed: true, showNGPill: true, label: "NG",
       via: [{ x: snap(nodeById("incoming").x + CARD_W + 40), y: BOT_Y + CARD_H / 2 }, { x: snap(nodeById("partner").x - 40), y: BOT_Y + CARD_H / 2 }] },
-    { from: "partner", to: "incoming", fromAnchor: "bottom", toAnchor: "top", animated: true, label: "Re-test / 재검",
+    { from: "partner", to: "incoming", fromAnchor: "bottom", toAnchor: "top", label: "Re-test / 재검",
       via: [{ x: snap(nodeById("partner").x + (nodeById("partner").w ?? 220) / 2), y: 300 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 300 }] },
 
-    // 조립/측정검사 NG → 가공/제작 (horizontal balik kiri, putus-putus)
     { from: "assyqa", to: "machining", fromAnchor: "left", toAnchor: "right", dashed: true, label: "NG", showNGPill: true },
   ];
 
-  // ===== State kecil untuk chip live =====
+  // pisahkan layer dashed vs solid (biar nggak “ketimpa”)
+  const dashedEdges = EDGES.filter(e => !!e.dashed);
+  const solidEdges  = EDGES.filter(e => !e.dashed);
+
+  // ===== Live chips =====
   const [activeCard, setActiveCard] = React.useState<string | null>(null);
   const [live, setLive] = React.useState({ th: 87, ef: 94, qu: 99.2 });
   React.useEffect(() => {
@@ -387,15 +386,26 @@ function ProcessFlowChart() {
     return () => clearInterval(t);
   }, []);
 
-  // ===== SVG helper (stroke non-scaling & shapeRendering) =====
+  // ===== SVG common =====
   const lineCommon = {
     vectorEffect: "non-scaling-stroke" as const,
     shapeRendering: "geometricPrecision" as const,
   };
 
+  // posisi label OK/NG – puncak arc jika archUp
+  const getLabelPos = (start:{x:number;y:number}, end:{x:number;y:number}, isLong:boolean, archUp?:boolean) => {
+    const midX = snap((start.x + end.x) / 2);
+    if (archUp) {
+      const h = isLong ? LONG_ARCH_HEIGHT : ARCH_HEIGHT;
+      const y = snap(Math.min(start.y, end.y) - h - 8);
+      return { x: midX, y };
+    }
+    return { x: midX, y: snap((start.y + end.y) / 2) - 8 };
+  };
+
   return (
     <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a142b] to-[#0a1633]">
-      {/* Header ringkas */}
+      {/* Header */}
       <div className="relative z-10 py-6 text-center">
         <h2 className="mb-1 text-2xl font-bold tracking-tight text-white">차세대 반도체 제조 프로세스</h2>
         <p className="text-sm text-cyan-200/80">Next-Generation Semiconductor Manufacturing Process</p>
@@ -406,10 +416,10 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* Stage ter-scale */}
+      {/* Stage */}
       <div ref={containerRef} className="relative z-10 h-[540px] overflow-x-auto overflow-y-hidden px-8">
         <div className="relative origin-top-left" style={{ width: DESIGN_W, height: DESIGN_H, transform: `scale(${scale})` }}>
-          {/* Grid halus */}
+          {/* Grid */}
           <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
             <svg width={DESIGN_W} height={DESIGN_H} className="text-white">
               <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" /></pattern></defs>
@@ -417,7 +427,7 @@ function ProcessFlowChart() {
             </svg>
           </div>
 
-          {/* EDGES */}
+          {/* EDGES (SVG di bawah nodes) */}
           <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
               <marker id="arrowClean" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
@@ -429,55 +439,95 @@ function ProcessFlowChart() {
               </linearGradient>
             </defs>
 
-            {EDGES.map((e, i) => {
+            {/* Layer 1: dashed (di bawah) */}
+            {dashedEdges.map((e, i) => {
               const A = nodeById(e.from), B = nodeById(e.to);
               const start = anchor(A, e.fromAnchor ?? "right");
               const end   = anchor(B, e.toAnchor   ?? "left");
 
               let d: string;
               if (e.archUp) {
-                // lengkung rapi di atas: kontrol simetris
                 const dx = (end.x - start.x);
                 const cpPull = Math.max(120, Math.abs(dx) * 0.25);
-                const cp1 = { x: snap(start.x + cpPull), y: snap(start.y - 60) };
-                const cp2 = { x: snap(end.x - cpPull),   y: snap(end.y - 60) };
+                const cp1 = { x: snap(start.x + cpPull), y: snap(start.y - ARCH_HEIGHT) };
+                const cp2 = { x: snap(end.x - cpPull),   y: snap(end.y   - ARCH_HEIGHT) };
+                if (e.from === "reorder" && e.to === "concept") {
+                  cp1.y = snap(start.y - LONG_ARCH_HEIGHT);
+                  cp2.y = snap(end.y   - LONG_ARCH_HEIGHT);
+                }
                 d = `M ${snap(start.x)} ${snap(start.y)} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${snap(end.x)} ${snap(end.y)}`;
               } else if (e.via && e.via.length) {
                 d = hvh(start, end, e.via[0]?.x, e.via[0]?.y);
               } else {
-                // garis lurus horizontal (atau HVH default midpoint)
                 d = start.y === end.y
                   ? `M ${snap(start.x)} ${snap(start.y)} L ${snap(end.x)} ${snap(end.y)}`
                   : hvh(start, end);
               }
 
-              // posisi label kira-kira di tengah rute
-              const midX = snap((start.x + end.x) / 2);
-              const midY = snap((start.y + end.y) / 2);
+              const isLong = e.from === "reorder" && e.to === "concept";
+              const lp = getLabelPos(start, end, isLong, e.archUp);
 
               return (
-                <g key={i}>
+                <g key={`d-${i}`}>
                   <path
                     d={d}
                     fill="none"
                     stroke="url(#edgeGradClean)"
                     strokeWidth={2}
                     markerEnd="url(#arrowClean)"
-                    style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.25))" }}
-                    className={[e.dashed ? "[stroke-dasharray:8_6]" : "", e.animated ? "[animation:dashMove_2s_linear_infinite]" : ""].join(" ")}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="[stroke-dasharray:6_4]"
+                    style={{ filter: "drop-shadow(0 0 5px rgba(34,211,238,0.20))", pointerEvents: "none" }}
+                    {...lineCommon}
+                  />
+                  {e.label && e.label !== "OK" && (
+                    <text x={lp.x} y={lp.y} textAnchor="middle" className="fill-cyan-200 text-[11px]" {...lineCommon}>
+                      {e.label}
+                    </text>
+                  )}
+                  {e.showNGPill && (
+                    <foreignObject x={lp.x - 18} y={lp.y - 18} width="64" height="26">
+                      <div className="pointer-events-none"><NGPill /></div>
+                    </foreignObject>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* Layer 2: solid main flow (di atas) */}
+            {solidEdges.map((e, i) => {
+              const A = nodeById(e.from), B = nodeById(e.to);
+              const start = anchor(A, e.fromAnchor ?? "right");
+              const end   = anchor(B, e.toAnchor   ?? "left");
+
+              let d: string;
+              if (e.via && e.via.length) {
+                d = hvh(start, end, e.via[0]?.x, e.via[0]?.y);
+              } else {
+                d = start.y === end.y
+                  ? `M ${snap(start.x)} ${snap(start.y)} L ${snap(end.x)} ${snap(end.y)}`
+                  : hvh(start, end);
+              }
+
+              const lp = getLabelPos(start, end, false, false);
+
+              return (
+                <g key={`s-${i}`}>
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke="url(#edgeGradClean)"
+                    strokeWidth={2}
+                    markerEnd="url(#arrowClean)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{ filter: "drop-shadow(0 0 8px rgba(94,234,212,0.25))", pointerEvents: "none" }}
                     {...lineCommon}
                   />
                   {e.label === "OK" && (
-                    <foreignObject x={midX - 16} y={midY - 18} width="40" height="24">
+                    <foreignObject x={lp.x - 16} y={lp.y - 18} width="40" height="24">
                       <div className="pointer-events-none rounded-full border border-emerald-400/40 bg-emerald-500/90 px-2.5 py-0.5 text-[10px] font-bold text-white">OK</div>
-                    </foreignObject>
-                  )}
-                  {e.label && e.label !== "OK" && (
-                    <text x={midX} y={midY - 8} textAnchor="middle" className="fill-cyan-200 text-[11px]" {...lineCommon}>{e.label}</text>
-                  )}
-                  {e.showNGPill && (
-                    <foreignObject x={midX - 18} y={midY - 34} width="64" height="26">
-                      <div className="pointer-events-none"><NGPill /></div>
                     </foreignObject>
                   )}
                 </g>
@@ -485,7 +535,7 @@ function ProcessFlowChart() {
             })}
           </svg>
 
-          {/* NODES (ukuran dan alignment konsisten) */}
+          {/* NODES */}
           {NODES.map((n) => {
             const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
             return (
@@ -519,8 +569,6 @@ function ProcessFlowChart() {
     </div>
   );
 }
-
-
 
 /* =========================
         Page content
