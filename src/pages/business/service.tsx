@@ -237,9 +237,10 @@ function DataFlowVisualizer({ className = "" }: { className?: string }) {
 }
 
 function ProcessFlowChart() {
-  // ===== Fixed design stage (auto-scaled) =====
-  const DESIGN_W = 3600; // diperlebar supaya semua node muat
+  // ===== Stage tetap (auto-scale), tapi stroke tidak ikut scale =====
+  const DESIGN_W = 3700; // lebar panggung, muat hingga Re-Order
   const DESIGN_H = 560;
+  const GRID = 20;       // grid-snap
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [scale, setScale] = React.useState(1);
 
@@ -255,224 +256,227 @@ function ProcessFlowChart() {
   }, []);
 
   type Anchor = "left" | "right" | "top" | "bottom";
-  type NodeState = "default" | "active" | "warning";
   interface FlowNode {
     id: string;
     label: React.ReactNode;
     type?: "step" | "decision";
-    x: number; y: number; w?: number; h?: number; state?: NodeState;
+    x: number; y: number; w?: number; h?: number;
   }
   interface Waypoint { x: number; y: number; }
   interface FlowEdge {
-    id?: string;
     from: string; to: string;
     fromAnchor?: Anchor; toAnchor?: Anchor;
-    via?: Waypoint[];
-    animated?: boolean; dashed?: boolean; showNGPill?: boolean;
-    label?: string; curve?: boolean;
+    via?: Waypoint[];      // rute ortogonal (H→V→H), akan di-snap ke grid
+    dashed?: boolean; animated?: boolean;
+    label?: "OK" | string;
+    archUp?: boolean;      // untuk loop melengkung rapi (Re-Order → Concept)
+    showNGPill?: boolean;
   }
 
-  /* ================================
-     NODES — sesuai urutan yang diminta
-     ================================ */
+  // ===== Dimensi & baris standar (rapi) =====
+  const CARD_W = 300;
+  const CARD_H = 108;
+  const TOP_Y = 36;
+  const BOT_Y = 340;
+  const X0 = 40;         // mulai kiri baris atas
+  const GAP = 340;       // GAP = CARD_W (300) + 40px jeda
+
+  // ===== Posisi node — serba sejajar & jarak konsisten =====
   const NODES: FlowNode[] = [
-    { id: "customer",  label: "Customer",                    x: 40,   y: 40,  type: "step" },
-    { id: "concept",   label: <>Concept 설계<br/><span className="text-xs opacity-80">Concept Design</span></>, x: 360,  y: 40,  type: "step" },
-    { id: "dr",        label: "D/R",                         x: 680,  y: 40,  type: "decision" },
-    { id: "dev",       label: <>개발/가공 설계<br/><span className="text-xs opacity-80">Development / Machining Design</span></>, x: 1000, y: 40, type: "step" },
-    { id: "review",    label: <>검토승인<br/><span className="text-xs opacity-80">Review Approval</span></>, x: 1320, y: 40, type: "decision" },
-    { id: "order",     label: <>발주(소재/부품)<br/><span className="text-xs opacity-80">Place Order: Materials/Parts</span></>, x: 1640, y: 40, type: "step" },
+    { id: "customer",  label: "Customer", x: X0 + GAP * 0, y: TOP_Y, w: CARD_W, h: CARD_H, type: "step" },
+    { id: "concept",   label: <>Concept 설계<br/><span className="text-xs opacity-80">Concept Design</span></>, x: X0 + GAP * 1, y: TOP_Y, type: "step" },
+    { id: "dr",        label: "D/R", x: X0 + GAP * 2, y: TOP_Y, type: "decision" },
+    { id: "dev",       label: <>개발/가공 설계<br/><span className="text-xs opacity-80">Development / Machining Design</span></>, x: X0 + GAP * 3, y: TOP_Y, type: "step" },
+    { id: "review",    label: <>검토승인<br/><span className="text-xs opacity-80">Review Approval</span></>, x: X0 + GAP * 4, y: TOP_Y, type: "decision" },
+    { id: "order",     label: <>발주(소재/부품)<br/><span className="text-xs opacity-80">Place Order: Materials/Parts</span></>, x: X0 + GAP * 5, y: TOP_Y, type: "step" },
 
-    // supplier (dipakai untuk loop NG di Incoming Inspection)
-    { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Supplier</span></>, x: 1900, y: 210, type: "step", w: 220, h: 90 },
+    // supplier (untuk loop NG dari 수입검사)
+    { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Supplier</span></>, x: X0 + GAP * 6 + 20, y: 210, w: 220, h: 90, type: "step" },
 
-    // baris bawah
-    { id: "incoming",  label: <>수입검사<br/><span className="text-xs opacity-80">Incoming Inspection</span></>, x: 1500, y: 360, type: "decision" },
-    { id: "machining", label: <>가공/제작<br/><span className="text-xs opacity-80">Processing / Manufacturing</span></>, x: 1800, y: 360, type: "step" },
-    { id: "assyqa",    label: <>조립/측정검사<br/><span className="text-xs opacity-80">Assembly & Measurement Inspection</span></>, x: 2100, y: 360, type: "decision" },
-    { id: "packing",   label: <>포장<br/><span className="text-xs opacity-80">Packaging</span></>, x: 2400, y: 360, type: "step" },
-    { id: "delivery",  label: <>고객사 납품<br/><span className="text-xs opacity-80">Delivery to Customer</span></>, x: 2700, y: 360, type: "step" },
-    { id: "feedback",  label: <>고객 Feedback</>,            x: 3000, y: 360, type: "step" },
-    { id: "reorder",   label: <>Re-Order 개선/반영<br/><span className="text-xs opacity-80">Re-Order & Improvement</span></>, x: 3300, y: 360, type: "step" },
+    // baris bawah (rapi satu garis)
+    { id: "incoming",  label: <>수입검사<br/><span className="text-xs opacity-80">Incoming Inspection</span></>, x: X0 + GAP * 4, y: BOT_Y, type: "decision" },
+    { id: "machining", label: <>가공/제작<br/><span className="text-xs opacity-80">Processing / Manufacturing</span></>, x: X0 + GAP * 5 - 20, y: BOT_Y, type: "step" },
+    { id: "assyqa",    label: <>조립/측정검사<br/><span className="text-xs opacity-80">Assembly & Measurement Inspection</span></>, x: X0 + GAP * 6, y: BOT_Y, type: "decision" },
+    { id: "packing",   label: <>포장<br/><span className="text-xs opacity-80">Packaging</span></>, x: X0 + GAP * 7, y: BOT_Y, type: "step" },
+    { id: "delivery",  label: <>고객사 납품<br/><span className="text-xs opacity-80">Delivery to Customer</span></>, x: X0 + GAP * 8, y: BOT_Y, type: "step" },
+    { id: "feedback",  label: "고객 Feedback", x: X0 + GAP * 9, y: BOT_Y, type: "step" },
+    { id: "reorder",   label: <>Re-Order 개선/반영<br/><span className="text-xs opacity-80">Re-Order & Improvement</span></>, x: X0 + GAP * 10, y: BOT_Y, type: "step" },
   ];
 
-  /* ================================
-     EDGES — OK path + NG loops
-     ================================ */
+  // ===== Helper posisi anchor & snap-to-grid =====
+  const nodeById = (id: string) => NODES.find(n => n.id === id)!;
+  const anchor = (n: FlowNode, where: Anchor) => {
+    const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
+    const cx = n.x + w / 2, cy = n.y + h / 2;
+    if (where === "left")   return { x: n.x,     y: cy };
+    if (where === "right")  return { x: n.x + w, y: cy };
+    if (where === "top")    return { x: cx,      y: n.y };
+    /* bottom */            return { x: cx,      y: n.y + h };
+  };
+  const snap = (v: number) => Math.round(v / GRID) * GRID;
+
+  // ===== Rute ortogonal rapi (H→V→H), semua di-snap =====
+  const hvh = (a: {x:number;y:number}, b: {x:number;y:number}, midX?: number, midY?: number) => {
+    const mX = midX !== undefined ? snap(midX) : snap((a.x + b.x) / 2);
+    const mY = midY !== undefined ? snap(midY) : undefined;
+    if (mY !== undefined) {
+      // H → V (ke mY) → H
+      return [`M ${snap(a.x)} ${snap(a.y)}`,
+              `L ${snap(mX)} ${snap(a.y)}`,
+              `L ${snap(mX)} ${snap(mY)}`,
+              `L ${snap(b.x)} ${snap(mY)}`,
+              `L ${snap(b.x)} ${snap(b.y)}`].join(" ");
+    }
+    // H → V → H (midX di tengah)
+    return [`M ${snap(a.x)} ${snap(a.y)}`,
+            `L ${snap(mX)} ${snap(a.y)}`,
+            `L ${snap(mX)} ${snap(b.y)}`,
+            `L ${snap(b.x)} ${snap(b.y)}`].join(" ");
+  };
+
+  // ===== Edges OK (lurus & sejajar), NG (putus-putus) =====
   const EDGES: FlowEdge[] = [
-    // OK main flow (atas)
-    { from: "customer", to: "concept", animated: true },
-    { from: "concept",  to: "dr",      animated: true },
-    { from: "dr",       to: "dev",     animated: true, label: "OK" },
-    { from: "dev",      to: "review",  animated: true },
-    { from: "review",   to: "order",   animated: true, label: "OK" },
+    // TOP (horizontal bersih)
+    { from: "customer", to: "concept",    fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "concept",  to: "dr",         fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "dr",       to: "dev",        fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
+    { from: "dev",      to: "review",     fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "review",   to: "order",      fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
 
-    // turun ke baris bawah: order -> incoming (elbow)
-    { from: "order", to: "incoming", animated: true, fromAnchor: "bottom", toAnchor: "top",
-      via: [{ x: 1640, y: 260 }, { x: 1500, y: 260 }] },
+    // Turun rapi: Order → Incoming (pakai lorong X & Y tetap)
+    { from: "order", to: "incoming", fromAnchor: "bottom", toAnchor: "top", animated: true,
+      via: [{ x: snap(nodeById("order").x + CARD_W / 2), y: 260 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 260 }] },
 
-    // OK main flow (bawah)
-    { from: "incoming", to: "machining", animated: true, label: "OK" },
-    { from: "machining", to: "assyqa",   animated: true },
-    { from: "assyqa",   to: "packing",   animated: true, label: "OK" },
-    { from: "packing",  to: "delivery",  animated: true },
-    { from: "delivery", to: "feedback",  animated: true },
-    { from: "feedback", to: "reorder",   animated: true },
+    // BOTTOM (horizontal bersih)
+    { from: "incoming", to: "machining", fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
+    { from: "machining", to: "assyqa",   fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "assyqa",   to: "packing",   fromAnchor: "right", toAnchor: "left", animated: true, label: "OK" },
+    { from: "packing",  to: "delivery",  fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "delivery", to: "feedback",  fromAnchor: "right", toAnchor: "left", animated: true },
+    { from: "feedback", to: "reorder",   fromAnchor: "right", toAnchor: "left", animated: true },
 
-    // continuous improvement loop: Re-Order -> Concept
-    { from: "reorder", to: "concept", dashed: true, curve: true, label: "Improve & Re-Order",
-      fromAnchor: "top", toAnchor: "bottom" },
+    // Continuous improvement: Re-Order → Concept (arch ke atas, halus & putus-putus)
+    { from: "reorder", to: "concept", fromAnchor: "top", toAnchor: "bottom", dashed: true, archUp: true, label: "Improve & Re-Order" },
 
-    // ===== NG LOOPS =====
-    // D/R NG → Concept
-    { from: "dr", to: "concept", dashed: true, curve: true, label: "NG", showNGPill: true,
-      fromAnchor: "bottom", toAnchor: "top" },
+    // ===== NG LOOPS rapi =====
+    // D/R NG → Concept (arch pendek ke atas)
+    { from: "dr", to: "concept", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
 
-    // 검토승인 NG → 개발/가공 설계
-    { from: "review", to: "dev", dashed: true, curve: true, label: "NG", showNGPill: true,
-      fromAnchor: "bottom", toAnchor: "top" },
+    // 검토승인 NG → 개발/가공 설계 (arch pendek ke atas)
+    { from: "review", to: "dev", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
 
-    // 수입검사 NG → 협력사 → (re-test) → 수입검사
-    { from: "incoming", to: "partner", dashed: true, label: "NG", showNGPill: true,
-      fromAnchor: "right", toAnchor: "left", via: [{ x: 1700, y: 360 }, { x: 1900, y: 360 }] },
-    { from: "partner", to: "incoming", animated: true, label: "Re-test / 재검",
-      fromAnchor: "bottom", toAnchor: "top", via: [{ x: 1900, y: 300 }, { x: 1500, y: 300 }] },
+    // 수입검사 NG → 협력사 (ortogonal kanan), lalu balik Re-test → 수입검사
+    { from: "incoming", to: "partner", fromAnchor: "right", toAnchor: "left", dashed: true, showNGPill: true, label: "NG",
+      via: [{ x: snap(nodeById("incoming").x + CARD_W + 40), y: BOT_Y + CARD_H / 2 }, { x: snap(nodeById("partner").x - 40), y: BOT_Y + CARD_H / 2 }] },
+    { from: "partner", to: "incoming", fromAnchor: "bottom", toAnchor: "top", animated: true, label: "Re-test / 재검",
+      via: [{ x: snap(nodeById("partner").x + (nodeById("partner").w ?? 220) / 2), y: 300 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 300 }] },
 
-    // 조립/측정검사 NG → 가공/제작
-    { from: "assyqa", to: "machining", dashed: true, curve: true, label: "NG", showNGPill: true,
-      fromAnchor: "top", toAnchor: "bottom" },
+    // 조립/측정검사 NG → 가공/제작 (horizontal balik kiri, putus-putus)
+    { from: "assyqa", to: "machining", fromAnchor: "left", toAnchor: "right", dashed: true, label: "NG", showNGPill: true },
   ];
 
-  // ====== state & helpers (tetap sama) ======
+  // ===== State kecil untuk chip live =====
   const [activeCard, setActiveCard] = React.useState<string | null>(null);
-  const [realTimeData, setRealTimeData] = React.useState({ throughput: 87, efficiency: 94, quality: 99.2 });
+  const [live, setLive] = React.useState({ th: 87, ef: 94, qu: 99.2 });
   React.useEffect(() => {
-    const t = setInterval(() => {
-      setRealTimeData({
-        throughput: Math.floor(Math.random() * 10) + 85,
-        efficiency: Math.floor(Math.random() * 8) + 90,
-        quality: Math.floor(Math.random() * 80) / 100 + 98.5,
-      });
-    }, 3000);
+    const t = setInterval(() => setLive({
+      th: Math.floor(Math.random() * 10) + 85,
+      ef: Math.floor(Math.random() * 8) + 90,
+      qu: Math.floor(Math.random() * 80) / 100 + 98.5,
+    }), 3000);
     return () => clearInterval(t);
   }, []);
 
-  const defaultW = 280, defaultH = 110;
-  const getNode = (id: string) => NODES.find(n => n.id === id)!;
-  function anchorPoint(n: FlowNode, anchor?: Anchor) {
-    const w = n.w ?? defaultW, h = n.h ?? defaultH;
-    const cx = n.x + w/2, cy = n.y + h/2;
-    switch (anchor) {
-      case "left": return { x: n.x, y: cy };
-      case "right": return { x: n.x + w, y: cy };
-      case "top": return { x: cx, y: n.y };
-      case "bottom": return { x: cx, y: n.y + h };
-      default: return { x: cx, y: cy };
-    }
-  }
-  function autoAnchors(a: FlowNode, b: FlowNode): [Anchor, Anchor] {
-    const ac = { x: a.x + (a.w ?? defaultW)/2, y: a.y + (a.h ?? defaultH)/2 };
-    const bc = { x: b.x + (b.w ?? defaultW)/2, y: b.y + (b.h ?? defaultH)/2 };
-    const dx = bc.x - ac.x, dy = bc.y - ac.y;
-    if (Math.abs(dx) > Math.abs(dy)) return dx >= 0 ? ["right","left"] : ["left","right"];
-    return dy >= 0 ? ["bottom","top"] : ["top","bottom"];
-  }
-  function midOf(points: {x:number;y:number}[]) {
-    if (points.length === 2) return { x:(points[0].x+points[1].x)/2, y:(points[0].y+points[1].y)/2 };
-    const i = Math.floor(points.length/2); return points[i];
-  }
+  // ===== SVG helper (stroke non-scaling & shapeRendering) =====
+  const lineCommon = {
+    vectorEffect: "non-scaling-stroke" as const,
+    shapeRendering: "geometricPrecision" as const,
+  };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
-      {/* header */}
-      <div className="relative z-10 bg-gradient-to-b from-slate-900/50 to-transparent py-8 text-center backdrop-blur-sm">
-        <h2 className="mb-3 bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-3xl font-bold text-transparent">
-          차세대 반도체 제조 프로세스
-        </h2>
-        <p className="mb-4 text-lg text-cyan-200/80">Next-Generation Semiconductor Manufacturing Process</p>
-        <div className="flex justify-center gap-6 text-sm">
-          <div className="rounded-lg border border-cyan-500/30 bg-slate-800/50 px-3 py-1 backdrop-blur-sm">
-            <span className="text-cyan-400">Throughput:</span>
-            <span className="ml-1 font-mono text-white">{realTimeData.throughput}%</span>
-          </div>
-          <div className="rounded-lg border border-emerald-500/30 bg-slate-800/50 px-3 py-1 backdrop-blur-sm">
-            <span className="text-emerald-400">Efficiency:</span>
-            <span className="ml-1 font-mono text-white">{realTimeData.efficiency}%</span>
-          </div>
-          <div className="rounded-lg border border-purple-500/30 bg-slate-800/50 px-3 py-1 backdrop-blur-sm">
-            <span className="text-purple-400">Quality:</span>
-            <span className="ml-1 font-mono text-white">{realTimeData.quality}%</span>
-          </div>
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a142b] to-[#0a1633]">
+      {/* Header ringkas */}
+      <div className="relative z-10 py-6 text-center">
+        <h2 className="mb-1 text-2xl font-bold tracking-tight text-white">차세대 반도체 제조 프로세스</h2>
+        <p className="text-sm text-cyan-200/80">Next-Generation Semiconductor Manufacturing Process</p>
+        <div className="mt-3 flex justify-center gap-4 text-xs">
+          <div className="rounded-md border border-cyan-500/30 bg-slate-800/50 px-2.5 py-1 leading-none"><span className="text-cyan-300">Throughput</span> <span className="ml-1 font-mono text-white">{live.th}%</span></div>
+          <div className="rounded-md border border-emerald-500/30 bg-slate-800/50 px-2.5 py-1 leading-none"><span className="text-emerald-300">Efficiency</span> <span className="ml-1 font-mono text-white">{live.ef}%</span></div>
+          <div className="rounded-md border border-purple-500/30 bg-slate-800/50 px-2.5 py-1 leading-none"><span className="text-purple-300">Quality</span> <span className="ml-1 font-mono text-white">{live.qu}%</span></div>
         </div>
       </div>
 
-      {/* stage (scaled) */}
-      <div ref={containerRef} className="relative z-10 h-[580px] overflow-x-auto overflow-y-hidden px-8">
+      {/* Stage ter-scale */}
+      <div ref={containerRef} className="relative z-10 h-[540px] overflow-x-auto overflow-y-hidden px-8">
         <div className="relative origin-top-left" style={{ width: DESIGN_W, height: DESIGN_H, transform: `scale(${scale})` }}>
-          {/* grid */}
-          <div className="pointer-events-none absolute inset-0 opacity-10">
-            <svg width={DESIGN_W} height={DESIGN_H} className="text-cyan-400">
-              <defs>
-                <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
+          {/* Grid halus */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+            <svg width={DESIGN_W} height={DESIGN_H} className="text-white">
+              <defs><pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" /></pattern></defs>
+              <rect width="100%" height="100%" fill="url(#g)" />
             </svg>
           </div>
 
           {/* EDGES */}
           <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
-              <marker id="arrow" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
-                <polygon points="0 0, 10 4, 0 8" className="fill-cyan-400" />
+              <marker id="arrowClean" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                <polygon points="0 0, 9 3.5, 0 7" className="fill-cyan-300" />
               </marker>
-              <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0ea5e9" />
-                <stop offset="50%" stopColor="#22d3ee" />
-                <stop offset="100%" stopColor="#0ea5e9" />
+              <linearGradient id="edgeGradClean" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#22d3ee" />
+                <stop offset="100%" stopColor="#60a5fa" />
               </linearGradient>
             </defs>
 
-            {EDGES.map((e, idx) => {
-              const a = getNode(e.from), b = getNode(e.to);
-              const [fa, ta] = (e.fromAnchor && e.toAnchor) ? [e.fromAnchor, e.toAnchor] : autoAnchors(a, b);
-              const start = anchorPoint(a, fa), end = anchorPoint(b, ta);
-              const pts = [start, ...(e.via ?? []), end];
+            {EDGES.map((e, i) => {
+              const A = nodeById(e.from), B = nodeById(e.to);
+              const start = anchor(A, e.fromAnchor ?? "right");
+              const end   = anchor(B, e.toAnchor   ?? "left");
 
-              const pathD = e.curve && (!e.via || e.via.length === 0)
-                ? (() => {
-                    const cx = (start.x + end.x) / 2;
-                    const cy = Math.min(start.y, end.y) - 80;
-                    return `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`;
-                  })()
-                : `M ${pts[0].x} ${pts[0].y}` + pts.slice(1).map(p => ` L ${p.x} ${p.y}`).join("");
+              let d: string;
+              if (e.archUp) {
+                // lengkung rapi di atas: kontrol simetris
+                const dx = (end.x - start.x);
+                const cpPull = Math.max(120, Math.abs(dx) * 0.25);
+                const cp1 = { x: snap(start.x + cpPull), y: snap(start.y - 60) };
+                const cp2 = { x: snap(end.x - cpPull),   y: snap(end.y - 60) };
+                d = `M ${snap(start.x)} ${snap(start.y)} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${snap(end.x)} ${snap(end.y)}`;
+              } else if (e.via && e.via.length) {
+                d = hvh(start, end, e.via[0]?.x, e.via[0]?.y);
+              } else {
+                // garis lurus horizontal (atau HVH default midpoint)
+                d = start.y === end.y
+                  ? `M ${snap(start.x)} ${snap(start.y)} L ${snap(end.x)} ${snap(end.y)}`
+                  : hvh(start, end);
+              }
 
-              const mid = pts.length === 2
-                ? { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 - 8 }
-                : pts[Math.floor(pts.length / 2)];
+              // posisi label kira-kira di tengah rute
+              const midX = snap((start.x + end.x) / 2);
+              const midY = snap((start.y + end.y) / 2);
 
               return (
-                <g key={e.id ?? idx}>
+                <g key={i}>
                   <path
-                    d={pathD}
+                    d={d}
                     fill="none"
-                    stroke="url(#edgeGrad)"
+                    stroke="url(#edgeGradClean)"
                     strokeWidth={2}
-                    markerEnd="url(#arrow)"
-                    className={[
-                      e.dashed ? "stroke-[2px] [stroke-dasharray:8_6]" : "",
-                      e.animated ? "[animation:dashMove_2s_linear_infinite]" : "",
-                    ].join(" ")}
-                    style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.5))" }}
+                    markerEnd="url(#arrowClean)"
+                    style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.25))" }}
+                    className={[e.dashed ? "[stroke-dasharray:8_6]" : "", e.animated ? "[animation:dashMove_2s_linear_infinite]" : ""].join(" ")}
+                    {...lineCommon}
                   />
-                  {e.label && (
-                    <text x={mid.x} y={mid.y} textAnchor="middle" className="fill-cyan-300 text-[12px]">
-                      {e.label}
-                    </text>
+                  {e.label === "OK" && (
+                    <foreignObject x={midX - 16} y={midY - 18} width="40" height="24">
+                      <div className="pointer-events-none rounded-full border border-emerald-400/40 bg-emerald-500/90 px-2.5 py-0.5 text-[10px] font-bold text-white">OK</div>
+                    </foreignObject>
+                  )}
+                  {e.label && e.label !== "OK" && (
+                    <text x={midX} y={midY - 8} textAnchor="middle" className="fill-cyan-200 text-[11px]" {...lineCommon}>{e.label}</text>
                   )}
                   {e.showNGPill && (
-                    <foreignObject x={mid.x - 20} y={(mid.y ?? 0) - 28} width="80" height="26">
+                    <foreignObject x={midX - 18} y={midY - 34} width="64" height="26">
                       <div className="pointer-events-none"><NGPill /></div>
                     </foreignObject>
                   )}
@@ -481,19 +485,19 @@ function ProcessFlowChart() {
             })}
           </svg>
 
-          {/* NODES */}
+          {/* NODES (ukuran dan alignment konsisten) */}
           {NODES.map((n) => {
-            const w = n.w ?? 280, h = n.h ?? 110;
+            const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
             return (
-              <div key={n.id} style={{ position: "absolute", left: n.x, top: n.y, width: w, height: h }}>
+              <div key={n.id} style={{ position: "absolute", left: snap(n.x), top: snap(n.y), width: w, height: h }}>
                 <ProcessCard
                   type={n.type ?? "step"}
-                  state={activeCard === n.id ? "active" : n.state ?? "default"}
+                  state={activeCard === n.id ? "active" : "default"}
                   onClick={() => setActiveCard(n.id)}
-                  processingTime={1600}
+                  processingTime={1200}
                   className="!w-full !h-full"
                 >
-                  <div className="flex items-center gap-2">{n.label}</div>
+                  <div className="leading-snug">{n.label}</div>
                 </ProcessCard>
               </div>
             );
@@ -501,21 +505,11 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* footer chip */}
+      {/* Footer chip */}
       <div className="relative z-10 py-4 text-center">
-        <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-slate-800/50 px-6 py-3 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-            <span className="text-sm font-medium text-emerald-400">LIVE</span>
-          </div>
-          <span className="text-sm text-cyan-200">← Real-time Process Flow →</span>
-          <div className="flex items-center gap-1">
-            <svg className="h-4 w-4 animate-spin text-cyan-400" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-              <path d="M4 12a8 8 0 018-8v8H4z" fill="currentColor" />
-            </svg>
-            <span className="text-xs text-cyan-400">Processing</span>
-          </div>
+        <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-slate-900/60 px-5 py-2 backdrop-blur-sm">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+          <span className="text-xs text-cyan-200">Aligned to Grid · Orthogonal Routes</span>
         </div>
       </div>
 

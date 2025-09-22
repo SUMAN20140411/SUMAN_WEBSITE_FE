@@ -88,7 +88,7 @@ export const homeContentEng = {
       lines: [
         "Dreams are only granted to those who dream",
       "and those dreams can definitely become reality",
-"Dreams that are challenged and executed definitely become reality.",
+"Dreams that are challenged and executed definitely become reality",
       ],
       //subtitle: 'Dreams are only granted to those who dream, and those dreams can definitely become reality. Dreams that are challenged and executed definitely become reality.',
     },
