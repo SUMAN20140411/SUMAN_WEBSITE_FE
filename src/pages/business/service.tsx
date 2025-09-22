@@ -237,106 +237,116 @@ function DataFlowVisualizer({ className = "" }: { className?: string }) {
 }
 
 function ProcessFlowChart() {
-  // ----- DESIGN STAGE (fixed design size; auto-scaled to container) -----
-  const DESIGN_W = 3200;
-  const DESIGN_H = 520;
+  // ===== Fixed design stage (auto-scaled) =====
+  const DESIGN_W = 3600; // diperlebar supaya semua node muat
+  const DESIGN_H = 560;
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = React.useState(1);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const ro = new ResizeObserver(() => {
       const w = el.clientWidth;
-      const s = Math.min(w / DESIGN_W, 1); // jangan membesar > 1 biar blur tidak terjadi
-      setScale(s);
+      setScale(Math.min(w / DESIGN_W, 1));
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
-  // ---------- TYPES ----------
   type Anchor = "left" | "right" | "top" | "bottom";
   type NodeState = "default" | "active" | "warning";
   interface FlowNode {
     id: string;
-    label: string | React.ReactNode;
+    label: React.ReactNode;
     type?: "step" | "decision";
-    x: number; // left in design px
-    y: number; // top in design px
-    w?: number; // default 280
-    h?: number; // default 110
-    state?: NodeState;
+    x: number; y: number; w?: number; h?: number; state?: NodeState;
   }
   interface Waypoint { x: number; y: number; }
   interface FlowEdge {
     id?: string;
-    from: string;
-    to: string;
-    fromAnchor?: Anchor; // auto if not set
-    toAnchor?: Anchor;   // auto if not set
-    via?: Waypoint[];    // elbow/route points (in design px)
-    animated?: boolean;
-    dashed?: boolean;
-    showNGPill?: boolean; // “NG” pill di tengah edge
-    label?: string;       // optional label teks di tengah edge
-    curve?: boolean;      // kalau true dan tanpa via => pakai quad curve
+    from: string; to: string;
+    fromAnchor?: Anchor; toAnchor?: Anchor;
+    via?: Waypoint[];
+    animated?: boolean; dashed?: boolean; showNGPill?: boolean;
+    label?: string; curve?: boolean;
   }
 
-  // ---------- FLOW CONFIG (EDIT THIS TO MATCH YOUR IMAGE) ----------
-  // 👉 EDIT DI SINI: Atur koordinat node & edges agar sama persis seperti gambar.
+  /* ================================
+     NODES — sesuai urutan yang diminta
+     ================================ */
   const NODES: FlowNode[] = [
-    { id: "customer",  label: "Customer",                x: 60,   y: 20,  type: "step" },
-    { id: "concept",   label: "Concept 설계",           x: 420,  y: 20,  type: "step" },
-    { id: "dr",        label: "D/R",                     x: 800,  y: 20,  type: "decision" },
-    { id: "dev",       label: "개발/기공 설계",          x: 1080, y: 20,  type: "step" },
+    { id: "customer",  label: "Customer",                    x: 40,   y: 40,  type: "step" },
+    { id: "concept",   label: <>Concept 설계<br/><span className="text-xs opacity-80">Concept Design</span></>, x: 360,  y: 40,  type: "step" },
+    { id: "dr",        label: "D/R",                         x: 680,  y: 40,  type: "decision" },
+    { id: "dev",       label: <>개발/가공 설계<br/><span className="text-xs opacity-80">Development / Machining Design</span></>, x: 1000, y: 40, type: "step" },
+    { id: "review",    label: <>검토승인<br/><span className="text-xs opacity-80">Review Approval</span></>, x: 1320, y: 40, type: "decision" },
+    { id: "order",     label: <>발주(소재/부품)<br/><span className="text-xs opacity-80">Place Order: Materials/Parts</span></>, x: 1640, y: 40, type: "step" },
 
-    { id: "review",    label: "검토승인",                x: 1480, y: 180, type: "decision" },
-    { id: "order",     label: "발주(소재/부품)",         x: 1780, y: 180, type: "step" },
-    { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Partner</span></>, x: 2080, y: 180, type: "step", w: 220, h: 90 },
+    // supplier (dipakai untuk loop NG di Incoming Inspection)
+    { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Supplier</span></>, x: 1900, y: 210, type: "step", w: 220, h: 90 },
 
-    { id: "incoming",  label: "수입검사",                x: 300,  y: 380, type: "step" },
-    { id: "machining", label: "가공/제작",               x: 600,  y: 380, type: "step" },
-    { id: "assyqa",    label: "출하 및 조립/품질검사",   x: 900,  y: 380, type: "decision" },
-    { id: "packing",   label: "포장",                    x: 1260, y: 380, type: "step" },
-    { id: "delivery",  label: "고객사 납품",             x: 1540, y: 380, type: "step" },
-    { id: "feedback",  label: "고객 Feedback",           x: 1840, y: 380, type: "decision" },
-    { id: "reorder",   label: <>Re-Order<br/>개선/반영</>, x: 2140, y: 380, type: "step" },
+    // baris bawah
+    { id: "incoming",  label: <>수입검사<br/><span className="text-xs opacity-80">Incoming Inspection</span></>, x: 1500, y: 360, type: "decision" },
+    { id: "machining", label: <>가공/제작<br/><span className="text-xs opacity-80">Processing / Manufacturing</span></>, x: 1800, y: 360, type: "step" },
+    { id: "assyqa",    label: <>조립/측정검사<br/><span className="text-xs opacity-80">Assembly & Measurement Inspection</span></>, x: 2100, y: 360, type: "decision" },
+    { id: "packing",   label: <>포장<br/><span className="text-xs opacity-80">Packaging</span></>, x: 2400, y: 360, type: "step" },
+    { id: "delivery",  label: <>고객사 납품<br/><span className="text-xs opacity-80">Delivery to Customer</span></>, x: 2700, y: 360, type: "step" },
+    { id: "feedback",  label: <>고객 Feedback</>,            x: 3000, y: 360, type: "step" },
+    { id: "reorder",   label: <>Re-Order 개선/반영<br/><span className="text-xs opacity-80">Re-Order & Improvement</span></>, x: 3300, y: 360, type: "step" },
   ];
 
+  /* ================================
+     EDGES — OK path + NG loops
+     ================================ */
   const EDGES: FlowEdge[] = [
-    // top row
-    { from: "customer", to: "concept",  animated: true },
-    { from: "concept",  to: "dr",       animated: true },
-    { from: "dr",       to: "concept",  dashed: true, showNGPill: true, label: "NG", curve: true, fromAnchor: "bottom", toAnchor: "top" },
-    { from: "dr",       to: "dev",      animated: true },
+    // OK main flow (atas)
+    { from: "customer", to: "concept", animated: true },
+    { from: "concept",  to: "dr",      animated: true },
+    { from: "dr",       to: "dev",     animated: true, label: "OK" },
+    { from: "dev",      to: "review",  animated: true },
+    { from: "review",   to: "order",   animated: true, label: "OK" },
 
-    // down to middle row
-    { from: "dev", to: "review", animated: true, fromAnchor: "bottom", toAnchor: "top", via: [{ x: 1190, y: 130 }] },
+    // turun ke baris bawah: order -> incoming (elbow)
+    { from: "order", to: "incoming", animated: true, fromAnchor: "bottom", toAnchor: "top",
+      via: [{ x: 1640, y: 260 }, { x: 1500, y: 260 }] },
 
-    { from: "review", to: "order", animated: true },
-    { from: "order",  to: "partner", animated: true },
+    // OK main flow (bawah)
+    { from: "incoming", to: "machining", animated: true, label: "OK" },
+    { from: "machining", to: "assyqa",   animated: true },
+    { from: "assyqa",   to: "packing",   animated: true, label: "OK" },
+    { from: "packing",  to: "delivery",  animated: true },
+    { from: "delivery", to: "feedback",  animated: true },
+    { from: "feedback", to: "reorder",   animated: true },
 
-    // partner down to incoming (vertical)
-    { from: "partner", to: "incoming", animated: true, fromAnchor: "bottom", toAnchor: "top", via: [{ x: 2190, y: 300 }, { x: 410, y: 300 }] , dashed: true, label: "입고" },
+    // continuous improvement loop: Re-Order -> Concept
+    { from: "reorder", to: "concept", dashed: true, curve: true, label: "Improve & Re-Order",
+      fromAnchor: "top", toAnchor: "bottom" },
 
-    // bottom row (left → right)
-    { from: "incoming", to: "machining", animated: true },
-    { from: "machining", to: "assyqa", animated: true },
-    { from: "assyqa", to: "packing", animated: true },
-    { from: "packing", to: "delivery", animated: true },
-    { from: "delivery", to: "feedback", animated: true },
-    { from: "feedback", to: "reorder", animated: true },
+    // ===== NG LOOPS =====
+    // D/R NG → Concept
+    { from: "dr", to: "concept", dashed: true, curve: true, label: "NG", showNGPill: true,
+      fromAnchor: "bottom", toAnchor: "top" },
 
-    // main improvement loop back to review/concept (choose one)
-    { from: "reorder", to: "concept", dashed: true, label: "Continuous Improvement", curve: true, fromAnchor: "top", toAnchor: "bottom" },
+    // 검토승인 NG → 개발/가공 설계
+    { from: "review", to: "dev", dashed: true, curve: true, label: "NG", showNGPill: true,
+      fromAnchor: "bottom", toAnchor: "top" },
+
+    // 수입검사 NG → 협력사 → (re-test) → 수입검사
+    { from: "incoming", to: "partner", dashed: true, label: "NG", showNGPill: true,
+      fromAnchor: "right", toAnchor: "left", via: [{ x: 1700, y: 360 }, { x: 1900, y: 360 }] },
+    { from: "partner", to: "incoming", animated: true, label: "Re-test / 재검",
+      fromAnchor: "bottom", toAnchor: "top", via: [{ x: 1900, y: 300 }, { x: 1500, y: 300 }] },
+
+    // 조립/측정검사 NG → 가공/제작
+    { from: "assyqa", to: "machining", dashed: true, curve: true, label: "NG", showNGPill: true,
+      fromAnchor: "top", toAnchor: "bottom" },
   ];
 
-  // ---------- STATE ----------
-  const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [realTimeData, setRealTimeData] = useState({ throughput: 87, efficiency: 94, quality: 99.2 });
-
-  useEffect(() => {
+  // ====== state & helpers (tetap sama) ======
+  const [activeCard, setActiveCard] = React.useState<string | null>(null);
+  const [realTimeData, setRealTimeData] = React.useState({ throughput: 87, efficiency: 94, quality: 99.2 });
+  React.useEffect(() => {
     const t = setInterval(() => {
       setRealTimeData({
         throughput: Math.floor(Math.random() * 10) + 85,
@@ -347,53 +357,33 @@ function ProcessFlowChart() {
     return () => clearInterval(t);
   }, []);
 
-  // ---------- HELPERS ----------
-  const getNode = (id: string) => NODES.find(n => n.id === id)!;
   const defaultW = 280, defaultH = 110;
-
-  function anchorPoint(n: FlowNode, anchor?: Anchor): { x: number; y: number } {
-    const w = n.w ?? defaultW;
-    const h = n.h ?? defaultH;
-    const cx = n.x + w / 2;
-    const cy = n.y + h / 2;
+  const getNode = (id: string) => NODES.find(n => n.id === id)!;
+  function anchorPoint(n: FlowNode, anchor?: Anchor) {
+    const w = n.w ?? defaultW, h = n.h ?? defaultH;
+    const cx = n.x + w/2, cy = n.y + h/2;
     switch (anchor) {
       case "left": return { x: n.x, y: cy };
       case "right": return { x: n.x + w, y: cy };
       case "top": return { x: cx, y: n.y };
       case "bottom": return { x: cx, y: n.y + h };
-      default: {
-        // auto: pilih sisi terdekat berdasarkan delta
-        return { x: cx, y: cy };
-      }
+      default: return { x: cx, y: cy };
     }
   }
-
   function autoAnchors(a: FlowNode, b: FlowNode): [Anchor, Anchor] {
-    const ac = { x: a.x + (a.w ?? defaultW) / 2, y: a.y + (a.h ?? defaultH) / 2 };
-    const bc = { x: b.x + (b.w ?? defaultW) / 2, y: b.y + (b.h ?? defaultH) / 2 };
-    const dx = bc.x - ac.x;
-    const dy = bc.y - ac.y;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      return dx >= 0 ? ["right", "left"] : ["left", "right"];
-    } else {
-      return dy >= 0 ? ["bottom", "top"] : ["top", "bottom"];
-    }
+    const ac = { x: a.x + (a.w ?? defaultW)/2, y: a.y + (a.h ?? defaultH)/2 };
+    const bc = { x: b.x + (b.w ?? defaultW)/2, y: b.y + (b.h ?? defaultH)/2 };
+    const dx = bc.x - ac.x, dy = bc.y - ac.y;
+    if (Math.abs(dx) > Math.abs(dy)) return dx >= 0 ? ["right","left"] : ["left","right"];
+    return dy >= 0 ? ["bottom","top"] : ["top","bottom"];
+  }
+  function midOf(points: {x:number;y:number}[]) {
+    if (points.length === 2) return { x:(points[0].x+points[1].x)/2, y:(points[0].y+points[1].y)/2 };
+    const i = Math.floor(points.length/2); return points[i];
   }
 
-  function midOf(points: { x: number; y: number }[]) {
-    if (points.length === 2) {
-      return { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 };
-    }
-    const midIdx = Math.floor(points.length / 2);
-    return points[midIdx];
-  }
-
-  // ---------- RENDER ----------
   return (
-    <div className="relative h-[760px] w-full overflow-hidden rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
-      {/* glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-cyan-900/20" />
-
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
       {/* header */}
       <div className="relative z-10 bg-gradient-to-b from-slate-900/50 to-transparent py-8 text-center backdrop-blur-sm">
         <h2 className="mb-3 bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-3xl font-bold text-transparent">
@@ -416,17 +406,10 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* scrollable rail that scales the fixed design stage */}
-      <div ref={containerRef} className="relative z-10 h-[560px] overflow-x-auto overflow-y-hidden px-8">
-        <div
-          className="relative origin-top-left"
-          style={{
-            width: DESIGN_W,
-            height: DESIGN_H,
-            transform: `scale(${scale})`,
-          }}
-        >
-          {/* GRID BG + particles */}
+      {/* stage (scaled) */}
+      <div ref={containerRef} className="relative z-10 h-[580px] overflow-x-auto overflow-y-hidden px-8">
+        <div className="relative origin-top-left" style={{ width: DESIGN_W, height: DESIGN_H, transform: `scale(${scale})` }}>
+          {/* grid */}
           <div className="pointer-events-none absolute inset-0 opacity-10">
             <svg width={DESIGN_W} height={DESIGN_H} className="text-cyan-400">
               <defs>
@@ -438,80 +421,43 @@ function ProcessFlowChart() {
             </svg>
           </div>
 
-          {/* EDGES (SVG) */}
+          {/* EDGES */}
           <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
               <marker id="arrow" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
                 <polygon points="0 0, 10 4, 0 8" className="fill-cyan-400" />
               </marker>
+              <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0ea5e9" />
+                <stop offset="50%" stopColor="#22d3ee" />
+                <stop offset="100%" stopColor="#0ea5e9" />
+              </linearGradient>
             </defs>
 
             {EDGES.map((e, idx) => {
-              const a = getNode(e.from);
-              const b = getNode(e.to);
-              const [fa, ta] = [e.fromAnchor, e.toAnchor] ?? autoAnchors(a, b);
-              const start = anchorPoint(a, e.fromAnchor ?? fa);
-              const end = anchorPoint(b, e.toAnchor ?? ta);
-              const pts: { x: number; y: number }[] = [start, ...(e.via ?? []), end];
+              const a = getNode(e.from), b = getNode(e.to);
+              const [fa, ta] = (e.fromAnchor && e.toAnchor) ? [e.fromAnchor, e.toAnchor] : autoAnchors(a, b);
+              const start = anchorPoint(a, fa), end = anchorPoint(b, ta);
+              const pts = [start, ...(e.via ?? []), end];
 
-              // path: straight / polyline / quad curve
-              if (e.curve && (!e.via || e.via.length === 0)) {
-                const cx = (start.x + end.x) / 2;
-                const cy = Math.min(start.y, end.y) - 80; // arch
-                const d = `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`;
-                return (
-                  <g key={e.id ?? idx}>
-                    <path
-                      d={d}
-                      fill="none"
-                      stroke="url(#edgeGrad)"
-                      strokeWidth={2}
-                      markerEnd="url(#arrow)"
-                      className={[
-                        e.dashed ? "stroke-[2px] [stroke-dasharray:8_6]" : "",
-                        e.animated ? "[animation:dashMove_2s_linear_infinite]" : "",
-                      ].join(" ")}
-                      style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.5))" }}
-                    />
-                    {e.label && (
-                      <text x={(start.x + end.x) / 2} y={cy - 6} textAnchor="middle" className="fill-cyan-300 text-[12px]">
-                        {e.label}
-                      </text>
-                    )}
-                    {e.showNGPill && (
-                      <foreignObject
-                        x={(start.x + end.x) / 2 - 18}
-                        y={cy - 26}
-                        width="80"
-                        height="26"
-                      >
-                        <div className="pointer-events-none">
-                          <NGPill />
-                        </div>
-                      </foreignObject>
-                    )}
-                    {/* gradient per all edges (single) */}
-                    <defs>
-                      <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#0ea5e9" />
-                        <stop offset="50%" stopColor="#22d3ee" />
-                        <stop offset="100%" stopColor="#0ea5e9" />
-                      </linearGradient>
-                    </defs>
-                  </g>
-                );
-              }
+              const pathD = e.curve && (!e.via || e.via.length === 0)
+                ? (() => {
+                    const cx = (start.x + end.x) / 2;
+                    const cy = Math.min(start.y, end.y) - 80;
+                    return `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`;
+                  })()
+                : `M ${pts[0].x} ${pts[0].y}` + pts.slice(1).map(p => ` L ${p.x} ${p.y}`).join("");
 
-              // polyline (with via)
-              const pathD = `M ${pts[0].x} ${pts[0].y}` + pts.slice(1).map(p => ` L ${p.x} ${p.y}`).join("");
-              const mid = midOf(pts);
+              const mid = pts.length === 2
+                ? { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 - 8 }
+                : pts[Math.floor(pts.length / 2)];
 
               return (
                 <g key={e.id ?? idx}>
                   <path
                     d={pathD}
                     fill="none"
-                    stroke="url(#edgeGrad2)"
+                    stroke="url(#edgeGrad)"
                     strokeWidth={2}
                     markerEnd="url(#arrow)"
                     className={[
@@ -521,25 +467,15 @@ function ProcessFlowChart() {
                     style={{ filter: "drop-shadow(0 0 6px rgba(34,211,238,0.5))" }}
                   />
                   {e.label && (
-                    <text x={mid.x} y={mid.y - 8} textAnchor="middle" className="fill-cyan-300 text-[12px]">
+                    <text x={mid.x} y={mid.y} textAnchor="middle" className="fill-cyan-300 text-[12px]">
                       {e.label}
                     </text>
                   )}
                   {e.showNGPill && (
-                    <foreignObject x={mid.x - 20} y={mid.y - 40} width="80" height="26">
-                      <div className="pointer-events-none">
-                        <NGPill />
-                      </div>
+                    <foreignObject x={mid.x - 20} y={(mid.y ?? 0) - 28} width="80" height="26">
+                      <div className="pointer-events-none"><NGPill /></div>
                     </foreignObject>
                   )}
-
-                  <defs>
-                    <linearGradient id="edgeGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#12386E" />
-                      <stop offset="50%" stopColor="#22d3ee" />
-                      <stop offset="100%" stopColor="#12386E" />
-                    </linearGradient>
-                  </defs>
                 </g>
               );
             })}
@@ -547,8 +483,7 @@ function ProcessFlowChart() {
 
           {/* NODES */}
           {NODES.map((n) => {
-            const w = n.w ?? defaultW;
-            const h = n.h ?? defaultH;
+            const w = n.w ?? 280, h = n.h ?? 110;
             return (
               <div key={n.id} style={{ position: "absolute", left: n.x, top: n.y, width: w, height: h }}>
                 <ProcessCard
@@ -566,7 +501,7 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* footer live chip */}
+      {/* footer chip */}
       <div className="relative z-10 py-4 text-center">
         <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-slate-800/50 px-6 py-3 backdrop-blur-sm">
           <div className="flex items-center gap-2">
@@ -584,16 +519,13 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* keyframes for animated dash */}
       <style jsx>{`
-        @keyframes dashMove {
-          0% { stroke-dashoffset: 0; }
-          100% { stroke-dashoffset: -200; }
-        }
+        @keyframes dashMove { 0% { stroke-dashoffset: 0 } 100% { stroke-dashoffset: -200 } }
       `}</style>
     </div>
   );
 }
+
 
 
 /* =========================
