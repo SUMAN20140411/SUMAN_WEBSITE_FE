@@ -237,39 +237,162 @@ function DataFlowVisualizer({ className = "" }: { className?: string }) {
 }
 
 function ProcessFlowChart() {
-  const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [realTimeData, setRealTimeData] = useState({
+  type NodeState = "default" | "active" | "warning";
+  type NodeType = "step" | "decision";
+
+  // ====== GRID & SCALES ======
+  const CELL_W = 320;    // lebar 1 kolom
+  const CELL_H = 160;    // tinggi 1 baris
+  const GAP_X  = 64;     // jarak antar kolom
+  const GAP_Y  = 48;     // jarak antar baris
+  const PADDING = 24;    // padding area gambar
+
+  // helper untuk dapatkan posisi pixel dari row/col
+  const toXY = (row: number, col: number) => ({
+    x: PADDING + col * (CELL_W + GAP_X),
+    y: PADDING + row * (CELL_H + GAP_Y),
+  });
+
+  // ====== NODES (atur di sini supaya match gambar kamu) ======
+  // Snake 3 baris:
+  // Row 0: Customer → Concept → D/R → Development
+  // Turun di kanan → Review → Order → Partner
+  // Turun → Incoming Insp → Machining → Shipping/Assembly → Packing → Delivery → Feedback
+  // Naik → Re-Order → balik ke Concept (loop perbaikan)
+  const FLOW_NODES: Array<{
+    id: string;
+    title: string | React.ReactNode;
+    type: NodeType;
+    row: number;
+    col: number;
+    w?: number; // opsional, default 280..360
+    h?: number; // opsional
+    pillNG?: boolean;
+  }> = [
+    { id: "customer",   title: "Customer",                 type: "step",     row: 0, col: 0 },
+    { id: "concept",    title: "Concept 설계",            type: "step",     row: 0, col: 1 },
+    { id: "dr",         title: "D/R",                      type: "decision", row: 0, col: 2, pillNG: true },
+    { id: "dev",        title: "개발/기공 설계",           type: "step",     row: 0, col: 3 },
+
+    { id: "review",     title: "검토승인",                 type: "decision", row: 1, col: 3 },
+    { id: "order",      title: "발주(소재/부품)",          type: "step",     row: 1, col: 4 },
+    { id: "partner",    title: (<>협력사<br/><span className="text-xs opacity-80">Partner</span></>), type: "step", row: 1, col: 5, pillNG: true },
+
+    { id: "inspIn",     title: "수입검사",                 type: "step",     row: 2, col: 5, pillNG: true },
+    { id: "machining",  title: "가공/제작",                type: "step",     row: 2, col: 4 },
+    { id: "shipping",   title: "출하 및 조립/품질검사",     type: "decision", row: 2, col: 3, pillNG: true },
+    { id: "packing",    title: "포장",                     type: "step",     row: 2, col: 2 },
+    { id: "delivery",   title: "고객사 납품",              type: "step",     row: 2, col: 1 },
+    { id: "feedback",   title: "고객 Feedback",            type: "decision", row: 2, col: 0 },
+    { id: "reorder",    title: "Re-Order 개선/반영",       type: "step",     row: 1, col: 0 },
+  ];
+
+  // ====== EDGES (arah panah; straight / elbow / curve / loop) ======
+  type EdgeKind = "straight" | "elbow" | "curve";
+  const FLOW_EDGES: Array<{
+    from: string;
+    to: string;
+    kind?: EdgeKind;
+    // untuk "elbow": arah belok ("h" lalu "v" atau sebaliknya)
+    elbowHV?: "hv" | "vh";
+    dashed?: boolean;
+    glow?: boolean;
+  }> = [
+    { from: "customer", to: "concept" },
+    { from: "concept",  to: "dr" },
+    { from: "dr",       to: "dev" },
+    { from: "dev",      to: "review", kind: "straight" },           // vertikal (beda row, same col)
+    { from: "review",   to: "order" },
+    { from: "order",    to: "partner" },
+    { from: "partner",  to: "inspIn", kind: "straight" },           // vertikal
+    { from: "inspIn",   to: "machining" },
+    { from: "machining",to: "shipping" },
+    { from: "shipping", to: "packing" },
+    { from: "packing",  to: "delivery" },
+    { from: "delivery", to: "feedback" },
+
+    // loop naik: feedback → reorder (vertikal)
+    { from: "feedback", to: "reorder", kind: "straight", dashed: true, glow: true },
+
+    // reorder → concept (siku/“L”): kanan lalu atas (elbow "hv")
+    { from: "reorder",  to: "concept", kind: "elbow", elbowHV: "hv", dashed: true, glow: true },
+  ];
+
+  // ====== STATE (klik card untuk highlight) ======
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+  const isActive = (id: string): NodeState => (activeId === id ? "active" : "default");
+
+  // ====== MAP id → pos (center) ======
+  const nodePos = FLOW_NODES.reduce<Record<string, { x: number; y: number }>>((acc, n) => {
+    const { x, y } = toXY(n.row, n.col);
+    // center titik untuk panah (card default 280x110 dari komponenmu)
+    const w = n.w ?? 280;
+    const h = n.h ?? 110;
+    acc[n.id] = { x: x + w / 2, y: y + h / 2 };
+    return acc;
+  }, {});
+
+  // ====== LAYOUT SIZE ======
+  const maxCol = Math.max(...FLOW_NODES.map(n => n.col));
+  const maxRow = Math.max(...FLOW_NODES.map(n => n.row));
+  const contentW = PADDING * 2 + (maxCol + 1) * (CELL_W + GAP_X) - GAP_X;
+  const contentH = PADDING * 2 + (maxRow + 1) * (CELL_H + GAP_Y) - GAP_Y;
+
+  // ====== Edge drawing helpers ======
+  const arrowId = React.useId();
+  const glowId  = React.useId();
+
+  const edgePath = (e: typeof FLOW_EDGES[number]) => {
+    const a = nodePos[e.from];
+    const b = nodePos[e.to];
+    if (!a || !b) return "";
+
+    if (e.kind === "elbow") {
+      // elbow hv: horizontal lalu vertical; vh: sebaliknya
+      if (e.elbowHV === "vh") {
+        const midY = b.y;
+        return `M ${a.x} ${a.y} V ${midY} H ${b.x}`;
+      }
+      // default "hv"
+      const midX = b.x;
+      return `M ${a.x} ${a.y} H ${midX} V ${b.y}`;
+    }
+
+    if (e.kind === "curve") {
+      const mx = (a.x + b.x) / 2;
+      return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
+    }
+
+    // straight: kalau col sama → vertical; kalau row sama → horizontal; kalau diagonal → line
+    return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+  };
+
+  // ====== Realtime chips (dipertahankan) ======
+  const [realTimeData, setRealTimeData] = React.useState({
     throughput: 87,
     efficiency: 94,
     quality: 99.2,
   });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
+  React.useEffect(() => {
+    const t = setInterval(() => {
       setRealTimeData({
         throughput: Math.floor(Math.random() * 10) + 85,
         efficiency: Math.floor(Math.random() * 8) + 90,
         quality: Math.floor(Math.random() * 80) / 100 + 98.5,
       });
     }, 3000);
-    return () => clearInterval(interval);
+    return () => clearInterval(t);
   }, []);
 
   return (
-    <div className="relative h-[760px] w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
-      {/* background glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-cyan-900/20" />
-
+    <div className="relative w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-xl">
       {/* header */}
       <div className="relative z-10 bg-gradient-to-b from-slate-900/50 to-transparent py-8 text-center backdrop-blur-sm">
         <h2 className="mb-3 bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-3xl font-bold text-transparent">
           차세대 반도체 제조 프로세스
         </h2>
-        <p className="mb-4 text-lg text-cyan-200/80">
-          Next-Generation Semiconductor Manufacturing Process
-        </p>
+        <p className="mb-4 text-lg text-cyan-200/80">Next-Generation Semiconductor Manufacturing Process</p>
 
-        {/* realtime chips */}
         <div className="flex justify-center gap-6 text-sm">
           <div className="rounded-lg border border-cyan-500/30 bg-slate-800/50 px-3 py-1 backdrop-blur-sm">
             <span className="text-cyan-400">Throughput:</span>
@@ -286,382 +409,80 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* scroll rail */}
-      <div className="relative z-10 h-[520px] overflow-x-auto overflow-y-hidden px-8">
-        <div className="relative h-full min-w-[3200px] px-12 py-8">
-          <DataFlowVisualizer />
-
-          {/* top row */}
-          <div className="absolute left-12 right-12 top-8">
-            <div className="flex items-center gap-12">
-              {/* Customer */}
-              <ProcessCard
-                type="step"
-                state={activeCard === "customer" ? "active" : "default"}
-                onClick={() => setActiveCard("customer")}
-                processingTime={1500}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                  </svg>
-                  Customer
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              {/* Concept */}
-              <ProcessCard
-                type="step"
-                state={activeCard === "concept" ? "active" : "default"}
-                onClick={() => setActiveCard("concept")}
-                processingTime={2000}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                  </svg>
-                  Concept 설계
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              {/* D/R + NG loop */}
-              <div className="relative">
-                <ProcessCard
-                  type="decision"
-                  state={activeCard === "dr" ? "active" : "default"}
-                  onClick={() => setActiveCard("dr")}
-                  processingTime={1000}
-                >
-                  <div className="flex items-center gap-2">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    D/R
-                  </div>
-                </ProcessCard>
-
-                <div className="absolute -top-14 left-1/2 -translate-x-1/2 transform">
-                  <NGPill />
-                </div>
-                <svg className="absolute -left-20 -top-10 h-20 w-32" viewBox="0 0 128 80">
-                  <defs>
-                    <linearGradient id="feedbackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#ef4444" />
-                      <stop offset="50%" stopColor="#f97316" />
-                      <stop offset="100%" stopColor="#ef4444" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 10 60 Q 10 15 64 15 Q 118 15 118 60"
-                    stroke="url(#feedbackGrad)"
-                    strokeWidth="2"
-                    fill="none"
-                    strokeDasharray="4,4"
-                    markerEnd="url(#feedback-arrow)"
-                    className="animate-pulse"
-                  />
-                  <marker id="feedback-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                    <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
-                  </marker>
-                </svg>
-              </div>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              {/* Dev/Machining Design */}
-              <div className="relative">
-                <ProcessCard
-                  type="step"
-                  state={activeCard === "development" ? "active" : "default"}
-                  onClick={() => setActiveCard("development")}
-                  processingTime={2500}
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>개발/기공 설계</span>
-                  </div>
-                </ProcessCard>
-                <div className="absolute -top-14 right-4">
-                  <NGPill />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* vertical link down */}
-          <div className="absolute right-[280px] top-[150px]">
-            <Connector direction="vertical" length={80} animated />
-          </div>
-
-          {/* review + order */}
-          <div className="absolute right-12 top-[250px]">
-            <div className="flex items-center gap-12">
-              <ProcessCard
-                type="decision"
-                state={activeCard === "review" ? "active" : "default"}
-                onClick={() => setActiveCard("review")}
-                processingTime={1800}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  검토승인
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="step"
-                state={activeCard === "order" ? "active" : "default"}
-                onClick={() => setActiveCard("order")}
-                processingTime={2200}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                  </svg>
-                  발주(소재/부품)
-                </div>
-              </ProcessCard>
-            </div>
-          </div>
-
-          {/* partner + vertical to incoming inspection */}
-          <div className="absolute left-[1800px] top-[350px]">
-            <ProcessCard
-              type="step"
-              state={activeCard === "partner" ? "active" : "default"}
-              onClick={() => setActiveCard("partner")}
-              className="h-[80px] w-[200px]"
-              processingTime={1500}
-            >
-              <div className="flex flex-col items-center gap-1">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                </svg>
-                <span>협력사</span>
-                <span className="text-xs opacity-80">Partner</span>
-              </div>
-            </ProcessCard>
-            <div className="absolute left-1/2 top-[90px] -translate-x-1/2 transform">
-              <Connector direction="vertical" length={60} showNG animated />
-            </div>
-          </div>
-
-          {/* bottom row */}
-          <div className="absolute bottom-8 left-12 right-12">
-            <div className="flex items-center gap-12">
-              <div className="relative">
-                <ProcessCard
-                  type="decision"
-                  state={activeCard === "shipping" ? "active" : "default"}
-                  onClick={() => setActiveCard("shipping")}
-                  processingTime={3000}
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>출하 및 조립/품질검사</span>
-                  </div>
-                </ProcessCard>
-                <div className="absolute top-1/2 -left-16 -translate-y-1/2 transform">
-                  <NGPill />
-                </div>
-              </div>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="step"
-                state={activeCard === "machining" ? "active" : "default"}
-                onClick={() => setActiveCard("machining")}
-                processingTime={2800}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  가공/제작
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <div className="relative">
-                <ProcessCard
-                  type="step"
-                  state={activeCard === "inspection" ? "active" : "default"}
-                  onClick={() => setActiveCard("inspection")}
-                  processingTime={1600}
-                >
-                  <div className="flex items-center gap-2">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    수입검사
-                  </div>
-                </ProcessCard>
-                <div className="absolute left-1/2 -bottom-14 -translate-x-1/2 transform">
-                  <NGPill />
-                </div>
-              </div>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="step"
-                state={activeCard === "packing" ? "active" : "default"}
-                onClick={() => setActiveCard("packing")}
-                processingTime={1200}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  포장
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="step"
-                state={activeCard === "delivery" ? "active" : "default"}
-                onClick={() => setActiveCard("delivery")}
-                processingTime={1000}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-                  </svg>
-                  고객사 납품
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="decision"
-                state={activeCard === "feedback" ? "active" : "default"}
-                onClick={() => setActiveCard("feedback")}
-                processingTime={1400}
-              >
-                <div className="flex items-center gap-2">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  고객 Feedback
-                </div>
-              </ProcessCard>
-
-              <Connector direction="horizontal" length={80} animated />
-
-              <ProcessCard
-                type="step"
-                state={activeCard === "reorder" ? "active" : "default"}
-                onClick={() => setActiveCard("reorder")}
-                processingTime={2000}
-              >
-                <div className="flex flex-col items-center gap-1">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Re-Order 개선/반영</span>
-                </div>
-              </ProcessCard>
-            </div>
-          </div>
-
-          {/* bottom feedback arc */}
-          <div className="absolute left-1/2 -bottom-10 -translate-x-1/2 transform">
-            <svg width="500" height="80" viewBox="0 0 500 80" className="opacity-70">
-              <defs>
-                <linearGradient id="mainFeedbackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#06b6d4" />
-                  <stop offset="50%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#06b6d4" />
-                </linearGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <path
-                d="M 450 30 Q 250 70 50 30"
-                stroke="url(#mainFeedbackGrad)"
-                strokeWidth="2"
-                fill="none"
-                strokeDasharray="8,4"
-                markerEnd="url(#main-feedback-arrow)"
-                filter="url(#glow)"
-                className="animate-pulse"
-              />
-              <marker
-                id="main-feedback-arrow"
-                markerWidth="12"
-                markerHeight="10"
-                refX="12"
-                refY="5"
-                orient="auto"
-              >
-                <polygon points="0 0, 12 5, 0 10" fill="#06b6d4" />
+      {/* scrollable rail */}
+      <div className="relative z-10 overflow-x-auto overflow-y-hidden px-8 pb-8">
+        <div
+          className="relative"
+          style={{ width: Math.max(contentW, 1200), height: Math.max(contentH, 520) }}
+        >
+          {/* SVG edges layer */}
+          <svg className="absolute inset-0" width={Math.max(contentW, 1200)} height={Math.max(contentH, 520)}>
+            <defs>
+              <marker id={arrowId} markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+                <polygon points="0 0, 12 5, 0 10" fill="currentColor" />
               </marker>
-              <text
-                x="250"
-                y="55"
-                textAnchor="middle"
-                className="fill-cyan-400 text-xs font-medium"
+              <filter id={glowId}>
+                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {FLOW_EDGES.map((e, i) => {
+              const d = edgePath(e);
+              if (!d) return null;
+              return (
+                <path
+                  key={i}
+                  d={d}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  style={{ color: e.glow ? "#06b6d4" : "#67e8f9" }}
+                  markerEnd={`url(#${arrowId})`}
+                  strokeDasharray={e.dashed ? "8 6" : undefined}
+                  className={e.dashed ? "animate-[dash_2.4s_linear_infinite]" : "animate-[dash_2s_linear_infinite]"}
+                  filter={e.glow ? `url(#${glowId})` : undefined}
+                />
+              );
+            })}
+          </svg>
+
+          {/* Nodes layer */}
+          {FLOW_NODES.map((n) => {
+            const { x, y } = toXY(n.row, n.col);
+            const w = n.w ?? 280;
+            const h = n.h ?? 110;
+
+            return (
+              <div
+                key={n.id}
+                className="absolute"
+                style={{ left: x, top: y, width: w, height: h }}
               >
-                Continuous Improvement Loop
-              </text>
-            </svg>
-          </div>
+                <div className="relative">
+                  <ProcessCard
+                    type={n.type}
+                    state={isActive(n.id)}
+                    onClick={() => setActiveId(n.id)}
+                    processingTime={1500}
+                    className="!w-full !h-full"
+                  >
+                    {typeof n.title === "string" ? <span>{n.title}</span> : n.title}
+                  </ProcessCard>
+
+                  {n.pillNG && (
+                    <div className="absolute -top-10 right-2">
+                      {/* pakai NGPill milikmu */}
+                      <NGPill />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -683,24 +504,18 @@ function ProcessFlowChart() {
         </div>
       </div>
 
-      {/* keyframes */}
+      {/* keyframes untuk animasi garis */}
       <style jsx>{`
-        @keyframes flowRight {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(500%); }
-        }
-        @keyframes flowDown {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(500%); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
-          50% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+        @keyframes dash {
+          to { stroke-dashoffset: -56; }
         }
       `}</style>
     </div>
   );
 }
+
+
+
 
 /* =========================
         Page content
