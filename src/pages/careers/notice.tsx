@@ -126,10 +126,10 @@ const RecruitmentDownloadBanner: React.FC = () => {
           description:
             "",
           note: "",
-          fileLabel: "There are currently no internal recruitment notices.",
+          fileLabel: "Recruitment Notice",
           actionLabel: "There are currently no internal recruitment notices.",
-          ariaLabel: "There are currently no internal recruitment notices.",
-          fileName: "PLC Control Recruitment Notice",
+          ariaLabel: "DOWNLOAD",
+          fileName: "There are currently no internal recruitment notices.",
         };
 
   return (

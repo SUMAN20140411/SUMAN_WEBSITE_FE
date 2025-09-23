@@ -131,43 +131,32 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
+          {/* 수정된 부분: Hero 텍스트 영역 */}
+          <div className="absolute inset-0 flex flex-col justify-start items-start text-white z-10 px-6 sm:px-12 md:px-24 pt-20 md:pt-32 text-left">
             <div className="w-full max-w-3xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
-                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-4"
-                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif" }}
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
+                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1 }}
-                  viewport={{ once: true }}
                 >
                   {content.section1Text.subtitle}
                 </motion.h1>
               ) : null}
-              <motion.h2
-                className="text-3xl sm:text-4xl md:text-5xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.35] drop-shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif" }}
-                variants={heroContainerVariants}
-                viewport={{ once: true }}
+              
+              <motion.div
+                className="text-white leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: '1.5' }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
               >
-              {content.section1Text.lines.map((line, index) => (
-                  <motion.span
-                    key={`${line}-${index}`}
-                    className="relative block overflow-hidden py-1"
-                    custom={index}
-                    variants={heroLineVariants}
-                  >
-                    <span className="relative z-10 block">{line}</span>
-                    <motion.span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] -translate-y-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 mix-blend-screen skew-x-12"
-                      custom={index}
-                      variants={heroSheenVariants}
-                    />
-                  </motion.span>
-                ))}
-              </motion.h2>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-pre-line">
+                  {content.section1Text.lines.join('\n')}
+                </p>
+              </motion.div>
             </div>
           </div>
         </section>
