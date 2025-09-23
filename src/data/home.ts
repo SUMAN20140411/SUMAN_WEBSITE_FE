@@ -84,9 +84,9 @@ export const homeContentEng = {
     section1Text: {
       subtitle: "Confidential",
       lines: [
-        "Dreams are only granted to those who dream,",
-        "And those dreams can definitely become reality,",
-        "Dreams that are challenged and executed definitely become reality.",
+        "Dreams are only granted to those who dare to dream,",
+        "And with vision and action,",
+        "Those Dreams become reality.",
       ],
       //subtitle: 'Dreams are only granted to those who dream, and those dreams can definitely become reality. Dreams that are challenged and executed definitely become reality.',
     },
