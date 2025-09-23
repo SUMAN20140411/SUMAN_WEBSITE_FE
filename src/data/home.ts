@@ -12,7 +12,7 @@ export const homeContentKor = {
     
   section2: {
     title: '산업을 움직이는 기술',
-    description: '수만은 반도체, 전기전자, 이차전지 정밀가공 부품 및 신뢰성 평가 모듈을 설계하고\n제작하는 전문 기업으로 축적한 기술력과 인프라를 기반으로 고객 맞춤형 솔루션을 제공합니다.',
+    description: '수만은 반도체, 전기전자, 이차전지 정밀가공 부품 및 신뢰성 평가 모듈을 \n설계하고 제작하는 전문 기업으로 축적한 기술력과 인프라를 \n기반으로 고객 맞춤형 솔루션을 제공합니다.',
     bgImage: '/images/main/main_tech.png',
     buttonLabel: '기업 비전 바로가기 →',
     keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],

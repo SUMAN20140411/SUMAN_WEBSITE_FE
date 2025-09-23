@@ -60,7 +60,7 @@ export default function CeoPage() {
               style={{ fontFamily }}
             >
               <span className="inline-block rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">
-                {lang === "KOR" ? "CEO 메시지" : "Message from the CEO"}
+                {lang === "KOR" ? "CEO 인사말" : "Message from the CEO"}
               </span>
 
               <h2 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem]">
