@@ -844,14 +844,14 @@ export default function ServicePage() {
         </section>
 
         {/* PROCESS (interactive rail) */}
-        <section className="bg-white py-20 px-4 md:px-8">
+        {/*<section className="bg-white py-20 px-4 md:px-8">
           <div className="mx-auto w-full max-w-7xl">
             <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
               PROCESS
             </h2>
             <ProcessFlowChart />
           </div>
-        </section>
+        </section>*/}
 
         <hr className="my-6 w-full border-gray-200" />
       </main>
