@@ -8,7 +8,14 @@ import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
 import { ceoText } from "@/data/ceo";
 import { useLangStore } from "@/stores/langStore";
-
+const slideInRight = {
+  hidden: { opacity: 0, y: 80 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 2, ease: "easeOut" } as Transition,
+  },
+};
 const textReveal = {
   hidden: { opacity: 0, y: 60 },
   visible: {
@@ -108,37 +115,34 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            <motion.aside
-              className="lg:w-1/2 flex items-center justify-center lg:justify-end"
-              variants={imageReveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
+            {/*Ceo 인사말과 Ceo이미지 사이 회색 실선 */}
+          <div className="hidden md:block w-px min-h-[700px] bg-gray-200 self-stretch mr-8" />
+
+          {/* 이미지 플레이스홀더 */}
+          <motion.div
+            className="ceo-image-column md:w-[48%] flex items-center justify-center"
+            variants={slideInRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <div
+              className="placeholder-image w-full flex items-center justify-center text-blue-500 font-bold text-2xl"
+              style={{
+                height: "auto",
+                maxHeight: "550px",
+                overflow: "hidden",
+              }}
             >
-              <div className="
-                relative
-                overflow-hidden
-                rounded-2xl
-                border border-gray-100
-                shadow-xl
-                w-40 h-40
-                sm:w-56 sm:h-56
-                md:w-64 md:h-64
-                lg:w-72 lg:h-72
-                xl:w-80 xl:h-80
-                flex items-center justify-center
-                bg-gradient-to-br from-blue-50 via-white to-blue-100
-              ">
-                <Image
-                  src="/images/company/ceo/ceo.jpeg"
-                  alt={lang === "KOR" ? "(주)수만 대표이사 임태형 사진" : "Portrait of Taehyung Lim, CEO of SUMAN"}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width:1280px) 20rem, (min-width:1024px) 18rem, (min-width:768px) 16rem, (min-width:640px) 14rem, 10rem"
-                  priority
-                />
-              </div>
-            </motion.aside>
+              <Image
+                src="/images/company/ceo/ceo.jpeg"
+                alt="SUMAN CEO"
+                className="w-full h-full object-cover"
+                width={700}
+                height={500}
+              />
+            </div>
+          </motion.div>
           </div>
         </section>
 
