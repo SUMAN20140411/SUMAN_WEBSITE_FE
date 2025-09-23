@@ -32,7 +32,7 @@ export const ceoText = {
       "and extend our sincere thanks.",
     ],
     closing: null,
-    signatureTitle: "CEO, SUMAN Co., Ltd.",
-    signatureName: "Taehyung Lim",
+    signatureTitle: "SUMAN Co., Ltd CEO ",
+    signatureName: "Taehyong Lim",
   },
 };
