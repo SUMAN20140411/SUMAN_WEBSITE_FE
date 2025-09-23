@@ -1,7 +1,6 @@
 import Header from "@/components/HeaderEng";
 import Footer from "@/components/Footer";
-import { useState } from "react";
-import { motion, AnimatePresence, type Transition } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
@@ -18,6 +17,7 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 export default function HomePage({ content }: HomePageProps) {
+  const heroFontFamily = "'Malgun Gothic', '맑은 고딕', sans-serif";
   const labelClass =
     "text-base sm:text-lg lg:text-2xl font-semibold text-black";
   const buttonClass =
@@ -40,7 +40,7 @@ export default function HomePage({ content }: HomePageProps) {
       transition: { duration: 0.6, ease: "easeOut" } as Transition,
     },
   };
-    const heroContainerVariants = {
+  const heroContainerVariants = {
     hidden: {},
     visible: {
       transition: {
@@ -131,13 +131,13 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          {/* 수정된 부분: Hero 텍스트 영역 */}
-          <div className="absolute inset-0 flex flex-col justify-start items-start text-white z-10 px-6 sm:px-12 md:px-24 pt-20 md:pt-32 text-left">
-            <div className="w-full max-w-3xl">
+          {/* 수정된 Hero 텍스트 영역 */}
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
+            <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
                   className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
-                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
+                  style={{ fontFamily: heroFontFamily }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1 }}
@@ -147,15 +147,20 @@ export default function HomePage({ content }: HomePageProps) {
               ) : null}
               
               <motion.div
-                className="text-white leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: '1.5' }}
+                className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                style={{ fontFamily: heroFontFamily }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.3 }}
               >
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-pre-line">
-                  {content.section1Text.lines.join('\n')}
-                </p>
+                {content.section1Text.lines.map((line, index) => (
+                  <p 
+                    key={index} 
+                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
+                  >
+                    {line}
+                  </p>
+                ))}
               </motion.div>
             </div>
           </div>
@@ -187,7 +192,7 @@ export default function HomePage({ content }: HomePageProps) {
               Core Value
             </p>
             <div className="flex-grow" />
-            <Link href="/company/vision">
+            <Link href="/company/vision2">
               <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
                 {content.section2.buttonLabel}
               </button>
@@ -258,7 +263,7 @@ export default function HomePage({ content }: HomePageProps) {
           >
             <p className={labelClass}>Solutions</p>
             <div className="flex-grow" />
-            <Link href="eng/business/service">
+            <Link href="/business/service">
               <motion.button
                 className={buttonClass}
                 initial={{ opacity: 0, y: 40 }}
@@ -266,7 +271,7 @@ export default function HomePage({ content }: HomePageProps) {
                 transition={{ duration: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                Explore Our Products & Equipment →
+                제품 및 설비 바로가기 →
               </motion.button>
             </Link>
           </motion.div>
@@ -291,7 +296,7 @@ export default function HomePage({ content }: HomePageProps) {
               {content.section3.cards.map((card, index) => (
                 <motion.div
                   key={index}
-                  className="relative w-full h-[150px] md:h-[200px] lg:h-[550px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
+                  className="relative w-full h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
                   initial={{ x: -100, opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.2 }}
@@ -425,15 +430,14 @@ export default function HomePage({ content }: HomePageProps) {
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 sm:px-6 pointer-events-none">
             <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl font-semibold mb-2 sm:mb-4 lg:mb-7 tracking-wide">
               Contact us
-              </h2>
-              <Link href="/support/contact">
+            </h2>
+            <Link href="/support/contact">
               <button className="cursor-pointer pointer-events-auto border border-gray-300 text-sm sm:text-base lg:text-lg text-white px-4 sm:px-8 lg:px-12 py-1 sm:py-2 flex items-center gap-2 hover:bg-gray-300 hover:text-black transition tracking-wide">
                 Contact Us
                 <span className="text-sm sm:text-base lg:text-xl">→</span>
-    </button>
-  </Link>
-</div>
-
+              </button>
+            </Link>
+          </div>
         </section>
       </main>
       <Footer />

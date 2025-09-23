@@ -131,8 +131,9 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          <div className="absolute inset-0 flex flex-col justify-start items-start text-white z-10 px-6 sm:px-12 md:px-24 pt-20 md:pt-32 text-left">
-            <div className="w-full max-w-3xl">
+          {/* 수정된 Hero 텍스트 영역 */}
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
+            <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
                   className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
@@ -146,15 +147,20 @@ export default function HomePage({ content }: HomePageProps) {
               ) : null}
               
               <motion.div
-                className="text-white leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: '1.5' }}
+                className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.3 }}
               >
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-pre-line">
-                  {content.section1Text.lines.join('\n')}
-                </p>
+                {content.section1Text.lines.map((line, index) => (
+                  <p 
+                    key={index} 
+                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
+                  >
+                    {line}
+                  </p>
+                ))}
               </motion.div>
             </div>
           </div>
