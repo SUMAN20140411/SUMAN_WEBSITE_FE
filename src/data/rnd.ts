@@ -13,7 +13,7 @@ export const businessAreasData = {
   KOR: {
     semiconductor: {
       title: "반도체 제조 장비",
-      subtitle: "Semiconductor / Second Generation Battery",
+      subtitle: "Semiconductor / Secondary Battery",
       services: [
         "정밀 가공 부품 설계",
         "모듈 및 Assembly 설계/조립/제작",
@@ -28,7 +28,7 @@ export const businessAreasData = {
     },
     automation: {
       title: "공장 자동화",
-      subtitle: "Factory Automation",
+      subtitle: "Factory Automation System Integration",
       services: [
         "자동화 장비 설계 및 제작",
         "공장 자동화 통합 설계 및 제작",
@@ -40,7 +40,7 @@ export const businessAreasData = {
     },
     mobility: {
       title: "모빌리티",
-      subtitle: "Autonomous / Mobile Robot",
+      subtitle: "Mobility (Autonomous / Mobile Robot",
       services: [
         "주행 모듈 구조 설계/제작",
         "범용화 모듈 구조 설계/제작",

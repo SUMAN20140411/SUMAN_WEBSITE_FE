@@ -1,14 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useState } from "react";
-import { motion, AnimatePresence, type Transition } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import Image from "next/image";
 import Head from "next/head";
 import Link from "next/link";
 import { homeContentKor } from "@/data/home";
 import { GetStaticProps } from "next";
 import type { HomePageProps } from "@/types/home";
-
 
 export const getStaticProps: GetStaticProps = async () => {
   return {
@@ -19,6 +17,7 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 export default function HomePage({ content }: HomePageProps) {
+  const heroFontFamily = "'Malgun Gothic', '맑은 고딕', sans-serif";
   const labelClass =
     "text-base sm:text-lg lg:text-2xl font-semibold text-black";
   const buttonClass =
@@ -41,50 +40,6 @@ export default function HomePage({ content }: HomePageProps) {
       transition: { duration: 0.6, ease: "easeOut" } as Transition,
     },
   };
-   const heroContainerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.18,
-      },
-    },
-  };
-
-  const heroLineVariants = {
-    hidden: (index: number) => ({
-      opacity: 0,
-      y: 52,
-      x: index % 2 === 0 ? -32 : 32,
-      scale: 0.94,
-      filter: "blur(8px)",
-    }),
-    visible: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      x: 0,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        duration: 0.9,
-        ease: [0.22, 1, 0.36, 1],
-        delay: index * 0.08,
-      } as Transition,
-    }),
-  };
-
-  const heroSheenVariants = {
-    hidden: { x: "-120%", opacity: 0 },
-    visible: (index: number) => ({
-      x: "120%",
-      opacity: [0, 0.65, 0],
-      transition: {
-        duration: 1.2,
-        ease: "easeInOut",
-        delay: index * 0.08 + 0.28,
-      } as Transition,
-    }),
-  };
-
 
   return (
     <>
@@ -119,6 +74,7 @@ export default function HomePage({ content }: HomePageProps) {
       <Header />
 
       <main>
+        {/* ================= HERO ================= */}
         <section className="relative h-screen">
           <video
             autoPlay
@@ -131,32 +87,31 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          {/* 수정된 Hero 텍스트 영역 */}
-          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
-            <div className="w-full max-w-4xl">
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
+            <div className="w-full max-w-[560px]">
               {content.section1Text.subtitle ? (
                 <motion.h1
-                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
-                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
-                  initial={{ opacity: 0, y: 20 }}
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.35em] uppercase text-white/80 mb-3"
+                  style={{ fontFamily: heroFontFamily }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1 }}
+                  transition={{ duration: 0.8 }}
                 >
                   {content.section1Text.subtitle}
                 </motion.h1>
               ) : null}
-              
+
               <motion.div
-                className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
-                initial={{ opacity: 0, y: 30 }}
+                className="text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)]"
+                style={{ fontFamily: heroFontFamily }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
+                transition={{ duration: 0.9, delay: 0.15 }}
               >
                 {content.section1Text.lines.map((line, index) => (
-                  <p 
-                    key={index} 
-                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
+                  <p
+                    key={index}
+                    className="text-sm sm:text-base md:text-lg lg:text-[20px] font-normal leading-7 mb-1.5 whitespace-nowrap"
                   >
                     {line}
                   </p>
@@ -166,58 +121,59 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </section>
 
-<section
-  className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
-  style={{ aspectRatio: "1440/400" }}
->
-  <Image
-    src={content.section2.bgImage}
-    alt="배경"
-    fill
-    className="absolute inset-0 w-full h-full object-cover z-0"
-  />
+        {/* ============== CORE VALUE ============== */}
+        <section
+          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
+          style={{ aspectRatio: "1440/400" }}
+        >
+          <Image
+            src={content.section2.bgImage}
+            alt="배경"
+            fill
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          />
 
-  <motion.div
-    className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 1 }}
-    viewport={{ once: true, amount: 0.3 }}
-  >
-    <p
-      className={
-        "text-base sm:text-lg lg:text-2xl font-semibold text-white"
-      }
-    >
-      Core Value
-    </p>
-    <div className="flex-grow" />
-    <Link href="/company/vision2">
-      <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
-        {content.section2.buttonLabel}
-      </button>
-    </Link>
-  </motion.div>
+          <motion.div
+            className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            <p className="text-base sm:text-lg lg:text-2xl font-semibold text-white">
+              Core Value
+            </p>
+            <div className="flex-grow" />
+            <Link href="/company/vision2">
+              <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
+                {content.section2.buttonLabel}
+              </button>
+            </Link>
+          </motion.div>
 
-  <div className="relative z-20 w-full px-6 md:px-[60px] lg:px-[120px] flex flex-col md:flex-row items-start md:items-center justify-between gap-12 h-auto md:h-[550px]">
-    <motion.div
-      className="w-full md:w-[55%] max-w-full md:max-w-3xl"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.2 }}
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 md:mb-7 tracking-wide text-white">
-        {content.section2.title}
-      </h2>
-      <p className="text-sm md:text-base lg:text-lg text-white/80 leading-relaxed whitespace-pre-line tracking-wide font-light"
-         style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: '1.7' }}>
-        {content.section2.description}
-      </p>
-    </motion.div>
-
+          <div className="relative z-20 w-full px-6 md:px-[60px] lg:px-[120px] flex flex-col md:flex-row items-start md:items-center justify-between gap-12 h-auto md:h-[550px]">
+            {/* Left copy */}
             <motion.div
-              className="w-full md:w-[50%] flex flex-wrap gap-6 justify-start md:justify-end"
+              className="w-full md:w-[55%] max-w-full md:max-w-3xl"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 md:mb-7 tracking-wide text-white">
+                {content.section2.title}
+              </h2>
+              <p
+                className="text-sm md:text-base lg:text-lg text-white/80 leading-relaxed whitespace-pre-line tracking-wide font-light"
+                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: "1.7" }}
+              >
+                {content.section2.description}
+              </p>
+            </motion.div>
+
+            {/* Right grid 2x2 */}
+            <motion.div
+              className="w-full md:w-[50%] grid grid-cols-2 grid-rows-2 gap-6 justify-items-center"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}

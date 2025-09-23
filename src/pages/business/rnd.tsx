@@ -1,5 +1,3 @@
-
-
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
@@ -7,7 +5,7 @@ import { motion, type Transition } from "framer-motion";
 import { useLangStore } from "@/stores/langStore";
 import { heroText, businessAreasData } from "@/data/rnd";
 import Image from "next/image";
-import { CheckCircle, Cog, Cpu, Car, type LucideIcon } from "lucide-react";
+import { CheckCircle, Cog, Cpu, Car } from "lucide-react";
 import { useEffect } from "react";
 import Head from "next/head";
 
@@ -41,87 +39,10 @@ export default function App() {
 
   const cardHover = {
     rest: { scale: 1, y: 0 },
-    hover: {
-      scale: 1.02,
-      y: -8,
-      transition: { duration: 0.35, ease: "easeOut" } as Transition,
-    },
+    hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition }
   };
   const CM_TO_PX = 37.8;                       // UPDATED
   const HERO_TRIM_PX = Math.round(CM_TO_PX);
-
-  type CardKey = "semiconductor" | "automation" | "mobility";
-
-  type CardAccent = {
-    iconWrapper: string;
-    badge: string;
-    bulletWrapper: string;
-    bulletIcon: string;
-    highlightContainer: string;
-    highlightDot: string;
-  };
-
-  type CardConfig = {
-    key: CardKey;
-    image: string;
-    Icon: LucideIcon;
-    accent: CardAccent;
-    highlightTitle?: string;
-    highlightItems?: string[];
-  };
-
-  const cards: CardConfig[] = [
-    {
-      key: "semiconductor",
-      image: "/images/business/rnd/semiconductor.png",
-      Icon: Cpu,
-      accent: {
-        iconWrapper: "bg-blue-600 text-white shadow-lg shadow-blue-200/60",
-        badge: "bg-blue-50 text-blue-700 border border-blue-100",
-        bulletWrapper: "border border-blue-100 bg-blue-50",
-        bulletIcon: "text-blue-600",
-        highlightContainer: "border border-blue-100 bg-blue-50/70",
-        highlightDot: "bg-blue-500",
-      },
-      highlightTitle:
-        lang === "KOR"
-          ? "이차전지 제조 및 신뢰성 장비"
-          : "Secondary Battery & Reliability Equipment",
-      highlightItems: businessData.semiconductor.additionalServices,
-    },
-    {
-      key: "automation",
-      image:
-        "https://images.unsplash.com/photo-1716191299980-a6e8827ba10b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYWN0b3J5JTIwYXV0b21hdGlvbiUyMGluZHVzdHJpYWwlMjByb2JvdHN8ZW58MXx8fHwxNzU2MzcyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      Icon: Cog,
-      accent: {
-        iconWrapper: "bg-emerald-600 text-white shadow-lg shadow-emerald-200/60",
-        badge: "bg-emerald-50 text-emerald-700 border border-emerald-100",
-        bulletWrapper: "border border-emerald-100 bg-emerald-50",
-        bulletIcon: "text-emerald-600",
-        highlightContainer: "border border-emerald-100 bg-emerald-50/70",
-        highlightDot: "bg-emerald-500",
-      },
-      highlightTitle:
-        lang === "KOR"
-          ? "시스템 통합(System Integration)"
-          : "System Integration",
-      highlightItems: businessData.automation.systemIntegration,
-    },
-    {
-      key: "mobility",
-      image: "/images/business/rnd/mobilerobot.png",
-      Icon: Car,
-      accent: {
-        iconWrapper: "bg-violet-600 text-white shadow-lg shadow-violet-200/60",
-        badge: "bg-violet-50 text-violet-700 border border-violet-100",
-        bulletWrapper: "border border-violet-100 bg-violet-50",
-        bulletIcon: "text-violet-600",
-        highlightContainer: "border border-violet-100 bg-violet-50/70",
-        highlightDot: "bg-violet-500",
-      },
-    },
-  ];
 
   return (
     <Layout>
@@ -149,7 +70,7 @@ export default function App() {
 
         {/* Main Business Areas Section */}
         <motion.section
-          className="px-4 py-16 md:px-8 md:py-28 bg-slate-50"
+          className="py-16 md:py-24 px-4 md:px-8 bg-white"
           variants={fadeIn}
           initial="hidden"
           whileInView="visible"
@@ -173,97 +94,139 @@ export default function App() {
 
             {/* Business Areas Grid */}
             <motion.div
-              className="grid grid-cols-1 gap-8 lg:grid-cols-3"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {cards.map((card) => {
-                const content = businessData[card.key];
-                const Icon = card.Icon;
-
-                return (
-                  <motion.article
-                    key={card.key}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_45px_rgba(15,23,42,0.08)] transition-shadow duration-300 hover:shadow-[0_28px_60px_rgba(15,23,42,0.14)]"
-                    variants={itemVariants}
-                  >
-                    <motion.div
-                      className="flex h-full flex-col"
-                      variants={cardHover}
-                      initial="rest"
-                      whileHover="hover"
-                    >
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={card.image}
-                          alt={content.title}
-                          fill
-                          sizes="(min-width: 1024px) 400px, 100vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/65 via-slate-900/10 to-transparent" />
-                      </div>
-                      <div className="flex h-full flex-col gap-6 p-8 lg:p-10">
-                        <div className="flex items-start justify-between gap-4">
-                          <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] ${card.accent.badge}`}
-                          >
-                            {content.subtitle}
-                          </span>
-                          <span
-                            className={`inline-flex h-12 w-12 items-center justify-center rounded-full ${card.accent.iconWrapper}`}
-                          >
-                            <Icon className="h-5 w-5" />
-                          </span>
+              {/* Semiconductor */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+                variants={itemVariants}
+                whileHover="hover"
+                initial="rest"
+              >
+                <motion.div variants={cardHover}>
+                  <div className="relative h-64">
+                    <Image
+                      src="/images/business/rnd/semiconductor.png"
+                      alt="Semiconductor Equipment"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <Cpu className="w-8 h-8 mb-2" />
+                      <h3 className="text-lg font-semibold">{businessData.semiconductor.subtitle}</h3>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">{businessData.semiconductor.title}</h4>
+                    <div className="space-y-3">
+                      {businessData.semiconductor.services.map((service, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
                         </div>
-                        <h4 className="text-2xl font-bold leading-snug text-slate-900">
-                          {content.title}
-                        </h4>
-                        <ul className="space-y-3">
-                          {content.services.map((service, index) => (
-                            <li key={index} className="flex items-start gap-3">
-                              <span
-                                className={`mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full ${card.accent.bulletWrapper}`}
-                              >
-                                <CheckCircle
-                                  className={`h-4 w-4 ${card.accent.bulletIcon}`}
-                                />
-                              </span>
-                              <span className="text-sm leading-relaxed text-slate-700">
-                                {service}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                        {card.highlightTitle && card.highlightItems?.length ? (
-                          <div
-                            className={`rounded-xl p-5 ${card.accent.highlightContainer}`}
-                          >
-                            <h5 className="text-sm font-semibold text-slate-900">
-                              {card.highlightTitle}
-                            </h5>
-                            <ul className="mt-3 space-y-2">
-                              {card.highlightItems.map((item, index) => (
-                                <li
-                                  key={index}
-                                  className="flex items-start gap-2 text-xs leading-relaxed text-slate-600"
-                                >
-                                  <span
-                                    className={`relative top-2 block h-1.5 w-1.5 rounded-full ${card.accent.highlightDot}`}
-                                  />
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ) : null}
+                      ))}
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        {lang === 'KOR' ? '이차전지 제조 및 신뢰성 장비' : 'Secondary Battery & Reliability Equipment'}
+                      </h4>
+                      <div className="space-y-3">
+                      {businessData.semiconductor.additionalServices.map((service, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
+                        </div>
+                      ))}
                       </div>
-                    </motion.div>
-                  </motion.article>
-                );
-              })}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Factory Automation */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+                variants={itemVariants}
+                whileHover="hover"
+                initial="rest"
+              >
+                <motion.div variants={cardHover}>
+                  <div className="relative h-64">
+                    <Image
+                      src="https://images.unsplash.com/photo-1716191299980-a6e8827ba10b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYWN0b3J5JTIwYXV0b21hdGlvbiUyMGluZHVzdHJpYWwlMjByb2JvdHN8ZW58MXx8fHwxNzU2MzcyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                      alt="Factory Automation"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <Cog className="w-8 h-8 mb-2" />
+                      <h3 className="text-lg font-semibold">{businessData.automation.subtitle}</h3>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">{businessData.automation.title}</h4>
+                    <div className="space-y-3 mb-6">
+                      {businessData.automation.services.map((service, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        {lang === 'KOR' ? '시스템 통합(System Integration)' : 'System Integration'}
+                      </h4>
+                      <div className="space-y-3">
+                      {businessData.automation.systemIntegration.map((service, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
+                        </div>
+                      ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Mobility */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+                variants={itemVariants}
+                whileHover="hover"
+                initial="rest"
+              >
+                <motion.div variants={cardHover}>
+                  <div className="relative h-64">
+                    <Image
+                      src="/images/business/rnd/mobilerobot.png"
+                      alt="Mobility Robot"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <Car className="w-8 h-8 mb-2" />
+                      <h3 className="text-lg font-semibold">{businessData.mobility.subtitle}</h3>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">{businessData.mobility.title}</h4>
+                    <div className="space-y-3">
+                      {businessData.mobility.services.map((service, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           </div>
         </motion.section>
