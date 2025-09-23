@@ -1,383 +1,959 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, cubicBezier, type Variants } from 'framer-motion';
+"use client";
 
-// Types
-interface Node {
-  id: string;
-  label: string;
-  type: 'step' | 'decision';
-  col: number; // Column position (1-10 for horizontal flow)
-  row: number; // Row position (1 for top lane, 3 for main lane)
-  stepNumber?: number; // For main flow step numbering
-}
-interface ProcessFlowProps {
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLangStore } from "@/stores/langStore";
+
+/* =========================
+   Process section components
+   ========================= */
+
+interface ProcessCardProps {
+  children: React.ReactNode;
+  type?: "step" | "decision";
+  state?: "default" | "active" | "warning";
   className?: string;
+  onClick?: () => void;
+  processingTime?: number;
 }
 
-interface Edge {
-  from: string;
-  to: string;
-  kind?: 'main' | 'branch' | 'return';
-  ng?: boolean;
-}
+function ProcessCard({
+  children,
+  type = "step",
+  state = "default",
+  className = "",
+  onClick,
+  processingTime,
+}: ProcessCardProps) {
+  const [isHover, setIsHover] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-interface NodePosition {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+  const baseStyles =
+    type === "decision"
+      ? "w-[350px] h-[140px] cursor-pointer transition-all duration-300 relative overflow-hidden backdrop-blur-sm"
+      : "w-[350px] h-[140px] rounded-2xl flex items-center justify-center text-center p-5 cursor-pointer transition-all duration-300 relative overflow-hidden backdrop-blur-sm";
 
-const nodes: Node[] = [
-  { id: 'customer', label: 'Customer', type: 'step', col: 1, row: 1 },
-  { id: 'partner', label: '협력사', type: 'step', col: 6, row: 1 },
-  { id: 'reorder', label: 'Re-Order 개선/반영', type: 'step', col: 9, row: 1 },
-  { id: 'feedback', label: '고객 Feedback', type: 'decision', col: 10, row: 1 },
-  { id: 'concept', label: 'Concept 설계', type: 'step', col: 1, row: 3 },
-  { id: 'dr', label: 'D/R', type: 'decision', col: 2, row: 3 },
-  { id: 'dev_design', label: '개발/가공 설계', type: 'step', col: 3, row: 3 },
-  { id: 'review', label: '검토승인', type: 'decision', col: 4, row: 3 },
-  { id: 'order', label: '발주(소재/부품)', type: 'step', col: 5, row: 3 },
-  { id: 'inspection', label: '수입검사', type: 'decision', col: 6, row: 3 },
-  { id: 'manufacturing', label: '가공/제작', type: 'step', col: 7, row: 3 },
-  { id: 'final_check', label: '출하 및 조립/측정검사', type: 'decision', col: 8, row: 3 },
-  { id: 'packaging', label: '포장', type: 'step', col: 9, row: 3 },
-  { id: 'delivery', label: '고객사 납품', type: 'step', col: 10, row: 3 },
-];
-const edges: Edge[] = [
-  // top lane / context
-  { from: 'customer', to: 'concept', kind: 'main' },
-  { from: 'feedback', to: 'reorder', kind: 'main' },
-  { from: 'reorder', to: 'concept', kind: 'return' },
+  const typeStyles = {
+    step: `bg-gradient-to-br from-[#0B2A63]/90 via-[#1e40af]/80 to-[#0A1F4A]/90 
+           border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.3)]
+           before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-100%] before:transition-transform before:duration-700
+           hover:before:translate-x-[100%] text-white`,
+    decision: `bg-gradient-to-br from-slate-100/80 via-slate-200/70 to-slate-300/80 
+               border border-slate-400/40 backdrop-blur-md shadow-[0_0_15px_rgba(148,163,184,0.2)]
+               text-[#2B2F37]`,
+  };
 
-  // main flow (horizontal)
-  { from: 'concept', to: 'dr', kind: 'main' },
-  { from: 'dr', to: 'dev_design', kind: 'main' },
-  { from: 'dev_design', to: 'review', kind: 'main' },
-  { from: 'review', to: 'order', kind: 'main' },
-  { from: 'order', to: 'inspection', kind: 'main' },
-  { from: 'inspection', to: 'manufacturing', kind: 'main' },
-  { from: 'manufacturing', to: 'final_check', kind: 'main' },
-  { from: 'final_check', to: 'packaging', kind: 'main' },
-  { from: 'packaging', to: 'delivery', kind: 'main' },
+  const stateStyles = {
+    default: "",
+    active:
+      "ring-2 ring-cyan-400 ring-offset-2 shadow-[0_0_30px_rgba(34,211,238,0.4)]",
+    warning:
+      "ring-2 ring-red-400 ring-offset-2 shadow-[0_0_30px_rgba(248,113,113,0.4)]",
+  };
 
-  // NG / branch examples (keep visuals the same)
-  { from: 'inspection', to: 'partner', kind: 'branch', ng: true },
-  { from: 'manufacturing', to: 'manufacturing', kind: 'return', ng: true },
-  { from: 'concept', to: 'concept', kind: 'return', ng: true },
-];
+  const hoverStyles = isHover
+    ? "scale-[1.02] shadow-[0_20px_40px_rgba(59,130,246,0.4)] translate-y-[-2px]"
+    : "";
 
-// --- Card Components (no step number badge) ---
-const ProcessCard: React.FC<{ node: Node; className?: string }> = ({ node, className = '' }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  return (
-    <motion.div
-      role="group"
-      aria-label={`Process step: ${node.label}`}
-      className={`
-        relative bg-gradient-to-br from-[#E8F1F4] to-[#FFFFFF] text-[#1F2937]
-        rounded-2xl px-6 py-4 shadow-md border border-[#D1D5DB]
-        hover:scale-105 hover:brightness-105 hover:shadow-lg transition-all duration-300 cursor-pointer
-        min-w-[140px] min-h-[60px]
-        focus:outline-none focus:ring-2 focus:ring-blue-300
-        ${className}
-      `}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.05, filter: 'brightness(1.08)' }}
-      whileFocus={{ scale: 1.05, filter: 'brightness(1.08)' }}
-      onClick={() => setShowTooltip(!showTooltip)}
-      tabIndex={0}
-    >
-      <div className="text-center font-bold text-sm leading-tight">{node.label}</div>
-      {showTooltip && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 
-                     bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20
-                     max-w-[200px] text-center"
-        >
-          Process step: {node.label}
-          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
-        </motion.div>
-      )}
-    </motion.div>
-  );
-};
-const NGLabel: React.FC<{ x: number; y: number }> = ({ x, y }) => (
-  <g transform={`translate(${x}, ${y})`}>
-    <rect x={-12} y={-10} width={24} height={16} rx={3} fill="#EF4444" />
-    <text
-      x={0}
-      y={0}
-      fill="#FFFFFF"
-      fontSize="11"
-      fontWeight="bold"
-      textAnchor="middle"
-      dominantBaseline="middle"
-    >
-      NG
-    </text>
-  </g>
-);
-
-const DecisionDiamond: React.FC<{ node: Node; className?: string }> = ({ node, className = '' }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  return (
-    <motion.div
-      role="group"
-      aria-label={`Decision point: ${node.label}`}
-      className={`relative cursor-pointer ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{
-        filter: 'brightness(1.1) drop-shadow(0 0 6px #6F78B5)',
-        scale: 1.05,
-      }}
-      whileFocus={{
-        filter: 'brightness(1.1) drop-shadow(0 0 6px #6F78B5)',
-        scale: 1.05,
-      }}
-      tabIndex={0}
-      onClick={() => setShowTooltip(!showTooltip)}
-    >
-      <div className="w-28 h-28 bg-gradient-to-br from-[#6F78B5] to-[#8B90C9] transform rotate-45 shadow-lg hover:shadow-xl transition-all duration-300">
-        <div className="absolute inset-0 flex items-center justify-center transform -rotate-45">
-          <div className="text-white text-center font-bold text-sm leading-tight px-2">{node.label}</div>
-        </div>
-      </div>
-      {showTooltip && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 
-                     bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20
-                     max-w-[200px] text-center"
-        >
-          Decision point: {node.label}
-          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
-        </motion.div>
-      )}
-    </motion.div>
-  );
-};
-
-// --- Main ProcessFlow Component ---
-const ProcessFlow: React.FC<ProcessFlowProps> = ({ className = '' }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const nodeRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const [nodePositions, setNodePositions] = useState<{ [key: string]: NodePosition }>({});
-  const [isMobile, setIsMobile] = useState(false);
-  const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
-
-  // Responsive check
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    if (state === "active") {
+      setIsProcessing(true);
+      const timer = setTimeout(
+        () => setIsProcessing(false),
+        processingTime || 2000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [state, processingTime]);
+
+  const uniqueId = React.useId();
+
+  if (type === "decision") {
+    return (
+      <div
+        className={`relative ${stateStyles[state]} ${hoverStyles} ${className}`}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        onClick={onClick}
+      >
+        <svg width="350" height="140" className="absolute inset-0">
+          <defs>
+            <linearGradient
+              id={`diamond-grad-${uniqueId}`}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="rgba(248, 250, 252, 0.8)" />
+              <stop offset="50%" stopColor="rgba(226, 232, 240, 0.7)" />
+              <stop offset="100%" stopColor="rgba(203, 213, 225, 0.8)" />
+            </linearGradient>
+          </defs>
+          <path
+            d={`M 175 10 L 330 70 L 175 130 L 20 70 Z`}
+            fill={`url(#diamond-grad-${uniqueId})`}
+            stroke="rgba(148, 163, 184, 0.4)"
+            strokeWidth="2"
+            className="drop-shadow-[0_0_15px_rgba(148,163,184,0.2)]"
+          />
+        </svg>
+
+        {isProcessing && (
+          <svg width="350" height="140" className="absolute inset-0">
+            <path
+              d={`M 175 10 L 330 70 L 175 130 L 20 70 Z`}
+              fill="none"
+              stroke="#22d3ee"
+              strokeWidth="2"
+              className="animate-pulse"
+            />
+          </svg>
+        )}
+
+        <div className="absolute inset-0 flex items-center justify-center text-center p-5">
+          <div className="relative z-10 text-xs font-medium leading-tight text-[#2B2F37]">
+            {children}
+          </div>
+        </div>
+
+        <div className="absolute top-2 right-2 h-2 w-2 animate-ping rounded-full bg-emerald-400 opacity-60" />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`${baseStyles} ${typeStyles[type]} ${stateStyles[state]} ${hoverStyles} ${className}`}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      onClick={onClick}
+    >
+      <div className="absolute inset-0 opacity-20">
+        <div className="h-full w-full animate-pulse bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent" />
+      </div>
+
+      {isProcessing && (
+        <div className="absolute inset-0 rounded-2xl border-2 border-cyan-400">
+          <div className="absolute inset-0 animate-spin bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
+        </div>
+      )}
+
+      <div className="relative z-10 text-xs font-medium leading-tight">
+        {children}
+      </div>
+
+      {state === "active" && (
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 transform flex items-center gap-2">
+          <div className="flex gap-1">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-400" />
+            <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 [animation-delay:100ms]" />
+            <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-400 [animation-delay:200ms]" />
+          </div>
+          <span className="text-xs font-medium text-cyan-400">Processing</span>
+        </div>
+      )}
+
+      <div className="absolute top-2 right-2 h-2 w-2 animate-ping rounded-full bg-emerald-400 opacity-60" />
+    </div>
+  );
+}
+
+function NGPill({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`relative rounded-full border border-red-400/50 bg-gradient-to-r from-red-500 to-red-600 px-3 py-1 text-xs font-bold text-white shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse ${className}`}
+    >
+      <span className="relative z-10 text-xs">NG</span>
+      <div className="absolute inset-0 rounded-full bg-red-400 opacity-30 animate-ping" />
+    </div>
+  );
+}
+
+interface ConnectorProps {
+  direction?: "horizontal" | "vertical";
+  className?: string;
+  showNG?: boolean;
+  length?: number;
+  animated?: boolean;
+}
+
+function Connector({
+  direction = "horizontal",
+  className = "",
+  showNG = false,
+  length = 60,
+  animated = true,
+}: ConnectorProps) {
+  return (
+    <div className={`relative ${className}`}>
+      {direction === "horizontal" && (
+        <>
+          <div className="relative flex items-center">
+            <div
+              className="h-[3px] rounded-full bg-gradient-to-r from-[#12386E] via-cyan-400 to-[#12386E] shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+              style={{ width: `${length}px` }}
+            />
+            <div className="h-0 w-0 border-l-[8px] border-l-cyan-400 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+
+            {animated && (
+              <div className="absolute inset-0 overflow-hidden">
+                <div
+                  className="h-1 rounded-full bg-gradient-to-r from-transparent via-cyan-300 to-transparent"
+                  style={{
+                    width: "20px",
+                    animation: `flowRight 2s linear infinite`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          {showNG && (
+            <NGPill className="absolute left-1/2 top-1/2 -mt-3 -translate-x-1/2 -translate-y-full transform" />
+          )}
+        </>
+      )}
+
+      {direction === "vertical" && (
+        <>
+          <div className="relative flex flex-col items-center">
+            <div
+              className="w-[3px] rounded-full bg-gradient-to-b from-[#12386E] via-cyan-400 to-[#12386E] shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+              style={{ height: `${length}px` }}
+            />
+            <div className="h-0 w-0 border-t-[8px] border-t-cyan-400 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+
+            {animated && (
+              <div className="absolute inset-0 overflow-hidden">
+                <div
+                  className="w-1 rounded-full bg-gradient-to-b from-transparent via-cyan-300 to-transparent"
+                  style={{
+                    height: "20px",
+                    animation: `flowDown 2s linear infinite`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          {showNG && (
+            <NGPill className="absolute left-full top-1/2 ml-3 -translate-y-1/2 transform" />
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function DataFlowVisualizer({ className = "" }: { className?: string }) {
+  return (
+    <div className={`pointer-events-none absolute inset-0 ${className}`}>
+      {/* grid */}
+      <div className="absolute inset-0 opacity-10">
+        <svg width="100%" height="100%" className="text-cyan-400">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </div>
+
+      {/* floating dots */}
+      <div className="absolute inset-0">
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute h-1 w-1 rounded-full bg-cyan-400 opacity-60"
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${30 + (i % 3) * 20}%`,
+              animation: `float 3s ease-in-out infinite`,
+              animationDelay: `${i * 0.5}s`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProcessFlowChart() {
+  // === Read language from global store (same pattern as other pages)
+  const { lang } = useLangStore(); // "KOR" | "ENG"
+
+  // ===== Stage (auto-scale) =====
+  const DESIGN_W = 2100;
+  const DESIGN_H = 1200;
+  const GRID = 20;
+  const ARCH_HEIGHT = 72;
+  const LONG_ARCH_HEIGHT = 140;
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = React.useState(1);
+
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      const w = el.clientWidth;
+      setScale(w / DESIGN_W);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  // Calculate node positions for arrow paths
-  useLayoutEffect(() => {
-    if (!containerRef.current) return;
-    const positions: { [key: string]: NodePosition } = {};
-    const containerRect = containerRef.current.getBoundingClientRect();
-    let maxX = 0,
-      maxY = 0;
-    Object.entries(nodeRefs.current).forEach(([nodeId, ref]) => {
-      if (ref) {
-        const rect = ref.getBoundingClientRect();
-        const x = rect.left - containerRect.left + rect.width / 2;
-        const y = rect.top - containerRect.top + rect.height / 2;
-        positions[nodeId] = { x, y, width: rect.width, height: rect.height };
-        maxX = Math.max(maxX, x + rect.width / 2);
-        maxY = Math.max(maxY, y + rect.height / 2);
-      }
-    });
-    setNodePositions(positions);
-    setSvgDimensions({
-      width: Math.max(maxX + 60, isMobile ? 900 : 1200),
-      height: Math.max(maxY + 60, isMobile ? 220 : 400),
-    });
-  }, [isMobile, nodes.length]);
+  type Anchor = "left" | "right" | "top" | "bottom";
+  interface FlowNode {
+    id: string;
+    label: React.ReactNode;
+    type?: "step" | "decision";
+    x: number;
+    y: number;
+    w?: number;
+    h?: number;
+  }
+  interface Waypoint {
+    x: number;
+    y: number;
+  }
+  interface FlowEdge {
+    from: string;
+    to: string;
+    fromAnchor?: Anchor;
+    toAnchor?: Anchor;
+    via?: Waypoint[];
+    dashed?: boolean;
+    animated?: boolean;
+    label?: "OK" | string;
+    archUp?: boolean;
+    showNGPill?: boolean;
+  }
 
-  // --- Arrow animation variants ---
-  const arrowVariants: Variants = {
-    initial: { pathLength: 0 },
-    animate: {
-      pathLength: 1,
-      transition: { duration: 1.1, ease: cubicBezier(0.42, 0, 0.58, 1) },
-    },
-  };
+  // ===== 5-5-3 layout =====
+  const CARD_W = 350;
+  const CARD_H = 140;
+  const VERTICAL_OFFSET = 240;
+  const TOP_Y = 20 + VERTICAL_OFFSET;
+  const MID_Y = 500 + VERTICAL_OFFSET;
+  const BOT_Y = 980 + VERTICAL_OFFSET;
+  const PARTNER_Y = 840 + VERTICAL_OFFSET;
+  const X0 = 90;
+  const GAP = 400;
 
-  const ngVariants: Variants = {
-    initial: { pathLength: 0 },
-    animate: {
-      pathLength: 1,
-      transition: {
-        duration: 1.2,
-        ease: [0.42, 0, 0.58, 1] as const,
-        repeat: 1,
-        repeatType: 'reverse' as const,
+  // ===== i18n labels =====
+  const getNodeContent = (nodeId: string) => {
+    const content = {
+      KOR: {
+        customer: "고객사",
+        concept: (
+          <>
+            Concept 설계
+            <br />
+            <span className="text-[10px] opacity-80">제품 기획</span>
+          </>
+        ),
+        dr: "D/R",
+        dev: (
+          <>
+            개발/가공 설계
+            <br />
+            <span className="text-[10px] opacity-80">상세 설계</span>
+          </>
+        ),
+        review: (
+          <>
+            검토승인
+            <br />
+            <span className="text-[10px] opacity-80">승인 프로세스</span>
+          </>
+        ),
+        order: (
+          <>
+            발주(소재/부품)
+            <br />
+            <span className="text-[10px] opacity-80">자재 주문</span>
+          </>
+        ),
+        incoming: (
+          <>
+            수입검사
+            <br />
+            <span className="text-[10px] opacity-80">품질 검사</span>
+          </>
+        ),
+        machining: (
+          <>
+            가공/제작
+            <br />
+            <span className="text-[10px] opacity-80">제조 공정</span>
+          </>
+        ),
+        assyqa: (
+          <>
+            조립/측정검사
+            <br />
+            <span className="text-[10px] opacity-80">최종 검사</span>
+          </>
+        ),
+        packing: (
+          <>
+            포장
+            <br />
+            <span className="text-[10px] opacity-80">완제품 포장</span>
+          </>
+        ),
+        delivery: (
+          <>
+            고객사 납품
+            <br />
+            <span className="text-[10px] opacity-80">제품 배송</span>
+          </>
+        ),
+        reorder: (
+          <>
+            Re-Order 개선/반영
+            <br />
+            <span className="text-[10px] opacity-80">지속개선</span>
+          </>
+        ),
+        partner: (
+          <>
+            협력사
+            <br />
+            <span className="text-[10px] opacity-80">공급업체</span>
+          </>
+        ),
       },
+      ENG: {
+        customer: "Customer",
+        concept: (
+          <>
+            Concept Design
+            <br />
+            <span className="text-[10px] opacity-80">Product Planning</span>
+          </>
+        ),
+        dr: "D/R",
+        dev: (
+          <>
+            Development Design
+            <br />
+            <span className="text-[10px] opacity-80">Detailed Design</span>
+          </>
+        ),
+        review: (
+          <>
+            Review Approval
+            <br />
+            <span className="text-[10px] opacity-80">Approval Process</span>
+          </>
+        ),
+        order: (
+          <>
+            Material Order
+            <br />
+            <span className="text-[10px] opacity-80">Parts Procurement</span>
+          </>
+        ),
+        incoming: (
+          <>
+            Incoming Inspection
+            <br />
+            <span className="text-[10px] opacity-80">Quality Check</span>
+          </>
+        ),
+        machining: (
+          <>
+            Processing
+            <br />
+            <span className="text-[10px] opacity-80">Manufacturing</span>
+          </>
+        ),
+        assyqa: (
+          <>
+            Assembly & QA
+            <br />
+            <span className="text-[10px] opacity-80">Final Inspection</span>
+          </>
+        ),
+        packing: (
+          <>
+            Packaging
+            <br />
+            <span className="text-[10px] opacity-80">Product Packing</span>
+          </>
+        ),
+        delivery: (
+          <>
+            Delivery
+            <br />
+            <span className="text-[10px] opacity-80">Product Shipping</span>
+          </>
+        ),
+        reorder: (
+          <>
+            Re-Order & Improvement
+            <br />
+            <span className="text-[10px] opacity-80">
+              Continuous Improvement
+            </span>
+          </>
+        ),
+        partner: (
+          <>
+            Supplier
+            <br />
+            <span className="text-[10px] opacity-80">Partner Company</span>
+          </>
+        ),
+      },
+    } as const;
+
+    return content[lang as "KOR" | "ENG"][
+      nodeId as keyof typeof content.KOR
+    ];
+  };
+
+  // ===== Nodes =====
+  const NODES: FlowNode[] = [
+    // Row 1
+    {
+      id: "customer",
+      label: getNodeContent("customer"),
+      x: X0 + GAP * 0,
+      y: TOP_Y,
+      w: CARD_W,
+      h: CARD_H,
+      type: "step",
     },
-  };
+    { id: "concept", label: getNodeContent("concept"), x: X0 + GAP * 1, y: TOP_Y, type: "step" },
+    { id: "dr", label: getNodeContent("dr"), x: X0 + GAP * 2, y: TOP_Y, type: "decision" },
+    { id: "dev", label: getNodeContent("dev"), x: X0 + GAP * 3, y: TOP_Y, type: "step" },
+    { id: "review", label: getNodeContent("review"), x: X0 + GAP * 4, y: TOP_Y, type: "decision" },
 
-  // --- Arrow path generation ---
-  const generatePath = (edge: Edge): string => {
-    const fromPos = nodePositions[edge.from];
-    const toPos = nodePositions[edge.to];
-    if (!fromPos || !toPos) return '';
-    const { x: x1, y: y1 } = fromPos;
-    const { x: x2, y: y2 } = toPos;
-    if (edge.kind === 'return') {
-      // NG curved return
-      const curveX = Math.min(x1, x2) - 80;
-      const midY = (y1 + y2) / 2 + (y1 < y2 ? -60 : 60);
-      return `M ${x1} ${y1} Q ${curveX} ${midY} ${x2} ${y2}`;
-    } else if (edge.kind === 'branch') {
-      // Horizontal branch
-      return `M ${x1} ${y1} L ${x2} ${y2}`;
-    } else {
-      // Main flow: straight horizontal
-      return `M ${x1} ${y1} L ${x2} ${y2}`;
+    // Row 2
+    { id: "order", label: getNodeContent("order"), x: X0 + GAP * 0, y: MID_Y, type: "step" },
+    { id: "incoming", label: getNodeContent("incoming"), x: X0 + GAP * 1, y: MID_Y, type: "decision" },
+    { id: "machining", label: getNodeContent("machining"), x: X0 + GAP * 2, y: MID_Y, type: "step" },
+    { id: "assyqa", label: getNodeContent("assyqa"), x: X0 + GAP * 3, y: MID_Y, type: "decision" },
+    { id: "packing", label: getNodeContent("packing"), x: X0 + GAP * 4, y: MID_Y, type: "step" },
+
+    // 협력사
+    {
+      id: "partner",
+      label: getNodeContent("partner"),
+      x: X0 + GAP * 1,
+      y: PARTNER_Y,
+      w: CARD_W,
+      h: CARD_H,
+      type: "step",
+    },
+
+    // Row 3
+    { id: "delivery", label: getNodeContent("delivery"), x: X0 + GAP * 0, y: BOT_Y, type: "step" },
+    { id: "reorder", label: getNodeContent("reorder"), x: X0 + GAP * 1, y: BOT_Y, type: "step" },
+  ];
+
+  // ===== Helpers =====
+  const nodeById = (id: string) => NODES.find((n) => n.id === id)!;
+  const anchor = (n: any, where: Anchor) => {
+    const w = n.w ?? CARD_W,
+      h = n.h ?? CARD_H;
+    const cx = n.x + w / 2,
+      cy = n.y + h / 2;
+    if (where === "left") return { x: n.x, y: cy };
+    if (where === "right") return { x: n.x + w, y: cy };
+    if (where === "top") return { x: cx, y: n.y };
+    return { x: cx, y: n.y + h }; // bottom
+  };
+  const snap = (v: number) => Math.round(v / GRID) * GRID;
+
+  const hvh = (
+    a: { x: number; y: number },
+    b: { x: number; y: number },
+    midX?: number,
+    midY?: number
+  ) => {
+    const mX = midX !== undefined ? snap(midX) : snap((a.x + b.x) / 2);
+    const mY = midY !== undefined ? snap(midY) : undefined;
+    if (mY !== undefined) {
+      return [
+        `M ${snap(a.x)} ${snap(a.y)}`,
+        `L ${snap(mX)} ${snap(a.y)}`,
+        `L ${snap(mX)} ${snap(mY)}`,
+        `L ${snap(b.x)} ${snap(mY)}`,
+        `L ${snap(b.x)} ${snap(b.y)}`,
+      ].join(" ");
     }
+    return [
+      `M ${snap(a.x)} ${snap(a.y)}`,
+      `L ${snap(mX)} ${snap(a.y)}`,
+      `L ${snap(mX)} ${snap(b.y)}`,
+      `L ${snap(b.x)} ${snap(b.y)}`,
+    ].join(" ");
   };
 
-  // --- NG label positioning ---
-  const getPathMidpoint = (edge: Edge): { x: number; y: number } => {
-    const fromPos = nodePositions[edge.from];
-    const toPos = nodePositions[edge.to];
-    if (!fromPos || !toPos) return { x: 0, y: 0 };
-    const { x: x1, y: y1 } = fromPos;
-    const { x: x2, y: y2 } = toPos;
-    if (edge.kind === 'return') {
-      const curveX = Math.min(x1, x2) - 80;
-      const midY = (y1 + y2) / 2 + (y1 < y2 ? -60 : 60);
-      return { x: curveX + 20, y: midY };
+  // ===== Edges (unchanged logic) =====
+  const EDGES = [
+    { from: "customer", to: "concept", fromAnchor: "right", toAnchor: "left" },
+    { from: "concept", to: "dr", fromAnchor: "right", toAnchor: "left" },
+    { from: "dr", to: "dev", fromAnchor: "right", toAnchor: "left", label: "OK" },
+    { from: "dev", to: "review", fromAnchor: "right", toAnchor: "left" },
+
+    // Review ↓ Packing
+    { from: "review", to: "packing", fromAnchor: "bottom", toAnchor: "top", label: "OK" },
+
+    // Row 2 ← ← ← ←
+    { from: "packing", to: "assyqa", fromAnchor: "left", toAnchor: "right" },
+    { from: "assyqa", to: "machining", fromAnchor: "left", toAnchor: "right", label: "OK" },
+    { from: "machining", to: "incoming", fromAnchor: "left", toAnchor: "right" },
+    { from: "incoming", to: "order", fromAnchor: "left", toAnchor: "right", label: "OK" },
+
+    // Order ↓ Delivery
+    { from: "order", to: "delivery", fromAnchor: "bottom", toAnchor: "top" },
+
+    // Row 3 →
+    { from: "delivery", to: "reorder", fromAnchor: "right", toAnchor: "left" },
+
+    // NGs
+    { from: "dr", to: "concept", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
+    { from: "review", to: "dev", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
+
+    // Incoming NG → Partner
+    { from: "incoming", to: "partner", fromAnchor: "bottom", toAnchor: "top", dashed: true, showNGPill: true, label: "NG" },
+
+    // Assy/QA NG → Machining
+    { from: "assyqa", to: "machining", fromAnchor: "bottom", toAnchor: "bottom", dashed: true, showNGPill: true, label: "NG", archUp: true },
+  ] as FlowEdge[];
+
+  const dashedEdges = EDGES.filter((e) => !!e.dashed);
+  const solidEdges = EDGES.filter((e) => !e.dashed);
+
+  const [activeCard, setActiveCard] = React.useState<string | null>(null);
+  const [live, setLive] = React.useState({ th: 87, ef: 94, qu: 99.2 });
+  React.useEffect(() => {
+    const t = setInterval(
+      () =>
+        setLive({
+          th: Math.floor(Math.random() * 10) + 85,
+          ef: Math.floor(Math.random() * 8) + 90,
+          qu: Math.floor(Math.random() * 80) / 100 + 98.5,
+        }),
+      3000
+    );
+    return () => clearInterval(t);
+  }, []);
+
+  const lineCommon = {
+    vectorEffect: "non-scaling-stroke" as const,
+    shapeRendering: "geometricPrecision" as const,
+  };
+
+  const getLabelPos = (
+    start: { x: number; y: number },
+    end: { x: number; y: number },
+    isLong: boolean,
+    archUp?: boolean
+  ) => {
+    const midX = snap((start.x + end.x) / 2);
+    if (archUp) {
+      const h = isLong ? LONG_ARCH_HEIGHT : ARCH_HEIGHT;
+      const y = snap(Math.min(start.y, end.y) - h - 8);
+      return { x: midX, y };
     }
-    return { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+    return { x: midX, y: snap((start.y + end.y) / 2) - 8 };
   };
 
-  // --- Layout ---
   return (
-    <div className={`w-full ${className}`}>
-      <div className={isMobile ? 'overflow-x-auto' : 'flex justify-center'}>
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a142b] to-[#0a1633]">
+      {/* Header */}
+      <div className="relative z-10 py-6 text-center">
+        <div className="absolute right-4 top-4">
+          {/* No props — store-driven */}
+          <LanguageSwitcher />
+        </div>
+
+        <h2 className="mb-2 text-3xl font-bold tracking-tight text-white">
+          {lang === "KOR"
+            ? "차세대 반도체 제조 프로세스"
+            : "Next-Generation Semiconductor Manufacturing Process"}
+        </h2>
+        <p className="text-base text-cyan-200/80">
+          {lang === "KOR"
+            ? "스마트 제조 통합 워크플로우"
+            : "Smart Manufacturing Integrated Workflow"}
+        </p>
+        <div className="mt-4 flex justify-center gap-4 text-sm">
+          <div className="rounded-md border border-cyan-500/30 bg-slate-800/50 px-3 py-1.5 leading-none">
+            <span className="text-cyan-300">
+              {lang === "KOR" ? "처리량" : "Throughput"}
+            </span>
+            <span className="ml-2 font-mono text-white">{live.th}%</span>
+          </div>
+          <div className="rounded-md border border-emerald-500/30 bg-slate-800/50 px-3 py-1.5 leading-none">
+            <span className="text-emerald-300">
+              {lang === "KOR" ? "효율성" : "Efficiency"}
+            </span>
+            <span className="ml-2 font-mono text-white">{live.ef}%</span>
+          </div>
+          <div className="rounded-md border border-purple-500/30 bg-slate-800/50 px-3 py-1.5 leading-none">
+            <span className="text-purple-300">
+              {lang === "KOR" ? "품질" : "Quality"}
+            </span>
+            <span className="ml-2 font-mono text-white">{live.qu}%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Stage */}
+      <div
+        ref={containerRef}
+        className="relative z-10 h-[800px] overflow-hidden px-8 flex items-center justify-center"
+      >
         <div
-          ref={containerRef}
-          className="relative"
+          className="relative origin-center"
           style={{
-            minWidth: isMobile ? `${svgDimensions.width}px` : 'auto',
-            minHeight: `${svgDimensions.height}px`,
-            marginLeft: isMobile ? 0 : 'auto',
-            marginRight: isMobile ? 0 : 'auto',
-            paddingLeft: isMobile ? 16 : 0,
-            paddingRight: isMobile ? 16 : 0,
+            width: DESIGN_W,
+            height: DESIGN_H,
+            transform: `scale(${scale})`,
           }}
         >
-          {/* Grid Layout */}
-          <div
-            className={`
-              grid gap-6 py-8
-              ${
-                isMobile
-                  ? 'grid-cols-14 grid-rows-2'
-                  : 'grid-cols-10 grid-rows-3 w-full place-items-center'
-              }
-            `}
-            style={{
-              minWidth: isMobile ? `${svgDimensions.width}px` : 'auto',
-              gridTemplateColumns: isMobile ? 'repeat(14, minmax(140px, 1fr))' : 'repeat(10, 1fr)',
-              gridTemplateRows: isMobile ? 'repeat(2, 120px)' : 'auto 50px auto',
-              marginLeft: isMobile ? 0 : 'auto',
-              marginRight: isMobile ? 0 : 'auto',
-            }}
-          >
-            {nodes.map((node) => {
-              const gridCol = isMobile ? node.col : node.col;
-              const gridRow = isMobile ? (node.row === 1 ? 1 : 2) : node.row;
-              return (
-                <div
-                  key={node.id}
-                  ref={(el) => {
-                    nodeRefs.current[node.id] = el;
-                  }}
-                  style={{
-                    gridColumn: gridCol,
-                    gridRow: gridRow,
-                  }}
-                  className={`
-                    flex justify-center items-center w-full
-                    ${isMobile ? 'mb-0' : ''}
-                  `}
-                >
-                  {node.type === 'step' ? <ProcessCard node={node} /> : <DecisionDiamond node={node} />}
-                </div>
-              );
-            })}
+          {/* Grid */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+            <svg width={DESIGN_W} height={DESIGN_H} className="text-white">
+              <defs>
+                <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path
+                    d="M 40 0 L 0 0 0 40"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#g)" />
+            </svg>
           </div>
 
-          {/* SVG Overlay for Connections */}
-          <svg
-            className="absolute inset-0 pointer-events-none"
-            style={{ zIndex: 1 }}
-            width={svgDimensions.width}
-            height={svgDimensions.height}
-          >
+          {/* EDGES */}
+          <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
-              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="#9CA3AF" />
+              <marker
+                id="arrowClean"
+                markerWidth="12"
+                markerHeight="10"
+                refX="12"
+                refY="5"
+                orient="auto"
+                markerUnits="strokeWidth"
+              >
+                <polygon points="0 0, 12 5, 0 10" className="fill-cyan-300" />
               </marker>
-              <marker id="arrowhead-ng" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="#EF4444" />
-              </marker>
+              <linearGradient id="edgeGradClean" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#22d3ee" />
+                <stop offset="100%" stopColor="#60a5fa" />
+              </linearGradient>
             </defs>
-            {edges.map((edge: Edge, index: number) => {
-              const path = generatePath(edge);
-              const midpoint = getPathMidpoint(edge);
-              const isNGPath = edge.ng;
+
+            {/* dashed layer */}
+            {dashedEdges.map((e, i) => {
+              const A = nodeById(e.from),
+                B = nodeById(e.to);
+              const start = anchor(A, e.fromAnchor ?? "right");
+              const end = anchor(B, e.toAnchor ?? "left");
+
+              let d: string;
+              if (e.archUp) {
+                const dx = end.x - start.x;
+                const cpPull = Math.max(120, Math.abs(dx) * 0.25);
+                const cp1 = { x: snap(start.x + cpPull), y: snap(start.y - ARCH_HEIGHT) };
+                const cp2 = { x: snap(end.x - cpPull), y: snap(end.y - ARCH_HEIGHT) };
+                if (e.from === "reorder" && e.to === "concept") {
+                  cp1.y = snap(start.y - LONG_ARCH_HEIGHT);
+                  cp2.y = snap(end.y - LONG_ARCH_HEIGHT);
+                }
+                d = `M ${snap(start.x)} ${snap(start.y)} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${snap(end.x)} ${snap(end.y)}`;
+              } else if (e.via && e.via.length) {
+                d = hvh(start, end, e.via[0]?.x, e.via[0]?.y);
+              } else {
+                d =
+                  start.y === end.y
+                    ? `M ${snap(start.x)} ${snap(start.y)} L ${snap(end.x)} ${snap(end.y)}`
+                    : hvh(start, end);
+              }
+
+              const isLong = e.from === "reorder" && e.to === "concept";
+              const lp = getLabelPos(start, end, isLong, e.archUp);
+
               return (
-                <g key={`${edge.from}-${edge.to}-${index}`}>
-                  <motion.path
-                    d={path}
-                    stroke={isNGPath ? '#EF4444' : '#9CA3AF'}
-                    strokeWidth={isNGPath ? 3 : 2.5}
-                    strokeDasharray={isNGPath ? '8,4' : undefined}
+                <g key={`d-${i}`}>
+                  <path
+                    d={d}
                     fill="none"
-                    markerEnd={isNGPath ? 'url(#arrowhead-ng)' : 'url(#arrowhead)'}
-                    aria-label={`Connection from ${edge.from} to ${edge.to}${isNGPath ? ' (NG path)' : ''}`}
-                    className="drop-shadow-sm"
-                    variants={isNGPath ? ngVariants : arrowVariants}
-                    initial="initial"
-                    animate="animate"
+                    stroke="url(#edgeGradClean)"
+                    strokeWidth={3}
+                    markerEnd="url(#arrowClean)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="[stroke-dasharray:8_5]"
+                    style={{
+                      filter: "drop-shadow(0 0 8px rgba(34,211,238,0.30))",
+                      pointerEvents: "none",
+                    }}
+                    {...lineCommon}
                   />
-                  {edge.ng && (
-                    <g>
-                      <NGLabel x={midpoint.x} y={midpoint.y} />
-                      <text
-                        x={midpoint.x}
-                        y={midpoint.y + 25}
-                        fill="#EF4444"
-                        fontSize="11"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        className="drop-shadow-sm"
-                      >
-                        ↶ Return
-                      </text>
-                    </g>
+                  {e.label && e.label !== "OK" && (
+                    <text
+                      x={lp.x}
+                      y={lp.y}
+                      textAnchor="middle"
+                      className="fill-cyan-200 text-xs font-medium"
+                      {...lineCommon}
+                    >
+                      {e.label}
+                    </text>
+                  )}
+                  {e.showNGPill && (
+                    <foreignObject x={lp.x - 18} y={lp.y - 18} width="64" height="26">
+                      <div className="pointer-events-none">
+                        <NGPill />
+                      </div>
+                    </foreignObject>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* solid layer */}
+            {solidEdges.map((e, i) => {
+              const A = nodeById(e.from),
+                B = nodeById(e.to);
+              const start = anchor(A, e.fromAnchor ?? "right");
+              const end = anchor(B, e.toAnchor ?? "left");
+
+              let d: string;
+              if (e.via && e.via.length) {
+                d = hvh(start, end, e.via[0]?.x, e.via[0]?.y);
+              } else {
+                d =
+                  start.y === end.y
+                    ? `M ${snap(start.x)} ${snap(start.y)} L ${snap(end.x)} ${snap(end.y)}`
+                    : hvh(start, end);
+              }
+
+              const lp = getLabelPos(start, end, false, false);
+
+              return (
+                <g key={`s-${i}`}>
+                  <path
+                    d={d}
+                    fill="none"
+                    stroke="url(#edgeGradClean)"
+                    strokeWidth={3}
+                    markerEnd="url(#arrowClean)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      filter: "drop-shadow(0 0 10px rgba(94,234,212,0.35))",
+                      pointerEvents: "none",
+                    }}
+                    {...lineCommon}
+                  />
+                  {e.label === "OK" && (
+                    <foreignObject x={lp.x - 16} y={lp.y - 18} width="40" height="24">
+                      <div className="pointer-events-none rounded-full border border-emerald-400/40 bg-emerald-500/90 px-2.5 py-0.5 text-xs font-bold text-white">
+                        OK
+                      </div>
+                    </foreignObject>
                   )}
                 </g>
               );
             })}
           </svg>
+
+          {/* NODES */}
+          {NODES.map((n) => {
+            const w = n.w ?? CARD_W,
+              h = n.h ?? CARD_H;
+            return (
+              <div
+                key={`${n.id}-${lang}`}
+                style={{
+                  position: "absolute",
+                  left: snap(n.x),
+                  top: snap(n.y),
+                  width: w,
+                  height: h,
+                }}
+              >
+                <ProcessCard
+                  type={n.type ?? "step"}
+                  state={activeCard === n.id ? "active" : "default"}
+                  onClick={() => setActiveCard(n.id)}
+                  processingTime={1200}
+                  className="!w-full !h-full"
+                >
+                  <div className="leading-snug">{n.label}</div>
+                </ProcessCard>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Footer chip */}
+      <div className="relative z-10 py-4 text-center">
+        <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/30 bg-slate-900/60 px-5 py-2 backdrop-blur-sm">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+          <span className="text-sm text-cyan-200">
+            {lang === "KOR" ? "5-5-3 레이아웃 · 스마트 연결" : "5-5-3 Layout · Smart Connections"}
+          </span>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes dashMove {
+          0% {
+            stroke-dashoffset: 0;
+          }
+          100% {
+            stroke-dashoffset: -200;
+          }
+        }
+        @keyframes flowRight {
+          0% {
+            transform: translateX(-120px);
+          }
+          100% {
+            transform: translateX(200px);
+          }
+        }
+        @keyframes flowDown {
+          0% {
+            transform: translateY(-120px);
+          }
+          100% {
+            transform: translateY(200px);
+          }
+        }
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+      `}</style>
     </div>
   );
-};
+}
 
-export default ProcessFlow;
+export default ProcessFlowChart;
