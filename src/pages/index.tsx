@@ -89,9 +89,9 @@ export default function HomePage({ content }: HomePageProps) {
 
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
             <div className="w-full max-w-[560px]">
-              {content.section1Text.subtitle ? (
+              {content?.section1Text?.subtitle && (
                 <motion.h1
-                  className="text-sm sm:text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.35em] uppercase text-white/80 mb-3"
+                  className="text-sm sm:text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.35em] uppercase text-white/80 mb-4"
                   style={{ fontFamily: heroFontFamily }}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -99,8 +99,9 @@ export default function HomePage({ content }: HomePageProps) {
                 >
                   {content.section1Text.subtitle}
                 </motion.h1>
-              ) : null}
+              )}
 
+              {/* Lines */}
               <motion.div
                 className="text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)]"
                 style={{ fontFamily: heroFontFamily }}
@@ -108,10 +109,10 @@ export default function HomePage({ content }: HomePageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.15 }}
               >
-                {content.section1Text.lines.map((line, index) => (
+                {content?.section1Text?.lines?.map((line, index) => (
                   <p
                     key={index}
-                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-normal leading-7 mb-1.5 whitespace-nowrap"
+                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-normal leading-8 mb-2 whitespace-nowrap"
                   >
                     {line}
                   </p>
@@ -126,12 +127,15 @@ export default function HomePage({ content }: HomePageProps) {
           className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
           style={{ aspectRatio: "1440/400" }}
         >
-          <Image
-            src={content.section2.bgImage}
-            alt="배경"
-            fill
-            className="absolute inset-0 w-full h-full object-cover z-0"
-          />
+          <div className="absolute inset-0 -z-0">
+            <Image
+              src={content.section2.bgImage}
+              alt="배경"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
 
           <motion.div
             className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
@@ -145,7 +149,7 @@ export default function HomePage({ content }: HomePageProps) {
             </p>
             <div className="flex-grow" />
             <Link href="/company/vision2">
-              <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
+              <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 hover:text-black transition">
                 {content.section2.buttonLabel}
               </button>
             </Link>
@@ -165,7 +169,10 @@ export default function HomePage({ content }: HomePageProps) {
               </h2>
               <p
                 className="text-sm md:text-base lg:text-lg text-white/80 leading-relaxed whitespace-pre-line tracking-wide font-light"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: "1.7" }}
+                style={{
+                  fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif",
+                  lineHeight: "1.7",
+                }}
               >
                 {content.section2.description}
               </p>
@@ -179,7 +186,7 @@ export default function HomePage({ content }: HomePageProps) {
               transition={{ duration: 1 }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              {(content.section2.keywords as string[]).map((title, idx) => (
+              {(content.section2.keywords as string[])?.map((title, idx) => (
                 <motion.div
                   key={idx}
                   className="w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 rounded-full bg-white/10 border border-white/10 flex flex-col justify-center items-center text-sm md:text-base text-white backdrop-blur-sm hover:bg-white/20 transition"
@@ -205,7 +212,7 @@ export default function HomePage({ content }: HomePageProps) {
         </section>
 
         <motion.section
-          className="relative z-30 -mt-40 bg-white py-25 px-4 md:px-6 rounded-t-[40px] md:rounded-t-[60px]"
+          className="relative z-30 -mt-40 bg-white py-24 px-4 md:px-6 rounded-t-[40px] md:rounded-t-[60px]"
           initial={{ opacity: 1, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -243,7 +250,7 @@ export default function HomePage({ content }: HomePageProps) {
             <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-0 md:mb-3 tracking-wide text-black">
               {content.section3.title}
             </h2>
-            <p className=" text-xl md:text-2xl lg:text-4xl font-bold tracking-wide">
+            <p className="text-xl md:text-2xl lg:text-4xl font-bold tracking-wide">
               {content.section3.subtitle}
             </p>
           </motion.div>
@@ -260,7 +267,6 @@ export default function HomePage({ content }: HomePageProps) {
                   viewport={{ once: true, amount: 0.3 }}
                 >
                   <div className="relative w-full h-full">
-                    {" "}
                     <Image
                       src={card.img}
                       alt={card.title}
@@ -300,7 +306,7 @@ export default function HomePage({ content }: HomePageProps) {
             >
               <p className={`${labelClass} mt-12`}>Service</p>
               <h2 className="mt-5 mb-5 text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal">
-                고객 맞춤형 장비/제조 서비스를 제조합니다
+                고객 맞춤형 장비/제조 서비스를 제공합니다
               </h2>
 
               <p className="mb-8 text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed">
@@ -311,64 +317,66 @@ export default function HomePage({ content }: HomePageProps) {
             </motion.div>
 
             <div className="w-full max-w-5xl flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+                {/* Circle 1 */}
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_solution.jpg"
+                    alt="솔루션 서비스"
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    솔루션 서비스
+                  </h3>
+                </motion.div>
 
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_solution.jpg"
-                  alt="솔루션 서비스"
-                  fill
-                  className="object-cover rounded-full"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  솔루션 서비스
-                </h3>
-              </motion.div>
+                {/* Circle 2 */}
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_equipment.png"
+                    alt="맞춤형 장비/설비"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    맞춤형 장비/설비
+                  </h3>
+                </motion.div>
 
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_equipment.png"
-                  alt="맞춤형 장비/설비"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  맞춤형 장비/설비
-                </h3>
-              </motion.div>
-
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_parts.png"
-                  alt="정밀 가공 부품"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  정밀 가공 부품
-                </h3>
-              </motion.div>
+                {/* Circle 3 */}
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_parts.png"
+                    alt="정밀 가공 부품"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    정밀 가공 부품
+                  </h3>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -382,20 +390,21 @@ export default function HomePage({ content }: HomePageProps) {
             height={220}
             className="w-full object-cover"
             style={{ aspectRatio: "1440/220" }}
+            priority
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-white px-6 pointer-events-none">
-            <h2 className="text-sm md:text-xl lg:text-4xl font-semibold md:font-semibold lg:font-bold mb-2 md:mb-4 lg:mb-7 tracking-wide">
+            <h2 className="text-sm md:text-xl lg:text-4xl font-semibold lg:font-bold mb-2 md:mb-4 lg:mb-7 tracking-wide">
               Contact us
             </h2>
             <Link href="/support/contact">
-              <button className="cursor-pointer pointer-events-auto border border-gray-300 text-xs md:text-xs lg:text-sm text-white px-4 py-0.1 lg:px-12 lg:py-0.8 flex items-center gap-2 hover:bg-gray-300 hover:text-black transition tracking-wide">
-                문의하기{" "}
-                <span className="text-xs md:text-sm lg:text-base">→</span>
+              <button className="cursor-pointer pointer-events-auto border border-gray-300 text-xs md:text-xs lg:text-sm text-white px-4 py-2 lg:px-12 lg:py-3 flex items-center gap-2 hover:bg-gray-300 hover:text-black transition tracking-wide">
+                문의하기 <span className="text-xs md:text-sm lg:text-base">→</span>
               </button>
             </Link>
           </div>
         </section>
       </main>
+
       <Footer />
     </>
   );

@@ -92,7 +92,7 @@ export default function HomePage({ content }: HomePageProps) {
             <div className="w-full max-w-[560px]">
               {content.section1Text.subtitle ? (
                 <motion.h1
-                  className="text-sm sm:text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.35em] uppercase text-white/80 mb-3"
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.35em] uppercase text-white/80 mb-3"
                   style={{ fontFamily: heroFontFamily }}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -113,7 +113,7 @@ export default function HomePage({ content }: HomePageProps) {
                 {content.section1Text.lines.map((line, index) => (
                   <p
                     key={index}
-                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-normal leading-7 mb-1.5 whitespace-nowrap"
+                    className="text-sm sm:text-base md:text-lg lg:text-[20px] font-normal leading-7 mb-1.5 whitespace-nowrap"
                   >
                     {line}
                   </p>
