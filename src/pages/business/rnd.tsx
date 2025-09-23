@@ -177,8 +177,8 @@ export default function App() {
                         </div>
                       ))}
                     </div>
-                    <div className="text-xl font-bold text-gray-900 mb-4">
-                      <h4 className="font-semibold text-gray-900 mb-3">
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <h4 className="text-xl font-bold text-gray-900 mb-4">
                         {lang === 'KOR' ? '시스템 통합(System Integration)' : 'System Integration'}
                       </h4>
                       <div className="space-y-3">
