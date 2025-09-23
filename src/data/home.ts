@@ -92,7 +92,7 @@ export const homeContentEng = {
     },
     section2: {
       title: 'Technology that Drives Industry',
-      description:'SUMAN is a specialized company that designs and manufactures precision-machined components for semiconductors, electrical and electronic systems, \nand secondary batteries, \nas well as reliability evaluation modules. \nLeveraging our accumulated expertise and infrastructure, \nwe provide customized solutions tailored to each customer’s needs.',
+      description:'SUMAN is a specialized company that designs and manufactures precision-machined components for semiconductors, electrical and electronic systems, and secondary batteries, as well as reliability evaluation modules. Leveraging our accumulated expertise and infrastructure, we provide customized solutions tailored to each customer’s needs.',
       bgImage: '/images/main/main_tech.png',
       buttonLabel: 'Go to Vision →',
       keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],

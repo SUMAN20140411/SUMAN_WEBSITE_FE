@@ -167,23 +167,6 @@ export default function HomePage({ content }: HomePageProps) {
         </section>
 
         
-        {/* ============== CORE VALUE ============== */}
-        <section
-          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
-          style={{ aspectRatio: "1440/400" }}
-        >
-          <div className="absolute inset-0 -z-0">
-            <Image
-              src={content.section2.bgImage}
-              alt="배경"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          {/* ✅ FIX: close this section so the next section isn't nested */}
-        </section>
 
         {/* ============== CORE VALUE ============== */}
         <section
