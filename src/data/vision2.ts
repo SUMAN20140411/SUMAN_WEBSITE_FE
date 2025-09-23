@@ -71,7 +71,7 @@ export const visionStrategyText = {
       development: "R&BD 조기사업화\n/ 차세대 성장동력 확보",
       manufacturing: "제조부품/개발부문\nITEM 조기 정착\n/ Mass Product 안정화",
       partnerships: "신사업Biz / R&D\n신사업 발굴/ITEM PJT\nR&BD Base / 차별화",
-      sectors: ["자동차\n(정밀부품가공)", "이차전지\n(부품/모듈서비스/\n제조/신뢰성검비)", "반도체/전기전자\n(부품/솔루션서비\n스/빛출력서비)", "차세대 성장\n기술 / 제품"]
+      sectors: ["자동차\n(정밀부품가공)", "이차전지\n(부품/모듈서비스/\n제조/신뢰성장비)", "반도체/전기전자\n(부품/솔루션서비/맞춤설비)", "차세대 성장\n기술 / 제품"]
     }
   },
   ENG: {

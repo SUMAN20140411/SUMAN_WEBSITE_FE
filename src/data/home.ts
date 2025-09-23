@@ -15,7 +15,7 @@ export const homeContentKor = {
     section2: {
       title: '산업을 움직이는 기술',
       description:
-        '수만은 2차전지 생산 장비 및 신뢰성 평가 시스템을 설계 및 제작하는 전문 기업입니다.\n대전 R&D 센터에서 축적한 기술력과 생산 인프라를 기반으로, 고객 맞춤형 고신뢰성 솔루션을 제조합니다.',
+        '수만은 반도체, 전기전자, 이차전지 정밀가공 부품 및 신뢰성 평가 모듈을 설계하고\n 제작하는 전문 기업으로 축적한 기술력과 인프라를 기반으로 고객 맞춤형 솔루션을 제공합니다. ',
       bgImage: '/images/main/main_tech.png',
       buttonLabel: '기업 비전 바로가기 →',
       keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],
@@ -95,7 +95,7 @@ export const homeContentEng = {
     section2: {
       title: 'Technology that Drives Industry',
       description:
-        'SUMAN is a specialized company that designs and manufactures secondary battery production equipment and reliability evaluation systems.\nBased on the technological expertise and production infrastructure accumulated at our Daejeon R&D center, we provide customized, high-reliability solutions.',
+        'SUMAN is a specialist provider of precision-machined parts for semiconductors, electrical and electronic systems,\nand rechargeable (secondary) batteries, along with reliability-testing modules.\nBuilt on accumulated know-how and a strong manufacturing infrastructure, we offer customized, end-to-end solutions to meet each client’s needs.',
       bgImage: '/images/main/main_tech.png',
       buttonLabel: 'Go to Vision →',
       keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],

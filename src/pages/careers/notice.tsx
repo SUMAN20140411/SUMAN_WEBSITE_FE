@@ -108,11 +108,11 @@ const RecruitmentDownloadBanner: React.FC = () => {
     lang === "KOR"
       ? {
           heading: "내부공고",
-          tagline: "현재 진행 중 채용 정보를 한눈에 확인하세요.",
+          tagline: "",
           tag: "[TEST][채용공고]",
-          title: "PLC 제어 부문 신입 및 경력직 채용",
+          title: "현재 채용 진행중인 내부 공고가 없습니다.",
           description:
-            "PLC 제어 분야에서 새로운 혁신을 함께 만들어 갈 인재를 찾고 있습니다. 첨부된 공고문에서 지원 자격과 근무 환경을 확인하세요.",
+            "",
           note: "다운로드 후 안내에 따라 지원 절차를 진행해 주세요.",
           fileLabel: "채용 공고문",
           actionLabel: "공고문 다운로드",
@@ -123,13 +123,13 @@ const RecruitmentDownloadBanner: React.FC = () => {
           heading: "Internal Recruitment Notice",
           tagline: "Stay informed about SUMAN's current opening at a glance.",
           tag: "[TEST][Recruitment Notice]",
-          title: "Entry-Level and Experienced Positions in PLC Control",
+          title: "There are currently no internal recruitment notices.", 
           description:
-            "We are looking for PLC control specialists ready to innovate with SUMAN. Review the attached notice for qualifications and working conditions.",
+            "",
           note: "Download the notice to review every requirement before applying.",
-          fileLabel: "Recruitment Notice",
-          actionLabel: "Download Notice",
-          ariaLabel: "Download the PLC control recruitment notice",
+          fileLabel: "There are currently no internal recruitment notices.",
+          actionLabel: "There are currently no internal recruitment notices.",
+          ariaLabel: "There are currently no internal recruitment notices.",
           fileName: "PLC Control Recruitment Notice",
         };
 
