@@ -568,8 +568,8 @@ function CoreCapabilitiesImageSection() {
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
 
   // replace with your actual image paths
-  const coreImgKor = "/images/businerr/process/core-capabilities-kor.png";
-  const coreImgEng = "/images/businerr/process/core-capabilities-eng.png";
+  const coreImgKor = "/images/business/process/core-capabilities-kor.png";
+  const coreImgEng = "/images/business/process/core-capabilities-eng.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
   const titleText =
