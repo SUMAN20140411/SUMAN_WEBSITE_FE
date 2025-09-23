@@ -1,492 +1,465 @@
-"use client";
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
-import React, {
-  useRef,
-  useLayoutEffect,
-  useState,
-  useMemo,
-  RefObject,
-} from "react";
-import { motion } from "framer-motion";
-import type { HTMLMotionProps } from "framer-motion";
-
-// --- Types ---
-type NodeType = "step" | "decision";
-type Node = {
+// Types
+interface Node {
   id: string;
   label: string;
-  type: NodeType;
-  col: 1 | 3;
-  row: number;
-};
-type EdgeKind = "main" | "branch" | "return";
-type Edge = {
-  id: string;
+  type: 'step' | 'decision';
+  col: number; // Column position (1-10 for horizontal flow)
+  row: number; // Row position (1 for top lane, 3 for main lane)
+  stepNumber?: number; // For main flow step numbering
+}
+
+interface Edge {
   from: string;
   to: string;
-  kind?: EdgeKind;
+  kind?: 'main' | 'branch' | 'return';
   ng?: boolean;
-};
-
-// --- Data: Nodes & Edges ---
-const nodes: Node[] = [
-  // Left lane
-  { id: "customer", label: "Customer", type: "step", col: 1, row: 1 },
-  { id: "partner", label: "협력사", type: "step", col: 1, row: 6 },
-  { id: "reorder", label: "Re-Order 개선/반영", type: "step", col: 1, row: 13 },
-  { id: "feedback", label: "고객 Feedback", type: "decision", col: 1, row: 14 },
-  // Main lane
-  { id: "concept", label: "Concept 설계", type: "step", col: 3, row: 1 },
-  { id: "dr", label: "D/R", type: "decision", col: 3, row: 2 },
-  { id: "dev", label: "개발/가공 설계", type: "step", col: 3, row: 3 },
-  { id: "review", label: "검토승인", type: "decision", col: 3, row: 4 },
-  { id: "order", label: "발주(소재/부품)", type: "step", col: 3, row: 5 },
-  { id: "import", label: "수입검사", type: "decision", col: 3, row: 6 },
-  { id: "manufacture", label: "가공/제작", type: "step", col: 3, row: 7 },
-  {
-    id: "inspect",
-    label: "출하 및\n조립/측정검사",
-    type: "decision",
-    col: 3,
-    row: 8,
-  },
-  { id: "pack", label: "포장", type: "step", col: 3, row: 9 },
-  { id: "deliver", label: "고객사 납품", type: "step", col: 3, row: 10 },
-];
-
-const edges: Edge[] = [
-  // Main flow
-  { id: "e1", from: "customer", to: "concept", kind: "main" },
-  { id: "e2", from: "concept", to: "dr", kind: "main" },
-  { id: "e2r", from: "concept", to: "concept", kind: "return", ng: true }, // NG return
-  { id: "e3", from: "dr", to: "dev", kind: "main" },
-  { id: "e4", from: "dev", to: "review", kind: "main" },
-  { id: "e5", from: "review", to: "order", kind: "main" },
-  { id: "e6", from: "order", to: "import", kind: "main" },
-  { id: "e7", from: "import", to: "manufacture", kind: "main" },
-  { id: "e7b", from: "import", to: "partner", kind: "branch", ng: true }, // NG branch
-  { id: "e8", from: "manufacture", to: "inspect", kind: "main" },
-  { id: "e8r", from: "manufacture", to: "manufacture", kind: "return", ng: true }, // NG return
-  { id: "e9", from: "inspect", to: "pack", kind: "main" },
-  { id: "e10", from: "pack", to: "deliver", kind: "main" },
-  // Feedback loop
-  { id: "e11", from: "feedback", to: "reorder", kind: "main" },
-  {
-    id: "e12",
-    from: "reorder",
-    to: "concept",
-    kind: "return",
-    ng: false,
-  }, // upward return
-];
-
-// --- Layout Constants ---
-const COLS = 3;
-const ROWS = 15; // enough for spacing
-const GRID_GAP_Y = 36; // px, desktop
-const GRID_GAP_Y_MOBILE = 20; // px, mobile
-const CARD_W = 210;
-const CARD_W_MOBILE = 95;
-const CARD_H = 54;
-const DIAMOND_SIZE = 70;
-const DIAMOND_SIZE_MOBILE = 48;
-const GUTTER_W = 44;
-
-// --- Responsive helpers ---
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useLayoutEffect(() => {
-    function onResize() {
-      setIsMobile(window.innerWidth < 1024);
-    }
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-  return isMobile;
 }
 
-// --- Node positioning ---
-type NodePos = {
+interface NodePosition {
   x: number;
   y: number;
-  w: number;
-  h: number;
-  ref: RefObject<HTMLDivElement | null>;
-  node: Node;
+  width: number;
+  height: number;
+}
+
+// Node data - horizontal layout from left to right
+const nodes: Node[] = [
+  // Top lane nodes (supporting processes)
+  { id: 'customer', label: 'Customer', type: 'step', col: 1, row: 1 },
+  { id: 'partner', label: '협력사', type: 'step', col: 6, row: 1 },
+  { id: 'reorder', label: 'Re-Order 개선/반영', type: 'step', col: 9, row: 1 },
+  { id: 'feedback', label: '고객 Feedback', type: 'decision', col: 10, row: 1 },
+  
+  // Main lane nodes with step numbers - horizontal flow
+  { id: 'concept', label: 'Concept 설계', type: 'step', col: 1, row: 3, stepNumber: 1 },
+  { id: 'dr', label: 'D/R', type: 'decision', col: 2, row: 3, stepNumber: 2 },
+  { id: 'dev_design', label: '개발/가공 설계', type: 'step', col: 3, row: 3, stepNumber: 3 },
+  { id: 'review', label: '검토승인', type: 'decision', col: 4, row: 3, stepNumber: 4 },
+  { id: 'order', label: '발주(소재/부품)', type: 'step', col: 5, row: 3, stepNumber: 5 },
+  { id: 'inspection', label: '수입검사', type: 'decision', col: 6, row: 3, stepNumber: 6 },
+  { id: 'manufacturing', label: '가공/제작', type: 'step', col: 7, row: 3, stepNumber: 7 },
+  { id: 'final_check', label: '출하 및 조립/측정검사', type: 'decision', col: 8, row: 3, stepNumber: 8 },
+  { id: 'packaging', label: '포장', type: 'step', col: 9, row: 3, stepNumber: 9 },
+  { id: 'delivery', label: '고객사 납품', type: 'step', col: 10, row: 3, stepNumber: 10 },
+];
+
+// Edge data - connections between nodes
+const edges: Edge[] = [
+  // Main flow
+  { from: 'customer', to: 'concept', kind: 'main' },
+  { from: 'concept', to: 'dr', kind: 'main' },
+  { from: 'dr', to: 'dev_design', kind: 'main' },
+  { from: 'dev_design', to: 'review', kind: 'main' },
+  { from: 'review', to: 'order', kind: 'main' },
+  { from: 'order', to: 'inspection', kind: 'main' },
+  { from: 'inspection', to: 'manufacturing', kind: 'main' },
+  { from: 'manufacturing', to: 'final_check', kind: 'main' },
+  { from: 'final_check', to: 'packaging', kind: 'main' },
+  { from: 'packaging', to: 'delivery', kind: 'main' },
+  
+  // Branch flows
+  { from: 'inspection', to: 'partner', kind: 'branch', ng: true },
+  
+  // Return flows with NG - detailed return paths
+  { from: 'dr', to: 'concept', kind: 'return', ng: true },
+  { from: 'review', to: 'dev_design', kind: 'return', ng: true },
+  { from: 'final_check', to: 'manufacturing', kind: 'return', ng: true },
+  
+  // Feedback loop
+  { from: 'feedback', to: 'reorder', kind: 'main' },
+  { from: 'reorder', to: 'concept', kind: 'return' },
+];
+
+// Process Card Component
+const ProcessCard: React.FC<{ node: Node; className?: string }> = ({ node, className = '' }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
+  return (
+    <motion.div
+      role="group"
+      aria-label={`Process step: ${node.label}`}
+      className={`
+        relative bg-gradient-to-br from-[#E8F1F4] to-[#FFFFFF] text-[#1F2937] 
+        rounded-2xl px-6 py-4 shadow-md border border-[#D1D5DB]
+        hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer
+        min-w-[140px] min-h-[60px]
+        ${className}
+      `}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      whileHover={{ scale: 1.05 }}
+      onClick={() => setShowTooltip(!showTooltip)}
+    >
+      {/* Step Number Badge */}
+      {node.stepNumber && (
+        <div className="absolute -top-3 -left-3 w-7 h-7 bg-[#4F46E5] text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white">
+          {node.stepNumber}
+        </div>
+      )}
+      <div className="text-center font-bold text-sm leading-tight">
+        {node.label}
+      </div>
+      
+      {/* Tooltip */}
+      {showTooltip && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 
+                     bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20
+                     max-w-[200px] text-center"
+        >
+          Process step: {node.label}
+          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+        </motion.div>
+      )}
+    </motion.div>
+  );
 };
 
-function getNodePositions(isMobile: boolean): Record<string, NodePos> {
-  // On mobile, all nodes are in a single column, interleaved by row
-  const colX = (col: number) =>
-    isMobile ? 0 : col === 1 ? 0 : CARD_W + GUTTER_W; // left or right
-  const cardW = isMobile ? CARD_W_MOBILE : CARD_W;
-  const cardH = CARD_H;
-  const diamond = isMobile ? DIAMOND_SIZE_MOBILE : DIAMOND_SIZE;
-  const yGap = isMobile ? GRID_GAP_Y_MOBILE : GRID_GAP_Y;
-
-  // For mobile, stack by row order (ignore col)
-  const sorted = isMobile ? [...nodes].sort((a, b) => a.row - b.row) : nodes;
-
-  const pos: Record<string, NodePos> = {};
-  sorted.forEach((node) => {
-    const x = colX(isMobile ? 1 : node.col);
-    const y = (node.row - 1) * (cardH + yGap);
-    pos[node.id] = {
-      x,
-      y,
-      w: node.type === "decision" ? diamond : cardW,
-      h: node.type === "decision" ? diamond : cardH,
-      ref: React.createRef<HTMLDivElement>(),
-      node,
-    };
-  });
-  return pos;
-}
-
-// --- Helper: get center of node ---
-function getCenter(pos: NodePos) {
-  return {
-    x: pos.x + pos.w / 2,
-    y: pos.y + pos.h / 2,
-  };
-}
-
-// --- Helper: get side center of node ---
-function getSideCenter(pos: NodePos, side: "left" | "right" | "top" | "bottom") {
-  switch (side) {
-    case "left":
-      return { x: pos.x, y: pos.y + pos.h / 2 };
-    case "right":
-      return { x: pos.x + pos.w, y: pos.y + pos.h / 2 };
-    case "top":
-      return { x: pos.x + pos.w / 2, y: pos.y };
-    case "bottom":
-      return { x: pos.x + pos.w / 2, y: pos.y + pos.h };
-    default:
-      return getCenter(pos);
-  }
-}
-
-// --- Helper: get SVG path for edge ---
-function getEdgePath(
-  from: NodePos,
-  to: NodePos,
-  kind: EdgeKind | undefined,
-  isMobile: boolean
-) {
-  // Main: straight vertical/horizontal, always center-to-center
-  if (kind === "main") {
-    const a = getCenter(from);
-    const b = getCenter(to);
-    return `M${a.x},${a.y} L${b.x},${b.y}`;
-  }
-
-  // Branch: horizontal, left-to-right (수입검사 → 협력사)
-  if (kind === "branch") {
-    const a = getSideCenter(from, isMobile ? "bottom" : "left");
-    const b = getSideCenter(to, isMobile ? "top" : "right");
-    // On desktop, horizontal; on mobile, vertical
-    if (!isMobile) {
-      return `M${a.x},${a.y} L${b.x},${b.y}`;
-    } else {
-      // Mobile: vertical line
-      return `M${a.x},${a.y} L${b.x},${b.y}`;
-    }
-  }
-
-  // Return: curve outside grid, left side
-  if (kind === "return") {
-    // Self-loop (NG after concept/manufacture): curve left, up, then back to left side of node
-    if (from.node.id === to.node.id) {
-      const a = getSideCenter(from, "left");
-      const b = getSideCenter(to, "left");
-      const curveX = a.x - (isMobile ? 40 : 80);
-      const curveY = a.y - (isMobile ? 60 : 90);
-      return `M${a.x},${a.y} Q${curveX},${curveY} ${b.x},${b.y - (isMobile ? 40 : 80)}`;
-    }
-    // Feedback loop: big upward curve from reorder to concept, outside grid
-    const a = getSideCenter(from, "left");
-    const b = getSideCenter(to, "left");
-    const midY = Math.min(a.y, b.y) - (isMobile ? 120 : 220);
-    const midX = a.x - (isMobile ? 60 : 120);
-    return `M${a.x},${a.y} C${midX},${midY} ${midX},${midY} ${b.x},${b.y}`;
-  }
-
-  // Fallback: straight
-  const a = getCenter(from);
-  const b = getCenter(to);
-  return `M${a.x},${a.y} L${b.x},${b.y}`;
-}
-
-// --- Helper: get point at t along SVG path ---
-function getPointAtPath(path: string, t: number): { x: number; y: number } {
-  if (typeof window === "undefined") return { x: 0, y: 0 };
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  p.setAttribute("d", path);
-  svg.appendChild(p);
-  document.body.appendChild(svg);
-  const len = p.getTotalLength();
-  const pt = p.getPointAtLength(len * t);
-  document.body.removeChild(svg);
-  return { x: pt.x, y: pt.y };
-}
-
-// --- Card & Diamond Components ---
-function ProcessCard({
-  label,
-  className,
-  ...props
-}: HTMLMotionProps<"div"> & { label: string }) {
+// Decision Diamond Component
+const DecisionDiamond: React.FC<{ node: Node; className?: string }> = ({ node, className = '' }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
   return (
     <motion.div
       role="group"
-      tabIndex={0}
-      aria-label={label}
-      className={`bg-[#E8F1F4] text-[#1F2937] rounded-2xl shadow-md px-6 py-3 font-semibold text-center text-base select-none transition-all duration-150 border border-gray-200 hover:scale-105 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-blue-300 ${
-        className || ""
-      }`}
-      whileHover={{ scale: 1.05, filter: "brightness(1.08)" }}
-      {...props}
+      aria-label={`Decision point: ${node.label}`}
+      className={`relative cursor-pointer ${className}`}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      whileHover={{ 
+        filter: 'brightness(1.1) drop-shadow(0 0 6px #6F78B5)',
+        scale: 1.05 
+      }}
+      onClick={() => setShowTooltip(!showTooltip)}
     >
-      {label}
-    </motion.div>
-  );
-}
-
-function DecisionDiamond({
-  label,
-  className,
-  ...props
-}: HTMLMotionProps<"div"> & { label: string }) {
-  return (
-    <motion.div
-      role="group"
-      tabIndex={0}
-      aria-label={label}
-      className={`relative flex items-center justify-center select-none ${className || ""}`}
-      style={{ width: "100%", height: "100%" }}
-      whileHover={{ scale: 1.07, filter: "drop-shadow(0 0 8px #6F78B5)" }}
-      {...props}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: "rotate(45deg)",
-          background: "linear-gradient(180deg, #6F78B5 0%, #8B90C9 100%)",
-          borderRadius: 16,
-          boxShadow: "0 2px 12px 0 rgba(31,41,55,0.10)",
-        }}
-      />
-      <div
-        className="relative z-10 w-full h-full flex items-center justify-center text-white font-semibold text-base"
-        style={{
-          transform: "rotate(-45deg)",
-          whiteSpace: "pre-line",
-          userSelect: "none",
-        }}
-      >
-        {label}
+      {/* Step Number Badge */}
+      {node.stepNumber && (
+        <div className="absolute -top-3 -left-3 w-7 h-7 bg-[#4F46E5] text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white z-10">
+          {node.stepNumber}
+        </div>
+      )}
+      {/* Rotated diamond container */}
+      <div className="w-28 h-28 bg-gradient-to-br from-[#6F78B5] to-[#8B90C9] transform rotate-45 shadow-lg hover:shadow-xl transition-all duration-300">
+        {/* Counter-rotated content */}
+        <div className="absolute inset-0 flex items-center justify-center transform -rotate-45">
+          <div className="text-white text-center font-bold text-sm leading-tight px-2">
+            {node.label}
+          </div>
+        </div>
       </div>
+      
+      {/* Tooltip */}
+      {showTooltip && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 
+                     bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg z-20
+                     max-w-[200px] text-center"
+        >
+          Decision point: {node.label}
+          <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+        </motion.div>
+      )}
     </motion.div>
   );
+};
+
+// NG Label Component
+const NGLabel: React.FC<{ x: number; y: number }> = ({ x, y }) => (
+  <g>
+    {/* Background circle for better visibility */}
+    <circle
+      cx={x}
+      cy={y}
+      r="12"
+      fill="white"
+      stroke="#EF4444"
+      strokeWidth="2"
+    />
+    <text
+      x={x}
+      y={y}
+      fill="#EF4444"
+      fontSize="11"
+      fontWeight="bold"
+      textAnchor="middle"
+      dominantBaseline="middle"
+    >
+      NG
+    </text>
+  </g>
+);
+
+// Main ProcessFlow Component
+interface ProcessFlowProps {
+  className?: string;
 }
 
-// --- Main Component ---
-export default function ProcessFlow({ className }: { className?: string }) {
-  const isMobile = useIsMobile();
+const ProcessFlow: React.FC<ProcessFlowProps> = ({ className = '' }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [nodePositions, setNodePositions] = useState<{ [key: string]: NodePosition }>({});
+  const [isMobile, setIsMobile] = useState(false);
+  const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
 
-  // --- Node positions & refs ---
-  const [nodeRects, setNodeRects] = useState<Record<string, NodePos>>({});
-  const nodePositions = useMemo(() => getNodePositions(isMobile), [isMobile]);
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-  // --- Layout effect: measure node positions after render ---
+  // Calculate node positions for horizontal layout
   useLayoutEffect(() => {
-    function measure() {
-      const updated: Record<string, NodePos> = {};
-      for (const id in nodePositions) {
-        const pos = nodePositions[id];
-        const el = pos.ref.current;
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          updated[id] = {
-            ...pos,
-            x: el.offsetLeft,
-            y: el.offsetTop,
-            w: rect.width,
-            h: rect.height,
-            ref: pos.ref,
-            node: pos.node,
-          };
-        } else {
-          updated[id] = pos;
-        }
+    if (!containerRef.current || !gridRef.current) return;
+
+    const positions: { [key: string]: NodePosition } = {};
+    const containerRect = containerRef.current.getBoundingClientRect();
+    
+    // Calculate SVG dimensions
+    let maxX = 0;
+    let maxY = 0;
+    
+    Object.entries(nodeRefs.current).forEach(([nodeId, ref]) => {
+      if (ref) {
+        const rect = ref.getBoundingClientRect();
+        const x = rect.left - containerRect.left + rect.width / 2;
+        const y = rect.top - containerRect.top + rect.height / 2;
+        
+        positions[nodeId] = { x, y, width: rect.width, height: rect.height };
+        
+        maxX = Math.max(maxX, x + rect.width / 2);
+        maxY = Math.max(maxY, y + rect.height / 2);
       }
-      setNodeRects(updated);
+    });
+    
+    setNodePositions(positions);
+    setSvgDimensions({ 
+      width: Math.max(maxX + 100, isMobile ? 400 : 1800), 
+      height: Math.max(maxY + 100, isMobile ? 800 : 400) 
+    });
+  }, [isMobile]);
+
+  // Generate SVG path for edge - horizontal flow arrows
+  const generatePath = (edge: Edge): string => {
+    const fromPos = nodePositions[edge.from];
+    const toPos = nodePositions[edge.to];
+    
+    if (!fromPos || !toPos) return '';
+
+    const { x: x1, y: y1 } = fromPos;
+    const { x: x2, y: y2 } = toPos;
+
+    if (edge.kind === 'return') {
+      // Return flows - curved arc above or below the main flow
+      const isAbove = y1 < y2;
+      const arcHeight = isAbove ? -80 : 80;
+      const midX = (x1 + x2) / 2;
+      const controlY = Math.min(y1, y2) + arcHeight;
+      
+      return `M ${x1} ${y1} Q ${midX} ${controlY} ${x2} ${y2}`;
+    } else if (edge.kind === 'branch') {
+      // Branch flows - vertical connections between rows
+      if (Math.abs(x1 - x2) < 20) {
+        // Same column - direct vertical
+        return `M ${x1} ${y1} L ${x2} ${y2}`;
+      } else {
+        // Different columns - L-shaped path
+        return `M ${x1} ${y1} L ${x1} ${y2} L ${x2} ${y2}`;
+      }
+    } else {
+      // Main flow - horizontal arrows
+      if (Math.abs(y1 - y2) < 20) {
+        // Same row - direct horizontal
+        return `M ${x1} ${y1} L ${x2} ${y2}`;
+      } else {
+        // Different rows - L-shaped path
+        return `M ${x1} ${y1} L ${x2} ${y1} L ${x2} ${y2}`;
+      }
     }
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [nodePositions, isMobile]);
-
-  // --- SVG size ---
-  const svgW = (isMobile ? CARD_W_MOBILE : CARD_W * 2 + GUTTER_W + 16) + 32;
-  const svgH =
-    Math.max(...Object.values(nodePositions).map((p) => p.y + p.h)) + 60;
-
-  // --- Animation variants ---
-  const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.08, duration: 0.6 },
-    }),
   };
 
-  // --- Render ---
+  // Get path midpoint for NG label positioning
+  const getPathMidpoint = (edge: Edge): { x: number; y: number } => {
+    const fromPos = nodePositions[edge.from];
+    const toPos = nodePositions[edge.to];
+    
+    if (!fromPos || !toPos) return { x: 0, y: 0 };
+
+    const { x: x1, y: y1 } = fromPos;
+    const { x: x2, y: y2 } = toPos;
+
+    if (edge.kind === 'return') {
+      // Position label at the curved arc
+      const midX = (x1 + x2) / 2;
+      const isAbove = y1 < y2;
+      const arcHeight = isAbove ? -80 : 80;
+      const controlY = Math.min(y1, y2) + arcHeight;
+      return { x: midX, y: controlY }; // At the curve peak
+    } else if (edge.kind === 'branch') {
+      // Position at corner or midpoint
+      if (Math.abs(x1 - x2) < 20) {
+        return { x: x1 + 15, y: (y1 + y2) / 2 };
+      } else {
+        return { x: x1, y: (y1 + y2) / 2 };
+      }
+    } else {
+      // Midpoint for straight paths
+      if (Math.abs(y1 - y2) < 20) {
+        return { x: (x1 + x2) / 2, y: y1 - 15 }; // Offset for horizontal lines
+      } else {
+        return { x: x2 - 15, y: y1 + 15 }; // Corner position for L-shaped
+      }
+    }
+  };
+
   return (
-    <div
-      className={`relative w-full flex justify-center ${className || ""}`}
-      style={{ minHeight: svgH }}
-    >
-      {/* SVG connectors */}
-      <svg
-        className="absolute left-0 top-0 pointer-events-none"
-        width={svgW}
-        height={svgH}
-        style={{ zIndex: 1 }}
-        aria-hidden="true"
-      >
-        <defs>
-          <marker
-            id="arrow"
-            markerWidth="10"
-            markerHeight="10"
-            refX="7"
-            refY="5"
-            orient="auto"
-            markerUnits="strokeWidth"
+    <div className={`w-full ${className}`}>
+      {/* Horizontal scroll wrapper for desktop */}
+      <div className={isMobile ? '' : 'overflow-x-auto'}>
+        <div 
+          ref={containerRef}
+          className="relative"
+          style={{ 
+            minWidth: isMobile ? 'auto' : `${svgDimensions.width}px`,
+            minHeight: `${svgDimensions.height}px`
+          }}
+        >
+          {/* Grid Layout */}
+          <div 
+            ref={gridRef}
+            className={`
+              grid gap-6 p-8
+              ${isMobile 
+                ? 'grid-cols-1 max-w-md mx-auto' 
+                : 'grid-cols-10 grid-rows-3 w-full place-items-center'
+              }
+            `}
+            style={{ 
+              minWidth: isMobile ? 'auto' : `${svgDimensions.width - 200}px`,
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(10, 1fr)',
+              gridTemplateRows: isMobile ? 'auto' : 'auto 50px auto'
+            }}
           >
-            <polygon points="0,2 10,5 0,8" fill="#9CA3AF" />
-          </marker>
-        </defs>
-        {edges.map((edge) => {
-          const from = nodeRects[edge.from] || nodePositions[edge.from];
-          const to = nodeRects[edge.to] || nodePositions[edge.to];
-          if (!from || !to) return null;
-          const path = getEdgePath(from, to, edge.kind, isMobile);
-          const fromLabel = from.node.label.replace(/\n/g, " ");
-          const toLabel = to.node.label.replace(/\n/g, " ");
-          return (
-            <g key={edge.id}>
-              <path
-                d={path}
-                stroke="#9CA3AF"
-                strokeWidth={2}
-                fill="none"
-                markerEnd="url(#arrow)"
-                aria-label={`${fromLabel}에서 ${toLabel}로 이동`}
-                tabIndex={-1}
-              />
-              {edge.ng &&
-                typeof window !== "undefined" &&
-                (() => {
-                  // For NG curves, offset NG label so it never collides with the arrow
-                  const pt = getPointAtPath(path, 0.5);
-                  let offsetX = isMobile ? -22 : -32;
-                  let offsetY = isMobile ? -12 : -18;
-                  if (edge.kind === "branch") {
-                    offsetX = isMobile ? 8 : 12;
-                    offsetY = isMobile ? -6 : -10;
-                  }
-                  return (
-                    <text
-                      x={pt.x + offsetX}
-                      y={pt.y + offsetY}
-                      fontSize={isMobile ? 11 : 13}
-                      fontWeight={700}
-                      fill="#EF4444"
-                      style={{
-                        textShadow: "0 1px 2px #fff",
-                        fontFamily: "inherit",
-                        pointerEvents: "none",
-                        userSelect: "none",
-                      }}
-                    >
-                      NG
-                    </text>
-                  );
-                })()}
-            </g>
-          );
-        })}
-      </svg>
+            {nodes.map((node) => {
+              const gridArea = isMobile
+                ? `${node.stepNumber || node.row} / 1`
+                : `${node.row} / ${node.col}`;
+              
+              return (
+                <div
+                  key={node.id}
+                  ref={(el) => { nodeRefs.current[node.id] = el; }}
+                  style={{ gridArea }}
+                  className={`
+                    flex justify-center items-center w-full
+                    ${isMobile ? 'mb-6' : ''}
+                  `}
+                >
+                  {node.type === 'step' ? (
+                    <ProcessCard node={node} />
+                  ) : (
+                    <DecisionDiamond node={node} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-      {/* Grid container */}
-      <div
-        className={`grid w-full`}
-        style={{
-          maxWidth: `${svgW}px`,
-          gridTemplateColumns: isMobile
-            ? `1fr`
-            : `${CARD_W}px ${GUTTER_W}px ${CARD_W}px`,
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        {/* Place nodes */}
-        {nodes.map((node, i) => {
-          const pos = nodePositions[node.id];
-          const gridCol = isMobile ? 1 : node.col;
-          const gridRow = node.row;
-          const style: React.CSSProperties = {
-            gridColumn: gridCol,
-            gridRow,
-            justifySelf: "center",
-            alignSelf: "center",
-            width:
-              node.type === "decision"
-                ? isMobile
-                  ? DIAMOND_SIZE_MOBILE
-                  : DIAMOND_SIZE
-                : isMobile
-                ? CARD_W_MOBILE
-                : CARD_W,
-            height:
-              node.type === "decision"
-                ? isMobile
-                  ? DIAMOND_SIZE_MOBILE
-                  : DIAMOND_SIZE
-                : CARD_H,
-            zIndex: 3,
-          };
-          const label =
-            node.id === "inspect" ? "출하 및\n조립/측정검사" : node.label;
-
-          return (
-            <motion.div
-              key={node.id}
-              ref={(el) => {
-                pos.ref.current = el as HTMLDivElement;
-              }}
-              style={style}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={fadeUp}
-              custom={i}
-            >
-              {node.type === "step" ? (
-                <ProcessCard label={label} />
-              ) : (
-                <DecisionDiamond label={label} />
-              )}
-            </motion.div>
-          );
-        })}
+          {/* SVG Overlay for Connections */}
+          <svg
+            className="absolute inset-0 pointer-events-none"
+            style={{ zIndex: -1 }}
+            width={svgDimensions.width}
+            height={svgDimensions.height}
+          >
+            <defs>
+              <marker
+                id="arrowhead"
+                markerWidth="10"
+                markerHeight="7"
+                refX="9"
+                refY="3.5"
+                orient="auto"
+              >
+                <polygon
+                  points="0 0, 10 3.5, 0 7"
+                  fill="#9CA3AF"
+                />
+              </marker>
+              <marker
+                id="arrowhead-ng"
+                markerWidth="10"
+                markerHeight="7"
+                refX="9"
+                refY="3.5"
+                orient="auto"
+              >
+                <polygon
+                  points="0 0, 10 3.5, 0 7"
+                  fill="#EF4444"
+                />
+              </marker>
+            </defs>
+            
+            {edges.map((edge, index) => {
+              const path = generatePath(edge);
+              const midpoint = getPathMidpoint(edge);
+              const isNGPath = edge.ng;
+              
+              return (
+                <g key={`${edge.from}-${edge.to}-${index}`}>
+                  <path
+                    d={path}
+                    stroke={isNGPath ? "#EF4444" : "#9CA3AF"}
+                    strokeWidth={isNGPath ? "3" : "2.5"}
+                    strokeDasharray={isNGPath ? "8,4" : "none"}
+                    fill="none"
+                    markerEnd={isNGPath ? "url(#arrowhead-ng)" : "url(#arrowhead)"}
+                    aria-label={`Connection from ${edge.from} to ${edge.to}${isNGPath ? ' (NG path)' : ''}`}
+                    className="drop-shadow-sm"
+                  />
+                  {edge.ng && (
+                    <g>
+                      <NGLabel x={midpoint.x} y={midpoint.y} />
+                      {/* Add direction indicator for NG paths */}
+                      <text
+                        x={midpoint.x}
+                        y={midpoint.y + 25}
+                        fill="#EF4444"
+                        fontSize="11"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="drop-shadow-sm"
+                      >
+                        ↶ Return
+                      </text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default ProcessFlow;

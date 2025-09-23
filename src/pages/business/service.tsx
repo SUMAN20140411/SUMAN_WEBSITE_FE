@@ -11,7 +11,7 @@ import ProcessFlow from "@/components/ProcessFlow";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 import { Settings, PenTool, Package, Layers, ClipboardCheck, Gauge } from "lucide-react";
-
+import CapabilityWheel, { type CapabilityWheelData } from "@/components/CapabilityWheel";
 
 
 export default function ServicePage() {
@@ -19,6 +19,94 @@ export default function ServicePage() {
   const { equipmentList, measurementEquipmentList } = serviceContent[lang];
   const section = serviceContent[lang].sectionList?.[0];
   const technologyOverview = serviceContent[lang].technologyOverview;
+
+  const capabilityWheelData: CapabilityWheelData = { // <-- type annotation here
+  center: {
+    logo: "/images/business/process/fieldro_logo.png",
+    alt: "FieldRo Logo",
+    title: "지능형 AMR &",
+    subtitle: "무인 물류 거점",
+    caption: "차세대 무인배송 요소기술",
+  },
+  arcs: [
+    { color: "#F28C28", start: 210, end: 270 }, // orange
+    { color: "#6A6CD5", start: 270, end: 30 },  // blue
+    { color: "#3DB24B", start: 30, end: 90 },   // green
+    { color: "#E04A59", start: 90, end: 210 },  // red
+  ],
+  cards: [
+    {
+      id: "algo",
+      title: "자율주행 알고리즘",
+      color: "#F28C28",
+      bullets: [
+        "3D HD 맵 제작/매칭 기반 위치 인식",
+      ],
+      image: "/images/business/process/wheel_algo.png",
+      alt: "맵 이미지",
+      position: "tr",
+    },
+    {
+      id: "outdoor",
+      title: "실내외 협치 주행",
+      color: "#6A6CD5",
+      bullets: [
+        "실시간 하중반영 바퀴/틸트 제어",
+      ],
+      image: "/images/business/process/wheel_outdoor.png",
+      alt: "주행 이미지",
+      position: "r",
+    },
+    {
+      id: "arch",
+      title: "시스템 아키텍처",
+      color: "#E04A59",
+      bullets: [
+        "자율주행 로봇 및 로컬허브 플랫폼 인터페이스",
+        "로봇 및 로컬물류거점 API 개발",
+        "구성요소간 상호작용",
+      ],
+      image: "/images/business/process/wheel_arch.png",
+      alt: "아키텍처 이미지",
+      position: "br",
+    },
+    {
+      id: "eval",
+      title: "고신뢰성 특성분석 평가 기술",
+      color: "#E04A59",
+      bullets: [
+        "앱시스 기반 시뮬레이션 분석 및 평가 기술",
+        "환경특성, 구동특성 등 분석",
+      ],
+      image: "/images/business/process/wheel_eval.png",
+      alt: "분석 이미지",
+      position: "bl",
+    },
+    {
+      id: "make",
+      title: "시스템 제작 기술",
+      color: "#3DB24B",
+      bullets: [
+        "지능형 자율주행 로봇 구동부 및 적재부 정밀설계",
+        "로컬거점 정밀 설계 및 제작 기술",
+      ],
+      image: "/images/business/process/wheel_make.png",
+      alt: "제작 이미지",
+      position: "l",
+    },
+    {
+      id: "dl",
+      title: "딥러닝기반 최적",
+      color: "#F28C28",
+      bullets: [
+        "시뮬레이션 트레이닝 데이터 확보 및 딥러닝 기반 강화학습재",
+      ],
+      image: "/images/business/process/wheel_dl.png",
+      alt: "딥러닝 이미지",
+      position: "tl",
+    },
+  ],
+};
 
   const processImages = [
     "/images/business/process/service_design.png",
@@ -87,7 +175,11 @@ export default function ServicePage() {
         {/*<div className="px-4 sm:px-6 lg:px-8 my-12">
           <CapabilityDiagram />
         </div>*/}
-
+        <section id="capability-wheel" className="py-16 px-4 md:px-0 bg-white flex flex-col items-center">
+          <h2 className="text-center text-2xl md:text-3xl font-bold mb-8 text-gray-900">
+            지능형 AMR & 무인 물류 거점
+            </h2>
+            <CapabilityWheel data={capabilityWheelData} /></section>
         {/* 1. Main Equipment Section */}
         <div className="bg-white py-12 md:py-20 px-4">
           <div className="max-w-7xl mx-auto">
