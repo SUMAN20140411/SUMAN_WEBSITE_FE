@@ -115,8 +115,6 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/*Ceo 인사말과 Ceo이미지 사이 회색 실선 */}
-          <div className="hidden md:block w-px min-h-[700px] bg-gray-200 self-stretch mr-8" />
 
           {/* 이미지 플레이스홀더 */}
           <motion.div

@@ -2,7 +2,7 @@ export const ceoText = {
   KOR: {
     hero: {
       primary: "주식회사수만",
-      secondary: "찾아주신 여러분반갑습니다.",
+      secondary: "찾아주신 여러분, 반갑습니다.",
     },
     paragraphs: [
       "안녕하십니까.",
@@ -21,10 +21,10 @@ export const ceoText = {
   ENG: {
     hero: {
       primary: "Welcome to SUMAN",
-      secondary: "it is a pleasure to meet you.",
+      secondary: "Thank you for visiting us.",
     },
     paragraphs: [
-      "Hello.",
+      "Hello,",
       "SUMAN Co., Ltd. possesses the technology and know-how to drive comprehensive growth across the entire value chain, expanding into precision parts, modules, and equipment manufacturing for the automotive, electronics, and secondary battery industries.",
       "Through continuous technological innovation and rigorous quality control, we earn the trust of our customers and deliver competitive solutions with precise engineering, growing together as we respond to new trends across the industry.",
       "We will remain a dependable partner that advances alongside your success.",

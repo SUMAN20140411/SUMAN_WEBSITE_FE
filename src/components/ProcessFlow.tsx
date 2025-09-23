@@ -152,6 +152,22 @@ function getCenter(pos: NodePos) {
   };
 }
 
+// --- Helper: get side center of node ---
+function getSideCenter(pos: NodePos, side: "left" | "right" | "top" | "bottom") {
+  switch (side) {
+    case "left":
+      return { x: pos.x, y: pos.y + pos.h / 2 };
+    case "right":
+      return { x: pos.x + pos.w, y: pos.y + pos.h / 2 };
+    case "top":
+      return { x: pos.x + pos.w / 2, y: pos.y };
+    case "bottom":
+      return { x: pos.x + pos.w / 2, y: pos.y + pos.h };
+    default:
+      return getCenter(pos);
+  }
+}
+
 // --- Helper: get SVG path for edge ---
 function getEdgePath(
   from: NodePos,
@@ -159,36 +175,47 @@ function getEdgePath(
   kind: EdgeKind | undefined,
   isMobile: boolean
 ) {
+  // Main: straight vertical/horizontal, always center-to-center
+  if (kind === "main") {
+    const a = getCenter(from);
+    const b = getCenter(to);
+    return `M${a.x},${a.y} L${b.x},${b.y}`;
+  }
+
+  // Branch: horizontal, left-to-right (수입검사 → 협력사)
+  if (kind === "branch") {
+    const a = getSideCenter(from, isMobile ? "bottom" : "left");
+    const b = getSideCenter(to, isMobile ? "top" : "right");
+    // On desktop, horizontal; on mobile, vertical
+    if (!isMobile) {
+      return `M${a.x},${a.y} L${b.x},${b.y}`;
+    } else {
+      // Mobile: vertical line
+      return `M${a.x},${a.y} L${b.x},${b.y}`;
+    }
+  }
+
+  // Return: curve outside grid, left side
+  if (kind === "return") {
+    // Self-loop (NG after concept/manufacture): curve left, up, then back to left side of node
+    if (from.node.id === to.node.id) {
+      const a = getSideCenter(from, "left");
+      const b = getSideCenter(to, "left");
+      const curveX = a.x - (isMobile ? 40 : 80);
+      const curveY = a.y - (isMobile ? 60 : 90);
+      return `M${a.x},${a.y} Q${curveX},${curveY} ${b.x},${b.y - (isMobile ? 40 : 80)}`;
+    }
+    // Feedback loop: big upward curve from reorder to concept, outside grid
+    const a = getSideCenter(from, "left");
+    const b = getSideCenter(to, "left");
+    const midY = Math.min(a.y, b.y) - (isMobile ? 120 : 220);
+    const midX = a.x - (isMobile ? 60 : 120);
+    return `M${a.x},${a.y} C${midX},${midY} ${midX},${midY} ${b.x},${b.y}`;
+  }
+
+  // Fallback: straight
   const a = getCenter(from);
   const b = getCenter(to);
-
-  // Main: straight vertical/horizontal
-  if (kind === "main") {
-    if (Math.abs(a.x - b.x) < 2) return `M${a.x},${a.y} L${b.x},${b.y}`; // vertical
-    if (Math.abs(a.y - b.y) < 2) return `M${a.x},${a.y} L${b.x},${b.y}`; // horizontal
-    const mx = (a.x + b.x) / 2;
-    return `M${a.x},${a.y} Q${mx},${a.y} ${b.x},${b.y}`;
-  }
-
-  // Branch: curve left/right
-  if (kind === "branch") {
-    const curve = isMobile
-      ? `C${a.x - 30},${a.y} ${b.x + 30},${b.y} ${b.x},${b.y}`
-      : `C${a.x - 60},${a.y} ${b.x + 60},${b.y} ${b.x},${b.y}`;
-    return `M${a.x},${a.y} ${curve}`;
-  }
-
-  // Return: self-loop or big upward curve
-  if (kind === "return") {
-    if (from.node.id === to.node.id) {
-      const dx = from.node.col === 3 ? 38 : -38;
-      const up = isMobile ? 28 : 38;
-      return `M${a.x},${a.y} q${dx},-${up} 0,-${up * 2}`;
-    }
-    const minY = Math.min(a.y, b.y) - (isMobile ? 80 : 180);
-    return `M${a.x},${a.y} C${a.x},${minY} ${b.x},${minY} ${b.x},${b.y}`;
-  }
-
   return `M${a.x},${a.y} L${b.x},${b.y}`;
 }
 
@@ -366,11 +393,18 @@ export default function ProcessFlow({ className }: { className?: string }) {
               {edge.ng &&
                 typeof window !== "undefined" &&
                 (() => {
+                  // For NG curves, offset NG label so it never collides with the arrow
                   const pt = getPointAtPath(path, 0.5);
+                  let offsetX = isMobile ? -22 : -32;
+                  let offsetY = isMobile ? -12 : -18;
+                  if (edge.kind === "branch") {
+                    offsetX = isMobile ? 8 : 12;
+                    offsetY = isMobile ? -6 : -10;
+                  }
                   return (
                     <text
-                      x={pt.x + (isMobile ? 8 : 12)}
-                      y={pt.y - (isMobile ? 6 : 10)}
+                      x={pt.x + offsetX}
+                      y={pt.y + offsetY}
                       fontSize={isMobile ? 11 : 13}
                       fontWeight={700}
                       fill="#EF4444"
