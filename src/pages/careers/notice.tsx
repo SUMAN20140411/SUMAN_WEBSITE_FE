@@ -102,7 +102,7 @@ const RecruitmentDownloadBanner: React.FC = () => {
   const lang = useLangStore((state) => state.lang) || "KOR";
 
   const fileHref =
-    "/images/PLC제어 부문 신입 및 경력직 채용 공고문_2025.00.00.docx";
+    "/images/부문 신입 및 경력직 채용 공고문_2025.00.00.docx";
 
   const noticeContent =
     lang === "KOR"

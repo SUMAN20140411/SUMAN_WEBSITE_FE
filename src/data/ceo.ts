@@ -1,7 +1,7 @@
 export const ceoText = {
   KOR: {
     hero: {
-      primary: "주식회사수만,",
+      primary: "주식회사수만",
       secondary: "찾아주신 여러분반갑습니다.",
     },
     paragraphs: [

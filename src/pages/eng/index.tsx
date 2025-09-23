@@ -271,7 +271,7 @@ export default function HomePage({ content }: HomePageProps) {
                 transition={{ duration: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                제품 및 설비 바로가기 →
+                Explore Products & Equipment →
               </motion.button>
             </Link>
           </motion.div>

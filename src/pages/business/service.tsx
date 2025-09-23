@@ -7,6 +7,7 @@ import { motion, type Transition } from "framer-motion";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
+import ProcessFlow from "@/components/ProcessFlow";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 import { Settings, PenTool, Package, Layers, ClipboardCheck, Gauge } from "lucide-react";
@@ -204,6 +205,11 @@ export default function ServicePage() {
         </div>
 
         <hr className="my-6 border-gray-200 w-full" />
+        <hr className="my-6 border-gray-200 w-full" />
+        {/* Add the new process flow section here */}
+        <section className="mt-20">
+          <ProcessFlow />
+        </section>
       </main>
     </Layout>
   );
