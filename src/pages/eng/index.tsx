@@ -166,9 +166,8 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </section>
 
-        {/* ============== CORE VALUE ============== */}
         <section
-          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
+          className="relative w-full  min-h-[900px] bg-cover bg-center text-white  px-6"
           style={{ aspectRatio: "1440/400" }}
         >
           <Image
@@ -178,7 +177,6 @@ export default function HomePage({ content }: HomePageProps) {
             className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
-          {/* Title row with same horizontal padding (px-6 md:px-[120px]) */}
           <motion.div
             className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
             initial={{ opacity: 0, y: 30 }}
@@ -186,7 +184,11 @@ export default function HomePage({ content }: HomePageProps) {
             transition={{ duration: 1 }}
             viewport={{ once: true, amount: 0.3 }}
           >
-            <p className="text-base sm:text-lg lg:text-2xl font-semibold text-white">
+            <p
+              className={
+                "text-base sm:text-lg lg:text-2xl font-semibold text-white"
+              }
+            >
               Core Value
             </p>
             <div className="flex-grow" />
@@ -198,7 +200,6 @@ export default function HomePage({ content }: HomePageProps) {
           </motion.div>
 
           <div className="relative z-20 w-full px-6 md:px-[60px] lg:px-[120px] flex flex-col md:flex-row items-start md:items-center justify-between gap-12 h-auto md:h-[550px]">
-            {/* Left copy */}
             <motion.div
               className="w-full md:w-[55%] max-w-full md:max-w-3xl"
               initial={{ opacity: 0, y: 30 }}
@@ -209,17 +210,13 @@ export default function HomePage({ content }: HomePageProps) {
               <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 md:mb-7 tracking-wide text-white">
                 {content.section2.title}
               </h2>
-              <p
-                className="text-sm md:text-base lg:text-lg text-white/80 leading-relaxed whitespace-pre-line tracking-wide font-light"
-                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif", lineHeight: "1.7" }}
-              >
+              <p className="text-sm md:text-sm lg:text-xl text-white/70 leading-relaxed whitespace-pre-line tracking-wide">
                 {content.section2.description}
               </p>
             </motion.div>
 
-            {/* Right grid 2x2 */}
             <motion.div
-              className="w-full md:w-[50%] grid grid-cols-2 grid-rows-2 gap-6 justify-items-center"
+              className="w-full md:w-[50%] flex flex-wrap gap-6 justify-start md:justify-end"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
