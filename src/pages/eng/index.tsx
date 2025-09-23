@@ -74,6 +74,7 @@ export default function HomePage({ content }: HomePageProps) {
       <Header />
 
       <main>
+        
         {/* ================= HERO ================= */}
         <section className="relative h-screen">
           <video
@@ -89,31 +90,30 @@ export default function HomePage({ content }: HomePageProps) {
 
           {/* Left aligned + same horizontal padding as 'Core Value' (px-6 md:px-[120px]) */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
-            <div className="w-full max-w-[560px]">
+            <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
-                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.35em] uppercase text-white/80 mb-3"
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
                   style={{ fontFamily: heroFontFamily }}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 1 }}
                 >
                   {content.section1Text.subtitle}
                 </motion.h1>
               ) : null}
-
-              {/* One line per array item; smaller size; aligned with subtitle */}
+              
               <motion.div
-                className="text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.55)]"
+                className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{ fontFamily: heroFontFamily }}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.15 }}
+                transition={{ duration: 1, delay: 0.3 }}
               >
                 {content.section1Text.lines.map((line, index) => (
-                  <p
-                    key={index}
-                    className="text-sm sm:text-base md:text-lg lg:text-[20px] font-normal leading-7 mb-1.5 whitespace-nowrap"
+                  <p 
+                    key={index} 
+                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
                   >
                     {line}
                   </p>
