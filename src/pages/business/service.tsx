@@ -13,7 +13,184 @@ import { serviceContent } from "@/data/service";
 /* =========================
    Process section components
    ========================= */
+const CARD_SLOTS = {
+  leftTop: "시스템 아키텍처 기술",
+  rightTop: "실내외 협치 주행 기술",
+  leftBot: "중대형 구조물 가공/ 제작 기술",
+  rightBot: "구조물 가공/ 제작 기술",
+} as const;
 
+// --- Types ---
+interface EquipmentCard {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon?: string;
+}
+
+interface MainEquipmentProps {
+  className?: string;
+  cards: EquipmentCard[];
+}
+
+// --- Helper: Get card slot ---
+function getCardSlot(title: string): keyof typeof CARD_SLOTS | null {
+  return Object.entries(CARD_SLOTS).find(([_, t]) => t === title)?.[0] as keyof typeof CARD_SLOTS || null;
+}
+
+function MainEquipment({ cards, className = '' }: MainEquipmentProps) {
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isTablet, setIsTablet] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsTablet(width > 768 && width < 1024);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Filter cards that should be in the grid
+  const gridCards = cards.filter(card => (Object.values(CARD_SLOTS) as readonly string[]).includes(card.title));
+  
+  return (
+    <div className={`w-full ${className}`}>
+      {/* Mobile Layout */}
+      {isMobile && (
+        <div className="flex flex-col gap-4 px-4">
+          {/* Mobile Header (Option A) */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              주요 설비
+            </h2>
+            <p className="text-sm text-gray-600">
+              고정밀 가공 및 측정 설비
+            </p>
+          </div>
+
+          {/* Mobile Card Stack */}
+          <div className="grid grid-cols-1 gap-4">
+            {Object.values(CARD_SLOTS).map(title => {
+              const card = gridCards.find(c => c.title === title);
+              if (!card) return null;
+              
+              return (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="w-full"
+                >
+                  <div className="bg-white rounded-xl shadow-lg p-5">
+                    {card.icon && (
+                      <div className="mb-3">
+                        <Image
+                          src={card.icon}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-bold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-sm text-gray-600">{card.subtitle}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Desktop/Tablet Layout */}
+      {!isMobile && (
+        <div className={`
+          grid gap-${isTablet ? '4' : '5'}
+          grid-cols-2
+          max-w-screen-xl
+          mx-auto
+          px-${isTablet ? '4' : '6'}
+        `}>
+          {/* Left Column */}
+          <div className="space-y-4">
+            {['leftTop', 'leftBot'].map(slot => {
+              const title = CARD_SLOTS[slot as keyof typeof CARD_SLOTS];
+              const card = gridCards.find(c => c.title === title);
+              if (!card) return null;
+
+              return (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="w-full"
+                >
+                  <div className="bg-white rounded-xl shadow-lg p-6 hover:scale-[1.02] transition-transform">
+                    {card.icon && (
+                      <div className="mb-4">
+                        <Image
+                          src={card.icon}
+                          alt=""
+                          width={48}
+                          height={48}
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-bold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-sm text-gray-600">{card.subtitle}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-4">
+            {['rightTop', 'rightBot'].map(slot => {
+              const title = CARD_SLOTS[slot as keyof typeof CARD_SLOTS];
+              const card = gridCards.find(c => c.title === title);
+              if (!card) return null;
+
+              return (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="w-full"
+                >
+                  <div className="bg-white rounded-xl shadow-lg p-6 hover:scale-[1.02] transition-transform">
+                    {card.icon && (
+                      <div className="mb-4">
+                        <Image
+                          src={card.icon}
+                          alt=""
+                          width={48}
+                          height={48}
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-bold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-sm text-gray-600">{card.subtitle}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 interface ProcessCardProps {
   children: React.ReactNode;
   type?: "step" | "decision";
