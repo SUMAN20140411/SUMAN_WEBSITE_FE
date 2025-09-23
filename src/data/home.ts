@@ -1,28 +1,24 @@
 // index.tsx에 들어가는 문구
 
 export const homeContentKor = {
-//--------------------------------------------
-//                   KOR
-//--------------------------------------------  
-    section1Text: {
-      subtitle: "Confidential",
-      lines: [
-        "꿈은 꿈꾸는 자에게만 허락되며,",
-        "그 꿈은 분명히 현실이 될 수 있으며,",
-        "도전하고 실행하는 꿈은 분명 현실이 됩니다.",
-      ],
+  section1Text: {
+    subtitle: "Confidential",
+    lines: [
+      "꿈은 꿈꾸는 자에게만 허락되며,",
+      "그 꿈은 분명히 현실이 될 수 있으며,",
+      "도전하고 실행하는 꿈은 분명 현실이 됩니다."
+    ],
   },
     
-    section2: {
-      title: '산업을 움직이는 기술',
-      description:
-        '수만은 반도체, 전기전자, 이차전지 정밀가공 부품 및 신뢰성 평가 모듈을 설계하고\n 제작하는 전문 기업으로 축적한 기술력과 인프라를 기반으로 고객 맞춤형 솔루션을 제공합니다. ',
-      bgImage: '/images/main/main_tech.png',
-      buttonLabel: '기업 비전 바로가기 →',
-      keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],
-      translations: ["즐겁게", "새롭게", "치열하게", "빠르게"]
-    },
-
+  section2: {
+    title: '산업을 움직이는 기술',
+    description: '수만은 반도체, 전기전자, 이차전지 정밀가공 부품 및 신뢰성 평가 모듈을 설계하고\n제작하는 전문 기업으로 축적한 기술력과 인프라를 기반으로 고객 맞춤형 솔루션을 제공합니다.',
+    bgImage: '/images/main/main_tech.png',
+    buttonLabel: '기업 비전 바로가기 →',
+    keywords: ["ENJOY", "NEO", "INTENSELY", "QUICKLY"],
+    translations: ["즐겁게", "새롭게", "치열하게", "빠르게"]
+  },
+    
     section3: {
       title: '정밀 부품, 모듈, 자동화 장비까지',
       subtitle: '미래 산업에 필요한 핵심 솔루션을 제조합니다',
