@@ -66,8 +66,8 @@ export default function HistoryPage() {
                 <div className="mb-10 p-5 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-base md:text-lg text-gray-700 text-center">
                     {lang === "KOR"
-                      ? "아래의 내용을 기재하여 하단의 메일으로 문의 주시면 신속하게 답변드리도록 하겠습니다."
-                      : "Please include the following information in your email to ooo@suman.co.kr and we will respond promptly."}
+                      ? "아래의 내용을 기재하여 하단의 메일주소로 문의 주시면 신속하게 답변드리도록 하겠습니다."
+                      : "Please fill out the information below and send it to the email address below. We will respond promptly."}
                   </p>
                 </div>
 
@@ -128,7 +128,7 @@ export default function HistoryPage() {
                   </div>
                   <div className="flex items-baseline text-sm md:text-base">
                     <span className="font-semibold text-blue-600 mr-2">
-                      {lang === "KOR" ? "대표 연락처" : "CEO Contact"}
+                      {lang === "KOR" ? "대표 연락처" : "CEO Contact Information"}
                     </span>
                     <a
                       href="042 - 434 - 1517"

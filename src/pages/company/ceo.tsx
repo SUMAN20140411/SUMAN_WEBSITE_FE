@@ -9,35 +9,30 @@ import { motion, type Transition } from "framer-motion";
 import { ceoText } from "@/data/ceo";
 import { useLangStore } from "@/stores/langStore";
 
-// Text animations
-const slideInLeft = {
-  hidden: { opacity: 0, y: 80 },
+const textReveal = {
+  hidden: { opacity: 0, y: 60 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 2, ease: "easeOut" } as Transition,
+    transition: { duration: 1.6, ease: "easeOut" } as Transition,
   },
 };
 
-const slideInRight = {
-  hidden: { opacity: 0, y: 80 },
+const imageReveal = {
+  hidden: { opacity: 0, scale: 0.95 },
   visible: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 2, ease: "easeOut" } as Transition,
+    scale: 1,
+    transition: { duration: 1.6, ease: "easeOut" } as Transition,
   },
 };
 
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
-  const { intro, body, closing } = ceoText[lang];
+  const { hero, paragraphs, closing, signatureTitle, signatureName } = ceoText[lang];
 
-  // Hero title (match rnd.tsx style/behavior)
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
-
-  // === UPDATED: konstanta trim 1cm atas & 1cm bawah ===
-  const CM_TO_PX = 37.8;                       // UPDATED
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);   // UPDATED -> 1cm ≈ 37.8px
+  const fontFamily = "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
   return (
     <Layout>
@@ -45,104 +40,75 @@ export default function CeoPage() {
         <title>{lang === "KOR" ? "CEO 인사말 | 수만" : "CEO Message | SUMAN"}</title>
       </Head>
 
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* === UPDATED: Bungkus HeroSection dengan negative margin top/bottom (1cm per sisi) === */}
-        <div                                       // UPDATED
-          style={{                                 // UPDATED
-            marginTop: `-${HERO_TRIM_PX}px`,       // UPDATED
-            marginBottom: `-${HERO_TRIM_PX}px`,    // UPDATED
-          }}                                       // UPDATED
-        >
-          <HeroSection
-            title={heroTitle}
-            backgroundImage="/images/sub_banner/ceo_hero.png"
-          />
-        </div>
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+        <HeroSection title={heroTitle} backgroundImage="/images/sub_banner/ceo_hero.png" />
 
-        {/* === UPDATED: Nempelin breadcrumb ke hero (sedikit -mt agar benar-benar rapat) === */}
-        <div className="relative z-30 -mt-2">      {/* UPDATED */}
+        <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
             path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"}
           />
         </div>
 
-        {/* === CEO Content === */}
-        <section className="content-wrapper py-16 px-4 sm:px-6 lg:px-8 bg-white flex justify-center">
-          <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center md:items-start gap-12">
-            {/* Message */}
-            <motion.div
-              className="md:w-1/2 text-gray-700 leading-relaxed space-y-6"
-              variants={slideInLeft}
+        <section className="bg-white">
+          <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-start lg:gap-16 lg:py-20">
+            <motion.article
+              className="lg:w-1/2"
+              variants={textReveal}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
+              style={{ fontFamily }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug">
-                {lang === "KOR" ? (
-                  <>
-                    <span className="text-blue-600 font-bold tracking-wide">SUMAN</span>
-                    <br />
-                    <span className="text-black font-bold tracking-wide">
-                      찾아주신 여러분, 반갑습니다.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-blue-600 font-bold tracking-wide">SUMAN</span>
-                    <br />
-                    <span className="text-black font-bold tracking-wide">
-                      Welcome, dear customers,
-                    </span>
-                  </>
-                )}
+              <span className="inline-block rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">
+                {lang === "KOR" ? "CEO 메시지" : "Message from the CEO"}
+              </span>
+
+              <h2 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem]">
+                <span className="block text-blue-600">{hero.primary}</span>
+                <span className="mt-2 block text-slate-900">{hero.secondary}</span>
               </h2>
 
-              <p className="text-base sm:text-lg tracking-wide leading-relaxed">{intro}</p>
-              {body.map((paragraph, idx) => (
-                <p key={idx} className="text-base sm:text-lg tracking-wide leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
-              <p className="text-base sm:text-lg tracking-wide leading-relaxed">{closing}</p>
+              <div className="mt-8 space-y-6 text-base leading-8 tracking-tight text-gray-700 sm:text-lg">
+                {paragraphs.map((paragraph, idx) => (
+                  <p key={idx}>{paragraph}</p>
+                ))}
 
-              <div className="signature-area mt-10 text-base sm:text-lg text-gray-800">
-                (주) 수만 대표이사 <strong className="ml-4">임태형</strong>
+                {closing ? <p className="font-medium text-gray-900">{closing}</p> : null}
               </div>
-            </motion.div>
 
-            {/* Divider */}
-            <div className="hidden md:block w-px bg-gray-200 self-stretch" />
+              <footer className="mt-10 border-t border-gray-200 pt-6 text-lg text-gray-900">
+                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-blue-500">
+                  {lang === "KOR" ? "Signature" : "Signature"}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
+                  <span className="text-gray-600">{signatureTitle}</span>
+                  <strong className="font-semibold text-slate-900">{signatureName}</strong>
+                </div>
+              </footer>
+            </motion.article>
 
-            {/* CEO Image */}
-            <motion.div
-              className="md:w-1/2 flex items-center justify-center"
-              variants={slideInRight}
+            <motion.aside
+              className="lg:w-1/2"
+              variants={imageReveal}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              <div
-                className="w-full flex items-center justify-center"
-                style={{
-                  height: "auto",
-                  maxHeight: "550px",
-                  overflow: "hidden",
-                }}
-              >
+              <div className="w-full overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
                 <Image
                   src="/images/company/ceo/ceo.jpeg"
-                  alt="SUMAN CEO"
-                  className="w-full h-full object-cover rounded-lg"
+                  alt={lang === "KOR" ? "(주)수만 대표이사 임태형 사진" : "Portrait of Taehyung Lim, CEO of SUMAN"}
+                  className="h-full w-full object-cover"
                   width={700}
                   height={500}
                   priority
                 />
               </div>
-            </motion.div>
+            </motion.aside>
           </div>
         </section>
 
-        <hr className="my-6 border-gray-200 w-full" />
+        <hr className="my-6 border-gray-200" />
       </main>
     </Layout>
   );

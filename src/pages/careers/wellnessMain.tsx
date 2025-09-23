@@ -70,7 +70,7 @@ export default function WellnessPage() {
     <>
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "복리후생 | 수만" : "Employee Wellness | SUMAN"}</title>
+        <title>{lang === "KOR" ? "복리후생 | 수만" : "Employee Benefits | SUMAN"}</title>
         <meta
           name="description"
           content={
@@ -90,7 +90,7 @@ export default function WellnessPage() {
           }}                                       // UPDATED
         >
         <HeroSection
-          title={lang === "KOR" ? "복리후생" : "Employee Wellness"}
+          title={lang === "KOR" ? "복리후생" : "Employee Benefits"}
           backgroundImage="/images/sub_banner/careers_hero.png"
         /></div>
 

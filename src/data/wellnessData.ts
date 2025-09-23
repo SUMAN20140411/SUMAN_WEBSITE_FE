@@ -57,7 +57,7 @@ export const wellnessContent: Record<string, WellnessData> = {
     sections: [
       {
         key: "office-life",
-        title: "Office Life",
+        title: "Employee Benefits",
         //subtitle: "회사생활",
         heroImage: "/images/wellness/life_bg.png",
         items: [
@@ -71,16 +71,16 @@ export const wellnessContent: Record<string, WellnessData> = {
   },
   ENG: {
     hero: {
-      title: "EMPLOYEE WELLNESS",
+      title: "EMPLOYEE BENEFITS",
       //subtitle: "To create a balance between work and life, we are implementing various welfare programs.",
-      path: "About Us > Employee Wellness",
+      path: "About Us > Employee Benefits",
       heroImage: "/images/wellness/well_bg.png",
     },
     sections: [
       {
         key: "office-life",
-        title: "Office Life",
-        //subtitle: "Office Life",
+        title: "Employee Benefits",
+        //subtitle: "Employee Benefits",
         heroImage: "/images/wellness/life_bg.png",
         items: [
           { title: "Dormitory", description: "Support for long-distance residents", iconKey: "dormitory" },

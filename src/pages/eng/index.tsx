@@ -131,49 +131,44 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          <div className="absolute inset-0 flex flex-col justify-center items-center text-white z-10 px-4 text-center">
-            <motion.h1
-              className="text-xl md:text-3xl font-bold mb-3 md:mb-4  tracking-wide"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              viewport={{ once: true }}
-            >
-              {/*SUMAN*/}
-            </motion.h1>
-            <motion.h2
-             className="font-danjo text-2xl sm:text-3xl md:text-3xl font-normal mb-5 md:mb-7 leading-snug md:leading-[1.3] tracking-wide text-center drop-shadow-[0_8px_18px_rgba(0,0,0,0.25)] uppercase"
-              variants={heroContainerVariants}
-              viewport={{ once: true }}
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
+            <div className="w-full max-w-3xl">
+              {content.section1Text.subtitle ? (
+                <motion.h1
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-4"
+                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif" }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1 }}
+                  viewport={{ once: true }}
+                >
+                  {content.section1Text.subtitle}
+                </motion.h1>
+              ) : null}
+              <motion.h2
+                className="text-3xl sm:text-4xl md:text-5xl font-medium mb-5 md:mb-7 leading-snug md:leading-[1.35] drop-shadow-[0_10px_24px_rgba(0,0,0,0.35)]"
+                style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif" }}
+                variants={heroContainerVariants}
+                viewport={{ once: true }}
               >
               {content.section1Text.lines.map((line, index) => (
-                <motion.span
-                  key={`${line}-${index}`}
-                  className="relative block overflow-hidden py-1"
-                  custom={index}
-                  variants={heroLineVariants}
-                   >
-                   <span className="relative z-10 block">{line}</span>
                   <motion.span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] -translate-y-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 mix-blend-screen skew-x-12"
+                    key={`${line}-${index}`}
+                    className="relative block overflow-hidden py-1"
                     custom={index}
-                    variants={heroSheenVariants}
-                  />
-                </motion.span>
-              ))}
-            </motion.h2>
-
-
-            {/*<motion.p
-              className="text-base md:text-xl text-gray-300 max-w-[90%] md:max-w-3xl lg:max-w-none lg:whitespace-nowrap mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.4 }}
-              viewport={{ once: true }}
-            >
-              {content.section1Text.subtitle}
-            </motion.p> */}
+                    variants={heroLineVariants}
+                  >
+                    <span className="relative z-10 block">{line}</span>
+                    <motion.span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] -translate-y-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 mix-blend-screen skew-x-12"
+                      custom={index}
+                      variants={heroSheenVariants}
+                    />
+                  </motion.span>
+                ))}
+              </motion.h2>
+            </div>
           </div>
         </section>
 

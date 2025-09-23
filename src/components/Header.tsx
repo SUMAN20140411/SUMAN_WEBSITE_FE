@@ -69,12 +69,12 @@ const navItemsEng = [
     ],
   },
   {
-    label: "Careers",
+    label: "Recruitment",
     href: "/eng/careers/philosophy",
     submenu: [
-      { label: "Talent Philosophy", href: "/eng/careers/philosophy" },
+      { label: "Ideal Candidate", href: "/eng/careers/philosophy" },
       { label: "Recruit Notice", href: "/eng/careers/notice" },
-      { label: "Wellness", href: "/eng/careers/wellnessMain" },
+      { label: "Employee Benefits", href: "/eng/careers/wellnessMain" },
     ],
   },
   {

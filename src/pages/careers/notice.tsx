@@ -109,11 +109,11 @@ const RecruitmentDownloadBanner: React.FC = () => {
       ? {
           heading: "내부공고",
           tagline: "",
-          tag: "[TEST][채용공고]",
+  
           title: "현재 채용 진행중인 내부 공고가 없습니다.",
           description:
             "",
-          note: "다운로드 후 안내에 따라 지원 절차를 진행해 주세요.",
+          note: "",
           fileLabel: "채용 공고문",
           actionLabel: "공고문 다운로드",
           ariaLabel: "PLC 제어 부문 채용 공고문 다운로드",
@@ -121,12 +121,11 @@ const RecruitmentDownloadBanner: React.FC = () => {
         }
       : {
           heading: "Internal Recruitment Notice",
-          tagline: "Stay informed about SUMAN's current opening at a glance.",
-          tag: "[TEST][Recruitment Notice]",
+          tagline: "",
           title: "There are currently no internal recruitment notices.", 
           description:
             "",
-          note: "Download the notice to review every requirement before applying.",
+          note: "",
           fileLabel: "There are currently no internal recruitment notices.",
           actionLabel: "There are currently no internal recruitment notices.",
           ariaLabel: "There are currently no internal recruitment notices.",
@@ -166,18 +165,6 @@ const RecruitmentDownloadBanner: React.FC = () => {
                 </div>
                 <p className="text-sm text-white/80 sm:text-base">{noticeContent.tagline}</p>
               </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white/80">
-                  {/*<Sparkles className="h-4 w-4 text-amber-300" />*/}
-                  {noticeContent.tag}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
-                  <CalendarDays className="h-4 w-4 text-sky-200" />
-                  {/*{noticeContent.postedOn}*/}
-                </span>
-              </div>
-
               <div className="space-y-3">
                 <h3 className="text-xl font-semibold sm:text-2xl">{noticeContent.title}</h3>
                 <p className="text-sm leading-relaxed text-white/75 sm:text-base">

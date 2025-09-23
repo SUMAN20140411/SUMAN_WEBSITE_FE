@@ -51,7 +51,7 @@ const locationsData = [
     key: "천안사업장",
     title: {
       KOR: "천안사업장",
-      ENG: "Cheonan Branch",
+      ENG: "Cheonan Place of Business",
     },
     addressSnippet: {
       KOR: "충남 천안시 서북구 2공단4로 40-11(성성동) G1 비즈캠퍼스 4F 401호",
@@ -208,7 +208,7 @@ export default function LocationPage() {
     <Layout>
       <Head>
         <title>
-          {lang === "KOR" ? "오시는길" : "Location"}
+          {lang === "KOR" ? "오시는길" : "Directions"}
         </title>
       </Head>
 
@@ -221,7 +221,7 @@ export default function LocationPage() {
           }}                                       // UPDATED
         >
         <HeroSection
-          title={lang === "KOR" ? "오시는 길" : "Our Location"}
+          title={lang === "KOR" ? "오시는 길" : "Directions"}
           //subtitle={lang === "KOR" ? "Locations" : "How to Reach Us"}
           backgroundImage="/images/sub_banner/company_banner.png"
         />
@@ -231,7 +231,7 @@ export default function LocationPage() {
         <BreadcrumbSection
           path={
             lang === "KOR"
-              ? "회사소개 > 오시는길"
+              ? "회사소개 > Directions"
               : "Company > Location / Directions"
           }
         /> </div>

@@ -69,7 +69,7 @@ const navItemsEng = [
     label: "Careers",
     href: "/eng/careers/philosophy",
     submenu: [
-      { label: "Talent Philosophy", href: "/eng/careers/philosophy" },
+      { label: "Ideal Candidate", href: "/eng/careers/philosophy" },
       { label: "Recruit Notice", href: "/eng/careers/notice" },
     ],
   },

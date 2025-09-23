@@ -5,10 +5,11 @@ export const homeContentKor = {
 //                   KOR
 //--------------------------------------------  
     section1Text: {
+      subtitle: "Confidential",
       lines: [
-        "꿈은 꿈꾸는 자에게만 허락되며",
-     "그 꿈은 분명히 현실이 될 수 있으며",
-  "도전하고 실행하는 꿈은 분명 현실이 됩니다",
+        "꿈은 꿈꾸는 자에게만 허락되며,",
+        "그 꿈은 분명히 현실이 될 수 있으며,",
+        "도전하고 실행하는 꿈은 분명 현실이 됩니다.",
       ],
   },
     
@@ -85,10 +86,11 @@ export const homeContentKor = {
 export const homeContentEng = {
     
     section1Text: {
+      subtitle: "Confidential",
       lines: [
-        "Dreams are only granted to those who dream",
-      "and those dreams can definitely become reality",
-"Dreams that are challenged and executed definitely become reality",
+        "Dreams are only granted to those who dream,",
+        "And those dreams can definitely become reality,",
+        "Dreams that are challenged and executed definitely become reality.",
       ],
       //subtitle: 'Dreams are only granted to those who dream, and those dreams can definitely become reality. Dreams that are challenged and executed definitely become reality.',
     },

@@ -83,13 +83,13 @@ export default function TalentPage() {
     <>
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "인재상" : "Talent Philosophy "}</title>
+        <title>{lang === "KOR" ? "인재상" : "Ideal Candidate "}</title>
         <meta
           name="description"
           content={
             lang === "KOR"
               ? "수만의 인재상과 핵심 가치를 확인해보세요"
-              : "Discover SUMAN's talent philosophy and core values"
+              : "Discover SUMAN's Ideal Candidate and core values"
           }
         />
       </Head>
@@ -102,13 +102,13 @@ export default function TalentPage() {
           }}                                       // UPDATED
         >
         <HeroSection
-          title={lang === "KOR" ? "인재상" : "Talent Philosophy"}
+          title={lang === "KOR" ? "인재상" : "Ideal Candidate"}
           //subtitle={lang === "KOR" ? "우리의 인재상" : "Our Talent Values"}
           backgroundImage="/images/sub_banner/careers_hero.png"
         /></div>
         <div className="relative z-30 -mt-2">  
         <BreadcrumbSection
-          path={lang === "KOR" ? "인재 채용 > 인재상" : "Careers > Talent Philosophy"}
+          path={lang === "KOR" ? "인재 채용 > 인재상" : "Recruitment > Ideal Candidate"}
         /></div>
 
         <div className="content-wrapper py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-8 bg-white">
