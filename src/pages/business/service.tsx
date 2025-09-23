@@ -172,9 +172,9 @@ export default function ServicePage() {
         </div>
 
         {/* Capability Diagram */}
-        {/*<div className="px-4 sm:px-6 lg:px-8 my-12">
+        {/* <div className="px-4 sm:px-6 lg:px-8 my-12">
           <CapabilityDiagram />
-        </div>*/}
+        </div> */}
         <section id="capability-wheel" className="py-16 px-4 md:px-0 bg-white flex flex-col items-center">
           <h2 className="text-center text-2xl md:text-3xl font-bold mb-8 text-gray-900">
             지능형 AMR & 무인 물류 거점
