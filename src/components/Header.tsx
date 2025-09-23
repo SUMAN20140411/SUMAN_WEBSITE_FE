@@ -55,7 +55,7 @@ const navItemsEng = [
       { label: "History", href: "/eng/company/history" },
       { label: "Organization", href: "/eng/company/org" },
       { label: "CI", href: "/eng/company/ci" },
-      { label: "Location", href: "/eng/company/location" },
+      { label: "Directions", href: "/eng/company/location" },
       { label: "Certifications", href: "/eng/company/certifications" },
     ],
   },

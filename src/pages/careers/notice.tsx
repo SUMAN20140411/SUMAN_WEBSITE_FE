@@ -116,8 +116,8 @@ const RecruitmentDownloadBanner: React.FC = () => {
           note: "",
           fileLabel: "채용 공고문",
           actionLabel: "공고문 다운로드",
-          ariaLabel: "PLC 제어 부문 채용 공고문 다운로드",
-          fileName: "PLC 제어 부문 채용 공고문",
+          ariaLabel: "현재 채용 진행중인 내부 공고가 없습니다.",
+          fileName: "현재 채용 진행중인 내부 공고가 없습니다.",
         }
       : {
           heading: "Internal Recruitment Notice",

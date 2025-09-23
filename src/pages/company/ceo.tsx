@@ -63,10 +63,13 @@ export default function CeoPage() {
                 {lang === "KOR" ? "CEO 인사말" : "Message from the CEO"}
               </span>
 
-              <h2 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl md:text-[2.75rem]">
+              <h2 className="mt-5 text-xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
                 {hero.primary && (
-                  <span className="block text-blue-600">{hero.primary}</span>
-                )}
+                  <span className="block text-blue-600">
+                    {hero.primary}
+                    {lang === "KOR" && <span className="text-slate-900">을</span>} {/* -> */}
+                    </span>
+                  )}
                 {hero.secondary && (
                   <span className="mt-2 block text-slate-900">{hero.secondary}</span>
                 )}
@@ -110,23 +113,23 @@ export default function CeoPage() {
             </motion.article>
 
             <motion.aside
-              className="lg:w-1/2"
-              variants={imageReveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
+            className="lg:w-1/2 flex items-center justify-center lg:justify-end"
+            variants={imageReveal}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
             >
-              <div className="w-full overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
+              <div className="relative overflow-hidden rounded-2xl border border-gray-100 shadow-xl w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 xl:w-72 xl:h-72">
                 <Image
-                  src="/images/company/ceo/ceo.jpeg"
-                  alt={lang === "KOR" ? "(주)수만 대표이사 임태형 사진" : "Portrait of Taehyung Lim, CEO of SUMAN"}
-                  className="h-full w-full object-cover"
-                  width={700}
-                  height={500}
-                  priority
+                src="/images/company/ceo/ceo.jpeg"
+                alt={lang === "KOR" ? "(주)수만 대표이사 임태형 사진" : "Portrait of Taehyung Lim, CEO of SUMAN"}
+                fill
+                className="object-cover"
+                sizes="(min-width:1280px) 18rem, (min-width:1024px) 16rem, (min-width:768px) 14rem, (min-width:640px) 12rem, 9rem"
+                priority
                 />
-              </div>
-            </motion.aside>
+                </div>
+                </motion.aside>
           </div>
         </section>
 

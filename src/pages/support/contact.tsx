@@ -128,7 +128,7 @@ export default function HistoryPage() {
                   </div>
                   <div className="flex items-baseline text-sm md:text-base">
                     <span className="font-semibold text-blue-600 mr-2">
-                      {lang === "KOR" ? "대표 연락처" : "CEO Contact Information"}
+                      {lang === "KOR" ? "대표 연락처" : "Contact Information"}
                     </span>
                     <a
                       href="042 - 434 - 1517"

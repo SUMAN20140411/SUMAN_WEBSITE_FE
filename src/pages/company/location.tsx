@@ -232,7 +232,7 @@ export default function LocationPage() {
           path={
             lang === "KOR"
               ? "회사소개 > Directions"
-              : "Company > Location / Directions"
+              : "Company > Directions"
           }
         /> </div>
 
