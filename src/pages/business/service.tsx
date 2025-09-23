@@ -205,7 +205,10 @@ export default function ServicePage() {
         </div>
 
         <hr className="my-6 border-gray-200 w-full" />
-        {/*<hr className="my-6 border-gray-200 w-full" />Add the new process flow section here <section className="mt-20"><ProcessFlow /></section> */}
+        {/*<hr className="my-6 border-gray-200 w-full" />Add the new process flow section here*/} 
+        <section className="mt-20">
+          <ProcessFlow />
+          </section> 
       </main>
     </Layout>
   );
