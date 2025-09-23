@@ -132,7 +132,7 @@ export default function HomePage({ content }: HomePageProps) {
           </video>
 
           {/* 수정된 Hero 텍스트 영역 */}
-          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 sm:px-12 md:px-24 text-left">
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
             <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
