@@ -63,22 +63,22 @@ const ProcessFlowChart: React.FC = () => {
     step?.id === "reorder" ||
     /re[-\s]?order/i.test(step?.title || "");
 
-  return (
-    <div className="w-full bg-white overflow-x-auto relative">
+ return (
+    <div className="w-full bg-white overflow-x-auto relative min-h-[calc(100vh-24rem)]"> {/* Added min-height */}
       <motion.div
-        className="min-w-[1980px] p-8 relative" // Increased from 1800px
+        className="min-w-[1881px] p-8 pb-16 relative transform scale-95" // Added bottom padding
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="flex items-center gap-9 mb-16"> {/* Increased gap from 8 to 9 */}
+        <div className="flex items-center gap-8"> {/* Removed mb-16 since we added pb-16 above */}
           {steps.map((step: any, index: number) => (
             <React.Fragment key={step.id}>
               <motion.div
-                className="relative scale-110" // Added 10% scale increase
+                className="relative scale-95" // 5% smaller
                 variants={stepVariants}
                 whileHover={{
-                  scale: 1.15, // Adjusted hover scale
+                  scale: 1.05,
                   transition: { type: "spring", stiffness: 400, damping: 10 },
                 }}
               >
@@ -93,14 +93,14 @@ const ProcessFlowChart: React.FC = () => {
                   <>
                     <FlowDiamond title={step.title} subtitle={step.subtitle} />
                     {/* NG Label under diamond */}
-                    <div className="absolute -bottom-28 left-1/2 -translate-x-1/2 z-10"> {/* Adjusted spacing */}
+                    <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 z-10">
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col items-center"
                       >
-                        <div className="bg-red-600 rounded-md px-5 py-2 shadow-sm min-w-[100px]"> {/* Increased sizes */}
-                          <div className="text-[11px] leading-[15px] font-bold text-white text-center tracking-wide"> {/* Increased font */}
+                        <div className="bg-red-600 rounded-md px-4 py-1.5 shadow-sm min-w-[95px]"> {/* 5% smaller */}
+                          <div className="text-[10.5px] leading-[14px] font-bold text-white text-center tracking-wide">
                             NG
                             <br />
                             (GO BACK)
@@ -114,26 +114,26 @@ const ProcessFlowChart: React.FC = () => {
                 {/* Special case for 수입검사 with vertical arrow */}
                 {isIncomingStep(step) && (
                   <motion.div
-                    className="absolute -bottom-48 left-1/2 -translate-x-1/2 z-0" // Adjusted spacing and z-index
+                    className="absolute -bottom-44 left-1/2 -translate-x-1/2 z-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
                     <div className="flex flex-col items-center">
                       <motion.div
-                        className="w-[3px] h-28 bg-red-600" // Increased width and height
+                        className="w-[2.85px] h-26 bg-red-600" // 5% smaller
                         initial={{ scaleY: 0 }}
                         animate={{ scaleY: 1 }}
                         transition={{ delay: 0.5, duration: 0.4 }}
                       />
                       <motion.div
-                        className="w-0 h-0 border-l-[7px] border-r-[7px] border-t-[12px] border-transparent border-t-red-600" // Increased arrow size
+                        className="w-0 h-0 border-l-[6.65px] border-r-[6.65px] border-t-[11.4px] border-transparent border-t-red-600" // 5% smaller
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.9 }}
                       />
                       <motion.div 
-                        className="mt-5" // Increased spacing
+                        className="mt-4"
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.1 }}
@@ -149,14 +149,12 @@ const ProcessFlowChart: React.FC = () => {
                 )}
               </motion.div>
 
-              {/* Forward arrows */}
-              {index < steps.length - 1 && 
-               !isReorderStep(step) &&
-               (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
+              {/* Forward arrows - now consistent for all steps */}
+              {index < steps.length - 1 && (
                 <motion.div 
                   variants={stepVariants} 
-                  whileHover={{ scale: 1.15 }}
-                  className="scale-110" // Added 10% scale increase
+                  whileHover={{ scale: 1.05 }}
+                  className="scale-95 mx-2" // 5% smaller & consistent spacing
                 >
                   <FlowArrow />
                 </motion.div>
@@ -440,15 +438,14 @@ export default function ServicePage() {
         </section>
 
         {/* PROCESS (interactive rail) */}
-        <section className="bg-white py-20 px-4 md:px-8">
+        <section className="bg-white py-20 px-4 md:px-8 min-h-[calc(100vh-12rem)]"> {/* Added min-height */}
           <div className="mx-auto w-full max-w-7xl">
-            <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
+            <h2 className="mb-10 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
               PROCESS
-            </h2>
-            <ProcessFlowChart />
-          </div>
-        </section>
-
+              </h2>
+              <ProcessFlowChart />
+              </div>
+              </section>
         <hr className="my-6 w-full border-gray-200" />
       </main>
     </Layout>

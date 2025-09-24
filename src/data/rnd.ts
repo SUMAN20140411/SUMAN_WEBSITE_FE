@@ -13,7 +13,7 @@ export const businessAreasData = {
   KOR: {
     semiconductor: {
       title: "반도체 제조 장비",
-      subtitle: "Semiconductor / Secondary Battery",
+      subtitle: "Semiconductor / 2ⁿᵈ Battery",
       services: [
         "정밀 가공 부품 설계",
         "모듈 및 Assembly 설계/조립/제작",
@@ -40,7 +40,7 @@ export const businessAreasData = {
     },
     mobility: {
       title: "모빌리티",
-      subtitle: "Mobility (Autonomous / Mobile Robot",
+      subtitle: "Mobility (Autonomous / Mobile Robot)",
       services: [
         "주행 모듈 구조 설계/제작",
         "범용화 모듈 구조 설계/제작",
@@ -52,7 +52,7 @@ export const businessAreasData = {
   ENG: {
     semiconductor: {
       title: "Semiconductor Manufacturing Equipment",
-      subtitle: "Semiconductor / Second Generation Battery",
+      subtitle: "Semiconductor / 2ⁿᵈ Battery",
       services: [
         "Precision machined parts design",
         "Module and Assembly design/assembly/manufacturing",
@@ -67,12 +67,12 @@ export const businessAreasData = {
       ]
     },
     automation: {
-      title: "Factory Automation",
+      title: "Factory Automation System Integration",
       subtitle: "Factory Automation",
       services: [
         "Automation equipment design and manufacturing",
         "Factory automation integrated design and manufacturing",
-        "Unit process equipment design and manufacturing"
+        "Unit process equipment design and manufacturing\n\n"
       ],
       systemIntegration: [
         "Customer requirement system planning / design /",

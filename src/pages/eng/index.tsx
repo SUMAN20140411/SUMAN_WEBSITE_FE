@@ -84,8 +84,6 @@ export default function HomePage({ content }: HomePageProps) {
     }),
   };
 
-
-
   return (
     <>
       <Head>
@@ -119,6 +117,7 @@ export default function HomePage({ content }: HomePageProps) {
       <Header />
 
       <main>
+        {/* Hero */}
         <section className="relative h-screen">
           <video
             autoPlay
@@ -131,8 +130,8 @@ export default function HomePage({ content }: HomePageProps) {
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
-          {/* 수정된 Hero 텍스트 영역 */}
-          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
+          {/* Update hero text section padding */}
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-4 sm:px-6 md:px-[120px] text-left">
             <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
@@ -145,7 +144,7 @@ export default function HomePage({ content }: HomePageProps) {
                   {content.section1Text.subtitle}
                 </motion.h1>
               ) : null}
-              
+
               <motion.div
                 className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{ fontFamily: heroFontFamily }}
@@ -154,8 +153,8 @@ export default function HomePage({ content }: HomePageProps) {
                 transition={{ duration: 1, delay: 0.3 }}
               >
                 {content.section1Text.lines.map((line, index) => (
-                  <p 
-                    key={index} 
+                  <p
+                    key={index}
                     className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
                   >
                     {line}
@@ -166,8 +165,9 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </section>
 
+        {/* Core Value */}
         <section
-          className="relative w-full  min-h-[900px] bg-cover bg-center text-white  px-6"
+          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-4 sm:px-6"
           style={{ aspectRatio: "1440/400" }}
         >
           <Image
@@ -177,18 +177,15 @@ export default function HomePage({ content }: HomePageProps) {
             className="absolute inset-0 w-full h-full object-cover z-0"
           />
 
+          {/* Core Value header */}
           <motion.div
-            className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
+            className="relative z-20 w-full pt-20 px-4 sm:px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
             viewport={{ once: true, amount: 0.3 }}
           >
-            <p
-              className={
-                "text-base sm:text-lg lg:text-2xl font-semibold text-white"
-              }
-            >
+            <p className="text-base sm:text-lg lg:text-2xl font-semibold text-white">
               Core Value
             </p>
             <div className="flex-grow" />
@@ -199,7 +196,8 @@ export default function HomePage({ content }: HomePageProps) {
             </Link>
           </motion.div>
 
-          <div className="relative z-20 w-full px-6 md:px-[60px] lg:px-[120px] flex flex-col md:flex-row items-start md:items-center justify-between gap-12 h-auto md:h-[550px]">
+          {/* Core Value content */}
+          <div className="relative z-20 w-full px-4 sm:px-6 md:px-[60px] lg:px-[120px] flex flex-col md:flex-row items-start md:items-center justify-between gap-12 h-auto md:h-[550px]">
             <motion.div
               className="w-full md:w-[55%] max-w-full md:max-w-3xl"
               initial={{ opacity: 0, y: 30 }}
@@ -247,15 +245,17 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </section>
 
+        {/* Solutions */}
         <motion.section
-          className="relative z-30 -mt-40 bg-white py-25 px-4 md:px-6 rounded-t-[40px] md:rounded-t-[60px]"
+          className="relative z-30 -mt-40 bg-white py-25 px-4 sm:px-6 rounded-t-[40px] md:rounded-t-[60px]"
           initial={{ opacity: 1, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.3 }}
         >
+          {/* Solutions header */}
           <motion.div
-            className="relative z-20 w-full pt-20 px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
+            className="relative z-20 w-full pt-20 px-4 sm:px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
@@ -276,8 +276,9 @@ export default function HomePage({ content }: HomePageProps) {
             </Link>
           </motion.div>
 
+          {/* Solutions title area */}
           <motion.div
-            className="text-left text-black mb-20 max-w-7xl mx-[30px] md:mx-[120px]"
+            className="text-left text-black mb-20 max-w-7xl mx-4 sm:mx-6 md:mx-[120px]"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
@@ -291,7 +292,8 @@ export default function HomePage({ content }: HomePageProps) {
             </p>
           </motion.div>
 
-          <div className="w-full px-[60px] md:px-[120px] lg:px-[160px]">
+          {/* Solutions cards */}
+          <div className="w-full px-4 sm:px-[60px] md:px-[120px] lg:px-[160px]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-10">
               {content.section3.cards.map((card, index) => (
                 <motion.div
@@ -303,7 +305,6 @@ export default function HomePage({ content }: HomePageProps) {
                   viewport={{ once: true, amount: 0.3 }}
                 >
                   <div className="relative w-full h-full">
-                    {" "}
                     <Image
                       src={card.img}
                       alt={card.title}
@@ -332,15 +333,17 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </motion.section>
 
+        {/* Service */}
         <motion.section
-          className="relative z-30 bg-white px-4 md:px-6"
+          className="relative z-30 bg-white px-4 sm:px-6"
           initial={{ opacity: 1, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.3 }}
         >
+          {/* Service header */}
           <motion.div
-            className="text-center text-black mb-10 max-w-7xl mx-auto md:mx-[120px] text-base sm:text-lg lg:text-2xl font-semibold tracking-wide"
+            className="text-center text-black mb-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-[120px]"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
@@ -418,6 +421,7 @@ export default function HomePage({ content }: HomePageProps) {
           </div>
         </motion.section>
 
+        {/* Contact */}
         <section className="relative w-full mt-0">
           <Image
             src={content.footer_banner[0]}
@@ -427,6 +431,7 @@ export default function HomePage({ content }: HomePageProps) {
             className="w-full object-cover"
             style={{ aspectRatio: "1440/220" }}
           />
+          {/* Contact section padding */}
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 sm:px-6 pointer-events-none">
             <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl font-semibold mb-2 sm:mb-4 lg:mb-7 tracking-wide">
               Contact us

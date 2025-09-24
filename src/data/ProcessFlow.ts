@@ -140,7 +140,7 @@ export const processFlowContent = {
       {
         id: "development",
         type: "card",
-        title: "Dev / Machining Design",
+        title: "Developing / Machining Design",
         hasNG: false
       },
       {

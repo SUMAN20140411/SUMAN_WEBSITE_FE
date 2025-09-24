@@ -67,7 +67,7 @@ export default function HistoryPage() {
                   <p className="text-base md:text-lg text-gray-700 text-center">
                     {lang === "KOR"
                       ? "아래의 내용을 기재하여 하단의 메일주소로 문의 주시면 신속하게 답변드리도록 하겠습니다."
-                      : "Please fill out the information below and send it to the email address below. \We will respond promptly."}
+                      : "Please fill out the information below and send it to the email address below. We will respond promptly."}
                   </p>
                 </div>
 
