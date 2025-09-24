@@ -283,7 +283,7 @@ function ProcessFlowChart() {
   const X0 = 40;
   const GAP = 340;
 
-  // ===== Posisi node =====
+  // ===== Posisi node (grid-snap, jarak konsisten) =====
   const NODES: FlowNode[] = [
     { id: "customer",  label: "Customer", x: X0 + GAP * 0, y: TOP_Y, w: CARD_W, h: CARD_H, type: "step" },
     { id: "concept",   label: <>Concept 설계<br/><span className="text-xs opacity-80">Concept Design</span></>, x: X0 + GAP * 1, y: TOP_Y, type: "step" },
@@ -292,8 +292,10 @@ function ProcessFlowChart() {
     { id: "review",    label: <>검토승인<br/><span className="text-xs opacity-80">Review Approval</span></>, x: X0 + GAP * 4, y: TOP_Y, type: "decision" },
     { id: "order",     label: <>발주(소재/부품)<br/><span className="text-xs opacity-80">Place Order: Materials/Parts</span></>, x: X0 + GAP * 5, y: TOP_Y, type: "step" },
 
+    // supplier (loop NG dari 수입검사)
     { id: "partner",   label: <>협력사<br/><span className="text-xs opacity-80">Supplier</span></>, x: X0 + GAP * 6 + 20, y: 210, w: 220, h: 90, type: "step" },
 
+    // baris bawah
     { id: "incoming",  label: <>수입검사<br/><span className="text-xs opacity-80">Incoming Inspection</span></>, x: X0 + GAP * 4, y: BOT_Y, type: "decision" },
     { id: "machining", label: <>가공/제작<br/><span className="text-xs opacity-80">Processing / Manufacturing</span></>, x: X0 + GAP * 5 - 20, y: BOT_Y, type: "step" },
     { id: "assyqa",    label: <>조립/측정검사<br/><span className="text-xs opacity-80">Assembly & Measurement Inspection</span></>, x: X0 + GAP * 6, y: BOT_Y, type: "decision" },
@@ -305,7 +307,7 @@ function ProcessFlowChart() {
 
   // ===== Helpers =====
   const nodeById = (id: string) => NODES.find(n => n.id === id)!;
-  const anchor = (n: any, where: Anchor) => {
+  const anchor = (n: FlowNode, where: Anchor) => {
     const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
     const cx = n.x + w / 2, cy = n.y + h / 2;
     if (where === "left")   return { x: n.x,     y: cy };
@@ -333,16 +335,19 @@ function ProcessFlowChart() {
   };
 
   // ===== Edges =====
-  const EDGES = [
+  const EDGES: FlowEdge[] = [
+    // TOP
     { from: "customer", to: "concept",    fromAnchor: "right", toAnchor: "left" },
     { from: "concept",  to: "dr",         fromAnchor: "right", toAnchor: "left" },
     { from: "dr",       to: "dev",        fromAnchor: "right", toAnchor: "left", label: "OK" },
     { from: "dev",      to: "review",     fromAnchor: "right", toAnchor: "left" },
     { from: "review",   to: "order",      fromAnchor: "right", toAnchor: "left", label: "OK" },
 
+    // turun: Order → Incoming
     { from: "order", to: "incoming", fromAnchor: "bottom", toAnchor: "top",
-      via: [{ x: snap(nodeById("order").x + 300 / 2), y: 260 }, { x: snap(nodeById("incoming").x + 300 / 2), y: 260 }] },
+      via: [{ x: snap(nodeById("order").x + CARD_W / 2), y: 260 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 260 }] },
 
+    // BOTTOM
     { from: "incoming", to: "machining", fromAnchor: "right", toAnchor: "left", label: "OK" },
     { from: "machining", to: "assyqa",   fromAnchor: "right", toAnchor: "left" },
     { from: "assyqa",   to: "packing",   fromAnchor: "right", toAnchor: "left", label: "OK" },
@@ -350,22 +355,26 @@ function ProcessFlowChart() {
     { from: "delivery", to: "feedback",  fromAnchor: "right", toAnchor: "left" },
     { from: "feedback", to: "reorder",   fromAnchor: "right", toAnchor: "left" },
 
+    // loop panjang
     { from: "reorder", to: "concept", fromAnchor: "top", toAnchor: "bottom", dashed: true, archUp: true, label: "Improve & Re-Order" },
 
+    // NG loops
     { from: "dr",     to: "concept", fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
     { from: "review", to: "dev",     fromAnchor: "top", toAnchor: "top", dashed: true, archUp: true, showNGPill: true, label: "NG" },
 
     { from: "incoming", to: "partner", fromAnchor: "right", toAnchor: "left", dashed: true, showNGPill: true, label: "NG",
-      via: [{ x: snap(nodeById("incoming").x + 300 + 40), y: 340 + 108 / 2 }, { x: snap(nodeById("partner").x - 40), y: 340 + 108 / 2 }] },
+      via: [{ x: snap(nodeById("incoming").x + CARD_W + 40), y: BOT_Y + CARD_H / 2 }, { x: snap(nodeById("partner").x - 40), y: BOT_Y + CARD_H / 2 }] },
     { from: "partner", to: "incoming", fromAnchor: "bottom", toAnchor: "top", label: "Re-test / 재검",
-      via: [{ x: snap(nodeById("partner").x + (nodeById("partner").w ?? 220) / 2), y: 300 }, { x: snap(nodeById("incoming").x + 300 / 2), y: 300 }] },
+      via: [{ x: snap(nodeById("partner").x + (nodeById("partner").w ?? 220) / 2), y: 300 }, { x: snap(nodeById("incoming").x + CARD_W / 2), y: 300 }] },
 
     { from: "assyqa", to: "machining", fromAnchor: "left", toAnchor: "right", dashed: true, label: "NG", showNGPill: true },
-  ] as any[];
+  ];
 
+  // pisahkan layer dashed vs solid (biar nggak “ketimpa”)
   const dashedEdges = EDGES.filter(e => !!e.dashed);
   const solidEdges  = EDGES.filter(e => !e.dashed);
 
+  // ===== Live chips =====
   const [activeCard, setActiveCard] = React.useState<string | null>(null);
   const [live, setLive] = React.useState({ th: 87, ef: 94, qu: 99.2 });
   React.useEffect(() => {
@@ -377,11 +386,13 @@ function ProcessFlowChart() {
     return () => clearInterval(t);
   }, []);
 
+  // ===== SVG common =====
   const lineCommon = {
     vectorEffect: "non-scaling-stroke" as const,
     shapeRendering: "geometricPrecision" as const,
   };
 
+  // posisi label OK/NG – puncak arc jika archUp
   const getLabelPos = (start:{x:number;y:number}, end:{x:number;y:number}, isLong:boolean, archUp?:boolean) => {
     const midX = snap((start.x + end.x) / 2);
     if (archUp) {
@@ -416,7 +427,7 @@ function ProcessFlowChart() {
             </svg>
           </div>
 
-          {/* EDGES */}
+          {/* EDGES (SVG di bawah nodes) */}
           <svg className="absolute inset-0" width={DESIGN_W} height={DESIGN_H}>
             <defs>
               <marker id="arrowClean" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
@@ -428,7 +439,7 @@ function ProcessFlowChart() {
               </linearGradient>
             </defs>
 
-            {/* dashed layer */}
+            {/* Layer 1: dashed (di bawah) */}
             {dashedEdges.map((e, i) => {
               const A = nodeById(e.from), B = nodeById(e.to);
               const start = anchor(A, e.fromAnchor ?? "right");
@@ -484,7 +495,7 @@ function ProcessFlowChart() {
               );
             })}
 
-            {/* solid layer */}
+            {/* Layer 2: solid main flow (di atas) */}
             {solidEdges.map((e, i) => {
               const A = nodeById(e.from), B = nodeById(e.to);
               const start = anchor(A, e.fromAnchor ?? "right");
@@ -526,7 +537,7 @@ function ProcessFlowChart() {
 
           {/* NODES */}
           {NODES.map((n) => {
-            const w = n.w ?? 300, h = n.h ?? 108;
+            const w = n.w ?? CARD_W, h = n.h ?? CARD_H;
             return (
               <div key={n.id} style={{ position: "absolute", left: snap(n.x), top: snap(n.y), width: w, height: h }}>
                 <ProcessCard
@@ -560,116 +571,6 @@ function ProcessFlowChart() {
 }
 
 /* =========================
-   NEW: Core Capabilities Image Section
-   ========================= */
-
-function CoreCapabilitiesImageSection() {
-  const { lang } = useLangStore();
-  const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
-
-  // replace with your actual image paths
-  const coreImgKor = "/images/business/process/core-capabilities-kor.png";
-  const coreImgEng = "/images/business/process/core-capabilities-eng.png";
-  const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
-
-  const titleText =
-    langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies";
-  const subtitleText =
-    langCode === "KOR"
-      ? "정밀가공 · 모듈화 · 장비 기술"
-      : "Precision · Modularization · Equipment";
-
-  return (
-    <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(9,18,42,1)_0%,_rgba(8,14,31,1)_45%,_#070d1f_100%)] py-16 md:py-24">
-      {/* soft grid + glow */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
-        <svg width="100%" height="100%">
-          <defs>
-            <pattern id="cg-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#cg-grid)" />
-        </svg>
-      </div>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
-
-      <div className="relative mx-auto max-w-7xl px-4">
-        {/* Title with effects */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 text-center md:mb-12"
-        >
-          <h2 className="inline-block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent drop-shadow-sm md:text-4xl">
-            {titleText}
-          </h2>
-
-          {/* animated underline */}
-          <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-white/10 md:mt-4">
-            <motion.div
-              initial={{ x: "-100%" }}
-              whileInView={{ x: "100%" }}
-              viewport={{ once: true }}
-              transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-              className="h-full w-1/3 bg-gradient-to-r from-cyan-400 via-white to-fuchsia-400"
-            />
-          </div>
-
-          <p className="mt-3 text-sm text-slate-300/90 md:text-base">{subtitleText}</p>
-        </motion.div>
-
-        {/* Image Frame */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="group relative mx-auto max-w-5xl"
-        >
-          {/* gradient border frame */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-cyan-400/20 via-white/10 to-fuchsia-400/20 p-[2px] shadow-[0_25px_60px_rgba(5,11,25,0.45)]">
-            <div className="relative rounded-[calc(1.5rem-2px)] bg-slate-900/60 backdrop-blur-xl">
-              {/* light sweep overlay */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-                <motion.div
-                  initial={{ x: "-120%" }}
-                  whileInView={{ x: "120%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.8, delay: 0.2, ease: "easeInOut" }}
-                  className="h-full w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/12 to-transparent"
-                />
-              </div>
-
-              {/* image with hover tilt & subtle parallax */}
-              <motion.div
-                whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                className="relative aspect-[16/9] w-full"
-              >
-                <Image
-                  src={imgSrc}
-                  alt={langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies"}
-                  fill
-                  priority
-                  className="rounded-[inherit] object-contain"
-                />
-              </motion.div>
-            </div>
-          </div>
-
-          {/* corner accent chips */}
-          <span className="pointer-events-none absolute -left-3 -top-3 h-6 w-6 rounded-full bg-cyan-400/50 blur-[6px]" />
-          <span className="pointer-events-none absolute -right-3 -bottom-3 h-6 w-6 rounded-full bg-fuchsia-400/40 blur-[6px]" />
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* =========================
         Page content
    ========================= */
 
@@ -678,6 +579,32 @@ export default function ServicePage() {
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
   const { equipmentList, measurementEquipmentList } = serviceContent[langCode];
   const section = serviceContent[langCode].sectionList?.[0];
+
+  // capability data (language-aware)
+  const capabilitiesData = {
+    KOR: [
+      { key: "midLarge", title: "중대형 구조물 가공/ 제작 기술", desc: "중대형 구조물의 금형 설계, 가공, 제작", angle: 0 },
+      { key: "coopDriving", title: "실내외 협치 주행 기술", desc: "실시간 하중반영 바퀴/틸트 제어", angle: 60 },
+      { key: "sysArchA", title: "시스템 아키텍처 기술", desc: "실시간 하중반영 바퀴/틸트 제어", angle: 120 },
+      { key: "structFab", title: "구조물 가공/ 제작 기술", desc: "지능형 자율주행 로봇 구동부 및 적재부 정밀설계", angle: 180 },
+      { key: "precisionJig", title: "고정밀 Jig 개발 / 제작 기술", desc: "고객 맞춤형 Jig 설계/개발/제작 기술", angle: 240 },
+      { key: "sysArchB", title: "시스템 아키텍처 기술", desc: "실시간 하중반영 바퀴/틸트 제어", angle: 300 },
+    ],
+    ENG: [
+      { key: "midLarge", title: "Mid/Large Structure Machining & Manufacturing", desc: "Mold design, machining, and manufacturing of mid/large structures", angle: 0 },
+      { key: "coopDriving", title: "Indoor/Outdoor Cooperative Driving", desc: "Real-time load-adaptive wheel/tilt control", angle: 60 },
+      { key: "sysArchA", title: "System Architecture Technology", desc: "Real-time load-adaptive wheel/tilt control", angle: 120 },
+      { key: "structFab", title: "Structural Processing & Manufacturing", desc: "Precision design of drive and payload modules for intelligent autonomous robots", angle: 180 },
+      { key: "precisionJig", title: "High-Precision Jig Development / Manufacturing", desc: "Custom jig design, development, and fabrication", angle: 240 },
+      { key: "sysArchB", title: "System Architecture Technology", desc: "Real-time load-adaptive wheel/tilt control", angle: 300 },
+    ],
+  } as const;
+
+  const capabilities = capabilitiesData[langCode].map((c) => ({ ...c, subtitle: c.desc }));
+  const getPositionFromAngle = (angle: number, radius: number) => {
+    const rad = (angle * Math.PI) / 180;
+    return { x: Math.cos(rad) * radius, y: Math.sin(rad) * radius };
+  };
 
   const pageVariants = {
     hidden: { opacity: 0 },
@@ -693,8 +620,15 @@ export default function ServicePage() {
     },
   };
 
+  const ringPulse = {
+    scale: [1, 1.02, 1],
+    opacity: [0.15, 0.35, 0.15],
+    transition: { duration: 4, repeat: Infinity, ease: easeInOut },
+  };
+
   const CM_TO_PX = 37.8;
   const HERO_TRIM_PX = Math.round(CM_TO_PX);
+  const orbitRadius = 320;
 
   return (
     <Layout>
@@ -716,8 +650,103 @@ export default function ServicePage() {
           <BreadcrumbSection path={langCode === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"} />
         </div>
 
-        {/* NEW: Core Capabilities image section (replaces the old Capability Orbit) */}
-        <CoreCapabilitiesImageSection />
+        {/* Capability Orbit */}
+        <section className="relative overflow-hidden py-20">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a1630] via-[#0f1e3e] to-[#0a1630]" />
+
+          <motion.div
+            className="relative mx-auto h-[920px] w-full max-w-[1200px]"
+            variants={pageVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
+          >
+            {/* orbits */}
+            {[420, 560, 700].map((size) => (
+              <motion.div
+                key={size}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+                style={{ width: size, height: size }}
+                animate={ringPulse}
+              />
+            ))}
+            <motion.div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"
+              style={{ width: 640, height: 640 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 60, repeat: Infinity, ease: (t: number) => t }}
+            />
+
+            {/* center */}
+            <motion.div
+              className="absolute left-1/2 top-1/2 z-10 flex h-[230px] w-[230px] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full"
+              variants={fadeUp}
+              whileHover={{ scale: 1.04 }}
+              style={{
+                boxShadow:
+                  "0 25px 60px rgba(13,25,49,0.45), inset 0 2px 6px rgba(255,255,255,0.12)",
+              }}
+            >
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(116,76,255,0.35),transparent_60%),radial-gradient(circle_at_70%_70%,rgba(46,165,255,0.35),transparent_55%)]" />
+              <div className="absolute inset-[6px] rounded-full border border-white/10 bg-gradient-to-b from-[#0f1e3e] to-[#0a142b]" />
+              <div className="relative z-10 text-center text-white drop-shadow">
+                <div className="text-xl font-extrabold tracking-tight">
+                  {langCode === "KOR" ? "정밀가공/모듈화" : "Precision Machining"}
+                </div>
+                <div className="mt-1 text-xs opacity-80">
+                  {langCode === "KOR" ? "＆ 장비 기술" : "& Systems"}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* cards */}
+            {capabilities.map((cap) => {
+              const { x, y } = getPositionFromAngle(cap.angle - 90, orbitRadius);
+              return (
+                <motion.div
+                  key={cap.key}
+                  className="absolute w-[360px] max-w-[42vw]"
+                  style={{
+                    left: `calc(50% + ${x}px - 180px)`,
+                    top: `calc(50% + ${y}px - 80px)`,
+                  }}
+                  variants={fadeUp}
+                >
+                  <div
+                    className={[
+                      "group relative rounded-2xl border border-white/10 bg-gradient-to-br",
+                      "from-slate-800/70 to-slate-900/70 backdrop-blur",
+                      "shadow-[0_15px_35px_rgba(5,11,25,0.5)]",
+                      "transition-transform duration-200 ease-linear hover:scale-[1.03]",
+                    ].join(" ")}
+                  >
+                    <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-cyan-300/70 group-hover:bg-cyan-200" />
+                    <span className="absolute right-8 top-4 h-2 w-2 rounded-full bg-cyan-300/30 group-hover:bg-cyan-200/60" />
+                    <div className="flex gap-4 p-5">
+                      <div className="mt-1 grid h-[46px] w-[46px] grid-cols-2 gap-1 rounded-md bg-slate-700/30 p-1">
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-sky-400/40 to-indigo-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-emerald-400/40 to-teal-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-fuchsia-400/40 to-pink-400/40" />
+                        <div className="h-full w-full rounded-[6px] bg-gradient-to-br from-amber-400/40 to-orange-400/40" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="text-lg font-extrabold leading-tight text-white">
+                          {cap.title}
+                        </div>
+                        <p className="mt-1 text-sm leading-snug text-slate-200/80">
+                          {cap.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[6px] scale-x-0 rounded-b-2xl bg-gradient-to-r from-cyan-400 to-fuchsia-400 opacity-90 transition-transform duration-200 group-hover:scale-x-100" />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </section>
 
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
@@ -844,14 +873,14 @@ export default function ServicePage() {
         </section>
 
         {/* PROCESS (interactive rail) */}
-        *<section className="bg-white py-20 px-4 md:px-8">
+        {/*<section className="bg-white py-20 px-4 md:px-8">
           <div className="mx-auto w-full max-w-7xl">
             <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
               PROCESS
             </h2>
             <ProcessFlowChart />
           </div>
-        </section>
+        </section>*/}
 
         <hr className="my-6 w-full border-gray-200" />
       </main>
