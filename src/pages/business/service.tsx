@@ -64,7 +64,19 @@ const ProcessFlowChart: React.FC = () => {
     /re[-\s]?order/i.test(step?.title || "");
 
   return (
-    <div className="w-full bg-white overflow-x-auto">
+    <div className="w-full bg-[#020B24] overflow-x-auto">
+      {/* Title Section */}
+      <div className="text-center mb-16 pt-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          PROCESS
+        </h1>
+        <div className="space-y-1">
+          <p className="text-lg text-gray-300">
+            {lang === "KOR" ? "좋은 프로세스가 최고의 품질을 만듭니다" : "Good Process Makes The Best Quality"}
+          </p>
+        </div>
+      </div>
+
       <motion.div
         className="min-w-[1800px] p-8 relative"
         variants={containerVariants}
@@ -82,7 +94,6 @@ const ProcessFlowChart: React.FC = () => {
                   transition: { type: "spring", stiffness: 400, damping: 10 },
                 }}
               >
-                {/* Regular step rendering */}
                 {step.type === "card" ? (
                   <FlowCard
                     title={step.title}
@@ -91,19 +102,31 @@ const ProcessFlowChart: React.FC = () => {
                     size={step.isPartner ? "sm" : "md"}
                   />
                 ) : (
-                  <FlowDiamond title={step.title} subtitle={step.subtitle} />
+                  <>
+                    <FlowDiamond title={step.title} subtitle={step.subtitle} />
+                    {/* NG Label under diamond - moved down by 1cm (~38px) */}
+                    <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center"
+                      >
+                        <div className="bg-red-600 rounded-md px-2.5 py-1 shadow-sm">
+                          <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
+                            NG
+                            <br />
+                            (GO BACK)
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </>
                 )}
 
-                {/* Vertical NG arrow for 수입검사 */}
+                {/* Vertical NG arrow for 수입검사 - Only show if it's the inspection step */}
                 {isIncomingStep(step) && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3">
                     <div className="flex flex-col items-center">
-                      {/* NG Label */}
-                      <div className="text-[10px] leading-[12px] font-bold text-red-600 mb-1 text-center">
-                        NG
-                        <br />
-                        (GO BACK)
-                      </div>
                       {/* Vertical Arrow */}
                       <div className="w-0.5 h-16 bg-[#EF4444]" />
                       <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#EF4444]" />
@@ -120,14 +143,7 @@ const ProcessFlowChart: React.FC = () => {
                 )}
               </motion.div>
 
-              {/* Only show forward arrows before reorder and direct connection from 수입검사 to 가공/제작 */}
-              {index < steps.length - 1 && 
-               !isReorderStep(step) &&
-               (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
-                <motion.div variants={stepVariants} whileHover={{ scale: 1.1 }}>
-                  <FlowArrow />
-                </motion.div>
-              )}
+              {/* ...existing arrow code... */}
             </React.Fragment>
           ))}
         </div>
