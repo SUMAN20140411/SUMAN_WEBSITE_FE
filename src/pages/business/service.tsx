@@ -54,111 +54,107 @@ const ProcessFlowChart: React.FC = () => {
     ["reorder", "re-order"].includes(step?.id) || /re[-\s]?order/i.test(step?.title || "");
 
   return (
-    <div className="w-full overflow-x-auto relative">
-      {/* flow content */}
+    <div className="w-full overflow-x-auto relative bg-[#020B24]">
+      {/* Title Section */}
+      <div className="text-center mb-12 pt-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          PROCESS
+        </h1>
+        <p className="text-lg text-cyan-400 mb-6">
+          Next-Generation Semiconductor Manufacturing Process
+        </p>
+        <div className="flex justify-center gap-6">
+          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-cyan-900/30">
+            <span className="text-cyan-400">Throughput</span>
+            <span className="text-cyan-400 font-bold ml-2">87%</span>
+          </div>
+          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-emerald-900/30">
+            <span className="text-emerald-400">Efficiency</span>
+            <span className="text-emerald-400 font-bold ml-2">96%</span>
+          </div>
+          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-purple-900/30">
+            <span className="text-purple-400">Quality</span>
+            <span className="text-purple-400 font-bold ml-2">99.19%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Flow Chart Content */}
       <motion.div
         className="min-w-[1800px] p-8 relative z-20"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
+        {/* Background Lines */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent" />
+        
         <div className="flex items-center gap-8 mb-16">
           {steps.map((step: any, index: number) => (
             <React.Fragment key={step.id ?? index}>
               <motion.div
                 className="relative"
                 variants={stepVariants}
-                whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                whileHover={{ scale: 1.02 }}
               >
-                {/* card / diamond */}
                 {step.type === "card" ? (
-                  <FlowCard
-                    title={step.title}
-                    subtitle={step.subtitle}
-                    variant={step.isPartner ? "navy" : "light"}
-                    size={step.isPartner ? "sm" : "md"}
-                  />
+                  <div className="bg-white rounded-xl px-6 py-3 shadow-lg">
+                    <p className="text-gray-900 font-medium text-sm">
+                      {step.title}
+                    </p>
+                    {step.subtitle && (
+                      <p className="text-gray-500 text-xs mt-1">
+                        {step.subtitle}
+                      </p>
+                    )}
+                  </div>
                 ) : (
                   <>
-                    <FlowDiamond title={step.title} subtitle={step.subtitle} />
-                    {/* NG label under every diamond */}
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center"
-                      >
-                        <div className="bg-red-600 rounded-md px-2.5 py-1 shadow-sm">
-                          <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
-                            NG
-                            <br />
-                            (GO BACK)
-                          </div>
-                        </div>
-                      </motion.div>
+                    <div className="rotate-45 bg-white p-5 rounded-lg shadow-lg">
+                      <div className="-rotate-45">
+                        <p className="text-gray-900 font-medium text-sm whitespace-nowrap">
+                          {step.title}
+                        </p>
+                      </div>
                     </div>
-                  </>
-                )}
-
-                {/* special: vertical NG under '수입검사' down to 협력사 */}
-                {isIncomingStep(step) && (
-                  <motion.div
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <div className="flex flex-col items-center">
-                      <div className="bg-red-600 rounded-md px-2.5 py-1 mb-2 shadow-sm">
-                        <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
+                    {/* NG label under diamond */}
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                      <div className="bg-red-600 rounded px-2 py-0.5">
+                        <p className="text-[10px] leading-tight font-bold text-white">
                           NG
                           <br />
                           (GO BACK)
-                        </div>
+                        </p>
                       </div>
-                      <motion.div
-                        className="w-0.5 h-16 bg-red-600"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: 0.45, duration: 0.4 }}
-                      />
-                      <motion.div
-                        className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-red-600"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.85 }}
-                      />
-                      <motion.div className="mt-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
-                        <FlowCard title="협력사" variant="navy" size="sm" />
-                      </motion.div>
                     </div>
-                  </motion.div>
+                  </>
                 )}
               </motion.div>
 
-              {/* forward arrow with sweep glow; keep rightward flow; remove after Re-Order */}
-              {index < steps.length - 1 &&
-                !isReorderStep(step) &&
-                (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
-                  <motion.div variants={stepVariants} whileHover={{ scale: 1.1 }} className="relative">
-                    {/* glow sweep */}
-                    <motion.div
-                      className="pointer-events-none absolute -inset-1 rounded-full opacity-30"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, rgba(34,211,238,0.15), rgba(59,130,246,0.22), rgba(168,85,247,0.15))",
-                        filter: "blur(6px)",
-                      }}
-                      animate={{ x: ["-40%", "40%"] }}
-                      transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                    />
-                    <FlowArrow />
-                  </motion.div>
-                )}
+              {/* Arrows */}
+              {index < steps.length - 1 && (
+                <motion.div variants={stepVariants}>
+                  <div className="w-16 h-16">
+                    <svg viewBox="0 0 24 24" className="w-full h-full text-white">
+                      <path
+                        d="M5 12h14m0 0l-7-7m7 7l-7 7"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        fill="none"
+                      />
+                    </svg>
+                  </div>
+                </motion.div>
+              )}
             </React.Fragment>
           ))}
         </div>
       </motion.div>
+
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
     </div>
   );
 };
@@ -351,76 +347,97 @@ export default function ServicePage() {
           </div>
         </section>
 
-        {/* PROCESS (animated tech) */}
-        <section className="relative bg-[#08142c] py-16 md:py-20 px-4 md:px-8 overflow-hidden">
-          {/* navy gradient + grid + sweep */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(34,211,238,0.12)_0%,_transparent_45%)]" />
-            <div className="absolute inset-0 opacity-[0.07]">
-              <svg width="100%" height="100%">
-                <defs>
-                  <pattern id="process-grid" width="44" height="44" patternUnits="userSpaceOnUse">
-                    <path d="M 44 0 L 0 0 0 44" fill="none" stroke="white" strokeWidth="1" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#process-grid)" />
-              </svg>
-            </div>
-            <motion.div
-              className="absolute inset-0"
-              animate={{ backgroundPosition: ["0% 0%", "120% 120%"] }}
-              transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
-              style={{ backgroundImage: "linear-gradient(45deg, transparent 60%, rgba(59,130,246,0.08) 62%, transparent 64%)", backgroundSize: "32px 32px" }}
-            />
-          </div>
+        {/* PROCESS section */}
+<section className="bg-[#0a132e] py-20 px-4 md:px-8 relative overflow-hidden">
+  {/* Background Grid + Gradients */}
+  <div className="pointer-events-none absolute inset-0">
+    {/* Grid Pattern */}
+    <div className="absolute inset-0 opacity-[0.08]">
+      <svg width="100%" height="100%">
+        <defs>
+          <pattern id="process-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#process-grid)" />
+      </svg>
+    </div>
+    {/* Gradient Overlays */}
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%)]" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
+  </div>
 
-          {/* header seperti gambar */}
-          <div className="relative z-10 mx-auto w-full max-w-7xl text-center mb-6 md:mb-10">
-            <motion.h3
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-[22px] md:text-3xl lg:text-4xl font-extrabold text-white"
-            >
-              차세대 반도체 제조 프로세스
-            </motion.h3>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-sky-200/90 text-sm md:text-base"
-            >
-              Next-Generation Semiconductor Manufacturing Process
-            </motion.p>
+  <div className="mx-auto w-full max-w-7xl relative z-10">
+    {/* Title Section with Animations */}
+    <div className="mb-16 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mb-6"
+      >
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white/[0.03] mb-4">
+          차세대 반도체 제조 프로세스
+        </h2>
+        <p className="text-lg md:text-xl lg:text-2xl text-teal-400/10">
+          Next-Generation Semiconductor Manufacturing Process
+        </p>
+      </motion.div>
 
-            <div className="mt-4 flex items-center justify-center gap-3">
-              {[
-                { label: "Throughput", value: "87%", bg: "from-cyan-500/20 to-cyan-400/10", ring: "ring-cyan-400/40" },
-                { label: "Efficiency", value: "96%", bg: "from-emerald-500/20 to-emerald-400/10", ring: "ring-emerald-400/40" },
-                { label: "Quality", value: "99.19%", bg: "from-fuchsia-500/20 to-fuchsia-400/10", ring: "ring-fuchsia-400/40" },
-              ].map((pill, i) => (
-                <motion.div
-                  key={pill.label}
-                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.15 + i * 0.08 }}
-                  className={`rounded-full px-3 py-1 text-[12px] md:text-[13px] text-slate-100 ring-1 ${pill.ring} bg-gradient-to-br ${pill.bg} backdrop-blur-sm`}
-                >
-                  <span className="opacity-90">{pill.label}</span>{" "}
-                  <span className="font-semibold">{pill.value}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+      {/* Stats Row */}
+      <motion.div 
+        className="flex justify-center gap-8 mt-6"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-cyan-400">Throughput</span>
+          <span className="text-cyan-400 font-bold">90%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-emerald-400">Efficiency</span>
+          <span className="text-emerald-400 font-bold">94%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-purple-400">Quality</span>
+          <span className="text-purple-400 font-bold">98.98%</span>
+        </div>
+      </motion.div>
+    </div>
 
-          {/* chart */}
-          <div className="relative z-10 mx-auto w-full max-w-7xl">
-            <ProcessFlowChart />
-          </div>
-        </section>
+    {/* Process Flow Chart */}
+    <ProcessFlowChart />
+  </div>
+
+  {/* Animated Corner Accents */}
+  <motion.div
+    className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-cyan-500/20 to-transparent rounded-full blur-3xl"
+    animate={{
+      scale: [1, 1.2, 1],
+      opacity: [0.3, 0.5, 0.3],
+    }}
+    transition={{
+      duration: 4,
+      repeat: Infinity,
+      ease: "easeInOut",
+    }}
+  />
+  <motion.div
+    className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-purple-500/20 to-transparent rounded-full blur-3xl"
+    animate={{
+      scale: [1, 1.2, 1],
+      opacity: [0.3, 0.5, 0.3],
+    }}
+    transition={{
+      duration: 4,
+      repeat: Infinity,
+      ease: "easeInOut",
+      delay: 2,
+    }}
+  />
+</section>
 
         <hr className="my-6 w-full border-gray-200" />
       </main>
