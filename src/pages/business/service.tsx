@@ -11,11 +11,10 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
-// components (di src/components/*)
+// flow components (named exports)
 import { FlowCard } from "@/components/FlowCard";
 import { FlowDiamond } from "@/components/FlowDiamond";
 import { FlowArrow } from "@/components/FlowArrow";
-import { NGBox } from "@/components/NGBox";
 
 // data
 import { processFlowContent } from "@/data/ProcessFlow";
@@ -27,11 +26,6 @@ const ProcessFlowChart: React.FC = () => {
   const lang = useLangStore((state) => state.lang);
   const content = processFlowContent[lang];
   const steps = content.steps;
-
-  const findStepIndex = (id: string) => steps.findIndex((s) => s.id === id);
-
-  const calculateNGDistance = (fromIndex: number, toIndex: number) =>
-    Math.max(Math.abs(fromIndex - toIndex) * 200, 120);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -56,25 +50,21 @@ const ProcessFlowChart: React.FC = () => {
     },
   };
 
+  // Helper to identify specific steps
+  const isIncomingStep = (step: any) =>
+    ["inspection", "incomingInspection"].includes(step?.id) ||
+    step?.title === "수입검사";
+
+  const isManufacturingStep = (step: any) =>
+    step?.id === "manufacturing" ||
+    step?.title === "가공/제작";
+
+  const isReorderStep = (step: any) =>
+    step?.id === "reorder" ||
+    /re[-\s]?order/i.test(step?.title || "");
+
   return (
     <div className="w-full bg-white overflow-x-auto">
-      {/* animated background grid */}
-      <div className="fixed inset-0 opacity-5 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A1633]/20 via-transparent to-[#1B2B57]/20" />
-        <motion.div
-          className="absolute inset-0"
-          animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, transparent 98%, rgba(10, 22, 51, 0.1) 100%),
-              linear-gradient(transparent 98%, rgba(10, 22, 51, 0.1) 100%)
-            `,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
-
       <motion.div
         className="min-w-[1800px] p-8 relative"
         variants={containerVariants}
@@ -82,7 +72,7 @@ const ProcessFlowChart: React.FC = () => {
         animate="visible"
       >
         <div className="flex items-center gap-8 mb-16">
-          {steps.map((step, index) => (
+          {steps.map((step: any, index: number) => (
             <React.Fragment key={step.id}>
               <motion.div
                 className="relative"
@@ -92,6 +82,7 @@ const ProcessFlowChart: React.FC = () => {
                   transition: { type: "spring", stiffness: 400, damping: 10 },
                 }}
               >
+                {/* Regular step rendering */}
                 {step.type === "card" ? (
                   <FlowCard
                     title={step.title}
@@ -103,168 +94,38 @@ const ProcessFlowChart: React.FC = () => {
                   <FlowDiamond title={step.title} subtitle={step.subtitle} />
                 )}
 
-                {/* NG indicators for specific steps */}
-                {step.hasNG && (
-                  <motion.div
-                    className="absolute top-full mt-4 left-1/2 -translate-x-1/2"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.4 }}
-                  >
-                    <NGBox />
-
-                    <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2">
-                      {/* D/R -> Concept (NG return) */}
-                      {step.id === "dr" && (
-                        <motion.div
-                          className="flex items-center"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 1.2 }}
-                        >
-                          <motion.div
-                            className="w-0.5 h-8 bg-[#EF4444]"
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ delay: 1.2, duration: 0.3 }}
-                          />
-                          <motion.div
-                            className="h-1 bg-[#EF4444]"
-                            style={{
-                              width: `${calculateNGDistance(
-                                index,
-                                findStepIndex("concept")
-                              )}px`,
-                            }}
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{
-                              delay: 1.5,
-                              duration: 0.8,
-                              ease: "easeInOut",
-                            }}
-                          />
-                          <motion.div
-                            className="w-0.5 h-8 bg-[#EF4444]"
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ delay: 2.3, duration: 0.3 }}
-                          />
-                          <motion.div className="w-0 h-0 border-t-[6px] border-b-[6px] border-r-[10px] border-transparent border-r-[#EF4444] -ml-1" />
-                        </motion.div>
-                      )}
-
-                      {/* Partner -> PO (NG return) */}
-                      {step.id === "partner" && (
-                        <motion.div
-                          className="flex items-center"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 1.2 }}
-                        >
-                          <motion.div
-                            className="w-0.5 h-8 bg-[#EF4444]"
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ delay: 1.2, duration: 0.3 }}
-                          />
-                          <motion.div
-                            className="h-1 bg-[#EF4444]"
-                            style={{
-                              width: `${calculateNGDistance(
-                                index,
-                                findStepIndex("po")
-                              )}px`,
-                            }}
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{
-                              delay: 1.5,
-                              duration: 0.8,
-                              ease: "easeInOut",
-                            }}
-                          />
-                          <motion.div
-                            className="w-0.5 h-8 bg-[#EF4444]"
-                            initial={{ scaleY: 0 }}
-                            animate={{ scaleY: 1 }}
-                            transition={{ delay: 2.3, duration: 0.3 }}
-                          />
-                          <motion.div className="w-0 h-0 border-t-[6px] border-b-[6px] border-r-[10px] border-transparent border-r-[#EF4444] -ml-1" />
-                        </motion.div>
-                      )}
+                {/* Vertical NG arrow for 수입검사 */}
+                {isIncomingStep(step) && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3">
+                    <div className="flex flex-col items-center">
+                      {/* NG Label */}
+                      <div className="text-[10px] leading-[12px] font-bold text-red-600 mb-1 text-center">
+                        NG
+                        <br />
+                        (GO BACK)
+                      </div>
+                      {/* Vertical Arrow */}
+                      <div className="w-0.5 h-16 bg-[#EF4444]" />
+                      <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#EF4444]" />
+                      {/* Partner Card */}
+                      <div className="mt-3">
+                        <FlowCard 
+                          title="협력사" 
+                          variant="navy" 
+                          size="sm" 
+                        />
+                      </div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
 
-              {/* main arrow */}
-              {index < steps.length - 1 && !step.arrowsTo && (
+              {/* Only show forward arrows before reorder and direct connection from 수입검사 to 가공/제작 */}
+              {index < steps.length - 1 && 
+               !isReorderStep(step) &&
+               (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
                 <motion.div variants={stepVariants} whileHover={{ scale: 1.1 }}>
                   <FlowArrow />
-                </motion.div>
-              )}
-
-              {/* special arrow from 수입검사 to 협력사 */}
-              {step.arrowsTo && (
-                <motion.div
-                  variants={stepVariants}
-                  className="flex flex-col items-center"
-                >
-                  <motion.div
-                    className="w-0.5 h-16 bg-[#1B2B57]"
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: 0.5, duration: 0.5 }}
-                  />
-                  <motion.div
-                    className="w-16 h-0.5 bg-[#1B2B57]"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 1, duration: 0.5 }}
-                  />
-                  <motion.div
-                    className="w-0.5 h-16 bg-[#1B2B57]"
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    transition={{ delay: 1.5, duration: 0.5 }}
-                  />
-                  <motion.div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#1B2B57] -mt-1" />
-                </motion.div>
-              )}
-
-              {/* long return arrow for re-order */}
-              {step.returnTo && (
-                <motion.div className="relative ml-8" variants={stepVariants}>
-                  <FlowArrow />
-                  <motion.div
-                    className="absolute left-8 top-1/2 -translate-y-1/2"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5 }}
-                  >
-                    <div className="flex flex-col items-center">
-                      <motion.div
-                        className="w-0.5 h-12 bg-[#1B2B57]"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: 1.5, duration: 0.4 }}
-                      />
-                      <motion.div
-                        className="w-[1400px] h-0.5 bg-[#1B2B57]"
-                        initial={{ scaleX: 0, originX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ delay: 1.9, duration: 1.2, ease: "easeInOut" }}
-                      />
-                      <motion.div
-                        className="w-0.5 h-12 bg-[#1B2B57]"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: 3.1, duration: 0.4 }}
-                      />
-                      <motion.div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#1B2B57] -mt-3" />
-                    </div>
-                  </motion.div>
                 </motion.div>
               )}
             </React.Fragment>
