@@ -66,19 +66,19 @@ const ProcessFlowChart: React.FC = () => {
   return (
     <div className="w-full bg-white overflow-x-auto relative">
       <motion.div
-        className="min-w-[1260px] p-6 relative" // Reduced from 1800px
+        className="min-w-[1071px] p-6 relative scale-85" // Reduced from 1260px by 15%
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="flex items-center gap-6 mb-12"> {/* Reduced gap from 8 to 6 */}
+        <div className="flex items-center gap-5 mb-10"> {/* Reduced gap by 15% */}
           {steps.map((step: any, index: number) => (
             <React.Fragment key={step.id}>
               <motion.div
-                className="relative scale-70" // Added scale reduction
+                className="relative scale-[0.595]" // Reduced from 0.70 by 15%
                 variants={stepVariants}
                 whileHover={{
-                  scale: 0.75, // Adjusted hover scale
+                  scale: 0.64, // Reduced from 0.75 by 15%
                   transition: { type: "spring", stiffness: 400, damping: 10 },
                 }}
               >
@@ -87,20 +87,20 @@ const ProcessFlowChart: React.FC = () => {
                     title={step.title}
                     subtitle={step.subtitle}
                     variant={step.isPartner ? "navy" : "light"}
-                    size="sm" // Changed to small size
+                    size="sm"
                   />
                 ) : (
                   <>
                     <FlowDiamond title={step.title} subtitle={step.subtitle} />
                     {/* NG Label under diamond - brought to front */}
-                    <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-10">
+                    <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 z-20">
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col items-center"
                       >
-                        <div className="bg-red-600 rounded-md px-3 py-1 shadow-sm min-w-[63px]"> {/* Reduced width by 30% */}
-                          <div className="text-[8px] leading-[10px] font-bold text-white text-center tracking-wide"> {/* Reduced font size */}
+                        <div className="bg-red-600 rounded-md px-2.5 py-1 shadow-sm min-w-[54px]"> {/* Reduced by 15% */}
+                          <div className="text-[7px] leading-[9px] font-bold text-white text-center tracking-wide"> {/* Reduced by 15% */}
                             NG
                             <br />
                             (GO BACK)
@@ -114,26 +114,26 @@ const ProcessFlowChart: React.FC = () => {
                 {/* Special case for 수입검사 with vertical arrow */}
                 {isIncomingStep(step) && (
                   <motion.div
-                    className="absolute -bottom-32 left-1/2 -translate-x-1/2" // Reduced spacing
+                    className="absolute -bottom-28 left-1/2 -translate-x-1/2" // Reduced by 15%
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
                     <div className="flex flex-col items-center">
                       <motion.div
-                        className="w-0.5 h-16 bg-red-600 -z-10" // Added negative z-index
+                        className="w-0.5 h-14 bg-red-600 -z-10" // Reduced height by 15%
                         initial={{ scaleY: 0 }}
                         animate={{ scaleY: 1 }}
                         transition={{ delay: 0.5, duration: 0.4 }}
                       />
                       <motion.div
-                        className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[8px] border-transparent border-t-red-600 -z-10" // Reduced arrow size
+                        className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[7px] border-transparent border-t-red-600 -z-10" // Reduced size by 15%
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.9 }}
                       />
                       <motion.div 
-                        className="mt-3"
+                        className="mt-2.5" // Reduced from mt-3
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.1 }}
@@ -155,8 +155,8 @@ const ProcessFlowChart: React.FC = () => {
                (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
                 <motion.div 
                   variants={stepVariants} 
-                  whileHover={{ scale: 0.75 }}
-                  className="scale-70"
+                  whileHover={{ scale: 0.64 }} // Reduced from 0.75
+                  className="scale-[0.595]" // Reduced from 0.70
                 >
                   <FlowArrow />
                 </motion.div>

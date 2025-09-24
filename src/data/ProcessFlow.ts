@@ -16,7 +16,7 @@ export const processFlowContent = {
       {
         id: "concept",
         type: "card", 
-        title: "Concept 설계",
+        title: "Concept\n설계",
         hasNG: false
       },
       {
@@ -29,7 +29,7 @@ export const processFlowContent = {
       {
         id: "development",
         type: "card",
-        title: "개발/가공 설계", 
+        title: "개발/가공\n설계", 
         hasNG: false
       },
       {
@@ -41,7 +41,7 @@ export const processFlowContent = {
       {
         id: "po",
         type: "card",
-        title: "발주(소재/부품)",
+        title: "발주\n(소재/부품)",
         hasNG: false
       },
       {
@@ -51,14 +51,7 @@ export const processFlowContent = {
         hasNG: false,
         arrowsTo: "partner"
       },
-      {
-        id: "partner",
-        type: "card",
-        title: "협력사",
-        hasNG: true,
-        ngTarget: "po",
-        isPartner: true
-      },
+
       {
         id: "processing",
         type: "card",
@@ -68,7 +61,7 @@ export const processFlowContent = {
       {
         id: "shipping",
         type: "diamond",
-        title: "출하 및 조립/측정검사",
+        title: "출하 및 조립/\n측정검사",
         hasNG: false
       },
       {
@@ -168,14 +161,6 @@ export const processFlowContent = {
         title: "Incoming Inspection",
         hasNG: false,
         arrowsTo: "partner"
-      },
-      {
-        id: "partner",
-        type: "card",
-        title: "Partner",
-        hasNG: true,
-        ngTarget: "po",
-        isPartner: true
       },
       {
         id: "processing",
