@@ -55,7 +55,6 @@ const ProcessFlowChart: React.FC = () => {
 
   return (
     <div className="w-full overflow-x-auto relative">
-      {/* flow content */}
       <motion.div
         className="min-w-[1800px] p-8 relative z-20"
         variants={containerVariants}
@@ -70,7 +69,6 @@ const ProcessFlowChart: React.FC = () => {
                 variants={stepVariants}
                 whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 400, damping: 10 } }}
               >
-                {/* card / diamond */}
                 {step.type === "card" ? (
                   <FlowCard
                     title={step.title}
@@ -81,22 +79,24 @@ const ProcessFlowChart: React.FC = () => {
                 ) : (
                   <>
                     <FlowDiamond title={step.title} subtitle={step.subtitle} />
-                    {/* NG label under every diamond */}
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center"
-                      >
-                        <div className="bg-red-600 rounded-md px-2.5 py-1 shadow-sm">
-                          <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
-                            NG
-                            <br />
-                            (GO BACK)
+                    {/* NG label under diamond - wider by 10% */}
+                    {!isIncomingStep(step) && (
+                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex flex-col items-center"
+                        >
+                          <div className="bg-red-600 rounded-md px-3.5 py-1 shadow-sm w-[110%]">
+                            <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
+                              NG
+                              <br />
+                              (GO BACK)
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    </div>
+                        </motion.div>
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -109,7 +109,7 @@ const ProcessFlowChart: React.FC = () => {
                     transition={{ delay: 0.2 }}
                   >
                     <div className="flex flex-col items-center">
-                      <div className="bg-red-600 rounded-md px-2.5 py-1 mb-2 shadow-sm">
+                      <div className="bg-red-600 rounded-md px-3.5 py-1 mb-2 shadow-sm w-[110%]">
                         <div className="text-[10px] leading-[12px] font-bold text-white text-center tracking-wide">
                           NG
                           <br />
@@ -135,26 +135,6 @@ const ProcessFlowChart: React.FC = () => {
                   </motion.div>
                 )}
               </motion.div>
-
-              {/* forward arrow with sweep glow; keep rightward flow; remove after Re-Order */}
-              {index < steps.length - 1 &&
-                !isReorderStep(step) &&
-                (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
-                  <motion.div variants={stepVariants} whileHover={{ scale: 1.1 }} className="relative">
-                    {/* glow sweep */}
-                    <motion.div
-                      className="pointer-events-none absolute -inset-1 rounded-full opacity-30"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, rgba(34,211,238,0.15), rgba(59,130,246,0.22), rgba(168,85,247,0.15))",
-                        filter: "blur(6px)",
-                      }}
-                      animate={{ x: ["-40%", "40%"] }}
-                      transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                    />
-                    <FlowArrow />
-                  </motion.div>
-                )}
             </React.Fragment>
           ))}
         </div>
@@ -375,31 +355,37 @@ export default function ServicePage() {
           </div>
 
           {/* header seperti gambar */}
-          <div className="relative z-10 mx-auto w-full max-w-7xl text-center mb-6 md:mb-10">
-            <motion.h3
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-[22px] md:text-3xl lg:text-4xl font-extrabold text-white"
-            >
-              차세대 반도체 제조 프로세스
-            </motion.h3>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-sky-200/90 text-sm md:text-base"
-            >
-              Next-Generation Semiconductor Manufacturing Process
-            </motion.p>
+<div className="relative z-10 mx-auto w-full max-w-7xl text-center mb-6 md:mb-10">
+  <motion.h3
+    initial={{ opacity: 0, y: 10 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.6 }}
+    className="text-[22px] md:text-3xl lg:text-4xl font-extrabold text-white"
+  >
+    {lang === "KOR" 
+      ? "제품 제조 및 품질 프로세스"
+      : "Product Manufacturing & Quality Process"
+    }
+  </motion.h3>
+  <motion.p
+    initial={{ opacity: 0, y: 10 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.6, delay: 0.1 }}
+    className="text-sky-200/90 text-sm md:text-base mt-2"
+  >
+    {lang === "KOR"
+      ? "차세대 반도체 제조 프로세스"
+      : "Next-Generation Semiconductor Manufacturing Process"
+    }
+  </motion.p>
 
             <div className="mt-4 flex items-center justify-center gap-3">
               {[
-                { label: "Throughput", value: "87%", bg: "from-cyan-500/20 to-cyan-400/10", ring: "ring-cyan-400/40" },
-                { label: "Efficiency", value: "96%", bg: "from-emerald-500/20 to-emerald-400/10", ring: "ring-emerald-400/40" },
-                { label: "Quality", value: "99.19%", bg: "from-fuchsia-500/20 to-fuchsia-400/10", ring: "ring-fuchsia-400/40" },
+                { label: "Throughput", bg: "from-cyan-500/20 to-cyan-400/10", ring: "ring-cyan-400/40" },
+                { label: "Efficiency", bg: "from-emerald-500/20 to-emerald-400/10", ring: "ring-emerald-400/40" },
+                { label: "Quality",  bg: "from-fuchsia-500/20 to-fuchsia-400/10", ring: "ring-fuchsia-400/40" },
               ].map((pill, i) => (
                 <motion.div
                   key={pill.label}
@@ -410,7 +396,6 @@ export default function ServicePage() {
                   className={`rounded-full px-3 py-1 text-[12px] md:text-[13px] text-slate-100 ring-1 ${pill.ring} bg-gradient-to-br ${pill.bg} backdrop-blur-sm`}
                 >
                   <span className="opacity-90">{pill.label}</span>{" "}
-                  <span className="font-semibold">{pill.value}</span>
                 </motion.div>
               ))}
             </div>
