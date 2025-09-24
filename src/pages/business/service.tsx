@@ -11,16 +11,13 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
-// 👇 these files are in the same folder as service.tsx
-// pages/business/service.tsx (and anywhere else)
+// components (di src/components/*)
 import { FlowCard } from "@/components/FlowCard";
 import { FlowDiamond } from "@/components/FlowDiamond";
 import { FlowArrow } from "@/components/FlowArrow";
 import { NGBox } from "@/components/NGBox";
 
-
-
-// use alias so it resolves from src/data
+// data
 import { processFlowContent } from "@/data/ProcessFlow";
 
 /* =========================
@@ -409,15 +406,145 @@ export default function ServicePage() {
       </Head>
 
       <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
+        {/* hero trim */}
         <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
-          <HeroSection title={langCode === "KOR" ? "기술 소개" : "Technology"} backgroundImage="/images/sub_banner/business_hero.png" />
+          <HeroSection
+            title={langCode === "KOR" ? "기술 소개" : "Technology"}
+            backgroundImage="/images/sub_banner/business_hero.png"
+          />
         </div>
 
+        {/* breadcrumb */}
         <div className="relative -mt-2 z-30">
           <BreadcrumbSection path={langCode === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"} />
         </div>
 
+        {/* Core Capabilities image section */}
         <CoreCapabilitiesImageSection />
+
+        {/* Main Equipment */}
+        <section className="bg-white px-4 py-12 md:py-20">
+          <div className="mx-auto max-w-7xl">
+            <motion.h2
+              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+            >
+              Main Equipment
+            </motion.h2>
+
+            <motion.p
+              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+            >
+              {section?.maintitle}
+              <br />
+              {section?.mainsubtitle}
+            </motion.p>
+          </div>
+        </section>
+
+        {/* 생산가공 / 측정장비 */}
+        <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20">
+          <div className="pointer-events-none absolute inset-0">
+            <Image
+              src="/images/business/layer.png"
+              alt="배경 이미지"
+              fill
+              style={{ objectFit: "cover", objectPosition: "top" }}
+              priority
+            />
+          </div>
+
+          <div className="mx-auto max-w-7xl">
+            <motion.div
+              className="relative transition-all"
+              variants={pageVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              {/* 생산가공 / 조립 */}
+              <motion.span
+                className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
+                variants={fadeUp}
+              >
+                {section?.production}
+              </motion.span>
+
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                {equipmentList.map((equipment: any, index: number) => (
+                  <motion.div
+                    key={`prod-${index}`}
+                    className="group relative h-[calc(10rem+114px)] w-full overflow-hidden rounded-xl border-2 border-white/5 bg-white/5 p-2 shadow-lg transition-transform duration-200 hover:scale-[1.02] md:h-[calc(12.5rem+114px)]"
+                    variants={fadeUp}
+                  >
+                    <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
+                    </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-cyan-400 to-indigo-400 transition-transform duration-200 group-hover:scale-x-100" />
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* 신뢰성 (측정 / 분석) */}
+              <motion.span
+                className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
+                variants={fadeUp}
+              >
+                {section?.measurement}
+              </motion.span>
+
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+                {measurementEquipmentList.map((equipment: any, index: number) => (
+                  <motion.div
+                    key={`meas-${index}`}
+                    className="group relative h-[calc(10rem+114px)] w-full overflow-hidden rounded-xl border-2 border-white/5 bg-white/5 p-2 shadow-lg transition-transform duration-200 hover:scale-[1.02] md:h-[calc(12.5rem+114px)]"
+                    variants={fadeUp}
+                  >
+                    <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
+                    </div>
+
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-teal-400 to-emerald-400 transition-transform duration-200 group-hover:scale-x-100" />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
 
         {/* PROCESS (interactive rail) */}
         <section className="bg-white py-20 px-4 md:px-8">
