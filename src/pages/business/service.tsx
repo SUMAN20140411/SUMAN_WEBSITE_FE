@@ -12,10 +12,13 @@ import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
 // 👇 these files are in the same folder as service.tsx
-import { FlowCard } from "./FlowCard";
-import { FlowDiamond } from "./FlowDiamond";
-import { FlowArrow } from "./FlowArrow";
-import { NGBox } from "./NGBox";
+// pages/business/service.tsx (and anywhere else)
+import { FlowCard } from "@/components/FlowCard";
+import { FlowDiamond } from "@/components/FlowDiamond";
+import { FlowArrow } from "@/components/FlowArrow";
+import { NGBox } from "@/components/NGBox";
+
+
 
 // use alias so it resolves from src/data
 import { processFlowContent } from "@/data/ProcessFlow";
