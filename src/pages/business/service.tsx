@@ -495,9 +495,10 @@ export default function ServicePage() {
       <rect width="100%" height="100%" fill="url(#process-grid)" />
     </svg>
   </div>
+  
   <div className="mx-auto w-full max-w-7xl relative z-10">
     <motion.h2
-    initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       className="mb-6 text-left text-sm font-semibold tracking-wide text-cyan-400 sm:text-base lg:text-2xl"
@@ -505,7 +506,7 @@ export default function ServicePage() {
       PROCESS
     </motion.h2>
     <ProcessFlowChart />
-    </div>
+  </div>
 </section>
         <hr className="my-6 w-full border-gray-200" />
       </main>
