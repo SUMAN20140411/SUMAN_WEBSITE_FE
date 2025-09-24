@@ -29,7 +29,10 @@ const ProcessFlowChart: React.FC = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
   };
 
   const stepVariants = {
@@ -38,123 +41,97 @@ const ProcessFlowChart: React.FC = () => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: "spring" as const, stiffness: 100, damping: 15, duration: 0.6 },
+      transition: {
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 15,
+        duration: 0.6,
+      },
     },
   };
 
-  // identify steps by id/title
+  // Helper to identify specific steps
   const isIncomingStep = (step: any) =>
-    ["inspection", "incomingInspection", "incoming"].includes(step?.id) ||
-    /수입검사/i.test(step?.title || "");
+    ["inspection", "incomingInspection"].includes(step?.id) ||
+    step?.title === "수입검사";
 
   const isManufacturingStep = (step: any) =>
-    ["manufacturing"].includes(step?.id) || /가공\/?제작/i.test(step?.title || "");
+    step?.id === "manufacturing" ||
+    step?.title === "가공/제작";
 
   const isReorderStep = (step: any) =>
-    ["reorder", "re-order"].includes(step?.id) || /re[-\s]?order/i.test(step?.title || "");
+    step?.id === "reorder" ||
+    /re[-\s]?order/i.test(step?.title || "");
 
   return (
-    <div className="w-full overflow-x-auto relative bg-[#020B24]">
-      {/* Title Section */}
-      <div className="text-center mb-12 pt-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-          PROCESS
-        </h1>
-        <p className="text-lg text-cyan-400 mb-6">
-          Next-Generation Semiconductor Manufacturing Process
-        </p>
-        <div className="flex justify-center gap-6">
-          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-cyan-900/30">
-            <span className="text-cyan-400">Throughput</span>
-            <span className="text-cyan-400 font-bold ml-2">87%</span>
-          </div>
-          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-emerald-900/30">
-            <span className="text-emerald-400">Efficiency</span>
-            <span className="text-emerald-400 font-bold ml-2">96%</span>
-          </div>
-          <div className="bg-[#0A1836] px-4 py-2 rounded-lg border border-purple-900/30">
-            <span className="text-purple-400">Quality</span>
-            <span className="text-purple-400 font-bold ml-2">99.19%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Flow Chart Content */}
+    <div className="w-full bg-white overflow-x-auto">
       <motion.div
-        className="min-w-[1800px] p-8 relative z-20"
+        className="min-w-[1800px] p-8 relative"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Background Lines */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-transparent via-blue-900/30 to-transparent" />
-        
         <div className="flex items-center gap-8 mb-16">
           {steps.map((step: any, index: number) => (
-            <React.Fragment key={step.id ?? index}>
+            <React.Fragment key={step.id}>
               <motion.div
                 className="relative"
                 variants={stepVariants}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{
+                  scale: 1.05,
+                  transition: { type: "spring", stiffness: 400, damping: 10 },
+                }}
               >
+                {/* Regular step rendering */}
                 {step.type === "card" ? (
-                  <div className="bg-white rounded-xl px-6 py-3 shadow-lg">
-                    <p className="text-gray-900 font-medium text-sm">
-                      {step.title}
-                    </p>
-                    {step.subtitle && (
-                      <p className="text-gray-500 text-xs mt-1">
-                        {step.subtitle}
-                      </p>
-                    )}
-                  </div>
+                  <FlowCard
+                    title={step.title}
+                    subtitle={step.subtitle}
+                    variant={step.isPartner ? "navy" : "light"}
+                    size={step.isPartner ? "sm" : "md"}
+                  />
                 ) : (
-                  <>
-                    <div className="rotate-45 bg-white p-5 rounded-lg shadow-lg">
-                      <div className="-rotate-45">
-                        <p className="text-gray-900 font-medium text-sm whitespace-nowrap">
-                          {step.title}
-                        </p>
+                  <FlowDiamond title={step.title} subtitle={step.subtitle} />
+                )}
+
+                {/* Vertical NG arrow for 수입검사 */}
+                {isIncomingStep(step) && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3">
+                    <div className="flex flex-col items-center">
+                      {/* NG Label */}
+                      <div className="text-[10px] leading-[12px] font-bold text-red-600 mb-1 text-center">
+                        NG
+                        <br />
+                        (GO BACK)
+                      </div>
+                      {/* Vertical Arrow */}
+                      <div className="w-0.5 h-16 bg-[#EF4444]" />
+                      <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#EF4444]" />
+                      {/* Partner Card */}
+                      <div className="mt-3">
+                        <FlowCard 
+                          title="협력사" 
+                          variant="navy" 
+                          size="sm" 
+                        />
                       </div>
                     </div>
-                    {/* NG label under diamond */}
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2">
-                      <div className="bg-red-600 rounded px-2 py-0.5">
-                        <p className="text-[10px] leading-tight font-bold text-white">
-                          NG
-                          <br />
-                          (GO BACK)
-                        </p>
-                      </div>
-                    </div>
-                  </>
+                  </div>
                 )}
               </motion.div>
 
-              {/* Arrows */}
-              {index < steps.length - 1 && (
-                <motion.div variants={stepVariants}>
-                  <div className="w-16 h-16">
-                    <svg viewBox="0 0 24 24" className="w-full h-full text-white">
-                      <path
-                        d="M5 12h14m0 0l-7-7m7 7l-7 7"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        fill="none"
-                      />
-                    </svg>
-                  </div>
+              {/* Only show forward arrows before reorder and direct connection from 수입검사 to 가공/제작 */}
+              {index < steps.length - 1 && 
+               !isReorderStep(step) &&
+               (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
+                <motion.div variants={stepVariants} whileHover={{ scale: 1.1 }}>
+                  <FlowArrow />
                 </motion.div>
               )}
             </React.Fragment>
           ))}
         </div>
       </motion.div>
-
-      {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
     </div>
   );
 };
@@ -170,8 +147,12 @@ function CoreCapabilitiesImageSection() {
   const coreImgEng = "/images/business/process/core-capabilities-eng.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
-  const titleText = langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies";
-  const subtitleText = langCode === "KOR" ? "정밀가공 · 모듈화 · 장비 기술" : "Precision · Modularization · Equipment";
+  const titleText =
+    langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies";
+  const subtitleText =
+    langCode === "KOR"
+      ? "정밀가공 · 모듈화 · 장비 기술"
+      : "Precision · Modularization · Equipment";
 
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(9,18,42,1)_0%,_rgba(8,14,31,1)_45%,_#070d1f_100%)] py-16 md:py-24">
@@ -182,8 +163,10 @@ function CoreCapabilitiesImageSection() {
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
             </pattern>
           </defs>
+          <rect width="100%" height="100%" fill="url(#cg-grid)" />
         </svg>
       </div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
         <motion.div
@@ -217,11 +200,34 @@ function CoreCapabilitiesImageSection() {
         >
           <div className="relative rounded-3xl bg-gradient-to-br from-cyan-400/20 via-white/10 to-fuchsia-400/20 p-[2px] shadow-[0_25px_60px_rgba(5,11,25,0.45)]">
             <div className="relative rounded-[calc(1.5rem-2px)] bg-slate-900/60 backdrop-blur-xl">
-              <motion.div whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }} transition={{ type: "spring", stiffness: 160, damping: 18 }} className="relative aspect-[16/9] w-full">
-                <Image src={imgSrc} alt={titleText} fill priority className="rounded-[inherit] object-contain" />
+              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+                <motion.div
+                  initial={{ x: "-120%" }}
+                  whileInView={{ x: "120%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.8, delay: 0.2, ease: "easeInOut" }}
+                  className="h-full w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/12 to-transparent"
+                />
+              </div>
+
+              <motion.div
+                whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 160, damping: 18 }}
+                className="relative aspect-[16/9] w-full"
+              >
+                <Image
+                  src={imgSrc}
+                  alt={langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies"}
+                  fill
+                  priority
+                  className="rounded-[inherit] object-contain"
+                />
               </motion.div>
             </div>
           </div>
+
+          <span className="pointer-events-none absolute -left-3 -top-3 h-6 w-6 rounded-full bg-cyan-400/50 blur-[6px]" />
+          <span className="pointer-events-none absolute -right-3 -bottom-3 h-6 w-6 rounded-full bg-fuchsia-400/40 blur-[6px]" />
         </motion.div>
       </div>
     </section>
@@ -237,7 +243,10 @@ export default function ServicePage() {
   const { equipmentList, measurementEquipmentList } = serviceContent[langCode];
   const section = serviceContent[langCode].sectionList?.[0];
 
-  const pageVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12 } } };
+  const pageVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
+  };
 
   const fadeUp: Record<"hidden" | "visible", any> = {
     hidden: { opacity: 0, y: 24 },
@@ -260,7 +269,10 @@ export default function ServicePage() {
       <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
         {/* hero trim */}
         <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
-          <HeroSection title={langCode === "KOR" ? "기술 소개" : "Technology"} backgroundImage="/images/sub_banner/business_hero.png" />
+          <HeroSection
+            title={langCode === "KOR" ? "기술 소개" : "Technology"}
+            backgroundImage="/images/sub_banner/business_hero.png"
+          />
         </div>
 
         {/* breadcrumb */}
@@ -274,11 +286,23 @@ export default function ServicePage() {
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            <motion.h2 className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.25 }}>
+            <motion.h2
+              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+            >
               Main Equipment
             </motion.h2>
 
-            <motion.p className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.25 }}>
+            <motion.p
+              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+            >
               {section?.maintitle}
               <br />
               {section?.mainsubtitle}
@@ -289,13 +313,28 @@ export default function ServicePage() {
         {/* 생산가공 / 측정장비 */}
         <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20">
           <div className="pointer-events-none absolute inset-0">
-            <Image src="/images/business/layer.png" alt="배경 이미지" fill style={{ objectFit: "cover", objectPosition: "top" }} priority />
+            <Image
+              src="/images/business/layer.png"
+              alt="배경 이미지"
+              fill
+              style={{ objectFit: "cover", objectPosition: "top" }}
+              priority
+            />
           </div>
 
           <div className="mx-auto max-w-7xl">
-            <motion.div className="relative transition-all" variants={pageVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+            <motion.div
+              className="relative transition-all"
+              variants={pageVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               {/* 생산가공 / 조립 */}
-              <motion.span className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16" variants={fadeUp}>
+              <motion.span
+                className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
+                variants={fadeUp}
+              >
                 {section?.production}
               </motion.span>
 
@@ -307,11 +346,20 @@ export default function ServicePage() {
                     variants={fadeUp}
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
-                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />}
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
-                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">{equipment.name}</p>
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
                     </div>
 
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-cyan-400 to-indigo-400 transition-transform duration-200 group-hover:scale-x-100" />
@@ -320,7 +368,10 @@ export default function ServicePage() {
               </div>
 
               {/* 신뢰성 (측정 / 분석) */}
-              <motion.span className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28" variants={fadeUp}>
+              <motion.span
+                className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
+                variants={fadeUp}
+              >
                 {section?.measurement}
               </motion.span>
 
@@ -332,11 +383,20 @@ export default function ServicePage() {
                     variants={fadeUp}
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
-                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />}
+                      {equipment.image && (
+                        <Image
+                          src={equipment.image}
+                          alt={equipment.name}
+                          fill
+                          className="rounded-[10px] object-cover"
+                        />
+                      )}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
-                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">{equipment.name}</p>
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                        {equipment.name}
+                      </p>
                     </div>
 
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-teal-400 to-emerald-400 transition-transform duration-200 group-hover:scale-x-100" />
@@ -347,97 +407,15 @@ export default function ServicePage() {
           </div>
         </section>
 
-        {/* PROCESS section */}
-<section className="bg-[#0a132e] py-20 px-4 md:px-8 relative overflow-hidden">
-  {/* Background Grid + Gradients */}
-  <div className="pointer-events-none absolute inset-0">
-    {/* Grid Pattern */}
-    <div className="absolute inset-0 opacity-[0.08]">
-      <svg width="100%" height="100%">
-        <defs>
-          <pattern id="process-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#process-grid)" />
-      </svg>
-    </div>
-    {/* Gradient Overlays */}
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%)]" />
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
-  </div>
-
-  <div className="mx-auto w-full max-w-7xl relative z-10">
-    {/* Title Section with Animations */}
-    <div className="mb-16 text-center">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-6"
-      >
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white/[0.03] mb-4">
-          차세대 반도체 제조 프로세스
-        </h2>
-        <p className="text-lg md:text-xl lg:text-2xl text-teal-400/10">
-          Next-Generation Semiconductor Manufacturing Process
-        </p>
-      </motion.div>
-
-      {/* Stats Row */}
-      <motion.div 
-        className="flex justify-center gap-8 mt-6"
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-cyan-400">Throughput</span>
-          <span className="text-cyan-400 font-bold">90%</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-400">Efficiency</span>
-          <span className="text-emerald-400 font-bold">94%</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Quality</span>
-          <span className="text-purple-400 font-bold">98.98%</span>
-        </div>
-      </motion.div>
-    </div>
-
-    {/* Process Flow Chart */}
-    <ProcessFlowChart />
-  </div>
-
-  {/* Animated Corner Accents */}
-  <motion.div
-    className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-cyan-500/20 to-transparent rounded-full blur-3xl"
-    animate={{
-      scale: [1, 1.2, 1],
-      opacity: [0.3, 0.5, 0.3],
-    }}
-    transition={{
-      duration: 4,
-      repeat: Infinity,
-      ease: "easeInOut",
-    }}
-  />
-  <motion.div
-    className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-purple-500/20 to-transparent rounded-full blur-3xl"
-    animate={{
-      scale: [1, 1.2, 1],
-      opacity: [0.3, 0.5, 0.3],
-    }}
-    transition={{
-      duration: 4,
-      repeat: Infinity,
-      ease: "easeInOut",
-      delay: 2,
-    }}
-  />
-</section>
+        {/* PROCESS (interactive rail) */}
+        <section className="bg-white py-20 px-4 md:px-8">
+          <div className="mx-auto w-full max-w-7xl">
+            <h2 className="mb-6 text-left text-sm font-semibold tracking-wide sm:text-base lg:text-2xl">
+              PROCESS
+            </h2>
+            <ProcessFlowChart />
+          </div>
+        </section>
 
         <hr className="my-6 w-full border-gray-200" />
       </main>
