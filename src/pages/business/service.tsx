@@ -64,7 +64,7 @@ const ProcessFlowChart: React.FC = () => {
     /re[-\s]?order/i.test(step?.title || "");
 
   return (
-    <div className="w-full bg-white overflow-x-auto">
+    <div className="w-full bg-[#020B24] overflow-x-auto relative">
       <motion.div
         className="min-w-[1800px] p-8 relative"
         variants={containerVariants}
@@ -82,7 +82,6 @@ const ProcessFlowChart: React.FC = () => {
                   transition: { type: "spring", stiffness: 400, damping: 10 },
                 }}
               >
-                {/* Regular step rendering */}
                 {step.type === "card" ? (
                   <FlowCard
                     title={step.title}
@@ -91,36 +90,66 @@ const ProcessFlowChart: React.FC = () => {
                     size={step.isPartner ? "sm" : "md"}
                   />
                 ) : (
-                  <FlowDiamond title={step.title} subtitle={step.subtitle} />
+                  <>
+                    <FlowDiamond title={step.title} subtitle={step.subtitle} />
+                    {/* NG Label under diamond */}
+                    <div className="absolute -bottom-24 left-1/2 -translate-x-1/2">
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center"
+                      >
+                        <div className="bg-red-600 rounded-md px-4 py-1.5 shadow-sm min-w-[90px]">
+                          <div className="text-[10px] leading-[14px] font-bold text-white text-center tracking-wide">
+                            NG
+                            <br />
+                            (GO BACK)
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </>
                 )}
 
-                {/* Vertical NG arrow for 수입검사 */}
+                {/* Special case for 수입검사 with vertical arrow */}
                 {isIncomingStep(step) && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3">
+                  <motion.div
+                    className="absolute -bottom-44 left-1/2 -translate-x-1/2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
                     <div className="flex flex-col items-center">
-                      {/* NG Label */}
-                      <div className="text-[10px] leading-[12px] font-bold text-red-600 mb-1 text-center">
-                        NG
-                        <br />
-                        (GO BACK)
-                      </div>
-                      {/* Vertical Arrow */}
-                      <div className="w-0.5 h-16 bg-[#EF4444]" />
-                      <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-[#EF4444]" />
-                      {/* Partner Card */}
-                      <div className="mt-3">
+                      <motion.div
+                        className="w-0.5 h-24 bg-red-600"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ delay: 0.5, duration: 0.4 }}
+                      />
+                      <motion.div
+                        className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[10px] border-transparent border-t-red-600"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.9 }}
+                      />
+                      <motion.div 
+                        className="mt-4"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.1 }}
+                      >
                         <FlowCard 
                           title="협력사" 
                           variant="navy" 
                           size="sm" 
                         />
-                      </div>
+                      </motion.div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
 
-              {/* Only show forward arrows before reorder and direct connection from 수입검사 to 가공/제작 */}
+              {/* Forward arrows */}
               {index < steps.length - 1 && 
                !isReorderStep(step) &&
                (isIncomingStep(step) ? isManufacturingStep(steps[index + 1]) : true) && (
@@ -135,7 +164,6 @@ const ProcessFlowChart: React.FC = () => {
     </div>
   );
 };
-
 /* =========================
    Core Capabilities Image Section
    ========================= */
