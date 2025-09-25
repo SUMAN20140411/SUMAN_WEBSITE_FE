@@ -11,11 +11,6 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
-// flow components (named exports)
-import { FlowCard } from "@/components/FlowCard";
-import { FlowDiamond } from "@/components/FlowDiamond";
-import { FlowArrow } from "@/components/FlowArrow";
-
 // data
 import { processFlowContent } from "@/data/ProcessFlow";
 
@@ -27,120 +22,146 @@ const ProcessFlowChart: React.FC = () => {
   const content = processFlowContent[lang];
 
   return (
-    <div className="relative w-full">
-      {/* Top Lane */}
-      <div className="flex items-center justify-center gap-12 mb-32">
-          {content.topLane.map((step, index) => (
-            <React.Fragment key={step.id}>
-              <div className="relative">
-                {step.type === "diamond" ? (
-                  <div className="rotate-45 bg-gray-200 p-6 relative">
-                    <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                      {step.title}
+    <div className="relative mx-auto w-full max-w-5xl">
+      <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_42px_rgba(15,23,42,0.08)]">
+        <div className="relative max-h-[520px] overflow-hidden">
+          <div className="custom-scrollbar max-h-[520px] overflow-y-auto overflow-x-hidden px-6 py-10 sm:px-10">
+            <div className="mx-auto flex w-[920px] origin-top scale-[0.82] flex-col items-center gap-20 sm:scale-90 md:scale-100">
+              {/* Top Lane */}
+              <div className="flex w-full flex-nowrap items-center justify-center gap-5">
+                {content.topLane.map((step, index) => (
+                  <React.Fragment key={step.id}>
+                    <div className="relative flex flex-col items-center gap-3">
+                      {step.type === "diamond" ? (
+                        <div className="relative flex h-28 w-28 flex-shrink-0 rotate-45 items-center justify-center bg-gradient-to-br from-[#1B2B57] to-[#0A1633] shadow-[0_12px_28px_rgba(10,20,56,0.28)]">
+                          <div className="-rotate-45 px-2 text-center text-sm font-semibold text-white whitespace-pre-line">
+                            {step.title}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex min-w-[160px] flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-[#F3F4F8] px-5 py-4 text-center shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                          <div className="text-sm font-semibold text-slate-800 whitespace-pre-line">
+                            {step.title}
+                          </div>
+                        </div>
+                      )}
+                      {step.hasNGFrom && (
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            NG
+                          </span>
+                          <div className="h-10 w-0.5 bg-red-500" />
+                          <Arrow direction="up" className="text-red-500" />
+                        </div>
+                      )}
+                      {step.ngTarget && (
+                        <div className="absolute -top-12 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1">
+                          <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            NG
+                          </span>
+                          <Arrow direction="left" className="text-red-500" />
+                        </div>
+                      )}
                     </div>
-                    {step.ngTarget && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                        <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                          NG
-                        </span>
-                      </div>
+                    {index < content.topLane.length - 1 && (
+                      <Arrow direction="right" className="text-[#1B2B57]" />
                     )}
-                  </div>
-                ) : (
-                  <div className="bg-gray-200 rounded-lg px-4 py-3">
-                    <div className="text-gray-700 text-sm whitespace-pre-line">
-                      {step.title}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Middle Section - Inspection and Partner */}
+              <div className="flex w-full flex-col items-center gap-10">
+                <div className="flex flex-col items-center">
+                  <div className="h-16 w-0.5 bg-[#1B2B57]" />
+                  <Arrow direction="down" className="text-[#1B2B57]" />
+                </div>
+                <div className="relative flex items-center gap-8">
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                        NG
+                      </span>
+                      <Arrow direction="left" className="text-red-500" />
+                    </div>
+                    <div className="flex min-w-[160px] flex-col items-center justify-center rounded-2xl border border-slate-200 bg-[#F3F4F8] px-5 py-4 text-center shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                      <div className="text-sm font-semibold text-slate-800">
+                        협력사
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
-              {index < content.topLane.length - 1 && (
-                <Arrow direction="right" />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-      
-
-        {/* Middle Section - Inspection and Partner */}
-      <div className="relative -mt-16 mb-32">
-        <div className="absolute left-1/2 -translate-x-1/2">
-          {/* Vertical connector from 발주 */}
-          <div className="h-24 w-0.5 bg-gray-400 mx-auto" />
-          
-          {/* 수입검사 Diamond */}
-          <div className="relative">
-            <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-              <div className="-rotate-45 text-gray-700 text-sm">
-                수입검사
-              </div>
-            </div>
-
-            {/* 협력사 section with NG */}
-            <div className="absolute -left-48 top-1/2 -translate-y-1/2">
-              <div className="flex items-center">
-                <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
-                  NG
-                </div>
-                <Arrow direction="left" className="text-red-600" />
-                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
-                  <div className="text-gray-700 text-sm">
-                    협력사
+                  <div className="relative flex h-28 w-28 flex-shrink-0 rotate-45 items-center justify-center bg-gradient-to-br from-[#1B2B57] to-[#0A1633] shadow-[0_12px_28px_rgba(10,20,56,0.28)]">
+                    <div className="-rotate-45 px-2 text-center text-sm font-semibold text-white">
+                      수입검사
+                    </div>
                   </div>
                 </div>
+                <div className="flex flex-col items-center">
+                  <div className="h-16 w-0.5 bg-[#1B2B57]" />
+                  <Arrow direction="down" className="text-[#1B2B57]" />
+                </div>
+              </div>
+
+              {/* Bottom Lane - Left to Right Flow */}
+              <div className="flex w-full flex-nowrap items-center justify-center gap-5">
+                {content.bottomLane.map((step, index) => (
+                  <React.Fragment key={step.id}>
+                    <div className="relative flex flex-col items-center gap-3">
+                      {step.type === "diamond" ? (
+                        <div className="relative flex h-28 w-28 flex-shrink-0 rotate-45 items-center justify-center bg-gradient-to-br from-[#1B2B57] to-[#0A1633] shadow-[0_12px_28px_rgba(10,20,56,0.28)]">
+                          <div className="-rotate-45 px-2 text-center text-sm font-semibold text-white whitespace-pre-line">
+                            {step.title}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex min-w-[160px] flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-slate-200 bg-[#F3F4F8] px-5 py-4 text-center shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                          <div className="text-sm font-semibold text-slate-800 whitespace-pre-line">
+                            {step.title}
+                          </div>
+                        </div>
+                      )}
+                      {step.hasNGFrom && (
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            NG
+                          </span>
+                          <div className="h-10 w-0.5 bg-red-500" />
+                          <Arrow direction="up" className="text-red-500" />
+                        </div>
+                      )}
+                    </div>
+                    {index < content.bottomLane.length - 1 && (
+                      <Arrow direction="right" className="text-[#1B2B57]" />
+                    )}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
-
-            {/* Vertical arrow to 가공/제작 */}
-            <div className="h-24 w-0.5 bg-gray-400 mx-auto mt-6" />
           </div>
         </div>
-      </div>
-
-      {/* Bottom Lane - Left to Right Flow */}
-      <div className="flex items-center justify-center gap-12">
-        {content.bottomLane.map((step, index) => (
-          <React.Fragment key={step.id}>
-            <div className="relative">
-              {step.type === "diamond" ? (
-                <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
-                  <div className="text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                </div>
-              )}
-              {step.hasNGFrom && (
-                <div className="absolute -bottom-16 z-10">
-                  <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                    NG
-                  </span>
-                  <div className="h-10 w-0.5 bg-red-600 mx-auto mt-1" />
-                </div>
-              )}
-            </div>
-            {index < content.bottomLane.length - 1 && (
-              <Arrow direction="left" className="text-gray-400" />
-            )}
-          </React.Fragment>
-        ))}
       </div>
     </div>
   );
 };
 
 // Arrow component
-const Arrow: React.FC<{ direction: "left" | "right", className?: string }> = ({ 
+const Arrow: React.FC<{
+  direction: "left" | "right" | "up" | "down";
+  className?: string;
+}> = ({
   direction,
-  className = "text-gray-400"
+  className = "text-slate-400",
 }) => (
-  <svg 
-    className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
+  <svg
+    className={`h-6 w-6 ${
+      direction === "left"
+        ? "rotate-180"
+        : direction === "up"
+        ? "-rotate-90"
+        : direction === "down"
+        ? "rotate-90"
+        : ""
+    } ${className}`}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -149,8 +170,6 @@ const Arrow: React.FC<{ direction: "left" | "right", className?: string }> = ({
     <path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
-
-    
 /* =========================
    Core Capabilities Image Section
    ========================= */
