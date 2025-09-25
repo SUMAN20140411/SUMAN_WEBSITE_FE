@@ -518,7 +518,7 @@ export default function ServicePage() {
                     <Image
                       src={
                         lang === "KOR"
-                          ? "/images/business/process/FLOWKOREA.png"
+                          ? "/images/business/process/FLOWKOR.png"
                           : "/images/business/process/FLOWENG.png"
                       }
                       alt={
