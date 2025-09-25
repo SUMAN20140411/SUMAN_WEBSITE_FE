@@ -1,222 +1,187 @@
 export const processFlowContent = {
-  // ----------------------------------------------
-  //                       KOR
-  // ----------------------------------------------
   KOR: {
-    title: "프로세스 플로우 - 수평형 v1",
-    subtitle: "이중언어(한/영) 제조 공정 워크플로우 - 반응형 디자인",
-    
-    steps: [
+    title: "기준업종 공정도",
+    subtitle: "제품 제조 및 품질 프로세스",
+
+    topLane: [
       {
         id: "customer",
         type: "card",
         title: "Customer",
-        hasNG: false
       },
       {
         id: "concept",
-        type: "card", 
+        type: "card",
         title: "Concept\n설계",
-        hasNG: false
+        hasNGFrom: ["dr"]
       },
       {
         id: "dr",
         type: "diamond",
         title: "D/R",
-        hasNG: true,
         ngTarget: "concept"
       },
       {
         id: "development",
         type: "card",
-        title: "개발/가공\n설계", 
-        hasNG: false
+        title: "개발/가공\n설계",
+        hasNGFrom: ["review"]
       },
       {
         id: "review",
         type: "diamond",
         title: "검토승인",
-        hasNG: false
+        ngTarget: "development"
       },
       {
         id: "po",
         type: "card",
         title: "발주\n(소재/부품)",
-        hasNG: false
-      },
+      }
+    ],
+
+    middleSection: [
       {
         id: "inspection",
-        type: "diamond", 
+        type: "diamond",
         title: "수입검사",
-        hasNG: false,
-        arrowsTo: "partner"
+        connectsTo: ["partner", "processing"],
+        ngTarget: "partner"
       },
+      {
+        id: "partner",
+        type: "card",
+        title: "협력사",
+        isEndPoint: true
+      }
+    ],
 
+    bottomLane: [
       {
         id: "processing",
         type: "card",
         title: "가공/제작",
-        hasNG: false
+        hasNGFrom: ["shipping"]
       },
       {
         id: "shipping",
         type: "diamond",
         title: "출하 및 조립/\n측정검사",
-        hasNG: false
+        ngTarget: "processing"
       },
       {
-        id: "packaging", 
+        id: "packaging",
         type: "card",
-        title: "포장",
-        hasNG: false
+        title: "포장"
       },
       {
         id: "delivery",
         type: "card",
-        title: "고객사 납품", 
-        hasNG: false
+        title: "고객사 납품"
       },
       {
         id: "feedback",
         type: "diamond",
-        title: "고객 Feedback",
-        hasNG: false
+        title: "고객 Feedback"
       },
       {
         id: "reorder",
         type: "card",
-        title: "Re-Order 개선/반영",
-        hasNG: false,
-        returnTo: "concept"
+        title: "Re-Order\n개선/반영"
       }
-    ],
-
-    specs: {
-      colorTokens: "색상 토큰",
-      typography: "타이포그래피", 
-      components: "컴포넌트",
-      spacingLayout: "간격 및 레이아웃",
-      cardTitles: "카드 제목",
-      englishSubtitles: "영어 부제목",
-      diamondLabels: "다이아몬드 라벨",
-      flowCard: "플로우 카드",
-      flowDiamond: "플로우 다이아몬드", 
-      flowArrow: "플로우 화살표",
-      processFlow: "프로세스 플로우",
-      roundedRectangles: "둥근 사각형, 16px 반지름",
-      decisionPoints: "결정 지점, 네이비 그라데이션",
-      connectors: "연결선과 화살표",
-      mainContainer: "메인 컨테이너, 반응형"
-    }
+    ]
   },
 
-  // ----------------------------------------------  
-  //                       ENG
-  // ----------------------------------------------
   ENG: {
-    title: "Process Flow - Horizontal v1",
-    subtitle: "Bilingual (KR/EN) manufacturing process workflow with responsive design",
-    
-    steps: [
+    title: "Standard Industry Process Flow",
+    subtitle: "Product Manufacturing and Quality Process",
+
+    topLane: [
       {
         id: "customer",
         type: "card",
-        title: "Customer", 
-        hasNG: false
+        title: "Customer",
       },
       {
         id: "concept",
         type: "card",
-        title: "Concept Design",
-        hasNG: false
+        title: "Concept\nDesign",
+        hasNGFrom: ["dr"]
       },
       {
-        id: "dr", 
+        id: "dr",
         type: "diamond",
         title: "D/R",
-        hasNG: true,
         ngTarget: "concept"
       },
       {
         id: "development",
         type: "card",
-        title: "Developing / Machining Design",
-        hasNG: false
+        title: "Development /\nProcessing Design",
+        hasNGFrom: ["review"]
       },
       {
         id: "review",
-        type: "diamond", 
-        title: "Review & Approval",
-        hasNG: false
+        type: "diamond",
+        title: "Review\nApproval",
+        ngTarget: "development"
       },
       {
         id: "po",
         type: "card",
-        title: "PO (Materials/Parts)", 
-        hasNG: false
-      },
+        title: "Purchase Order\n(Materials / Parts)",
+      }
+    ],
+
+    middleSection: [
       {
         id: "inspection",
         type: "diamond",
-        title: "Incoming Inspection",
-        hasNG: false,
-        arrowsTo: "partner"
+        title: "Incoming\nInspection",
+        connectsTo: ["partner", "processing"],
+        ngTarget: "partner"
       },
+      {
+        id: "partner",
+        type: "card",
+        title: "Partner\n(Vendor)",
+        isEndPoint: true
+      }
+    ],
+
+    bottomLane: [
       {
         id: "processing",
         type: "card",
-        title: "Processing/Manufacturing",
-        hasNG: false
+        title: "Processing /\nManufacturing",
+        hasNGFrom: ["shipping"]
       },
       {
-        id: "shipping", 
+        id: "shipping",
         type: "diamond",
-        title: "Shipping & Assembly/Measurement Inspection", 
-        hasNG: false
+        title: "Shipping & Assembly /\nMeasurement Inspection",
+        ngTarget: "processing"
       },
       {
         id: "packaging",
         type: "card",
-        title: "Packaging",
-        hasNG: false
+        title: "Packaging"
       },
       {
         id: "delivery",
-        type: "card", 
-        title: "Delivery to Customer",
-        hasNG: false
+        type: "card",
+        title: "Customer\nDelivery"
       },
       {
         id: "feedback",
         type: "diamond",
-        title: "Customer Feedback",
-        hasNG: false
+        title: "Customer\nFeedback"
       },
       {
         id: "reorder",
         type: "card",
-        title: "Re-Order Improvement/Reflection", 
-        hasNG: false,
-        returnTo: "concept"
+        title: "Re-Order /\nImprovement"
       }
-    ],
-
-    specs: {
-      colorTokens: "Color Tokens",
-      typography: "Typography",
-      components: "Components", 
-      spacingLayout: "Spacing & Layout",
-      cardTitles: "Card Titles",
-      englishSubtitles: "English Subtitles",
-      diamondLabels: "Diamond Labels",
-      flowCard: "FlowCard",
-      flowDiamond: "FlowDiamond",
-      flowArrow: "FlowArrow", 
-      processFlow: "ProcessFlow",
-      roundedRectangles: "Rounded rectangles, 16px radius",
-      decisionPoints: "Decision points, navy gradient", 
-      connectors: "Connectors with chevrons",
-      mainContainer: "Main container, responsive"
-    }
+    ]
   }
 };

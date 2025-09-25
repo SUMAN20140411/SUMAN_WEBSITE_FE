@@ -6,18 +6,15 @@ import Link from "next/link";
 import { useLangStore } from "@/stores/langStore";
 import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
-import { ArrowDownToLine, CalendarDays, Download, FileText, Sparkles } from "lucide-react";
+import {
+  ArrowDownToLine,
+  Download,
+  FileText,
+} from "lucide-react";
 
 const cardAppearTransition: Transition = {
   duration: 0.7,
   ease: [0.22, 1, 0.36, 1],
-};
-
-const floatTransition: Transition = {
-  duration: 8,
-  repeat: Infinity,
-  repeatType: "mirror",
-  ease: "easeInOut",
 };
 
 const RecruitmentBoard: React.FC = () => {
@@ -107,96 +104,96 @@ const RecruitmentDownloadBanner: React.FC = () => {
   const noticeContent =
     lang === "KOR"
       ? {
-          heading: "내부공고",
-          tagline: "",
-  
-          title: "현재 채용 진행중인 내부 공고가 없습니다.",
-          description:
-            "",
-          note: "",
-          fileLabel: "채용 공고문",
-          actionLabel: "공고문 다운로드",
-          ariaLabel: "현재 채용 진행중인 내부 공고가 없습니다.",
-          fileName: "현재 채용 진행중인 내부 공고가 없습니다.",
-        }
+        heading: "내부공고",
+        tagline: "",
+
+        title: "현재 채용 진행중인 내부 공고가 없습니다.",
+        description:
+          "",
+        note: "",
+        fileLabel: "채용 공고문",
+        actionLabel: "공고문 다운로드",
+        ariaLabel: "현재 채용 진행중인 내부 공고가 없습니다.",
+        fileName: "현재 채용 진행중인 내부 공고가 없습니다.",
+      }
       : {
-          heading: "Internal Recruitment Notice",
-          tagline: "",
-          title: "There are currently no internal recruitment notices.", 
-          description:
-            "",
-          note: "",
-          fileLabel: "Recruitment Notice",
-          actionLabel: "There are currently no internal recruitment notices.",
-          ariaLabel: "DOWNLOAD",
-          fileName: "There are currently no internal recruitment notices.",
-        };
+        heading: "Internal Recruitment Notice",
+        tagline: "",
+        title: "There are currently no internal recruitment notices.",
+        description:
+          "",
+        note: "",
+        fileLabel: "Recruitment Notice",
+        actionLabel: "There are currently no internal recruitment notices.",
+        ariaLabel: "DOWNLOAD",
+        fileName: "There are currently no internal recruitment notices.",
+      };
 
   return (
     <section className="bg-white mt-2 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
-          className="group relative overflow-hidden rounded-3xl border border-[#1D3762]/20 bg-gradient-to-br from-[#0A1633] via-[#142A66] to-[#1D3762] p-8 sm:p-10 text-white shadow-2xl transition-transform duration-500 hover:-translate-y-1"
+          className="group relative overflow-hidden rounded-3xl border border-[#d9e2ff] bg-gradient-to-br from-white via-[#f5f7ff] to-white p-8 sm:p-10 shadow-[0_30px_80px_-40px_rgba(29,55,98,0.35)]"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0, transition: cardAppearTransition }}
           viewport={{ once: true, amount: 0.3 }}
         >
+          {/* Update the background spans to match document section */}
           <motion.span
             aria-hidden="true"
-            className="absolute -right-24 -top-24 h-56 w-56 rounded-full bg-sky-400/30 blur-3xl"
-            animate={{ y: [0, -18, 0], scale: [1, 1.08, 1] }}
-            transition={floatTransition}
+            className="absolute -right-20 -top-24 h-48 w-48 rounded-full bg-sky-200/50 blur-3xl"
+            animate={{ y: [0, -14, 0], scale: [1, 1.06, 1] }}
+            transition={{ duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
           />
           <motion.span
             aria-hidden="true"
-            className="absolute -bottom-24 left-6 h-48 w-48 rounded-full bg-indigo-500/25 blur-[120px]"
-            animate={{ y: [0, 18, 0], scale: [1, 1.04, 1] }}
-            transition={{ ...floatTransition, delay: 1.2 }}
+            className="absolute -bottom-24 left-10 h-52 w-52 rounded-full bg-indigo-200/40 blur-[120px]"
+            animate={{ y: [0, 16, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 10, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 0.8 }}
           />
 
+          {/* Update text colors to match the new theme */}
           <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1 space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  {/*<span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">*/}
-                    {/*<Sparkles className="h-6 w-6 text-amber-300" />*/}
-                  {/*</span>*/}
-                  <h2 className="text-2xl font-bold sm:text-3xl">{noticeContent.heading}</h2>
+                  <h2 className="text-2xl font-bold text-[#0A1633] sm:text-3xl">{noticeContent.heading}</h2>
                 </div>
-                <p className="text-sm text-white/80 sm:text-base">{noticeContent.tagline}</p>
+                <p className="text-sm text-[#3B4B77] sm:text-base">{noticeContent.tagline}</p>
               </div>
               <div className="space-y-3">
-                <h3 className="text-xl font-semibold sm:text-2xl">{noticeContent.title}</h3>
-                <p className="text-sm leading-relaxed text-white/75 sm:text-base">
+                <h3 className="text-xl font-semibold text-[#102042] sm:text-2xl">{noticeContent.title}</h3>
+                <p className="text-sm leading-relaxed text-[#42527A] sm:text-base">
                   {noticeContent.description}
                 </p>
               </div>
             </div>
 
+            {/* Update the file info box styling */}
             <div className="w-full max-w-md">
-              <div className="relative overflow-hidden rounded-2xl border border-white/30 bg-white/10 p-6 shadow-xl backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent opacity-70" aria-hidden="true" />
+              <div className="relative overflow-hidden rounded-2xl border border-[#d7def5] bg-white/80 p-6 shadow-lg shadow-[#1d3762]/10">
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-white opacity-70" aria-hidden="true" />
                 <div className="relative z-10 flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1D3762]/10 text-[#1D3762]">
                     <FileText className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#1D3762]/60">
                       {noticeContent.fileLabel}
                     </p>
-                    <p className="mt-1 text-lg font-semibold text-white sm:text-xl">
+                    <p className="mt-1 text-lg font-semibold text-[#102042] sm:text-xl">
                       {noticeContent.fileName}
                     </p>
                   </div>
                 </div>
-                <p className="relative z-10 mt-4 text-sm text-white/70">{noticeContent.note}</p>
+                <p className="relative z-10 mt-4 text-sm text-[#42527A]">{noticeContent.note}</p>
                 <a
                   href={fileHref}
                   download
                   aria-label={noticeContent.ariaLabel}
-                  className="relative z-10 mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#102042] shadow-lg shadow-black/15 transition-all duration-300 hover:-translate-y-1 hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+                  className="relative z-10 mt-6 inline-flex items-center gap-2 rounded-full bg-[#1D3762] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1d3762]/15 transition-all duration-300 hover:-translate-y-1 hover:bg-[#0A1633] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D3762]/40"
                 >
-                  <Download className="h-5 w-5 text-[#1D3762] transition-transform duration-300 group-hover:translate-x-1" />
+                  <Download className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                   <span>{noticeContent.actionLabel}</span>
                 </a>
               </div>
@@ -215,58 +212,58 @@ const DocumentDownloadBanner: React.FC = () => {
   const sectionCopy =
     lang === "KOR"
       ? {
-          heading: "자료실",
-          highlight: "지원서 양식",
-          description: "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요.",
-        }
+        heading: "자료실",
+        highlight: "지원서 양식",
+        description: "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요.",
+      }
       : {
-          heading: "Related Document",
-          highlight: "Application Forms",
-          description: "Choose the application template you need and download it instantly.",
-        };
+        heading: "Related Document",
+        highlight: "Application Forms",
+        description: "Choose the application template you need and download it instantly.",
+      };
 
   const documents =
     lang === "KOR"
       ? [
-          {
-            id: "word",
-            href: "/images/입사지원서 양식 다운로드(Word).docx",
-            title: "입사지원서 양식 (Word)",
-            description: "간편하게 수정 가능한 Microsoft Word 양식입니다.",
-            badge: "DOCX",
-            accent: "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
-            buttonLabel: "Word 파일 받기",
-          },
-          {
-            id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(한글).hwp",
-            title: "입사지원서 양식 (HWP)",
-            description: "한글 전용 문서 편집기에 최적화된 양식입니다.",
-            badge: "HWP",
-            accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
-            buttonLabel: "HWP 파일 받기",
-          },
-        ]
+        {
+          id: "word",
+          href: "/images/입사지원서 양식 다운로드(Word).docx",
+          title: "입사지원서 양식 (Word)",
+          description: "간편하게 수정 가능한 Microsoft Word 양식입니다.",
+          badge: "DOCX",
+          accent: "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
+          buttonLabel: "Word 파일 받기",
+        },
+        {
+          id: "hwp",
+          href: "/images/입사지원서 양식 다운로드(한글).hwp",
+          title: "입사지원서 양식 (HWP)",
+          description: "한글 전용 문서 편집기에 최적화된 양식입니다.",
+          badge: "HWP",
+          accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
+          buttonLabel: "HWP 파일 받기",
+        },
+      ]
       : [
-          {
-            id: "word",
-            href: "/images/입사지원서 양식 다운로드(Word).docx",
-            title: "Application Form Template (Word)",
-            description: "Editable Microsoft Word version of the application form.",
-            badge: "DOCX",
-            accent: "from-[#38BDF8] via-[#2563EB] to-[#1D4ED8]",
-            buttonLabel: "Download Word Template",
-          },
-          {
-            id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(한글).hwp",
-            title: "Application Form Template (HWP)",
-            description: "Hangul word processor version of the application form.",
-            badge: "HWP",
-            accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
-            buttonLabel: "Download HWP Template",
-          },
-        ];
+        {
+          id: "word",
+          href: "/images/입사지원서 양식 다운로드(Word).docx",
+          title: "Application Form Template (Word)",
+          description: "Editable Microsoft Word version of the application form.",
+          badge: "DOCX",
+          accent: "from-[#38BDF8] via-[#2563EB] to-[#1D4ED8]",
+          buttonLabel: "Download Word Template",
+        },
+        {
+          id: "hwp",
+          href: "/images/입사지원서 양식 다운로드(한글).hwp",
+          title: "Application Form Template (HWP)",
+          description: "Hangul word processor version of the application form.",
+          badge: "HWP",
+          accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
+          buttonLabel: "Download HWP Template",
+        },
+      ];
 
   return (
     <section className="bg-white mt-2 px-4">

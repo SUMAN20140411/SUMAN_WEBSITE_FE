@@ -25,147 +25,122 @@ import { processFlowContent } from "@/data/ProcessFlow";
 const ProcessFlowChart: React.FC = () => {
   const lang = useLangStore((state) => state.lang);
   const content = processFlowContent[lang];
-  const steps = content.steps;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
-
-  const stepVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-        duration: 0.6,
-      },
-    },
-  };
-
-  // Helper to identify specific steps
-  const isIncomingStep = (step: any) =>
-    ["inspection", "incomingInspection"].includes(step?.id) ||
-    step?.title === "수입검사";
-
-  const isManufacturingStep = (step: any) =>
-    step?.id === "manufacturing" ||
-    step?.title === "가공/제작";
-
-  const isReorderStep = (step: any) =>
-    step?.id === "reorder" ||
-    /re[-\s]?order/i.test(step?.title || "");
-
- return (
-    <div className="w-full bg-white overflow-x-auto relative min-h-[calc(100vh-24rem)]"> {/* Added min-height */}
-      <motion.div
-        className="min-w-[1881px] p-8 pb-16 relative transform scale-95" // Added bottom padding
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="flex items-center gap-8"> {/* Removed mb-16 since we added pb-16 above */}
-          {steps.map((step: any, index: number) => (
+  return (
+    <div className="w-full bg-white relative min-h-[calc(100vh-16rem)]">
+      <div className="min-w-[1400px] p-8 relative">
+        {/* Top Lane */}
+        <div className="flex items-center gap-8 mb-24">
+          {content.topLane.map((step, index) => (
             <React.Fragment key={step.id}>
-              <motion.div
-                className="relative scale-95" // 5% smaller
-                variants={stepVariants}
-                whileHover={{
-                  scale: 1.05,
-                  transition: { type: "spring", stiffness: 400, damping: 10 },
-                }}
-              >
-                {step.type === "card" ? (
-                  <FlowCard
-                    title={step.title}
-                    subtitle={step.subtitle}
-                    variant={step.isPartner ? "navy" : "light"}
-                    size={step.isPartner ? "sm" : "md"}
-                  />
+              <div className="relative">
+                {step.type === "diamond" ? (
+                  <div className="rotate-45 bg-gray-200 p-6 relative">
+                    <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
+                      {step.title}
+                    </div>
+                    {step.ngTarget && (
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
+                        <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
+                          NG
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <>
-                    <FlowDiamond title={step.title} subtitle={step.subtitle} />
-                    {/* NG Label under diamond */}
-                    <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 z-10">
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center"
-                      >
-                        <div className="bg-red-600 rounded-md px-4 py-1.5 shadow-sm min-w-[95px]"> {/* 5% smaller */}
-                          <div className="text-[10.5px] leading-[14px] font-bold text-white text-center tracking-wide">
-                            NG
-                            <br />
-                            (GO BACK)
-                          </div>
-                        </div>
-                      </motion.div>
+                  <div className="bg-gray-200 rounded-lg px-4 py-3">
+                    <div className="text-gray-700 text-sm whitespace-pre-line">
+                      {step.title}
                     </div>
-                  </>
+                  </div>
                 )}
-
-                {/* Special case for 수입검사 with vertical arrow */}
-                {isIncomingStep(step) && (
-                  <motion.div
-                    className="absolute -bottom-44 left-1/2 -translate-x-1/2 z-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <div className="flex flex-col items-center">
-                      <motion.div
-                        className="w-[2.85px] h-26 bg-red-600" // 5% smaller
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ delay: 0.5, duration: 0.4 }}
-                      />
-                      <motion.div
-                        className="w-0 h-0 border-l-[6.65px] border-r-[6.65px] border-t-[11.4px] border-transparent border-t-red-600" // 5% smaller
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.9 }}
-                      />
-                      <motion.div 
-                        className="mt-4"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.1 }}
-                      >
-                        <FlowCard 
-                          title="협력사" 
-                          variant="navy" 
-                          size="sm" 
-                        />
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                )}
-              </motion.div>
-
-              {/* Forward arrows - now consistent for all steps */}
-              {index < steps.length - 1 && (
-                <motion.div 
-                  variants={stepVariants} 
-                  whileHover={{ scale: 1.05 }}
-                  className="scale-95 mx-2" // 5% smaller & consistent spacing
-                >
-                  <FlowArrow />
-                </motion.div>
+              </div>
+              {index < content.topLane.length - 1 && (
+                <Arrow direction="right" />
               )}
             </React.Fragment>
           ))}
         </div>
-      </motion.div>
+
+        {/* Middle Section */}
+        <div className="relative -mt-12 mb-24">
+          <div className="absolute left-[calc(50%-100px)]">
+            {/* Vertical connector from PO to Inspection */}
+            <div className="h-20 w-0.5 bg-gray-400 mx-auto" />
+            {/* Inspection diamond */}
+            <div className="rotate-45 bg-gray-200 p-6 relative">
+              <div className="-rotate-45 text-gray-700 text-sm">
+                {content.middleSection[0].title}
+              </div>
+            </div>
+            {/* Partner box with NG arrow */}
+            <div className="absolute -left-32 top-1/2">
+              <Arrow direction="left" className="text-red-600" />
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xs bg-red-600 text-white px-2 py-0.5 rounded">
+                NG
+              </span>
+              <div className="bg-gray-200 rounded-lg px-4 py-3">
+                <div className="text-gray-700 text-sm">
+                  {content.middleSection[1].title}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Lane (Reversed) */}
+        <div className="flex flex-row-reverse items-center gap-8">
+          {content.bottomLane.map((step, index) => (
+            <React.Fragment key={step.id}>
+              {index > 0 && <Arrow direction="left" />}
+              <div className="relative">
+                {step.type === "diamond" ? (
+                  <div className="rotate-45 bg-gray-200 p-6">
+                    <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
+                      {step.title}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-200 rounded-lg px-4 py-3">
+                    <div className="text-gray-700 text-sm whitespace-pre-line">
+                      {step.title}
+                    </div>
+                  </div>
+                )}
+                {step.hasNGFrom && (
+                  <div className="absolute -bottom-12">
+                    <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
+                      NG
+                    </span>
+                    <div className="h-8 w-0.5 bg-red-600 mx-auto mt-1" />
+                  </div>
+                )}
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
+
+// Arrow component
+const Arrow: React.FC<{ direction: "left" | "right", className?: string }> = ({ 
+  direction,
+  className = "text-gray-400"
+}) => (
+  <svg 
+    className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+    
 /* =========================
    Core Capabilities Image Section
    ========================= */

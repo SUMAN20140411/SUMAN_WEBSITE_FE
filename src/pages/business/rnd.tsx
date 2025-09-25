@@ -177,19 +177,20 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                    {/* System Integration section */}
                     <div className="mt-6 pt-4 border-t border-gray-100">
                       <h4 className="text-xl font-bold text-gray-900 mb-4">
                         {lang === 'KOR' ? '시스템 통합(System Integration)' : 'System Integration'}
-                      </h4>
-                      <div className="space-y-3">
-                      {businessData.automation.systemIntegration.map((service, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                        </div>
-                      ))}
+                        </h4>
+                        <div className="space-y-3">
+                          {businessData.automation.systemIntegration.map((service, index) => (
+                            <div key={index} className="flex items-start space-x-3">
+                              <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" /> {/* Changed to text-green-600 */}
+                              <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
+                              </div>
+                            ))}
+                          </div>
                       </div>
-                    </div>
                   </div>
                 </motion.div>
               </motion.div>
