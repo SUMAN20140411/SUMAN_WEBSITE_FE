@@ -22,20 +22,21 @@ import { processFlowContent } from "@/data/ProcessFlow";
 /* =========================
    Process Flow (inlined)
    ========================= */
+
 const ProcessFlowChart: React.FC = () => {
   const lang = useLangStore((state) => state.lang);
   const content = processFlowContent[lang];
 
   return (
-    <div className="w-full bg-white relative min-h-[calc(100vh-16rem)]">
-      <div className="min-w-[1400px] p-8 relative">
+    <div className="w-full bg-white overflow-hidden">
+      <div className="max-w-[90vw] mx-auto transform scale-[0.85] origin-center p-8">
         {/* Top Lane */}
-        <div className="flex items-center gap-8 mb-24">
+        <div className="flex items-center justify-center gap-8 mb-24">
           {content.topLane.map((step, index) => (
             <React.Fragment key={step.id}>
               <div className="relative">
                 {step.type === "diamond" ? (
-                  <div className="rotate-45 bg-gray-200 p-6 relative">
+                  <div className="rotate-45 bg-[#E8F4FF] p-6 relative shadow-lg">
                     <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
@@ -48,7 +49,7 @@ const ProcessFlowChart: React.FC = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="bg-gray-200 rounded-lg px-4 py-3">
+                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
                     <div className="text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
@@ -56,59 +57,67 @@ const ProcessFlowChart: React.FC = () => {
                 )}
               </div>
               {index < content.topLane.length - 1 && (
-                <Arrow direction="right" />
+                <Arrow direction="right" className="text-gray-400" />
               )}
             </React.Fragment>
           ))}
         </div>
 
-        {/* Middle Section */}
+        {/* Middle Section - Inspection and Partner */}
         <div className="relative -mt-12 mb-24">
-          <div className="absolute left-[calc(50%-100px)]">
-            {/* Vertical connector from PO to Inspection */}
+          <div className="absolute left-1/2 -translate-x-1/2">
+            {/* Vertical connector */}
             <div className="h-20 w-0.5 bg-gray-400 mx-auto" />
+            
             {/* Inspection diamond */}
-            <div className="rotate-45 bg-gray-200 p-6 relative">
-              <div className="-rotate-45 text-gray-700 text-sm">
-                {content.middleSection[0].title}
-              </div>
-            </div>
-            {/* Partner box with NG arrow */}
-            <div className="absolute -left-32 top-1/2">
-              <Arrow direction="left" className="text-red-600" />
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                NG
-              </span>
-              <div className="bg-gray-200 rounded-lg px-4 py-3">
-                <div className="text-gray-700 text-sm">
-                  {content.middleSection[1].title}
+            <div className="relative">
+              <div className="rotate-45 bg-[#E8F4FF] p-6 relative shadow-lg">
+                <div className="-rotate-45 text-gray-700 text-sm">
+                  수입검사
                 </div>
               </div>
+              
+              {/* Partner section with NG */}
+              <div className="absolute -left-40 top-1/2 -translate-y-1/2">
+                <div className="flex items-center">
+                  <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
+                    NG
+                  </div>
+                  <Arrow direction="left" className="text-red-600" />
+                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
+                    <div className="text-gray-700 text-sm">
+                      협력사
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vertical arrow to Processing */}
+              <div className="h-20 w-0.5 bg-gray-400 mx-auto mt-4" />
             </div>
           </div>
         </div>
 
-        {/* Bottom Lane (Reversed) */}
-        <div className="flex flex-row-reverse items-center gap-8">
+        {/* Bottom Lane - Reversed Flow */}
+        <div className="flex flex-row-reverse items-center justify-center gap-8">
           {content.bottomLane.map((step, index) => (
             <React.Fragment key={step.id}>
-              {index > 0 && <Arrow direction="left" />}
               <div className="relative">
                 {step.type === "diamond" ? (
-                  <div className="rotate-45 bg-gray-200 p-6">
+                  <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
                     <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-200 rounded-lg px-4 py-3">
+                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
                     <div className="text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
                   </div>
                 )}
                 {step.hasNGFrom && (
-                  <div className="absolute -bottom-12">
+                  <div className="absolute -bottom-12 z-10">
                     <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
                       NG
                     </span>
@@ -116,6 +125,9 @@ const ProcessFlowChart: React.FC = () => {
                   </div>
                 )}
               </div>
+              {index < content.bottomLane.length - 1 && (
+                <Arrow direction="left" className="text-gray-400" />
+              )}
             </React.Fragment>
           ))}
         </div>
