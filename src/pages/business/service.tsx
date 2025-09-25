@@ -22,21 +22,19 @@ import { processFlowContent } from "@/data/ProcessFlow";
 /* =========================
    Process Flow (inlined)
    ========================= */
-
 const ProcessFlowChart: React.FC = () => {
   const lang = useLangStore((state) => state.lang);
   const content = processFlowContent[lang];
 
   return (
-    <div className="w-full bg-white overflow-hidden">
-      <div className="max-w-[90vw] mx-auto transform scale-[0.85] origin-center p-8">
-        {/* Top Lane */}
-        <div className="flex items-center justify-center gap-8 mb-24">
+    <div className="relative w-full">
+      {/* Top Lane */}
+      <div className="flex items-center justify-center gap-12 mb-32">
           {content.topLane.map((step, index) => (
             <React.Fragment key={step.id}>
               <div className="relative">
                 {step.type === "diamond" ? (
-                  <div className="rotate-45 bg-[#E8F4FF] p-6 relative shadow-lg">
+                  <div className="rotate-45 bg-gray-200 p-6 relative">
                     <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
@@ -49,7 +47,7 @@ const ProcessFlowChart: React.FC = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
+                  <div className="bg-gray-200 rounded-lg px-4 py-3">
                     <div className="text-gray-700 text-sm whitespace-pre-line">
                       {step.title}
                     </div>
@@ -57,80 +55,80 @@ const ProcessFlowChart: React.FC = () => {
                 )}
               </div>
               {index < content.topLane.length - 1 && (
-                <Arrow direction="right" className="text-gray-400" />
+                <Arrow direction="right" />
               )}
             </React.Fragment>
           ))}
         </div>
+      
 
         {/* Middle Section - Inspection and Partner */}
-        <div className="relative -mt-12 mb-24">
-          <div className="absolute left-1/2 -translate-x-1/2">
-            {/* Vertical connector */}
-            <div className="h-20 w-0.5 bg-gray-400 mx-auto" />
-            
-            {/* Inspection diamond */}
-            <div className="relative">
-              <div className="rotate-45 bg-[#E8F4FF] p-6 relative shadow-lg">
-                <div className="-rotate-45 text-gray-700 text-sm">
-                  수입검사
-                </div>
+      <div className="relative -mt-16 mb-32">
+        <div className="absolute left-1/2 -translate-x-1/2">
+          {/* Vertical connector from 발주 */}
+          <div className="h-24 w-0.5 bg-gray-400 mx-auto" />
+          
+          {/* 수입검사 Diamond */}
+          <div className="relative">
+            <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
+              <div className="-rotate-45 text-gray-700 text-sm">
+                수입검사
               </div>
-              
-              {/* Partner section with NG */}
-              <div className="absolute -left-40 top-1/2 -translate-y-1/2">
-                <div className="flex items-center">
-                  <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
-                    NG
-                  </div>
-                  <Arrow direction="left" className="text-red-600" />
-                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
-                    <div className="text-gray-700 text-sm">
-                      협력사
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Vertical arrow to Processing */}
-              <div className="h-20 w-0.5 bg-gray-400 mx-auto mt-4" />
             </div>
+
+            {/* 협력사 section with NG */}
+            <div className="absolute -left-48 top-1/2 -translate-y-1/2">
+              <div className="flex items-center">
+                <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
+                  NG
+                </div>
+                <Arrow direction="left" className="text-red-600" />
+                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
+                  <div className="text-gray-700 text-sm">
+                    협력사
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Vertical arrow to 가공/제작 */}
+            <div className="h-24 w-0.5 bg-gray-400 mx-auto mt-6" />
           </div>
         </div>
+      </div>
 
-        {/* Bottom Lane - Reversed Flow */}
-        <div className="flex flex-row-reverse items-center justify-center gap-8">
-          {content.bottomLane.map((step, index) => (
-            <React.Fragment key={step.id}>
-              <div className="relative">
-                {step.type === "diamond" ? (
-                  <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-                    <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                      {step.title}
-                    </div>
+      {/* Bottom Lane - Left to Right Flow */}
+      <div className="flex items-center justify-center gap-12">
+        {content.bottomLane.map((step, index) => (
+          <React.Fragment key={step.id}>
+            <div className="relative">
+              {step.type === "diamond" ? (
+                <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
+                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
+                    {step.title}
                   </div>
-                ) : (
-                  <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
-                    <div className="text-gray-700 text-sm whitespace-pre-line">
-                      {step.title}
-                    </div>
+                </div>
+              ) : (
+                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
+                  <div className="text-gray-700 text-sm whitespace-pre-line">
+                    {step.title}
                   </div>
-                )}
-                {step.hasNGFrom && (
-                  <div className="absolute -bottom-12 z-10">
-                    <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                      NG
-                    </span>
-                    <div className="h-8 w-0.5 bg-red-600 mx-auto mt-1" />
-                  </div>
-                )}
-              </div>
-              {index < content.bottomLane.length - 1 && (
-                <Arrow direction="left" className="text-gray-400" />
+                </div>
               )}
-            </React.Fragment>
-          ))}
-        </div>
+              {step.hasNGFrom && (
+                <div className="absolute -bottom-16 z-10">
+                  <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
+                    NG
+                  </span>
+                  <div className="h-10 w-0.5 bg-red-600 mx-auto mt-1" />
+                </div>
+              )}
+            </div>
+            {index < content.bottomLane.length - 1 && (
+              <Arrow direction="left" className="text-gray-400" />
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

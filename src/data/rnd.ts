@@ -75,10 +75,7 @@ export const businessAreasData = {
         "Unit process equipment design and manufacturing\n\n"
       ],
       systemIntegration: [
-        "Customer requirement system planning / design /",
-        "development / manufacturing / operation integrated service",
-        "(Open Innovation operation)",
-        "Mechanism and parts processing: Daejeon headquarters"
+        "Customer requirement system planning / design /development / manufacturing / operation integrated service (Open Innovation operation) Mechanism and parts processing: Daejeon headquarters"
       ]
     },
     mobility: {
