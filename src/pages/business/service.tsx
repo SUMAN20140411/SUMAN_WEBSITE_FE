@@ -133,9 +133,7 @@ const Arrow: React.FC<{
   className?: string;
 }> = ({ direction, className = "text-gray-400" }) => (
   <svg
-    className={`w-6 h-6 ${className} ${
-      direction === "left" ? "rotate-180" : ""
-    }`}
+    className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -215,8 +213,12 @@ function CoreCapabilitiesImageSection() {
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="group relative mx-auto max-w-5xl w-[85%]" // shrink 15%
+          transition={{
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1],
+            delay: 0.05,
+          }}
+          className="group relative mx-auto max-w-5xl w-[68%]" // shrink from previous (85%) to 68%
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -225,7 +227,11 @@ function CoreCapabilitiesImageSection() {
           >
             <Image
               src={imgSrc}
-              alt={langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies"}
+              alt={
+                langCode === "KOR"
+                  ? "핵심 기술 및 보유 기술"
+                  : "Core Capabilities & Technologies"
+              }
               fill
               priority
               className="object-contain"
@@ -236,6 +242,7 @@ function CoreCapabilitiesImageSection() {
     </section>
   );
 }
+
 /* =========================
         Page content
    ========================= */
@@ -306,7 +313,7 @@ export default function ServicePage() {
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
             <motion.h2
-              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl"
+              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl text-center"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
@@ -316,7 +323,7 @@ export default function ServicePage() {
             </motion.h2>
 
             <motion.p
-              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl"
+              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl text-center"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
@@ -350,12 +357,14 @@ export default function ServicePage() {
               viewport={{ once: true, amount: 0.2 }}
             >
               {/* 생산가공 / 조립 */}
-              <motion.span
-                className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
-                variants={fadeUp}
-              >
-                {section?.production}
-              </motion.span>
+              <div className="text-center">
+                <motion.span
+                  className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
+                  variants={fadeUp}
+                >
+                  {section?.production}
+                </motion.span>
+              </div>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                 {equipmentList.map((equipment: any, index: number) => (
@@ -387,12 +396,14 @@ export default function ServicePage() {
               </div>
 
               {/* 신뢰성 (측정 / 분석) */}
-              <motion.span
-                className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
-                variants={fadeUp}
-              >
-                {section?.measurement}
-              </motion.span>
+              <div className="text-center">
+                <motion.span
+                  className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
+                  variants={fadeUp}
+                >
+                  {section?.measurement}
+                </motion.span>
+              </div>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                 {measurementEquipmentList.map((equipment: any, index: number) => (
@@ -425,6 +436,7 @@ export default function ServicePage() {
             </motion.div>
           </div>
         </section>
+
         {/* PROCESS section */}
         <section className="relative py-16 md:py-24">
           <div className="relative mx-auto max-w-7xl px-4">
