@@ -171,15 +171,11 @@ function CoreCapabilitiesImageSection() {
 
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(9,18,42,1)_0%,_rgba(8,14,31,1)_45%,_#070d1f_100%)] py-16 md:py-24">
+      {/* background pattern */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
         <svg width="100%" height="100%">
           <defs>
-            <pattern
-              id="cg-grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
+            <pattern id="cg-grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
             </pattern>
           </defs>
@@ -189,6 +185,7 @@ function CoreCapabilitiesImageSection() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
+        {/* title */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -213,57 +210,32 @@ function CoreCapabilitiesImageSection() {
           </p>
         </motion.div>
 
+        {/* image */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
-          transition={{
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
-            delay: 0.05,
-          }}
-          className="group relative mx-auto max-w-5xl"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          className="group relative mx-auto max-w-5xl w-[85%]" // shrink 15%
         >
-          <div className="relative rounded-3xl bg-gradient-to-br from-cyan-400/20 via-white/10 to-fuchsia-400/20 p-[2px] shadow-[0_25px_60px_rgba(5,11,25,0.45)]">
-            <div className="relative rounded-[calc(1.5rem-2px)] bg-slate-900/60 backdrop-blur-xl">
-              <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-                <motion.div
-                  initial={{ x: "-120%" }}
-                  whileInView={{ x: "120%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.8, delay: 0.2, ease: "easeInOut" }}
-                  className="h-full w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/12 to-transparent"
-                />
-              </div>
-
-              <motion.div
-                whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                className="relative aspect-[16/9] w-full"
-              >
-                <Image
-                  src={imgSrc}
-                  alt={
-                    langCode === "KOR"
-                      ? "핵심 기술 및 보유 기술"
-                      : "Core Capabilities & Technologies"
-                  }
-                  fill
-                  priority
-                  className="rounded-[inherit] object-contain"
-                />
-              </motion.div>
-            </div>
-          </div>
-
-          <span className="pointer-events-none absolute -left-3 -top-3 h-6 w-6 rounded-full bg-cyan-400/50 blur-[6px]" />
-          <span className="pointer-events-none absolute -right-3 -bottom-3 h-6 w-6 rounded-full bg-fuchsia-400/40 blur-[6px]" />
+          <motion.div
+            whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 160, damping: 18 }}
+            className="relative aspect-[16/9] w-full"
+          >
+            <Image
+              src={imgSrc}
+              alt={langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies"}
+              fill
+              priority
+              className="object-contain"
+            />
+          </motion.div>
         </motion.div>
       </div>
     </section>
   );
 }
-
 /* =========================
         Page content
    ========================= */
