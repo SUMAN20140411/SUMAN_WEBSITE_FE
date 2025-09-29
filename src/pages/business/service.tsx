@@ -183,7 +183,7 @@ function CoreCapabilitiesImageSection() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        {/* title */}
+        {/* title (white) */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -191,24 +191,17 @@ function CoreCapabilitiesImageSection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-8 text-center md:mb-12"
         >
-          <h2 className="inline-block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent drop-shadow-sm md:text-4xl">
+          <h2 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm md:text-4xl">
             {titleText}
           </h2>
-          <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-white/10 md:mt-4">
-            <motion.div
-              initial={{ x: "-100%" }}
-              whileInView={{ x: "100%" }}
-              viewport={{ once: true }}
-              transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-              className="h-full w-1/3 bg-gradient-to-r from-cyan-400 via-white to-fuchsia-400"
-            />
-          </div>
+          {/* garis di section ini tetap, karena yang kamu minta dihapus hanya pada PROCESS */}
+          <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-white/10 md:mt-4" />
           <p className="mt-3 text-sm text-slate-300/90 md:text-base">
             {subtitleText}
           </p>
         </motion.div>
 
-        {/* image */}
+        {/* image (71%) */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -218,7 +211,7 @@ function CoreCapabilitiesImageSection() {
             ease: [0.16, 1, 0.3, 1],
             delay: 0.05,
           }}
-          className="group relative mx-auto max-w-5xl w-[68%]" // shrink from previous (85%) to 68%
+          className="group relative mx-auto max-w-5xl w-[71%]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -356,15 +349,13 @@ export default function ServicePage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              {/* 생산가공 / 조립 */}
-              <div className="text-center">
-                <motion.span
-                  className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
-                  variants={fadeUp}
-                >
-                  {section?.production}
-                </motion.span>
-              </div>
+              {/* 생산가공 / 조립 — align kiri */}
+              <motion.span
+                className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
+                variants={fadeUp}
+              >
+                {section?.production}
+              </motion.span>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                 {equipmentList.map((equipment: any, index: number) => (
@@ -395,15 +386,13 @@ export default function ServicePage() {
                 ))}
               </div>
 
-              {/* 신뢰성 (측정 / 분석) */}
-              <div className="text-center">
-                <motion.span
-                  className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
-                  variants={fadeUp}
-                >
-                  {section?.measurement}
-                </motion.span>
-              </div>
+              {/* 신뢰성 (측정 / 분석) — align kiri */}
+              <motion.span
+                className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
+                variants={fadeUp}
+              >
+                {section?.measurement}
+              </motion.span>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
                 {measurementEquipmentList.map((equipment: any, index: number) => (
@@ -437,7 +426,7 @@ export default function ServicePage() {
           </div>
         </section>
 
-        {/* PROCESS section */}
+        {/* PROCESS section — align kiri & tanpa garis/animasi */}
         <section className="relative py-16 md:py-24">
           <div className="relative mx-auto max-w-7xl px-4">
             <motion.div
@@ -445,20 +434,12 @@ export default function ServicePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8 text-center md:mb-12"
+              className="mb-8 text-left md:mb-12"
             >
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-4xl">
                 PROCESS
               </h2>
-              <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-gray-200 md:mt-4">
-                <motion.div
-                  initial={{ x: "-100%" }}
-                  whileInView={{ x: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                  className="h-full w-1/3 bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400"
-                />
-              </div>
+              {/* garis loading & garis statis dihapus */}
               <p className="mt-3 text-sm text-gray-600 md:text-base">
                 {lang === "KOR"
                   ? "제품 제조 및 품질 프로세스"
