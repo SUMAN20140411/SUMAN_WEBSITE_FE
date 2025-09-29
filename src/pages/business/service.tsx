@@ -183,20 +183,21 @@ function CoreCapabilitiesImageSection() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
-        {/* title (white) */}
+        {/* Title & Subtitle — LEFT ALIGN; title white; no divider */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 text-center md:mb-12"
+          className="mb-8 text-left md:mb-12"
         >
-          <h2 className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm md:text-4xl">
+          {/* Title: unified title size */}
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             {titleText}
           </h2>
-          {/* garis di section ini tetap, karena yang kamu minta dihapus hanya pada PROCESS */}
-          <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-white/10 md:mt-4" />
-          <p className="mt-3 text-sm text-slate-300/90 md:text-base">
+          {/* removed divider under title */}
+          {/* Subtitle: unified subtitle size */}
+          <p className="mt-3 text-base md:text-lg text-slate-300/90">
             {subtitleText}
           </p>
         </motion.div>
@@ -305,8 +306,9 @@ export default function ServicePage() {
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
+            {/* Title: LEFT, unified title size & bigger than subtitle */}
             <motion.h2
-              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl text-center"
+              className="mb-4 text-left text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wide"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
@@ -315,8 +317,9 @@ export default function ServicePage() {
               Main Equipment
             </motion.h2>
 
+            {/* Subtitle block (two lines): LEFT, unified subtitle size */}
             <motion.p
-              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl text-center"
+              className="text-left text-base md:text-lg text-slate-700"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
@@ -349,7 +352,7 @@ export default function ServicePage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              {/* 생산가공 / 조립 — align kiri */}
+              {/* 생산가공 / 조립 — LEFT (badge) */}
               <motion.span
                 className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
                 variants={fadeUp}
@@ -386,7 +389,7 @@ export default function ServicePage() {
                 ))}
               </div>
 
-              {/* 신뢰성 (측정 / 분석) — align kiri */}
+              {/* 신뢰성 (측정 / 분석) — LEFT (badge) */}
               <motion.span
                 className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
                 variants={fadeUp}
@@ -426,7 +429,7 @@ export default function ServicePage() {
           </div>
         </section>
 
-        {/* PROCESS section — align kiri & tanpa garis/animasi */}
+        {/* PROCESS — LEFT; no divider/animation */}
         <section className="relative py-16 md:py-24">
           <div className="relative mx-auto max-w-7xl px-4">
             <motion.div
@@ -436,11 +439,13 @@ export default function ServicePage() {
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="mb-8 text-left md:mb-12"
             >
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-4xl">
+              {/* Title: unified title size */}
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
                 PROCESS
               </h2>
-              {/* garis loading & garis statis dihapus */}
-              <p className="mt-3 text-sm text-gray-600 md:text-base">
+              {/* No running line; no static line */}
+              {/* Subtitle: unified subtitle size */}
+              <p className="mt-3 text-base md:text-lg text-gray-600">
                 {lang === "KOR"
                   ? "제품 제조 및 품질 프로세스"
                   : "Product Manufacturing & Quality Process"}

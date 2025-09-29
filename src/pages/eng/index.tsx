@@ -143,7 +143,7 @@ export default function HomePage({ content }: HomePageProps) {
                 {content.section1Text.lines.map((line, index) => (
                   <p
                     key={index}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-4 whitespace-nowrap"
+                    className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light mb-4 whitespace-nowrap"
                   >
                     {line}
                   </p>
@@ -155,7 +155,7 @@ export default function HomePage({ content }: HomePageProps) {
 
         {/* Core Value */}
         <section
-          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-4 sm:px-6"
+          className="relative w-full min-h[900px] bg-cover bg-center text-white px-4 sm:px-6"
           style={{ aspectRatio: "1440/400" }}
         >
           <Image

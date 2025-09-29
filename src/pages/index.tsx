@@ -9,7 +9,6 @@ import { homeContentKor } from "@/data/home";
 import { GetStaticProps } from "next";
 import type { HomePageProps } from "@/types/home";
 
-
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
@@ -41,7 +40,7 @@ export default function HomePage({ content }: HomePageProps) {
       transition: { duration: 0.6, ease: "easeOut" } as Transition,
     },
   };
-   const heroContainerVariants = {
+  const heroContainerVariants = {
     hidden: {},
     visible: {
       transition: {
@@ -84,7 +83,6 @@ export default function HomePage({ content }: HomePageProps) {
       } as Transition,
     }),
   };
-
 
   return (
     <>
@@ -133,7 +131,7 @@ export default function HomePage({ content }: HomePageProps) {
 
           {/* 수정된 Hero 텍스트 영역 */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
-            <div className="w-full max-w-4xl">      
+            <div className="w-full max-w-4xl">
               <motion.div
                 className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
@@ -144,7 +142,7 @@ export default function HomePage({ content }: HomePageProps) {
                 {content.section1Text.lines.map((line, index) => (
                   <p
                     key={index}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-4 whitespace-nowrap"
+                    className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light mb-4 whitespace-nowrap"
                   >
                     {line}
                   </p>
@@ -153,8 +151,6 @@ export default function HomePage({ content }: HomePageProps) {
             </div>
           </div>
         </section>
-
-        
 
         <section
           className="relative w-full min-h-[900px] bg-cover bg-center text-white px-6"
@@ -344,64 +340,63 @@ export default function HomePage({ content }: HomePageProps) {
             </motion.div>
 
             <div className="w-full max-w-5xl flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_solution.jpg"
+                    alt="솔루션 서비스"
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    솔루션 서비스
+                  </h3>
+                </motion.div>
 
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_solution.jpg"
-                  alt="솔루션 서비스"
-                  fill
-                  className="object-cover rounded-full"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  솔루션 서비스
-                </h3>
-              </motion.div>
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_equipment.png"
+                    alt="맞춤형 장비/설비"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    맞춤형 장비/설비
+                  </h3>
+                </motion.div>
 
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_equipment.png"
-                  alt="맞춤형 장비/설비"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  맞춤형 장비/설비
-                </h3>
-              </motion.div>
-
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image
-                  src="/images/main/service/index_parts.png"
-                  alt="정밀 가공 부품"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                  정밀 가공 부품
-                </h3>
-              </motion.div>
+                <motion.div
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src="/images/main/service/index_parts.png"
+                    alt="정밀 가공 부품"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    정밀 가공 부품
+                  </h3>
+                </motion.div>
               </div>
             </div>
           </div>
