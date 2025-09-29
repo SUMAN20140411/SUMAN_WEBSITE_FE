@@ -156,13 +156,13 @@ function CoreCapabilitiesImageSection() {
   const { lang } = useLangStore();
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
 
-  const coreImgKor = "/images/business/process/coreKorean.png";
-  const coreImgEng = "/images/business/process/coreEnglish.png";
+  const coreImgKor = "/images/business/process/coreKor.png";
+  const coreImgEng = "/images/business/process/coreEng.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
   const titleText =
     langCode === "KOR"
-      ? "Core Capabilities & Technologies"
+      ? "핵심 기술 및 보유 기술"
       : "Core Capabilities & Technologies";
   const subtitleText =
     langCode === "KOR"
@@ -245,7 +245,7 @@ function CoreCapabilitiesImageSection() {
                   src={imgSrc}
                   alt={
                     langCode === "KOR"
-                      ? "Core Capabilities & Technologies 및 보유 기술"
+                      ? "핵심 기술 및 보유 기술"
                       : "Core Capabilities & Technologies"
                   }
                   fill
@@ -299,87 +299,63 @@ export default function ServicePage() {
         <title>{langCode === "KOR" ? "기술소개 " : "Technology"}</title>
       </Head>
 
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* Hero Section */}
-        <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
+      <main
+        className="min-h-screen bg-white text-slate-900"
+        style={{ paddingTop: "90px" }}
+      >
+        {/* hero trim */}
+        <div
+          style={{
+            marginTop: `-${HERO_TRIM_PX}px`,
+            marginBottom: `-${HERO_TRIM_PX}px`,
+          }}
+        >
           <HeroSection
             title={langCode === "KOR" ? "기술 소개" : "Technology"}
             backgroundImage="/images/sub_banner/business_hero.png"
           />
         </div>
 
-        {/* Breadcrumb */}
+        {/* breadcrumb */}
         <div className="relative -mt-2 z-30">
           <BreadcrumbSection
-            path={langCode === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"}
+            path={
+              langCode === "KOR"
+                ? "사업분야 > 기술소개"
+                : "Business > Technology"
+            }
           />
         </div>
 
-        {/* Core Capabilities Image Section */}
+        {/* Core Capabilities image section */}
         <CoreCapabilitiesImageSection />
 
-        {/* ✨ New White Banner Below Core Image ✨ */}
+        {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            <motion.div
-              className="text-left"
+            <motion.h2
+              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.25 }}
             >
-              <h2 className="text-base font-semibold tracking-wide text-slate-900 sm:text-lg lg:text-2xl">
-                {langCode === "KOR" ? "핵심 기술 및 보유 기술" : "Core Capabilities & Technologies"}
-              </h2>
-              <div className="mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-gray-200 md:mt-4">
-                <motion.div
-                  initial={{ x: "-100%" }}
-                  whileInView={{ x: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                  className="h-full w-1/3 bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400"
-                />
-              </div>
-              <p className="mt-6 max-w-3xl text-xl font-bold leading-[1.35] tracking-wide text-slate-900 md:text-2xl lg:text-4xl">
-                {langCode === "KOR"
-                  ? "정밀가공 · 모듈화 · 장비 기술"
-                  : "Precision · Modularization · Equipment"}
-              </p>
-            </motion.div>
-          </div>
-        </section>
+              Main Equipment
+            </motion.h2>
 
-        {/* Main Equipment Section — modified for left alignment */}
-        <section className="bg-white px-4 py-12 md:py-20">
-          <div className="mx-auto max-w-7xl">
-            <motion.div
-              className="text-left" // changed from text-center
+            <motion.p
+              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.25 }}
             >
-              <h2 className="text-base font-semibold tracking-wide text-slate-900 sm:text-lg lg:text-2xl">
-                Main Equipment
-              </h2>
-              <div className="mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-gray-200 md:mt-4">
-                <motion.div
-                  initial={{ x: "-100%" }}
-                  whileInView={{ x: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                  className="h-full w-1/3 bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400"
-                />
-              </div>
-              <p className="mt-6 max-w-3xl text-xl font-bold leading-[1.35] tracking-wide text-slate-900 md:text-2xl lg:text-4xl">
-                {section?.maintitle}
-                <br />
-                {section?.mainsubtitle}
-              </p>
-            </motion.div>
+              {section?.maintitle}
+              <br />
+              {section?.mainsubtitle}
+            </motion.p>
           </div>
         </section>
-
 
         {/* 생산가공 / 측정장비 */}
         <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20">
