@@ -333,27 +333,31 @@ export default function ServicePage() {
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            <motion.h2
-              className="mb-6 text-base font-semibold tracking-wide sm:text-lg lg:text-2xl"
+            <motion.div
+              className="text-center"
               variants={fadeUp}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.25 }}
             >
-              Main Equipment
-            </motion.h2>
-
-            <motion.p
-              className="text-xl font-bold tracking-wide leading-[1.3] md:text-2xl lg:text-4xl"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-            >
-              {section?.maintitle}
-              <br />
-              {section?.mainsubtitle}
-            </motion.p>
+              <h2 className="text-base font-semibold tracking-wide text-slate-900 sm:text-lg lg:text-2xl">
+                Main Equipment
+              </h2>
+              <div className="mx-auto mt-3 h-[3px] w-24 overflow-hidden rounded-full bg-gray-200 md:mt-4">
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  whileInView={{ x: "100%" }}
+                  viewport={{ once: true }}
+                  transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
+                  className="h-full w-1/3 bg-gradient-to-r from-gray-400 via-gray-600 to-gray-400"
+                />
+              </div>
+              <p className="mx-auto mt-6 max-w-3xl text-xl font-bold leading-[1.35] tracking-wide text-slate-900 md:text-2xl lg:text-4xl">
+                {section?.maintitle}
+                <br />
+                {section?.mainsubtitle}
+              </p>
+            </motion.div>
           </div>
         </section>
 
