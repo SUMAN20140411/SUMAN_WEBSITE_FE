@@ -76,7 +76,7 @@ export default function OrgPage() {
               viewport={{ once: true, amount: 0.3 }}
             >
               {/* Reduced padding to make image 12% bigger */}
-              <div className="relative w-full h-auto overflow-hidden rounded-lg px-0 md:px-[4%] lg:px-[8%]">
+              <div className="relative w-full h-auto rounded-lg px-0 md:px-[4%] lg:px-[8%]">
                 <Image
                   src={currentContent.image}
                   alt={currentContent.alt}
@@ -84,7 +84,7 @@ export default function OrgPage() {
                   height={800}
                   layout="responsive"
                   objectFit="contain"
-                  className="w-full h-auto scale-110" // Added scale-110 for additional 10% size increase
+                  className="w-full h-auto rounded-lg"
                   sizes="(min-width:1024px) 84vw, (min-width:768px) 92vw, 100vw" // Adjusted sizes
                   priority
                 />
