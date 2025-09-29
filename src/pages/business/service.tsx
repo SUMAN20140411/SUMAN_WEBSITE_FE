@@ -160,7 +160,7 @@ function CoreCapabilitiesImageSection() {
 
   const titleText =
     langCode === "KOR"
-      ? "핵심 기술 및 보유 기술"
+      ? "Core Capabilities & Technologies"
       : "Core Capabilities & Technologies";
   const subtitleText =
     langCode === "KOR"
@@ -168,19 +168,17 @@ function CoreCapabilitiesImageSection() {
       : "Precision · Modularization · Equipment";
 
   return (
-    <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(9,18,42,1)_0%,_rgba(8,14,31,1)_45%,_#070d1f_100%)] py-16 md:py-24">
-      {/* background pattern */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
-        <svg width="100%" height="100%">
-          <defs>
-            <pattern id="cg-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#cg-grid)" />
-        </svg>
+    <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20 overflow-hidden">
+      {/* ⬇ same image background as Main Equipment section */}
+      <div className="pointer-events-none absolute inset-0">
+        <Image
+          src="/images/business/layer.png"
+          alt="배경 이미지"
+          fill
+          style={{ objectFit: "cover", objectPosition: "top" }}
+          priority
+        />
       </div>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_20%,rgba(56,189,248,0.12),transparent_40%),radial-gradient(circle_at_30%_70%,rgba(192,132,252,0.10),transparent_45%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
         {/* Title & Subtitle — LEFT ALIGN; title white; no divider */}
@@ -191,12 +189,9 @@ function CoreCapabilitiesImageSection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-8 text-left md:mb-12"
         >
-          {/* Title: unified title size */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             {titleText}
           </h2>
-          {/* removed divider under title */}
-          {/* Subtitle: unified subtitle size */}
           <p className="mt-3 text-base md:text-lg text-slate-300/90">
             {subtitleText}
           </p>
@@ -223,7 +218,7 @@ function CoreCapabilitiesImageSection() {
               src={imgSrc}
               alt={
                 langCode === "KOR"
-                  ? "핵심 기술 및 보유 기술"
+                  ? "Core Capabilities & Technologies"
                   : "Core Capabilities & Technologies"
               }
               fill
@@ -439,12 +434,9 @@ export default function ServicePage() {
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="mb-8 text-left md:mb-12"
             >
-              {/* Title: unified title size */}
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
                 PROCESS
               </h2>
-              {/* No running line; no static line */}
-              {/* Subtitle: unified subtitle size */}
               <p className="mt-3 text-base md:text-lg text-gray-600">
                 {lang === "KOR"
                   ? "제품 제조 및 품질 프로세스"
