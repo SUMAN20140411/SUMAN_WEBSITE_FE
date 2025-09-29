@@ -156,8 +156,8 @@ function CoreCapabilitiesImageSection() {
   const { lang } = useLangStore();
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
 
-  const coreImgKor = "/images/business/process/core-capabilities-kor.png";
-  const coreImgEng = "/images/business/process/core-capabilities-eng.png";
+  const coreImgKor = "/images/business/process/coreKor1.png";
+  const coreImgEng = "/images/business/process/coreKor1.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
   const titleText =
