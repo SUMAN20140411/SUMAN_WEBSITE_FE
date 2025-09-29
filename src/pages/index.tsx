@@ -133,19 +133,7 @@ export default function HomePage({ content }: HomePageProps) {
 
           {/* 수정된 Hero 텍스트 영역 */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
-            <div className="w-full max-w-4xl">
-              {content.section1Text.subtitle ? (
-                <motion.h1
-                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
-                  style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1 }}
-                >
-                  {content.section1Text.subtitle}
-                </motion.h1>
-              ) : null}
-              
+            <div className="w-full max-w-4xl">      
               <motion.div
                 className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{ fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif" }}
@@ -154,9 +142,9 @@ export default function HomePage({ content }: HomePageProps) {
                 transition={{ duration: 1, delay: 0.3 }}
               >
                 {content.section1Text.lines.map((line, index) => (
-                  <p 
-                    key={index} 
-                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
+                  <p
+                    key={index}
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-4 whitespace-nowrap"
                   >
                     {line}
                   </p>

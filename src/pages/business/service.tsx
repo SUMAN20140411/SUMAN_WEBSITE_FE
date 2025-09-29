@@ -453,9 +453,8 @@ export default function ServicePage() {
             </motion.div>
           </div>
         </section>
-
         {/* PROCESS section */}
-        <section className="relative overflow-hidden bg-white py-16 md:py-24">
+        <section className="relative py-16 md:py-24">
           <div className="relative mx-auto max-w-7xl px-4">
             <motion.div
               initial={{ opacity: 0, y: 18 }}
@@ -492,50 +491,29 @@ export default function ServicePage() {
                 ease: [0.16, 1, 0.3, 1],
                 delay: 0.05,
               }}
-              className="group relative mx-auto max-w-5xl"
+              className="relative mx-auto max-w-5xl"
             >
-              <div className="relative rounded-3xl bg-gradient-to-br from-gray-100 via-white to-gray-100 p-[2px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)]">
-                <div className="relative rounded-[calc(1.5rem-2px)] bg-white backdrop-blur-sm">
-                  <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-                    <motion.div
-                      initial={{ x: "-120%" }}
-                      whileInView={{ x: "120%" }}
-                      viewport={{ once: true }}
-                      transition={{
-                        duration: 1.8,
-                        delay: 0.2,
-                        ease: "easeInOut",
-                      }}
-                      className="h-full w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-gray-100 to-transparent"
-                    />
-                  </div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.01 }}
-                    transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                    className="relative aspect-[16/9] w-full"
-                  >
-                    <Image
-                      src={
-                        lang === "KOR"
-                          ? "/images/business/process/FLOWKOR.png"
-                          : "/images/business/process/FLOWENG.png"
-                      }
-                      alt={
-                        lang === "KOR"
-                          ? "제품 제조 및 품질 프로세스"
-                          : "Product Manufacturing & Quality Process"
-                      }
-                      fill
-                      priority
-                      className="rounded-[inherit] object-contain p-8"
-                    />
-                  </motion.div>
-                </div>
-              </div>
-
-              <span className="pointer-events-none absolute -left-3 -top-3 h-6 w-6 rounded-full bg-gray-200/50 blur-[6px]" />
-              <span className="pointer-events-none absolute -right-3 -bottom-3 h-6 w-6 rounded-full bg-gray-200/50 blur-[6px]" />
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 160, damping: 18 }}
+                className="relative aspect-[16/9] w-full"
+              >
+                <Image
+                  src={
+                    lang === "KOR"
+                      ? "/images/business/process/processKor.png"
+                      : "/images/business/process/processEng.png"
+                  }
+                  alt={
+                    lang === "KOR"
+                      ? "제품 제조 및 품질 프로세스"
+                      : "Product Manufacturing & Quality Process"
+                  }
+                  fill
+                  priority
+                  className="object-contain"
+                />
+              </motion.div>
             </motion.div>
           </div>
         </section>

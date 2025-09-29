@@ -2,7 +2,6 @@
 
 export const homeContentKor = {
   section1Text: {
-    subtitle: "Confidential",
     lines: [
       "꿈은 꿈꾸는 자에게만 허락되며,",
       "그 꿈은 분명히 현실이 될 수 있으며,",
@@ -82,7 +81,6 @@ export const homeContentKor = {
 export const homeContentEng = {
     
     section1Text: {
-      subtitle: "Confidential",
       lines: [
         "Dreams are only granted to those who dare to dream,",
         "And with vision and action,",
