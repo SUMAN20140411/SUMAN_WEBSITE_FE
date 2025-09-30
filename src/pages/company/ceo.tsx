@@ -1,3 +1,4 @@
+// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -37,9 +38,7 @@ export default function CeoPage() {
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
   const ceoSignImg =
-    lang === "KOR"
-      ? "/images/company/ceo/ceoKor.png"
-      : "/images/company/ceo/ceoEng.png";
+    lang === "KOR" ? "/images/company/ceo/ceoKor.png" : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -51,9 +50,7 @@ export default function CeoPage() {
         <HeroSection title={heroTitle} backgroundImage="/images/sub_banner/ceo_hero.png" />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
-          <BreadcrumbSection
-            path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"}
-          />
+          <BreadcrumbSection path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"} />
         </div>
 
         <section className="bg-white">
@@ -68,7 +65,7 @@ export default function CeoPage() {
               style={{ fontFamily }}
             >
               {/* Signature image: add 4cm LR padding on lg+ */}
-              <div className="lg:ml-0 lg:px-[4cm]">
+              <div className="lg:px-[4cm]"> {/* why: requested 4cm frame on both sides */}
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden rounded-md">
                   <Image
                     src={ceoSignImg}
@@ -81,14 +78,14 @@ export default function CeoPage() {
                 </div>
               </div>
 
-              {/* Closing text: shift left 1.5cm on lg+ */}
+              {/* Closing text: shift left ~1.5cm on lg+ */}
               {closing && (
                 <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
                   {closing}
                 </p>
               )}
 
-              {/* Border + Signature: shift left 1.5cm on lg+ */}
+              {/* Border + Signature: shift left ~1.5cm on lg+ */}
               <footer className="mt-6 lg:-ml-[1.5cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}

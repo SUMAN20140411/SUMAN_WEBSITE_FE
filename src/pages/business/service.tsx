@@ -1,3 +1,4 @@
+// app/service.tsx
 "use client";
 
 import React from "react";
@@ -62,16 +63,11 @@ const ProcessFlowChart: React.FC = () => {
       {/* Middle Section - Inspection and Partner */}
       <div className="relative -mt-16 mb-32">
         <div className="absolute left-1/2 -translate-x-1/2">
-          {/* Vertical connector from 발주 */}
           <div className="h-24 w-0.5 bg-gray-400 mx-auto" />
-
-          {/* 수입검사 Diamond */}
           <div className="relative">
             <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
               <div className="-rotate-45 text-gray-700 text-sm">수입검사</div>
             </div>
-
-            {/* 협력사 section with NG */}
             <div className="absolute -left-48 top-1/2 -translate-y-1/2">
               <div className="flex items-center">
                 <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
@@ -83,8 +79,6 @@ const ProcessFlowChart: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Vertical arrow to 가공/제작 */}
             <div className="h-24 w-0.5 bg-gray-400 mx-auto mt-6" />
           </div>
         </div>
@@ -139,11 +133,7 @@ const Arrow: React.FC<{
     stroke="currentColor"
     strokeWidth="2"
   >
-    <path
-      d="M5 12h14m0 0l-6-6m6 6l-6 6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -190,9 +180,7 @@ function CoreCapabilitiesImageSection() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             {titleText}
           </h2>
-          <p className="mt-3 text-base md:text-lg text-slate-300/90">
-            {subtitleText}
-          </p>
+          <p className="mt-3 text-base md:text-lg text-slate-300/90">{subtitleText}</p>
         </motion.div>
 
         {/* Image: add 4cm LR padding on lg+ */}
@@ -200,12 +188,8 @@ function CoreCapabilitiesImageSection() {
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
-          transition={{
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
-            delay: 0.05,
-          }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]"
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]" /* why: requested 4cm frame */
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -214,14 +198,10 @@ function CoreCapabilitiesImageSection() {
           >
             <Image
               src={imgSrc}
-              alt={
-                langCode === "KOR"
-                  ? "핵심 역량 및 기술"
-                  : "Core Capabilities & Technologies"
-              }
+              alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
               fill
               priority
-              className="object-contain transform-gpu will-change-transform scale-[1.08]" /* why: zoom-in 8% */
+              className="object-contain transform-gpu will-change-transform scale-[1.08]" /* why: subtle zoom-in */
               sizes="(min-width: 1280px) 76.8rem, 85.2vw"
             />
           </motion.div>
@@ -250,10 +230,7 @@ export default function ServicePage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.6,
-        ease: cubicBezier(0.16, 1, 0.3, 1),
-      } as Transition,
+      transition: { duration: 0.6, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
     },
   };
 
@@ -266,32 +243,15 @@ export default function ServicePage() {
         <title>{langCode === "KOR" ? "기술소개 " : "Technology"}</title>
       </Head>
 
-      <main
-        className="min-h-screen bg-white text-slate-900"
-        style={{ paddingTop: "90px" }}
-      >
+      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
         {/* hero trim */}
-        <div
-          style={{
-            marginTop: `-${HERO_TRIM_PX}px`,
-            marginBottom: `-${HERO_TRIM_PX}px`,
-          }}
-        >
-          <HeroSection
-            title={langCode === "KOR" ? "기술 소개" : "Technology"}
-            backgroundImage="/images/sub_banner/business_hero.png"
-          />
+        <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
+          <HeroSection title={langCode === "KOR" ? "기술 소개" : "Technology"} backgroundImage="/images/sub_banner/business_hero.png" />
         </div>
 
         {/* breadcrumb */}
         <div className="relative -mt-2 z-30">
-          <BreadcrumbSection
-            path={
-              langCode === "KOR"
-                ? "사업분야 > 기술소개"
-                : "Business > Technology"
-            }
-          />
+          <BreadcrumbSection path={langCode === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"} />
         </div>
 
         {/* Core Capabilities image section (localized title) */}
@@ -300,7 +260,6 @@ export default function ServicePage() {
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            {/* Title */}
             <motion.h2
               className="mb-4 text-left text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wide"
               variants={fadeUp}
@@ -311,7 +270,6 @@ export default function ServicePage() {
               {langCode === "KOR" ? "주요 설비" : "Main Equipment"}
             </motion.h2>
 
-            {/* Subtitle */}
             <motion.p
               className="text-left text-base md:text-lg text-slate-700"
               variants={fadeUp}
@@ -339,18 +297,8 @@ export default function ServicePage() {
           </div>
 
           <div className="mx-auto max-w-7xl">
-            <motion.div
-              className="relative transition-all"
-              variants={pageVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              {/* 생산가공 / 조립 */}
-              <motion.span
-                className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16"
-                variants={fadeUp}
-              >
+            <motion.div className="relative transition-all" variants={pageVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+              <motion.span className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16" variants={fadeUp}>
                 {section?.production}
               </motion.span>
 
@@ -363,19 +311,12 @@ export default function ServicePage() {
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
                       {equipment.image && (
-                        <Image
-                          src={equipment.image}
-                          alt={equipment.name}
-                          fill
-                          className="rounded-[10px] object-cover"
-                        />
+                        <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />
                       )}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
-                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
-                        {equipment.name}
-                      </p>
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">{equipment.name}</p>
                     </div>
 
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-cyan-400 to-indigo-400 transition-transform duration-200 group-hover:scale-x-100" />
@@ -383,11 +324,7 @@ export default function ServicePage() {
                 ))}
               </div>
 
-              {/* 신뢰성 (측정 / 분석) */}
-              <motion.span
-                className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28"
-                variants={fadeUp}
-              >
+              <motion.span className="mt-16 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16 md:mt-28" variants={fadeUp}>
                 {section?.measurement}
               </motion.span>
 
@@ -400,19 +337,12 @@ export default function ServicePage() {
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
                       {equipment.image && (
-                        <Image
-                          src={equipment.image}
-                          alt={equipment.name}
-                          fill
-                          className="rounded-[10px] object-cover"
-                        />
+                        <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />
                       )}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
-                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
-                        {equipment.name}
-                      </p>
+                      <p className="line-clamp-1 text-sm font-medium text-white md:text-base">{equipment.name}</p>
                     </div>
 
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 scale-x-0 bg-gradient-to-r from-teal-400 to-emerald-400 transition-transform duration-200 group-hover:scale-x-100" />
@@ -437,9 +367,7 @@ export default function ServicePage() {
                 {langCode === "KOR" ? "프로세스" : "Process"}
               </h2>
               <p className="mt-3 text-base md:text-lg text-gray-600">
-                {lang === "KOR"
-                  ? "제품 제조 및 품질 프로세스"
-                  : "Product Manufacturing & Quality Process"}
+                {lang === "KOR" ? "제품 제조 및 품질 프로세스" : "Product Manufacturing & Quality Process"}
               </p>
             </motion.div>
 
@@ -447,29 +375,13 @@ export default function ServicePage() {
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
-              transition={{
-                duration: 0.6,
-                ease: [0.16, 1, 0.3, 1],
-                delay: 0.05,
-              }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
               className="relative mx-auto max-w-5xl"
             >
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                className="relative aspect-[16/9] w-full"
-              >
+              <motion.div whileHover={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 160, damping: 18 }} className="relative aspect-[16/9] w-full">
                 <Image
-                  src={
-                    lang === "KOR"
-                      ? "/images/business/process/processKor.png"
-                      : "/images/business/process/processEng.png"
-                  }
-                  alt={
-                    lang === "KOR"
-                      ? "제품 제조 및 품질 프로세스"
-                      : "Product Manufacturing & Quality Process"
-                  }
+                  src={lang === "KOR" ? "/images/business/process/processKor.png" : "/images/business/process/processEng.png"}
+                  alt={lang === "KOR" ? "제품 제조 및 품질 프로세스" : "Product Manufacturing & Quality Process"}
                   fill
                   priority
                   className="object-contain"
@@ -484,3 +396,4 @@ export default function ServicePage() {
     </Layout>
   );
 }
+
