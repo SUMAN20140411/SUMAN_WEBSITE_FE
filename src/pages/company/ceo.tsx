@@ -68,7 +68,7 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Foto tanda tangan: diposisikan paling atas & samakan tinggi dengan kanan */}
+              {/* Foto tanda tangan */}
               <div className="lg:-ml-2">
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
                   <Image
@@ -76,7 +76,7 @@ export default function CeoPage() {
                     alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
                     fill
                     priority
-                    className="object-contain" /* why: full terlihat tanpa crop */
+                    className="object-contain"
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
@@ -89,8 +89,8 @@ export default function CeoPage() {
                 </p>
               )}
 
-              {/* Border + Signature */}
-              <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
+              {/* Border + Signature — naikkan 2cm pada laptop */}
+              <footer className="mt-6 lg:-mt-[2cm] lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
@@ -101,7 +101,7 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/* RIGHT: main photo (zoom out) */}
+            {/* RIGHT: main photo */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
@@ -113,7 +113,7 @@ export default function CeoPage() {
                 <Image
                   src="/images/company/ceo/ceo.jpeg"
                   alt="SUMAN CEO"
-                  className="w-full h-full object-contain" /* why: zoom out */
+                  className="w-full h-full object-contain"
                   width={700}
                   height={500}
                   priority
