@@ -29,8 +29,10 @@ const textReveal = {
 };
 
 export default function CeoPage() {
-  const lang = useLangStore((s) => s.lang);
+  const lang = useLangStore((state) => state.lang);
+
   const { closing, signatureTitle, signatureName } = ceoText[lang];
+
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
@@ -66,43 +68,40 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Closing: geser 1.5cm ke kiri di laptop */}
-              {closing && (
-                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
-                  {closing}
-                </p>
-              )}
-
-              {/* Signature wrapper: gambar + footer; sejajarkan kiri & frame 4cm (laptop) */}
-              <div className="mt-6 lg:-ml-[1.5cm] lg:px-[4cm]">
-                {/* Gambar signature: selalu tampil, lebih besar 20%, tidak kepotong */}
-                <div className="relative w-full h-[432px] sm:h-[504px] lg:h-[660px] overflow-visible rounded-md">
+              {/* Foto tanda tangan: diposisikan paling atas & samakan tinggi dengan kanan */}
+              <div className="lg:-ml-2">
+                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
                   <Image
                     src={ceoSignImg}
                     alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
                     fill
                     priority
-                    className="object-contain" /* why: cegah crop */
+                    className="object-contain" /* why: full terlihat tanpa crop */
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
-
-                {/* Footer Signature: border top tepat di bawah gambar */}
-                <footer className="mt-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
-                  <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
-                    {lang === "KOR" ? "Signature" : "Signature"}
-                  </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
-                    <span className="text-gray-600">{signatureTitle}</span>
-                    <strong className="font-semibold text-slate-900">
-                      {signatureName}
-                    </strong>
-                  </div>
-                </footer>
               </div>
+
+              {/* Closing text */}
+              {closing && (
+                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
+                  {closing}
+                </p>
+              )}
+
+              {/* Border + Signature */}
+              <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
+                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
+                  {lang === "KOR" ? "Signature" : "Signature"}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
+                  <span className="text-gray-600">{signatureTitle}</span>
+                  <strong className="font-semibold text-slate-900">{signatureName}</strong>
+                </div>
+              </footer>
             </motion.article>
 
-            {/* RIGHT (tetap) */}
+            {/* RIGHT: main photo (zoom out) */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
@@ -114,7 +113,7 @@ export default function CeoPage() {
                 <Image
                   src="/images/company/ceo/ceo.jpeg"
                   alt="SUMAN CEO"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain" /* why: zoom out */
                   width={700}
                   height={500}
                   priority
