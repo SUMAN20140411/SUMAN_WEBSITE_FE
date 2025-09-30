@@ -12,7 +12,7 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { useLangStore } from "@/stores/langStore";
 import { serviceContent } from "@/data/service";
 
-// flow components (named exports)
+// flow components
 import { FlowCard } from "@/components/FlowCard";
 import { FlowDiamond } from "@/components/FlowDiamond";
 import { FlowArrow } from "@/components/FlowArrow";
@@ -60,7 +60,7 @@ const ProcessFlowChart: React.FC = () => {
         ))}
       </div>
 
-      {/* Middle Section - Inspection and Partner */}
+      {/* Middle Section */}
       <div className="relative -mt-16 mb-32">
         <div className="absolute left-1/2 -translate-x-1/2">
           <div className="h-24 w-0.5 bg-gray-400 mx-auto" />
@@ -84,7 +84,7 @@ const ProcessFlowChart: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Lane - Left to Right Flow */}
+      {/* Bottom Lane */}
       <div className="flex items-center justify-center gap-12">
         {content.bottomLane.map((step, index) => (
           <React.Fragment key={step.id}>
@@ -111,7 +111,9 @@ const ProcessFlowChart: React.FC = () => {
                 </div>
               )}
             </div>
-            {index < content.bottomLane.length - 1 && <Arrow direction="left" className="text-gray-400" />}
+            {index < content.bottomLane.length - 1 && (
+              <Arrow direction="left" className="text-gray-400" />
+            )}
           </React.Fragment>
         ))}
       </div>
@@ -119,7 +121,6 @@ const ProcessFlowChart: React.FC = () => {
   );
 };
 
-// Arrow component
 const Arrow: React.FC<{ direction: "left" | "right"; className?: string }> = ({
   direction,
   className = "text-gray-400",
@@ -146,12 +147,16 @@ function CoreCapabilitiesImageSection() {
   const coreImgEng = "/images/business/process/coreEng2.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
-  const titleText = langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
-  const subtitleText = langCode === "KOR" ? "정밀가공 · 모듈화 · 장비 기술" : "Precision · Modularization · Equipment";
+  const titleText =
+    langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
+  const subtitleText =
+    langCode === "KOR"
+      ? "정밀가공 · 모듈화 · 장비 기술"
+      : "Precision · Modularization · Equipment";
 
   return (
-    <section className="relative z-0 bg-[#0a132e] px-4 pb-7 pt-14 md:pb-10 md:pt-24 overflow-hidden">
-      {/* background */}
+    // extend section downward ≈20% on desktop
+    <section className="relative z-0 bg-[#0a132e] px-4 pb-7 pt-14 md:pb-10 md:pt-24 lg:pb-[20vh] overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
         <Image
           src="/images/business/layer.png"
@@ -163,7 +168,6 @@ function CoreCapabilitiesImageSection() {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4">
-        {/* Title & Subtitle */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -174,16 +178,18 @@ function CoreCapabilitiesImageSection() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             {titleText}
           </h2>
-          <p className="mt-3 text-base md:text-lg text-slate-300/90">{subtitleText}</p>
+          <p className="mt-3 text-base md:text-lg text-slate-300/90">
+            {subtitleText}
+          </p>
         </motion.div>
 
-        {/* Image: frame 4cm kiri/kanan di desktop */}
+        {/* add 4cm frame LR; enlarge image ~10% more than before (1.08 -> 1.18) */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]" /* why: padding 4cm each side (desktop) */
+          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -195,7 +201,7 @@ function CoreCapabilitiesImageSection() {
               alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
               fill
               priority
-              className="object-contain transform-gpu will-change-transform scale-[1.08]"
+              className="object-contain transform-gpu will-change-transform scale-[1.18]"
               sizes="(min-width: 1280px) 76.8rem, 85.2vw"
             />
           </motion.div>
@@ -241,19 +247,18 @@ export default function ServicePage() {
       </Head>
 
       <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* hero trim */}
         <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
-          <HeroSection title={langCode === "KOR" ? "기술 소개" : "Technology"} backgroundImage="/images/sub_banner/business_hero.png" />
+          <HeroSection
+            title={langCode === "KOR" ? "기술 소개" : "Technology"}
+            backgroundImage="/images/sub_banner/business_hero.png"
+          />
         </div>
 
-        {/* breadcrumb */}
         <div className="relative -mt-2 z-30">
           <BreadcrumbSection path={langCode === "KOR" ? "사업분야 > 기술소개" : "Business > Technology"} />
         </div>
 
-        {/* Core Capabilities image section (localized title) */}
         <CoreCapabilitiesImageSection />
-
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">

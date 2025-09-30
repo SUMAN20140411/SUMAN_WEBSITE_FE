@@ -1,4 +1,3 @@
-// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -30,15 +29,13 @@ const textReveal = {
 
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
-
   const { closing, signatureTitle, signatureName } = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
-  const ceoSignImg =
-    lang === "KOR" ? "/images/company/ceo/ceoKor.png" : "/images/company/ceo/ceoEng.png";
+  const ceoSignImg = lang === "KOR" ? "/images/company/ceo/ceoKor.png" : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -64,28 +61,28 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Signature image: frame 4cm kiri/kanan di desktop */}
-              <div className="lg:px-[4cm]">{/* why: padding 4cm each side (desktop) */}
-                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden rounded-md">
+              {/* Signature image: +4cm frame, align left with Signature, grow 20% via container height */}
+              <div className="lg:-ml-[1.5cm] lg:px-[4cm]">
+                <div className="relative w-full h-[432px] sm:h-[504px] lg:h-[660px] overflow-visible rounded-md">
                   <Image
                     src={ceoSignImg}
                     alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
                     fill
                     priority
-                    className="object-contain transform-gpu will-change-transform scale-[1.10]"
+                    className="object-contain transform-gpu will-change-transform" /* why: prevent crop; no scale */
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
               </div>
 
-              {/* Closing text: geser 1.5cm ke kiri (desktop) */}
+              {/* Closing text: shift left 1.5cm */}
               {closing && (
                 <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
                   {closing}
                 </p>
               )}
 
-              {/* Signature block: geser 1.5cm ke kiri (desktop) */}
+              {/* Signature block: shift left 1.5cm */}
               <footer className="mt-6 lg:-ml-[1.5cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
@@ -97,7 +94,7 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/* RIGHT: main photo (unchanged) */}
+            {/* RIGHT */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
@@ -124,4 +121,3 @@ export default function CeoPage() {
     </Layout>
   );
 }
-
