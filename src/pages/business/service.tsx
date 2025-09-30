@@ -1,4 +1,3 @@
-// app/service.tsx
 "use client";
 
 import React from "react";
@@ -196,7 +195,7 @@ function CoreCapabilitiesImageSection() {
           </p>
         </motion.div>
 
-        {/* Image: zoom-in 8% */}
+        {/* Image: add 4cm LR padding on lg+ */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -206,7 +205,7 @@ function CoreCapabilitiesImageSection() {
             ease: [0.16, 1, 0.3, 1],
             delay: 0.05,
           }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%]"
+          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}

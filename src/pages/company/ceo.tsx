@@ -1,4 +1,3 @@
-// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -68,29 +67,29 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Signature image: zoom-in 10% */}
-              <div className="lg:-ml-2">
+              {/* Signature image: add 4cm LR padding on lg+ */}
+              <div className="lg:ml-0 lg:px-[4cm]">
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden rounded-md">
                   <Image
                     src={ceoSignImg}
                     alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
                     fill
                     priority
-                    className="object-contain transform-gpu will-change-transform scale-[1.10]" /* why: zoom-in 10% */
+                    className="object-contain transform-gpu will-change-transform scale-[1.10]" /* why: subtle zoom-in */
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
               </div>
 
-              {/* Closing text */}
+              {/* Closing text: shift left 1.5cm on lg+ */}
               {closing && (
-                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
+                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
                   {closing}
                 </p>
               )}
 
-              {/* Border + Signature */}
-              <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
+              {/* Border + Signature: shift left 1.5cm on lg+ */}
+              <footer className="mt-6 lg:-ml-[1.5cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
