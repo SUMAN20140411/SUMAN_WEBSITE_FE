@@ -159,7 +159,7 @@ function CoreCapabilitiesImageSection() {
   const coreImgEng = "/images/business/process/coreEng2.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
-  // why: make title bilingual by lang
+  // why: bilingual title; paddings+widths ditambah 20% agar section & foto lebih besar
   const titleText =
     langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
   const subtitleText =
@@ -168,7 +168,8 @@ function CoreCapabilitiesImageSection() {
       : "Precision · Modularization · Equipment";
 
   return (
-    <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20 overflow-hidden">
+    // ↑ Perpanjang section ~20%: pt-12→pt-14, md:pt-20→md:pt-24, pb-6→pb-7, md:pb-8→md:pb-10
+    <section className="relative z-0 bg-[#0a132e] px-4 pb-7 pt-14 md:pb-10 md:pt-24 overflow-hidden">
       {/* background */}
       <div className="pointer-events-none absolute inset-0">
         <Image
@@ -197,7 +198,7 @@ function CoreCapabilitiesImageSection() {
           </p>
         </motion.div>
 
-        {/* image (71%) */}
+        {/* image (+20%): w-[71%]→w-[85.2%], max-w-5xl→max-w-[76.8rem] */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +208,7 @@ function CoreCapabilitiesImageSection() {
             ease: [0.16, 1, 0.3, 1],
             delay: 0.05,
           }}
-          className="group relative mx-auto max-w-5xl w-[71%]"
+          className="group relative mx-auto max-w-[76.8rem] w-[85.2%]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -224,6 +225,7 @@ function CoreCapabilitiesImageSection() {
               fill
               priority
               className="object-contain"
+              sizes="(min-width: 1280px) 76.8rem, 85.2vw" // why: hindari blur saat dibesarkan
             />
           </motion.div>
         </motion.div>
