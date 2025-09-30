@@ -128,8 +128,8 @@ export default function Header() {
           className="w-full mx-auto max-w-screen-2xl px-4 lg:px-20 flex justify-between items-center text-sm lg:text-base font-medium text-black"
           style={{ height: "90px" }}
         >
-           {/* Logo — left aligned */}
-          <Link href={logoHref} className="flex items-center h-full mr-auto lg:mr-0">
+          {/* Logo (same ml-10) */}
+          <Link href={logoHref} className="flex items-center h-full mr-auto lg:mr-0 ml-10">
             <Image
               src="/images/logo_suman.png"
               alt="SUMAN CO., Ltd company logo"

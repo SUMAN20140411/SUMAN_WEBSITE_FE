@@ -133,6 +133,18 @@ export default function HomePage({ content }: HomePageProps) {
           {/* Update hero text section padding */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-4 sm:px-6 md:px-[120px] text-left">
             <div className="w-full max-w-4xl">
+              {content.section1Text.subtitle ? (
+                <motion.h1
+                  className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.45em] uppercase text-white/70 mb-6"
+                  style={{ fontFamily: heroFontFamily }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1 }}
+                >
+                  {content.section1Text.subtitle}
+                </motion.h1>
+              ) : null}
+
               <motion.div
                 className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{ fontFamily: heroFontFamily }}
@@ -143,7 +155,8 @@ export default function HomePage({ content }: HomePageProps) {
                 {content.section1Text.lines.map((line, index) => (
                   <p
                     key={index}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-4 whitespace-nowrap"                  >
+                    className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light mb-4 whitespace-nowrap"
+                  >
                     {line}
                   </p>
                 ))}
@@ -154,7 +167,7 @@ export default function HomePage({ content }: HomePageProps) {
 
         {/* Core Value */}
         <section
-          className="relative w-full min-h[900px] bg-cover bg-center text-white px-4 sm:px-6"
+          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-4 sm:px-6"
           style={{ aspectRatio: "1440/400" }}
         >
           <Image
