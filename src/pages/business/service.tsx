@@ -183,13 +183,13 @@ function CoreCapabilitiesImageSection() {
           </p>
         </motion.div>
 
-        {/* add 4cm frame LR; enlarge image ~10% more than before (1.08 -> 1.18) */}
+         {/* add 4cm frame LR; enlarge image ~10% more than before (1.08 -> 1.18) */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]"
+          className="group relative mx-auto max-w-[84.5rem] w-[94%] lg:px-[4cm]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -201,8 +201,8 @@ function CoreCapabilitiesImageSection() {
               alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
               fill
               priority
-              className="object-contain transform-gpu will-change-transform scale-[1.18]"
-              sizes="(min-width: 1280px) 76.8rem, 85.2vw"
+              className="object-contain transform-gpu will-change-transform"
+              sizes="(min-width: 1280px) 84.5rem, 94vw"
             />
           </motion.div>
         </motion.div>
