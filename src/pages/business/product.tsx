@@ -1,3 +1,4 @@
+// app/product/service.tsx (updated)
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
@@ -14,7 +15,6 @@ export default function ServicePage() {
   const { productCategories, footerText } = serviceContent[lang];
   const section = serviceContent[lang].sectionList?.[0];
 
-  // === Animations (match service.tsx) ===
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: {
@@ -23,7 +23,7 @@ export default function ServicePage() {
       transition: { duration: 0.5, ease: "easeOut" } as Transition,
     },
   };
-  const CM_TO_PX = 37.8; // UPDATED
+  const CM_TO_PX = 37.8;
   const HERO_TRIM_PX = Math.round(CM_TO_PX);
   const leftAlignTextVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -34,6 +34,8 @@ export default function ServicePage() {
     },
   };
 
+  const productTitle = lang === "KOR" ? "제품" : "Products"; // bilingual title
+
   return (
     <>
       <Layout>
@@ -41,7 +43,7 @@ export default function ServicePage() {
           <title>{lang === "KOR" ? "제품 소개 " : "Product "}</title>
         </Head>
         <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-          {/* === UPDATED: Bungkus HeroSection dengan negative margin top/bottom (1cm per sisi) === */}
+          {/* Hero with negative trims */}
           <div
             style={{
               marginTop: `-${HERO_TRIM_PX}px`,
@@ -54,7 +56,7 @@ export default function ServicePage() {
             />
           </div>
 
-          {/* Keep breadcrumb visible and above blue section */}
+          {/* Breadcrumb */}
           <div className="relative z-30 -mt-2">
             <BreadcrumbSection
               path={lang === "KOR" ? "사업분야 > 제품소개" : "Business > Product"}
@@ -67,22 +69,22 @@ export default function ServicePage() {
               <div
                 className="absolute inset-0 pointer-events-none flex bg-no-repeat bg-top bg-contain"
                 style={{ backgroundImage: "url('/images/business/layer2.png')" }}
-              ></div>
-
+              />
               <div className="max-w-7xl mx-auto relative z-10">
-                {/* Headings with same effects as service.tsx */}
+                {/* Title: bilingual & same size as '핵심 연구 분야' */}
                 <motion.h2
-                  className="text-white text-base sm:text-lg lg:text-2xl font-semibold tracking-wide mb-10"
+                  className="text-white text-4xl md:text-5xl font-bold tracking-tight mb-4"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
                   variants={leftAlignTextVariants}
                 >
-                  Products
+                  {productTitle}
                 </motion.h2>
 
+                {/* Tagline: subtitle sizing like R&D subtitle */}
                 <motion.p
-                  className="text-white text-xl md:text-2xl lg:text-4xl font-bold tracking-wide leading-[1.3] mb-12"
+                  className="text-slate-200 text-base md:text-lg leading-relaxed max-w-3xl"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
@@ -93,9 +95,9 @@ export default function ServicePage() {
                   {section.production2sub}
                 </motion.p>
 
-                {/* Grid with staggered children like service.tsx */}
+                {/* Grid */}
                 <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
@@ -127,7 +129,7 @@ export default function ServicePage() {
                   ))}
                 </motion.div>
 
-                {/* Footer text animation same style */}
+                {/* Footer */}
                 <motion.p
                   className="text-[#B2B2B2] font-light text-sm md:text-base mt-7 text-right tracking-wide"
                   initial="hidden"

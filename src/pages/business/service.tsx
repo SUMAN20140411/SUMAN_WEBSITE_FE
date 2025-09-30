@@ -1,3 +1,4 @@
+// app/service.tsx
 "use client";
 
 import React from "react";
@@ -158,10 +159,9 @@ function CoreCapabilitiesImageSection() {
   const coreImgEng = "/images/business/process/coreEng.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
+  // why: make title bilingual by lang
   const titleText =
-    langCode === "KOR"
-      ? "Core Capabilities & Technologies"
-      : "Core Capabilities & Technologies";
+    langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
   const subtitleText =
     langCode === "KOR"
       ? "정밀가공 · 모듈화 · 장비 기술"
@@ -169,11 +169,11 @@ function CoreCapabilitiesImageSection() {
 
   return (
     <section className="relative z-0 bg-[#0a132e] px-4 pb-6 pt-12 md:pb-8 md:pt-20 overflow-hidden">
-      {/* ⬇ same image background as Main Equipment section */}
+      {/* background */}
       <div className="pointer-events-none absolute inset-0">
         <Image
           src="/images/business/layer.png"
-          alt="배경 이미지"
+          alt={langCode === "KOR" ? "배경 이미지" : "Background image"}
           fill
           style={{ objectFit: "cover", objectPosition: "top" }}
           priority
@@ -218,7 +218,7 @@ function CoreCapabilitiesImageSection() {
               src={imgSrc}
               alt={
                 langCode === "KOR"
-                  ? "Core Capabilities & Technologies"
+                  ? "핵심 역량 및 기술"
                   : "Core Capabilities & Technologies"
               }
               fill
@@ -295,13 +295,13 @@ export default function ServicePage() {
           />
         </div>
 
-        {/* Core Capabilities image section */}
+        {/* Core Capabilities image section (localized title) */}
         <CoreCapabilitiesImageSection />
 
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            {/* Title: LEFT, unified title size & bigger than subtitle */}
+            {/* Title: LEFT, unified title size */}
             <motion.h2
               className="mb-4 text-left text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wide"
               variants={fadeUp}
@@ -309,7 +309,7 @@ export default function ServicePage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.25 }}
             >
-              Main Equipment
+              {langCode === "KOR" ? "주요 설비" : "Main Equipment"}
             </motion.h2>
 
             {/* Subtitle block (two lines): LEFT, unified subtitle size */}
@@ -332,7 +332,7 @@ export default function ServicePage() {
           <div className="pointer-events-none absolute inset-0">
             <Image
               src="/images/business/layer.png"
-              alt="배경 이미지"
+              alt={langCode === "KOR" ? "배경 이미지" : "Background image"}
               fill
               style={{ objectFit: "cover", objectPosition: "top" }}
               priority
@@ -435,7 +435,7 @@ export default function ServicePage() {
               className="mb-8 text-left md:mb-12"
             >
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
-                PROCESS
+                {langCode === "KOR" ? "프로세스" : "Process"}
               </h2>
               <p className="mt-3 text-base md:text-lg text-gray-600">
                 {lang === "KOR"
