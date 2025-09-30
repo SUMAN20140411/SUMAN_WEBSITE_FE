@@ -1,3 +1,4 @@
+// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -8,6 +9,7 @@ import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
 import { ceoText } from "@/data/ceo";
 import { useLangStore } from "@/stores/langStore";
+
 const slideInRight = {
   hidden: { opacity: 0, y: 80 },
   visible: {
@@ -16,6 +18,7 @@ const slideInRight = {
     transition: { duration: 2, ease: "easeOut" } as Transition,
   },
 };
+
 const textReveal = {
   hidden: { opacity: 0, y: 60 },
   visible: {
@@ -25,21 +28,21 @@ const textReveal = {
   },
 };
 
-const imageReveal = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 1.6, ease: "easeOut" } as Transition,
-  },
-};
-
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
-  const { hero, paragraphs, closing, signatureTitle, signatureName } = ceoText[lang];
+
+  // only keep what we still show
+  const { closing, signatureTitle, signatureName } = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
-  const fontFamily = "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
+  const fontFamily =
+    "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
+
+  // pick localized sign image (why: show above the border, localized)
+  const ceoSignImg =
+    lang === "KOR"
+      ? "/images/company/ceo/ceoKor.png"
+      : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -58,6 +61,7 @@ export default function CeoPage() {
 
         <section className="bg-white">
           <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-start lg:gap-16 lg:py-20">
+            {/* LEFT: closing + ceo sign image + signature */}
             <motion.article
               className="lg:w-1/2"
               variants={textReveal}
@@ -66,42 +70,27 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
+              {/* Closing text */}
+              {closing && (
+                <p className="text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
+                  {closing}
+                </p>
+              )}
 
-              <h2 className="mt-5 text-xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-2xl md:text-3xl">
-                {hero.primary && (
-                  <span className="block text-blue-600">
-                    {hero.primary}
-                    {lang === "KOR" && <span className="text-slate-900">을</span>}
-                  </span>
-                )}
-                {hero.secondary && (
-                  <span className="mt-2 block text-slate-900">{hero.secondary}</span>
-                )}
-              </h2>
-
-              <div className="mt-8 space-y-4 text-base leading-relaxed tracking-tight text-gray-700 sm:text-lg">
-                {paragraphs.map((paragraph, idx) => {
-                  if (paragraph === "") {
-                    return <div key={idx} className="h-2" />;
-                  }
-                  if (paragraph === "감사합니다.") {
-                    return (
-                      <p key={idx} className="font-medium text-gray-900 mt-6">
-                        {paragraph}
-                      </p>
-                    );
-                  }
-                  return (
-                    <p key={idx} className="leading-relaxed">
-                      {paragraph}
-                    </p>
-                  );
-                })}
-
-                {closing && <p className="font-medium text-gray-900 mt-6">{closing}</p>}
+              {/* Localized CEO image ABOVE the border (exact position requested) */}
+              <div className="mt-6 lg:-ml-2">
+                <Image
+                  src={ceoSignImg}
+                  alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                  width={360}
+                  height={120}
+                  className="w-[240px] sm:w-[300px] h-auto object-contain"
+                  priority
+                />
               </div>
 
-              <footer className="mt-10 border-t border-gray-200 pt-6 text-lg text-gray-900">
+              {/* Border + Signature (nudged left a bit to align with the image) */}
+              <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-blue-500">
                   {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
@@ -112,32 +101,27 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-
-          {/* 이미지 플레이스홀더 */}
-          <motion.div
-            className="ceo-image-column md:w-[48%] flex items-center justify-center"
-            variants={slideInRight}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <div
-              className="placeholder-image w-full flex items-center justify-center text-blue-500 font-bold text-2xl"
-              style={{
-                height: "auto",
-                maxHeight: "550px",
-                overflow: "hidden",
-              }}
+            {/* RIGHT: main photo, shifted a bit to the right; stacks below on mobile */}
+            <motion.div
+              className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
+              variants={slideInRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
             >
-              <Image
-                src="/images/company/ceo/ceo.jpeg"
-                alt="SUMAN CEO"
-                className="w-full h-full object-cover"
-                width={700}
-                height={500}
-              />
-            </div>
-          </motion.div>
+              <div
+                className="placeholder-image w-full flex items-center justify-center text-blue-500 font-bold text-2xl"
+                style={{ height: "auto", maxHeight: "550px", overflow: "hidden" }}
+              >
+                <Image
+                  src="/images/company/ceo/ceo.jpeg"
+                  alt="SUMAN CEO"
+                  className="w-full h-full object-cover"
+                  width={700}
+                  height={500}
+                />
+              </div>
+            </motion.div>
           </div>
         </section>
 
