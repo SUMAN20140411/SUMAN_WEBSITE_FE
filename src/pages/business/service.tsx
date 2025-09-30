@@ -111,9 +111,7 @@ const ProcessFlowChart: React.FC = () => {
                 </div>
               )}
             </div>
-            {index < content.bottomLane.length - 1 && (
-              <Arrow direction="left" className="text-gray-400" />
-            )}
+            {index < content.bottomLane.length - 1 && <Arrow direction="left" className="text-gray-400" />}
           </React.Fragment>
         ))}
       </div>
@@ -122,10 +120,10 @@ const ProcessFlowChart: React.FC = () => {
 };
 
 // Arrow component
-const Arrow: React.FC<{
-  direction: "left" | "right";
-  className?: string;
-}> = ({ direction, className = "text-gray-400" }) => (
+const Arrow: React.FC<{ direction: "left" | "right"; className?: string }> = ({
+  direction,
+  className = "text-gray-400",
+}) => (
   <svg
     className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
     viewBox="0 0 24 24"
@@ -148,12 +146,8 @@ function CoreCapabilitiesImageSection() {
   const coreImgEng = "/images/business/process/coreEng2.png";
   const imgSrc = langCode === "KOR" ? coreImgKor : coreImgEng;
 
-  const titleText =
-    langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
-  const subtitleText =
-    langCode === "KOR"
-      ? "정밀가공 · 모듈화 · 장비 기술"
-      : "Precision · Modularization · Equipment";
+  const titleText = langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies";
+  const subtitleText = langCode === "KOR" ? "정밀가공 · 모듈화 · 장비 기술" : "Precision · Modularization · Equipment";
 
   return (
     <section className="relative z-0 bg-[#0a132e] px-4 pb-7 pt-14 md:pb-10 md:pt-24 overflow-hidden">
@@ -183,13 +177,13 @@ function CoreCapabilitiesImageSection() {
           <p className="mt-3 text-base md:text-lg text-slate-300/90">{subtitleText}</p>
         </motion.div>
 
-        {/* Image: add 4cm LR padding on lg+ */}
+        {/* Image: frame 4cm kiri/kanan di desktop */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]" /* why: requested 4cm frame */
+          className="group relative mx-auto max-w-[76.8rem] w-[85.2%] lg:px-[4cm]" /* why: padding 4cm each side (desktop) */
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -201,7 +195,7 @@ function CoreCapabilitiesImageSection() {
               alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
               fill
               priority
-              className="object-contain transform-gpu will-change-transform scale-[1.08]" /* why: subtle zoom-in */
+              className="object-contain transform-gpu will-change-transform scale-[1.08]"
               sizes="(min-width: 1280px) 76.8rem, 85.2vw"
             />
           </motion.div>
@@ -230,7 +224,10 @@ export default function ServicePage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
+      transition: {
+        duration: 0.6,
+        ease: cubicBezier(0.16, 1, 0.3, 1),
+      } as Transition,
     },
   };
 
@@ -297,7 +294,13 @@ export default function ServicePage() {
           </div>
 
           <div className="mx-auto max-w-7xl">
-            <motion.div className="relative transition-all" variants={pageVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+            <motion.div
+              className="relative transition-all"
+              variants={pageVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
               <motion.span className="mb-10 inline-block rounded-full bg-white/10 px-6 py-1 text-base text-white sm:text-lg md:mb-16" variants={fadeUp}>
                 {section?.production}
               </motion.span>
@@ -310,9 +313,7 @@ export default function ServicePage() {
                     variants={fadeUp}
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
-                      {equipment.image && (
-                        <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />
-                      )}
+                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
@@ -336,9 +337,7 @@ export default function ServicePage() {
                     variants={fadeUp}
                   >
                     <div className="relative mb-0 h-[calc(5rem+95px)] w-full md:h-[calc(7rem+95px)]">
-                      {equipment.image && (
-                        <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />
-                      )}
+                      {equipment.image && <Image src={equipment.image} alt={equipment.name} fill className="rounded-[10px] object-cover" />}
                     </div>
 
                     <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-[#1F2432]/70 px-3 md:h-12">
@@ -396,4 +395,3 @@ export default function ServicePage() {
     </Layout>
   );
 }
-

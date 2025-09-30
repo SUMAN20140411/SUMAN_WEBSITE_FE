@@ -64,28 +64,28 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Signature image: add 4cm LR padding on lg+ */}
-              <div className="lg:px-[4cm]"> {/* why: requested 4cm frame on both sides */}
+              {/* Signature image: frame 4cm kiri/kanan di desktop */}
+              <div className="lg:px-[4cm]">{/* why: padding 4cm each side (desktop) */}
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden rounded-md">
                   <Image
                     src={ceoSignImg}
                     alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
                     fill
                     priority
-                    className="object-contain transform-gpu will-change-transform scale-[1.10]" /* why: subtle zoom-in */
+                    className="object-contain transform-gpu will-change-transform scale-[1.10]"
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
               </div>
 
-              {/* Closing text: shift left ~1.5cm on lg+ */}
+              {/* Closing text: geser 1.5cm ke kiri (desktop) */}
               {closing && (
                 <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
                   {closing}
                 </p>
               )}
 
-              {/* Border + Signature: shift left ~1.5cm on lg+ */}
+              {/* Signature block: geser 1.5cm ke kiri (desktop) */}
               <footer className="mt-6 lg:-ml-[1.5cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
                 <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
@@ -124,3 +124,4 @@ export default function CeoPage() {
     </Layout>
   );
 }
+
