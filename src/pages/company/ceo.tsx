@@ -12,20 +12,12 @@ import { useLangStore } from "@/stores/langStore";
 
 const slideInRight = {
   hidden: { opacity: 0, y: 80 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 2, ease: "easeOut" } as Transition,
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 2, ease: "easeOut" } as Transition },
 };
 
 const textReveal = {
   hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 1.6, ease: "easeOut" } as Transition,
-  },
+  visible: { opacity: 1, y: 0, transition: { duration: 1.6, ease: "easeOut" } as Transition },
 };
 
 export default function CeoPage() {
@@ -34,13 +26,9 @@ export default function CeoPage() {
   const { closing, signatureTitle, signatureName } = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
-  const fontFamily =
-    "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
+  const fontFamily = "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
-  const ceoSignImg =
-    lang === "KOR"
-      ? "/images/company/ceo/ceoKor.png"
-      : "/images/company/ceo/ceoEng.png";
+  const ceoSignImg = lang === "KOR" ? "/images/company/ceo/ceoKor.png" : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -52,9 +40,7 @@ export default function CeoPage() {
         <HeroSection title={heroTitle} backgroundImage="/images/sub_banner/ceo_hero.png" />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
-          <BreadcrumbSection
-            path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"}
-          />
+          <BreadcrumbSection path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"} />
         </div>
 
         <section className="bg-white">
@@ -68,26 +54,26 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Foto tanda tangan: diposisikan paling atas & samakan tinggi dengan kanan */}
+              {/* CEO sign zoom-out 20% ⇒ inset per sisi 10% */}
               <div className="lg:-ml-2">
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
-                  <Image
-                    src={ceoSignImg}
-                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                    fill
-                    priority
-                    className="object-contain" /* why: full terlihat tanpa crop */
-                    sizes="(min-width:1024px) 50vw, 90vw"
-                  />
+                  <div className="absolute inset-[10%]">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={ceoSignImg}
+                        alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                        fill
+                        priority
+                        className="object-contain"
+                        sizes="(min-width:1024px) 50vw, 90vw"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Closing text */}
-              {closing && (
-                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
-                  {closing}
-                </p>
-              )}
+              {closing && <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">{closing}</p>}
 
               {/* Border + Signature */}
               <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
@@ -101,7 +87,7 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/* RIGHT: main photo (zoom out) */}
+            {/* RIGHT */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
@@ -113,7 +99,7 @@ export default function CeoPage() {
                 <Image
                   src="/images/company/ceo/ceo.jpeg"
                   alt="SUMAN CEO"
-                  className="w-full h-full object-contain" /* why: zoom out */
+                  className="w-full h-full object-contain"
                   width={700}
                   height={500}
                   priority
