@@ -1,3 +1,4 @@
+// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -28,14 +29,16 @@ const textReveal = {
 };
 
 export default function CeoPage() {
-  const lang = useLangStore((state) => state.lang);
+  const lang = useLangStore((s) => s.lang);
   const { closing, signatureTitle, signatureName } = ceoText[lang];
-
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
-  const ceoSignImg = lang === "KOR" ? "/images/company/ceo/ceoKor.png" : "/images/company/ceo/ceoEng.png";
+  const ceoSignImg =
+    lang === "KOR"
+      ? "/images/company/ceo/ceoKor.png"
+      : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -47,7 +50,9 @@ export default function CeoPage() {
         <HeroSection title={heroTitle} backgroundImage="/images/sub_banner/ceo_hero.png" />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
-          <BreadcrumbSection path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"} />
+          <BreadcrumbSection
+            path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"}
+          />
         </div>
 
         <section className="bg-white">
@@ -61,40 +66,43 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Signature image: +4cm frame, align left with Signature, grow 20% via container height */}
-              <div className="lg:-ml-[1.5cm] lg:px-[4cm]">
-                <div className="relative w-full h-[432px] sm:h-[504px] lg:h-[660px] overflow-visible rounded-md">
-                  <Image
-                    src={ceoSignImg}
-                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                    fill
-                    priority
-                    className="object-contain transform-gpu will-change-transform" /* why: prevent crop; no scale */
-                    sizes="(min-width:1024px) 50vw, 90vw"
-                  />
-                </div>
-              </div>
-
-              {/* Closing text: shift left 1.5cm */}
+              {/* Closing: geser 1.5cm ke kiri di laptop */}
               {closing && (
                 <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800 lg:-ml-[1.5cm]">
                   {closing}
                 </p>
               )}
 
-              {/* Signature block: shift left 1.5cm */}
-              <footer className="mt-6 lg:-ml-[1.5cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
-                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
-                  {lang === "KOR" ? "Signature" : "Signature"}
+              {/* Signature wrapper: gambar + footer; sejajarkan kiri & frame 4cm (laptop) */}
+              <div className="mt-6 lg:-ml-[1.5cm] lg:px-[4cm]">
+                {/* Gambar signature: selalu tampil, lebih besar 20%, tidak kepotong */}
+                <div className="relative w-full h-[432px] sm:h-[504px] lg:h-[660px] overflow-visible rounded-md">
+                  <Image
+                    src={ceoSignImg}
+                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                    fill
+                    priority
+                    className="object-contain" /* why: cegah crop */
+                    sizes="(min-width:1024px) 50vw, 90vw"
+                  />
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
-                  <span className="text-gray-600">{signatureTitle}</span>
-                  <strong className="font-semibold text-slate-900">{signatureName}</strong>
-                </div>
-              </footer>
+
+                {/* Footer Signature: border top tepat di bawah gambar */}
+                <footer className="mt-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
+                  <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
+                    {lang === "KOR" ? "Signature" : "Signature"}
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
+                    <span className="text-gray-600">{signatureTitle}</span>
+                    <strong className="font-semibold text-slate-900">
+                      {signatureName}
+                    </strong>
+                  </div>
+                </footer>
+              </div>
             </motion.article>
 
-            {/* RIGHT */}
+            {/* RIGHT (tetap) */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
