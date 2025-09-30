@@ -31,14 +31,12 @@ const textReveal = {
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
 
-  // only keep what we still show
   const { closing, signatureTitle, signatureName } = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
-  // pick localized sign image (why: show above the border, localized)
   const ceoSignImg =
     lang === "KOR"
       ? "/images/company/ceo/ceoKor.png"
@@ -61,7 +59,7 @@ export default function CeoPage() {
 
         <section className="bg-white">
           <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-start lg:gap-16 lg:py-20">
-            {/* LEFT: closing + ceo sign image + signature */}
+            {/* LEFT */}
             <motion.article
               className="lg:w-1/2"
               variants={textReveal}
@@ -70,28 +68,30 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
+              {/* Foto tanda tangan: diposisikan paling atas & samakan tinggi dengan kanan */}
+              <div className="lg:-ml-2">
+                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
+                  <Image
+                    src={ceoSignImg}
+                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                    fill
+                    priority
+                    className="object-contain" /* why: full terlihat tanpa crop */
+                    sizes="(min-width:1024px) 50vw, 90vw"
+                  />
+                </div>
+              </div>
+
               {/* Closing text */}
               {closing && (
-                <p className="text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
+                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
                   {closing}
                 </p>
               )}
 
-              {/* Localized CEO image ABOVE the border (exact position requested) */}
-              <div className="mt-6 lg:-ml-2">
-                <Image
-                  src={ceoSignImg}
-                  alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                  width={360}
-                  height={120}
-                  className="w-[240px] sm:w-[300px] h-auto object-contain"
-                  priority
-                />
-              </div>
-
-              {/* Border + Signature (nudged left a bit to align with the image) */}
+              {/* Border + Signature */}
               <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
-                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-blue-500">
+                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
@@ -101,7 +101,7 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/* RIGHT: main photo, shifted a bit to the right; stacks below on mobile */}
+            {/* RIGHT: main photo (zoom out) */}
             <motion.div
               className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
               variants={slideInRight}
@@ -109,16 +109,14 @@ export default function CeoPage() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              <div
-                className="placeholder-image w-full flex items-center justify-center text-blue-500 font-bold text-2xl"
-                style={{ height: "auto", maxHeight: "550px", overflow: "hidden" }}
-              >
+              <div className="w-full max-h-[550px] h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden flex items-center justify-center p-2">
                 <Image
                   src="/images/company/ceo/ceo.jpeg"
                   alt="SUMAN CEO"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain" /* why: zoom out */
                   width={700}
                   height={500}
+                  priority
                 />
               </div>
             </motion.div>
