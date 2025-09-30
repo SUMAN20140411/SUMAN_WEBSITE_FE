@@ -1,4 +1,3 @@
-// app/company/ceo/page.tsx
 "use client";
 
 import Layout from "@/components/Layout";
@@ -46,40 +45,27 @@ export default function CeoPage() {
         <section className="bg-white">
           <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-start lg:gap-16 lg:py-20">
             {/* LEFT */}
-            <motion.article
-              className="lg:w-1/2"
-              variants={textReveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              style={{ fontFamily }}
-            >
-              {/* CEO sign zoom-out 20% ⇒ inset per sisi 10% */}
+            <motion.article className="lg:w-1/2" variants={textReveal} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} style={{ fontFamily }}>
+              {/* Signature image: zoom-in 20% */}
               <div className="lg:-ml-2">
-                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
-                  <div className="absolute inset-[10%]">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={ceoSignImg}
-                        alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                        fill
-                        priority
-                        className="object-contain"
-                        sizes="(min-width:1024px) 50vw, 90vw"
-                      />
-                    </div>
-                  </div>
+                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden">
+                  <Image
+                    src={ceoSignImg}
+                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                    fill
+                    priority
+                    className="object-cover transform scale-[1.2] will-change-transform" /* why: zoom-in 20% */
+                    sizes="(min-width:1024px) 50vw, 90vw"
+                  />
                 </div>
               </div>
 
               {/* Closing text */}
               {closing && <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">{closing}</p>}
 
-              {/* Border + Signature */}
+              {/* Border + Signature text */}
               <footer className="mt-6 lg:-ml-2 border-t border-gray-200 pt-6 text-lg text-gray-900">
-                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
-                  {lang === "KOR" ? "Signature" : "Signature"}
-                </div>
+                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">{lang === "KOR" ? "Signature" : "Signature"}</div>
                 <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
                   <span className="text-gray-600">{signatureTitle}</span>
                   <strong className="font-semibold text-slate-900">{signatureName}</strong>
@@ -87,23 +73,10 @@ export default function CeoPage() {
               </footer>
             </motion.article>
 
-            {/* RIGHT */}
-            <motion.div
-              className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
-              variants={slideInRight}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-            >
+            {/* RIGHT: main photo (kept zoom-out) */}
+            <motion.div className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center" variants={slideInRight} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
               <div className="w-full max-h-[550px] h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden flex items-center justify-center p-2">
-                <Image
-                  src="/images/company/ceo/ceo.jpeg"
-                  alt="SUMAN CEO"
-                  className="w-full h-full object-contain"
-                  width={700}
-                  height={500}
-                  priority
-                />
+                <Image src="/images/company/ceo/ceo.jpeg" alt="SUMAN CEO" className="w-full h-full object-contain" width={700} height={500} priority />
               </div>
             </motion.div>
           </div>

@@ -1,4 +1,3 @@
-// app/service.tsx
 "use client";
 
 import React from "react";
@@ -41,17 +40,13 @@ const ProcessFlowChart: React.FC = () => {
                   </div>
                   {step.ngTarget && (
                     <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                      <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                        NG
-                      </span>
+                      <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">NG</span>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="bg-gray-200 rounded-lg px-4 py-3">
-                  <div className="text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
+                  <div className="text-gray-700 text-sm whitespace-pre-line">{step.title}</div>
                 </div>
               )}
             </div>
@@ -70,9 +65,7 @@ const ProcessFlowChart: React.FC = () => {
             </div>
             <div className="absolute -left-48 top-1/2 -translate-y-1/2">
               <div className="flex items-center">
-                <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
-                  NG
-                </div>
+                <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">NG</div>
                 <Arrow direction="left" className="text-red-600" />
                 <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
                   <div className="text-gray-700 text-sm">협력사</div>
@@ -84,36 +77,28 @@ const ProcessFlowChart: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Lane - Left to Right Flow */}
+      {/* Bottom Lane */}
       <div className="flex items-center justify-center gap-12">
         {content.bottomLane.map((step, index) => (
           <React.Fragment key={step.id}>
             <div className="relative">
               {step.type === "diamond" ? (
                 <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
+                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">{step.title}</div>
                 </div>
               ) : (
                 <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
-                  <div className="text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
+                  <div className="text-gray-700 text-sm whitespace-pre-line">{step.title}</div>
                 </div>
               )}
               {step.hasNGFrom && (
                 <div className="absolute -bottom-16 z-10">
-                  <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                    NG
-                  </span>
+                  <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">NG</span>
                   <div className="h-10 w-0.5 bg-red-600 mx-auto mt-1" />
                 </div>
               )}
             </div>
-            {index < content.bottomLane.length - 1 && (
-              <Arrow direction="left" className="text-gray-400" />
-            )}
+            {index < content.bottomLane.length - 1 && <Arrow direction="left" className="text-gray-400" />}
           </React.Fragment>
         ))}
       </div>
@@ -122,17 +107,8 @@ const ProcessFlowChart: React.FC = () => {
 };
 
 // Arrow component
-const Arrow: React.FC<{
-  direction: "left" | "right";
-  className?: string;
-}> = ({ direction, className = "text-gray-400" }) => (
-  <svg
-    className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
+const Arrow: React.FC<{ direction: "left" | "right"; className?: string }> = ({ direction, className = "text-gray-400" }) => (
+  <svg className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
@@ -177,7 +153,7 @@ function CoreCapabilitiesImageSection() {
           <p className="mt-3 text-base md:text-lg text-slate-300/90">{subtitleText}</p>
         </motion.div>
 
-        {/* image container */}
+        {/* image container (keep width bump) */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -185,24 +161,16 @@ function CoreCapabilitiesImageSection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
           className="group relative mx-auto max-w-[76.8rem] w-[85.2%]"
         >
-          <motion.div
-            whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
-            transition={{ type: "spring", stiffness: 160, damping: 18 }}
-            className="relative aspect-[16/9] w-full"
-          >
-            {/* zoom-out 15% ⇒ inset per sisi 7.5% */}
-            <div className="absolute inset-[7.5%]">
-              <div className="relative w-full h-full">
-                <Image
-                  src={imgSrc}
-                  alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
-                  fill
-                  priority
-                  className="object-contain"
-                  sizes="(min-width: 1280px) 60rem, 70vw" /* why: optimalkan load setelah zoom-out */
-                />
-              </div>
-            </div>
+          {/* why: overflow-hidden to crop cleanly when scaled */}
+          <motion.div whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }} transition={{ type: "spring", stiffness: 160, damping: 18 }} className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+            <Image
+              src={imgSrc}
+              alt={langCode === "KOR" ? "핵심 역량 및 기술" : "Core Capabilities & Technologies"}
+              fill
+              priority
+              className="object-cover transform scale-[1.17] will-change-transform" /* why: zoom-in 17% */
+              sizes="(min-width: 1280px) 76.8rem, 85.2vw"
+            />
           </motion.div>
         </motion.div>
       </div>
@@ -219,18 +187,10 @@ export default function ServicePage() {
   const { equipmentList, measurementEquipmentList } = serviceContent[langCode];
   const section = serviceContent[langCode].sectionList?.[0];
 
-  const pageVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
-  };
-
+  const pageVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12 } } };
   const fadeUp: Record<"hidden" | "visible", any> = {
     hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition,
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: cubicBezier(0.16, 1, 0.3, 1) } as Transition },
   };
 
   const CM_TO_PX = 37.8;
@@ -259,23 +219,11 @@ export default function ServicePage() {
         {/* Main Equipment */}
         <section className="bg-white px-4 py-12 md:py-20">
           <div className="mx-auto max-w-7xl">
-            <motion.h2
-              className="mb-4 text-left text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wide"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-            >
+            <motion.h2 className="mb-4 text-left text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wide" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.25 }}>
               {langCode === "KOR" ? "주요 설비" : "Main Equipment"}
             </motion.h2>
 
-            <motion.p
-              className="text-left text-base md:text-lg text-slate-700"
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-            >
+            <motion.p className="text-left text-base md:text-lg text-slate-700" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.25 }}>
               {section?.maintitle}
               <br />
               {section?.mainsubtitle}
@@ -345,17 +293,9 @@ export default function ServicePage() {
         {/* PROCESS */}
         <section className="relative py-16 md:py-24">
           <div className="relative mx-auto max-w-7xl px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8 text-left md:mb-12"
-            >
+            <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }} className="mb-8 text-left md:mb-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">{langCode === "KOR" ? "프로세스" : "Process"}</h2>
-              <p className="mt-3 text-base md:text-lg text-gray-600">
-                {lang === "KOR" ? "제품 제조 및 품질 프로세스" : "Product Manufacturing & Quality Process"}
-              </p>
+              <p className="mt-3 text-base md:text-lg text-gray-600">{lang === "KOR" ? "제품 제조 및 품질 프로세스" : "Product Manufacturing & Quality Process"}</p>
             </motion.div>
 
             <motion.div
