@@ -27,7 +27,15 @@ import {
   Layers,
   FlaskConical,
 } from "lucide-react";
+const HERO_TRIM_PX = 38;
+import type { Transition } from "framer-motion";
 
+const floatTransition: Transition = {
+  duration: 12,
+  repeat: Infinity,
+  repeatType: "mirror",
+  ease: "easeInOut",
+};
 
 // Animation variants
 const fadeIn = {
@@ -61,14 +69,38 @@ export default function Vision2Page() {
     "/images/business/process/FLOWKOREA.png",
     "/images/company/vision_factory.jpg",
   ];
-
+  
   // Circle values
-  const circleValues = [
-    { label: lang === "KOR" ? "즐겁게" : "Enjoy", en: lang === "KOR" ? "Enjoy" : "Enjoy" },
-    { label: lang === "KOR" ? "새롭게" : "Neo", en: lang === "KOR" ? "Neo" : "Neo" },
-    { label: lang === "KOR" ? "치열하게" : "Intensely", en: lang === "KOR" ? "Intensely" : "Intensely" },
-    { label: lang === "KOR" ? "빠르게" : "Fastly", en: lang === "KOR" ? "Fastly" : "Fastly" },
-  ];
+  const visionTitle = lang === "KOR"
+    ? <>
+        2024 <b>도약의 원년</b>—5년 내<br />
+        <b>매출 600억</b>
+        <span className="text-sky-400 font-bold">·순이익 150억 달성,</span><br />
+        <span className="text-sky-400 font-bold">‘확신(Confidence)’</span>
+        <span className="text-sky-400 font-bold">의 종합 솔루션 서비스 기업으로 성장</span>
+      </>
+    : <>
+        2024 <b>Leap Year</b>—Within 5 Years<br />
+        <b>Revenue 60B KRW</b>
+        <span className="text-sky-400 font-bold">·Net Profit 15B Achieved,</span><br />
+        <span className="text-sky-400 font-bold">‘Confidence’</span>
+        <span className="text-sky-400 font-bold">-based Total Solution Service Company Growth</span>
+      </>;
+
+  // Circle quadrant values
+  const circleValues = lang === "KOR"
+    ? [
+        { label: "즐겁게", en: "Enjoy" },
+        { label: "새롭게", en: "Neo" },
+        { label: "치열하게", en: "Intensely" },
+        { label: "빠르게", en: "Fastly" },
+      ]
+    : [
+        { label: "Enjoy", en: "Enjoy" },
+        { label: "Neo", en: "Neo" },
+        { label: "Intensely", en: "Intensely" },
+        { label: "Fastly", en: "Fastly" },
+      ];
 
   // Timeline colors
   const timelineColors = ["#0a2540", "#17416d", "#38bdf8"];
@@ -76,15 +108,121 @@ export default function Vision2Page() {
   return (
     <Layout>
       <Head>
-        <title>{hero.title}</title>
+        <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-      <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-slate-100 text-slate-900 pt-[90px]">
-        {/* Hero Section */}
-        <section className="relative">
-          <HeroSection title={hero.title} backgroundImage={images[0]} />
-          <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
-        </section>
+            <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
+        <motion.div
+          className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
+          animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
+          transition={floatTransition}
+        />
+        <motion.div
+          className="pointer-events-none absolute bottom-[-12rem] right-[-12rem] h-[28rem] w-[28rem] -z-10 rounded-full bg-emerald-200/40 blur-3xl"
+          animate={{ x: [0, -40, 20], y: [10, -30, 15] }}
+          transition={{ ...floatTransition, duration: 16 }}
+        />
 
+        <div className="relative z-10">
+          <div
+            style={{
+              marginTop: `-${HERO_TRIM_PX}px`,
+              marginBottom: `-${HERO_TRIM_PX}px`,
+            }}
+          >
+            <HeroSection
+              title={hero.title}
+              backgroundImage="/images/sub_banner/company_banner.png"
+            />
+          </div>
+
+          <div className="relative z-20 -mt-2">
+            <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
+          </div>
+        </div>
+        {/* Vision Section */}
+        <section className="w-full flex flex-col lg:flex-row items-center justify-between py-16 px-4 md:px-12 gap-10">
+          {/* Left: Title & Timeline */}
+          <div className="flex-1 flex flex-col justify-center items-start w-full max-w-2xl">
+            <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-2">
+              {lang === "KOR" ? "Our Vision" : "Our Vision"}
+            </h2>
+            <div className="mb-8">
+              <div className="text-2xl md:text-4xl font-bold leading-tight mb-2 text-slate-900">
+                {visionTitle}
+              </div>
+            </div>
+            {/* Timeline Bar */}
+            <div className="w-full mb-8">
+              <div className="flex items-center w-full mb-2">
+                <div className="flex-1 flex items-center gap-2">
+                  <div className="flex-1 h-3 rounded-full bg-[#17416d]" />
+                  <div className="flex-1 h-3 rounded-full bg-[#17416d]" />
+                  <div className="flex-1 h-3 rounded-full bg-[#38bdf8]" />
+                  <div className="flex-1 h-3 rounded-full bg-[#bae6fd]" />
+                </div>
+                {/* Arrow */}
+                <svg width="40" height="20" className="ml-2">
+                  <line x1="0" y1="10" x2="32" y2="10" stroke="#cbd5e1" strokeWidth="3" />
+                  <polygon points="32,6 40,10 32,14" fill="#cbd5e1" />
+                </svg>
+              </div>
+              {/* Timeline Years & Descriptions */}
+              <div className="flex items-start w-full mt-2">
+                {milestones.map((m, idx) => (
+                  <div key={m.year} className="flex-1 flex flex-col items-center">
+                    <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1">{m.year}</div>
+                    <div className="text-sm md:text-base text-gray-500 text-center whitespace-pre-line">
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Right: Large Circle with 4 Quadrants */}
+          <div className="flex-shrink-0 flex items-center justify-center w-full lg:w-[420px] h-[420px]">
+            <svg
+              viewBox="0 0 420 420"
+              width="100%"
+              height="100%"
+              className="max-w-[420px] max-h-[420px]"
+            >
+              {/* Gradients */}
+              <defs>
+                <linearGradient id="quadGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#bae6fd" />
+                  <stop offset="100%" stopColor="#38bdf8" />
+                </linearGradient>
+              </defs>
+              {/* Four Quadrants */}
+              <path d="M210,210 L210,30 A180,180 0 0,1 390,210 Z" fill="url(#quadGrad)" />
+              <path d="M210,210 L390,210 A180,180 0 0,1 210,390 Z" fill="url(#quadGrad)" />
+              <path d="M210,210 L210,390 A180,180 0 0,1 30,210 Z" fill="url(#quadGrad)" />
+              <path d="M210,210 L30,210 A180,180 0 0,1 210,30 Z" fill="url(#quadGrad)" />
+              {/* Cross lines */}
+              <line x1="210" y1="30" x2="210" y2="390" stroke="#fff" strokeWidth="2"/>
+              <line x1="30" y1="210" x2="390" y2="210" stroke="#fff" strokeWidth="2"/>
+              {/* Texts */}
+              <text x="110" y="120" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
+                {circleValues[0].label}
+                <tspan x="110" dy="1.2em" fontSize="18">{`(${circleValues[0].en})`}</tspan>
+              </text>
+              <text x="310" y="120" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
+                {circleValues[1].label}
+                <tspan x="310" dy="1.2em" fontSize="18">{`(${circleValues[1].en})`}</tspan>
+              </text>
+              <text x="110" y="320" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
+                {circleValues[2].label}
+                <tspan x="110" dy="1.2em" fontSize="18">{`(${circleValues[2].en})`}</tspan>
+              </text>
+              <text x="310" y="320" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
+                {circleValues[3].label}
+                <tspan x="310" dy="1.2em" fontSize="18">{`(${circleValues[3].en})`}</tspan>
+              </text>
+            </svg>
+          </div>
+        </section>
+        
         {/* Vision Modern Section (diagram + values) */}
         <section className="w-full flex flex-col lg:flex-row items-center justify-between py-16 px-4 md:px-12 gap-10">
           {/* Left: Title & Timeline */}
