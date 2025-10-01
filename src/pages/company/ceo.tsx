@@ -68,7 +68,7 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Foto tanda tangan + Signature, geser kanan 1cm */}
+              {/* Foto tanda tangan */}
               <div className="lg:ml-[1cm]">
                 <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
                   <Image
@@ -80,17 +80,8 @@ export default function CeoPage() {
                     sizes="(min-width:1024px) 50vw, 90vw"
                   />
                 </div>
-                {/* Signature & CEO info, geser kanan 1cm */}
-                <footer className="mt-6 lg:ml-[1cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
-                  <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
-                    {lang === "KOR" ? "Signature" : "Signature"}
-                  </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
-                    <span className="text-gray-600">{signatureTitle}</span>
-                    <strong className="font-semibold text-slate-900">{signatureName}</strong>
-                  </div>
-                </footer>
               </div>
+
               {/* Closing text */}
               {closing && (
                 <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">

@@ -150,19 +150,39 @@ export default function Vision2Page() {
           <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
             {/* LEFT: Vision & Timeline */}
             <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
-              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">
-                {lang === "KOR" ? "Our Vision" : "Our Vision"}
-              </h2>
-              <div className="mb-10 text-left w-full">
+              {/* Vision Title - animated, left align, bilingual */}
+              <motion.h2
+                initial={{ opacity: 0, x: -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full"
+              >
+                {lang === "KOR" ? "비전" : "Vision"}
+              </motion.h2>
+              {/* Vision Main Text - animated */}
+              <motion.div
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
+                className="mb-10 text-left w-full"
+              >
                 <div className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
                   {visionTitle}
                 </div>
-              </div>
-              {/* Timeline */}
-              <div className="w-full flex flex-col items-center mb-10">
-                {/* Target label */}
+              </motion.div>
+              {/* Timeline - animated */}
+              <motion.div
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
+                className="w-full flex flex-col items-center mb-10"
+              >
+                {/* Target label - black color */}
                 <div className="w-full text-center mb-2">
-                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">TARGET</span>
+                  <span className="tracking-[0.3em] text-black text-lg md:text-xl font-semibold">TARGET</span>
                 </div>
                 {/* Arrow above timeline */}
                 <div className="flex justify-center w-full relative mb-2">
@@ -170,7 +190,6 @@ export default function Vision2Page() {
                     <polygon points="50%,0 47%,18 53%,18" fill="#38bdf8" />
                   </svg>
                   <div className="flex justify-between w-full mx-auto max-w-[700px]">
-                    {/* 3 gradiasi garis sepanjang container */}
                     {timelineColors.map((color, idx) => (
                       <div
                         key={color}
@@ -189,18 +208,31 @@ export default function Vision2Page() {
                 {/* Years & Descriptions */}
                 <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
                   {milestones.map((item, idx) => (
-                    <div key={item.year} className="flex flex-col items-center flex-1">
+                    <motion.div
+                      key={item.year}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.5 }}
+                      transition={{ duration: 0.5 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
+                      className="flex flex-col items-center flex-1"
+                    >
                       <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">{item.year}</div>
                       <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
                         {item.text}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
-            {/* RIGHT: Quadrant Circle */}
-            <div className="flex items-center justify-center w-full lg:w-[520px] h-[520px]">
+            {/* RIGHT: Quadrant Circle - animated */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 32 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
+              className="flex items-center justify-center w-full lg:w-[520px] h-[520px]"
+            >
               <svg
                 viewBox="0 0 520 520"
                 width="100%"
@@ -242,9 +274,9 @@ export default function Vision2Page() {
                   <tspan x="365" dy="1.2em" fontSize="14.9">{`(${quadrants[3].en})`}</tspan>
                 </text>
               </svg>
-            </div>
+            </motion.div>
           </div>
-          {/* Core Values Section - left align, same max width, animated */}
+          {/* Core Values Section - left align, same max width, animated, sejajar Vision */}
           <div className="w-full pt-16">
             <div className="max-w-[1400px] mx-auto px-4">
               <motion.h3
@@ -253,6 +285,7 @@ export default function Vision2Page() {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
                 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
+                style={{ marginLeft: 0 }} // sejajar Vision
               >
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
               </motion.h3>
@@ -302,19 +335,19 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* R&D Vision with Image - left align title, animated */}
+        {/* R&D Vision with Image - left align title, animated, OPEN INNOVATION not in shape, font same as Vision */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <motion.span
+              <motion.h2
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4 text-left"
+                className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
               >
-                {rnd.title}
-              </motion.span>
+                {lang === "KOR" ? "비전" : "Vision"}
+              </motion.h2>
               <motion.h3
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -324,6 +357,16 @@ export default function Vision2Page() {
               >
                 {rnd.subtitle}
               </motion.h3>
+              {/* OPEN INNOVATION title, font same as Vision, bilingual */}
+              <motion.h2
+                initial={{ opacity: 0, x: -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
+              >
+                {lang === "KOR" ? "OPEN INNOVATION" : "OPEN INNOVATION"}
+              </motion.h2>
               <motion.div
                 initial="hidden"
                 whileInView="visible"
