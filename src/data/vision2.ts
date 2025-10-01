@@ -51,6 +51,192 @@ export const visionMilestones = {
   ],
 };
 
+// Core Technology Section
+export const visionCoreTechnology = {
+  KOR: {
+    title: "Core Technology",
+    subtitle: "정밀가공 기술, 모듈화,\n장비 기술력과 노하우를\n보유한 강소기업",
+    sections: [
+      {
+        title: "Medium & Large\nStructure Processing",
+        description: "대형 구조물 설계, 가공 및 제조를 위한 전문 기술력",
+        icon: "manufacturing"
+      },
+      {
+        title: "High-Precision\nJig Development", 
+        description: "고정밀 지그 설계 및 제조 전문 기술",
+        icon: "precision"
+      },
+      {
+        title: "Custom\nEquipment",
+        description: "고객 맞춤형 장비 및 설비 제조 솔루션",
+        icon: "custom"
+      }
+    ],
+    detailTitles: ["상세 타이틀", "상세 타이틀", "상세 타이틀"],
+    detailDescriptions: [
+      "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트 템플릿",
+      "세련되고 정교한 디자인으로 구성",
+      "비즈니스와 교육 현장에서 사용하기 적합"
+    ]
+  },
+  ENG: {
+    title: "Core Technology", 
+    subtitle: "Precision Processing, Modularity,\nEquipment Technology and Know-how\nStrong Small-Medium Enterprise",
+    sections: [
+      {
+        title: "Medium & Large\nStructure Processing",
+        description: "Professional technology for large structure design, processing and manufacturing", 
+        icon: "manufacturing"
+      },
+      {
+        title: "High-Precision\nJig Development",
+        description: "Specialized technology for high-precision jig design and manufacturing",
+        icon: "precision" 
+      },
+      {
+        title: "Custom\nEquipment",
+        description: "Customer-specific equipment and facility manufacturing solutions",
+        icon: "custom"
+      }
+    ],
+    detailTitles: ["Detail Title", "Detail Title", "Detail Title"],
+    detailDescriptions: [
+      "PowerPoint templates that can enhance the value of presentations",
+      "Composed of sophisticated and elaborate design", 
+      "Suitable for use in business and educational settings"
+    ]
+  }
+};
+
+// Business Model Infographic
+export const visionBusinessModel = {
+  KOR: {
+    title: "메인 타이틀을 입력하세요",
+    subtitle: "서브 타이틀을 입력하세요",
+    items: [
+      {
+        label: "A",
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트",
+        percentage: 52
+      },
+      {
+        label: "B", 
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트",
+        percentage: 10
+      },
+      {
+        label: "C",
+        title: "상세 타이틀", 
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트",
+        percentage: 30
+      },
+      {
+        label: "D",
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트",
+        percentage: 8
+      }
+    ],
+    circleNodes: ["상세 타이틀", "상세 타이틀", "상세 타이틀", "상세 타이틀", "상세 타이틀", "상세 타이틀"]
+  },
+  ENG: {
+    title: "Enter Main Title Here",
+    subtitle: "Enter Sub Title Here", 
+    items: [
+      {
+        label: "A",
+        title: "Detail Title",
+        description: "PowerPoint that can enhance the value of presentations",
+        percentage: 52
+      },
+      {
+        label: "B",
+        title: "Detail Title", 
+        description: "PowerPoint that can enhance the value of presentations",
+        percentage: 10
+      },
+      {
+        label: "C",
+        title: "Detail Title",
+        description: "PowerPoint that can enhance the value of presentations", 
+        percentage: 30
+      },
+      {
+        label: "D",
+        title: "Detail Title",
+        description: "PowerPoint that can enhance the value of presentations",
+        percentage: 8
+      }
+    ],
+    circleNodes: ["Detail Title", "Detail Title", "Detail Title", "Detail Title", "Detail Title", "Detail Title"]
+  }
+};
+
+// Network Visualization
+export const visionNetworkData = {
+  KOR: {
+    nodes: [
+      {
+        id: "2080",
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트 템플릿과 구글 슬라이드를 다양한 스타일과 디자인으로 제공합니다.",
+        size: "small"
+      },
+      {
+        id: "3050", 
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트 템플릿과 구글 슬라이드를 다양한 스타일과 디자인으로 제공합니다.",
+        size: "medium"
+      },
+      {
+        id: "7020",
+        title: "상세 타이틀", 
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트 템플릿과 구글 슬라이드를 다양한 스타일과 디자인으로 제공합니다.",
+        size: "large"
+      },
+      {
+        id: "9000",
+        title: "상세 타이틀",
+        description: "프레젠테이션의 가치를 향상시킬 수 있는 파워포인트 템플릿과 구글 슬라이드를 다양한 스타일과 디자인으로 제공합니다.",
+        size: "small",
+        isTarget: true
+      }
+    ]
+  },
+  ENG: {
+    nodes: [
+      {
+        id: "2080",
+        title: "Detail Title",
+        description: "We provide PowerPoint templates and Google Slides that can enhance the value of presentations in various styles and designs.",
+        size: "small"
+      },
+      {
+        id: "3050",
+        title: "Detail Title", 
+        description: "We provide PowerPoint templates and Google Slides that can enhance the value of presentations in various styles and designs.",
+        size: "medium"
+      },
+      {
+        id: "7020",
+        title: "Detail Title",
+        description: "We provide PowerPoint templates and Google Slides that can enhance the value of presentations in various styles and designs.", 
+        size: "large"
+      },
+      {
+        id: "9000",
+        title: "Detail Title",
+        description: "We provide PowerPoint templates and Google Slides that can enhance the value of presentations in various styles and designs.",
+        size: "small",
+        isTarget: true
+      }
+    ]
+  }
+};
+
 // New strategy section data
 export const visionStrategyText = {
   KOR: {
@@ -161,4 +347,3 @@ export const visionRndText = {
     rightBoxDesc: "Phased ITEM Launching / Commercialization",
   },
 };
-
