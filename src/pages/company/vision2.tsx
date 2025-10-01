@@ -223,22 +223,22 @@ export default function Vision2Page() {
                 {/* Cross lines gradiasi */}
                 <line x1="260" y1="40" x2="260" y2="480" stroke="url(#lineGrad)" strokeWidth="3"/>
                 <line x1="40" y1="260" x2="480" y2="260" stroke="url(#lineGrad)" strokeWidth="3"/>
-                {/* Texts (smaller font) */}
-                <text x="130" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                {/* Texts (font size +7%, center shift 10%) */}
+                <text x="143" y="148" textAnchor="middle" fontSize="21.4" fill="#fff" fontWeight="600">
                   {quadrants[0].label}
-                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[0].en})`}</tspan>
+                  <tspan x="143" dy="1.2em" fontSize="13.9">{`(${quadrants[0].en})`}</tspan>
                 </text>
-                <text x="390" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                <text x="377" y="148" textAnchor="middle" fontSize="21.4" fill="#fff" fontWeight="600">
                   {quadrants[1].label}
-                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[1].en})`}</tspan>
+                  <tspan x="377" dy="1.2em" fontSize="13.9">{`(${quadrants[1].en})`}</tspan>
                 </text>
-                <text x="130" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                <text x="143" y="382" textAnchor="middle" fontSize="21.4" fill="#fff" fontWeight="600">
                   {quadrants[2].label}
-                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[2].en})`}</tspan>
+                  <tspan x="143" dy="1.2em" fontSize="13.9">{`(${quadrants[2].en})`}</tspan>
                 </text>
-                <text x="390" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                <text x="377" y="382" textAnchor="middle" fontSize="21.4" fill="#fff" fontWeight="600">
                   {quadrants[3].label}
-                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[3].en})`}</tspan>
+                  <tspan x="377" dy="1.2em" fontSize="13.9">{`(${quadrants[3].en})`}</tspan>
                 </text>
               </svg>
             </div>
