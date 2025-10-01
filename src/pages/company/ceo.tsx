@@ -68,19 +68,16 @@ export default function CeoPage() {
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Foto tanda tangan */}
-              <div className="lg:ml-[1cm]">
-                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
-                  <Image
-                    src={ceoSignImg}
-                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                    fill
-                    priority
-                    className="object-contain"
-                    sizes="(min-width:1024px) 50vw, 90vw"
-                  />
+              {/* Border + Signature — naikkan 2cm pada laptop */}
+              <footer className="mt-6 lg:-mt-[2cm] lg:ml-[1cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
+                <div className="text-xs font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
+                  {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
-              </div>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm sm:text-base">
+                  <span className="text-gray-600">{signatureTitle}</span>
+                  <strong className="font-semibold text-slate-900">{signatureName}</strong>
+                </div>
+              </footer>
 
               {/* Closing text */}
               {closing && (
@@ -91,10 +88,10 @@ export default function CeoPage() {
 
               {/* Border + Signature — naikkan 2cm pada laptop */}
               <footer className="mt-6 lg:-mt-[2cm] lg:ml-[1cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
-                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
+                <div className="text-xs font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
                   {lang === "KOR" ? "Signature" : "Signature"}
                 </div>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm sm:text-base">
                   <span className="text-gray-600">{signatureTitle}</span>
                   <strong className="font-semibold text-slate-900">{signatureName}</strong>
                 </div>

@@ -277,7 +277,7 @@ export default function Vision2Page() {
               </svg>
             </motion.div>
           </div>
-          {/* Core Values Section - left align, same max width, animated, sejajar Vision & RND */}
+          {/* Core Values Section - judul sejajar dengan card pertama, card membesar, gap antar card kecil */}
           <div className="w-full pt-16">
             <div className="max-w-[1400px] mx-auto px-4 md:px-8">
               <motion.h3
@@ -286,7 +286,7 @@ export default function Vision2Page() {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
                 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
-                style={{ marginLeft: 0 }} // sejajar Vision & RND
+                style={{ marginLeft: "0.5rem" }} // sejajar dengan kotak pertama
               >
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
               </motion.h3>
@@ -302,7 +302,7 @@ export default function Vision2Page() {
                     transition: { staggerChildren: 0.15, delayChildren: 0.2 },
                   },
                 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+                className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3"
               >
                 {coreValues.map((cv, idx) => {
                   const icons = [Users, Lightbulb, Layers, FlaskConical];
@@ -313,15 +313,15 @@ export default function Vision2Page() {
                       initial={{ opacity: 0, scale: 0.95, y: 24 }}
                       whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ duration: 0.6 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
-                      className="rounded-2xl border border-sky-100 bg-white p-4 md:p-5 shadow flex flex-col items-center"
-                      style={{ minWidth: 0, maxWidth: 220, margin: "0 auto" }}
+                      className="rounded-2xl border border-sky-100 bg-white px-6 py-7 shadow flex flex-col items-center"
+                      style={{ minWidth: 0, maxWidth: 320, margin: "0 auto" }}
                     >
                       <motion.div
                         whileHover={{ scale: 1.08, rotate: 2 }}
                         transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                        className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
+                        className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
                       >
-                        <Icon className="h-6 w-6 md:h-7 md:w-7" />
+                        <Icon className="h-7 w-7" />
                       </motion.div>
                       <h4 className="text-base md:text-lg font-semibold text-center text-slate-900">
                         {cv.title}
@@ -337,11 +337,10 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* R&D Vision with Image - left align title, animated */}
+                {/* R&D Vision with Image - left align title, animated, OPEN INNOVATION not in shape, font same as Vision */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-              {/* Judul R&D bilingual, font sama dengan Vision */}
               <motion.h2
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -360,7 +359,7 @@ export default function Vision2Page() {
               >
                 {rnd.subtitle}
               </motion.h3>
-              {/* OPEN INNOVATION bilingual, font sama Vision, tidak dalam shape */}
+              {/* OPEN INNOVATION title, font same as Vision, bilingual */}
               <motion.h2
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -368,7 +367,7 @@ export default function Vision2Page() {
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
                 className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
               >
-                {lang === "KOR" ? "오픈 이노베이션" : "OPEN INNOVATION"}
+                {lang === "KOR" ? "OPEN INNOVATION" : "OPEN INNOVATION"}
               </motion.h2>
               <motion.div
                 initial="hidden"
