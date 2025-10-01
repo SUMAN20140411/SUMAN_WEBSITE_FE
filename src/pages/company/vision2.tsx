@@ -31,6 +31,7 @@ const stagger = {
     transition: { staggerChildren: 0.15, delayChildren: 0.2 }
   },
 };
+
 export default function Vision2Page() {
   const { lang } = useLangStore();
 
@@ -45,7 +46,6 @@ export default function Vision2Page() {
   // Example images (replace with your actual images)
   const images = [
     "/images/company/vision_banner.jpg",
-    "/images/company/vision_team.jpg",
     "/images/business/process/coreKor2.png",
     "/images/business/process/FLOWKOREA.png",
     "/images/company/vision_factory.jpg",
@@ -73,7 +73,7 @@ export default function Vision2Page() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }} // FIX
+              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
               className="space-y-6"
             >
               <span className="inline-block rounded-full bg-sky-100 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-sky-600 mb-4">
@@ -84,9 +84,7 @@ export default function Vision2Page() {
                 <span className="block text-slate-900">{overview.blackTitle}</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-600 leading-relaxed mt-4">
-                {lang === "KOR"
-                  ? "고객의 니즈를 총체적으로 해결하는 토탈 솔루션 기업으로의 여정을 시각화했습니다."
-                  : "We visualise our journey toward becoming a total solution partner that answers every customer demand."}
+                {strategy.mainGoal}
               </p>
             </motion.div>
             <motion.div
@@ -94,58 +92,17 @@ export default function Vision2Page() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
-              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100"
+              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white"
             >
               <Image
                 src={images[1]}
-                alt="Vision Team"
+                alt="Core Capabilities"
                 width={600}
                 height={400}
-                className="object-cover w-full h-full"
+                className="object-contain w-full h-full"
               />
             </motion.div>
           </div>
-        </section>
-
-        {/* Highlight Cards with Icons */}
-        <section className="py-10 px-4 md:px-8 bg-gradient-to-r from-white via-sky-50 to-slate-100">
-          <motion.div
-            className="grid gap-6 sm:grid-cols-2 md:grid-cols-4 max-w-6xl mx-auto"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={stagger}
-          >
-            {(lang === "KOR"
-              ? [
-                  { icon: Globe2, title: "글로벌 기술 확장", desc: "핵심 역량을 기반으로 글로벌 솔루션 네트워크를 구축합니다." },
-                  { icon: Handshake, title: "파트너십 강화", desc: "산학연 협업으로 혁신적인 비즈니스 기회를 발굴합니다." },
-                  { icon: Cpu, title: "스마트 제조 혁신", desc: "스마트 공정과 데이터 기반 운영으로 생산성을 높입니다." },
-                  { icon: Leaf, title: "지속 가능한 가치", desc: "ESG와 품질 중심 경영으로 장기적인 신뢰를 만들어갑니다." },
-                ]
-              : [
-                  { icon: Globe2, title: "Global Technology Reach", desc: "Build a worldwide solution network anchored in our core capabilities." },
-                  { icon: Handshake, title: "Stronger Partnerships", desc: "Create innovative business opportunities through strategic collaborations." },
-                  { icon: Cpu, title: "Smart Manufacturing", desc: "Boost productivity with smart processes and data-driven operations." },
-                  { icon: Leaf, title: "Sustainable Value", desc: "Deliver long-term trust with ESG- and quality-focused management." },
-                ]
-            ).map((card, idx) => {
-              const Icon = card.icon;
-              return (
-                <motion.div
-                  key={card.title}
-                  transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }} // FIX
-                  className="rounded-2xl border border-sky-100 bg-white p-6 shadow hover:shadow-lg transition-shadow flex flex-col items-center"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3">
-                    <Icon className="h-7 w-7" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-center">{card.title}</h3>
-                  <p className="text-sm text-slate-600 text-center mt-2">{card.desc}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
         </section>
 
         {/* Timeline Diagram for Milestones */}
@@ -174,14 +131,14 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* Strategy Section with Image */}
+        {/* Strategy Section with Diagram */}
         <section className="relative py-16 px-4 md:px-8 bg-gradient-to-br from-sky-50 via-white to-slate-100">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }} // FIX
+              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
               className="space-y-6"
             >
               <span className="text-sm font-semibold uppercase tracking-widest text-sky-600">
@@ -192,9 +149,14 @@ export default function Vision2Page() {
                 <p className="text-sm font-semibold uppercase tracking-widest text-sky-500">
                   {strategy.neoTitle}
                 </p>
-                <p className="mt-4 whitespace-pre-line text-base md:text-lg leading-relaxed text-slate-700">
-                  {strategy.mainGoal}
-                </p>
+                <ul className="mt-4 space-y-2 text-base md:text-lg leading-relaxed text-slate-700">
+                  {strategy.strategicPoints.map((point, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <span className="inline-block h-2 w-2 rounded-full bg-sky-400" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
             <motion.div
@@ -202,14 +164,14 @@ export default function Vision2Page() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
-              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100"
+              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white"
             >
               <Image
                 src={images[2]}
-                alt="Core Capabilities"
+                alt="Process Flow"
                 width={600}
                 height={400}
-                className="object-contain w-full h-full bg-white"
+                className="object-contain w-full h-full"
               />
             </motion.div>
           </div>
@@ -221,15 +183,13 @@ export default function Vision2Page() {
             {[
               {
                 icon: Target,
-                value: lang === "KOR" ? "600억원" : "600B KRW",
+                value: lang === "KOR" ? "600억원" : "60B KRW",
                 label: lang === "KOR" ? "목표 매출액" : "Target Revenue",
-                image: images[3],
               },
               {
                 icon: LineChart,
-                value: lang === "KOR" ? "150억원" : "150B KRW",
+                value: lang === "KOR" ? "150억원" : "15B KRW",
                 label: lang === "KOR" ? "목표 순이익" : "Target Net Profit",
-                image: images[4],
               },
             ].map((card, idx) => {
               const Icon = card.icon;
@@ -239,24 +199,13 @@ export default function Vision2Page() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
-                  className="flex flex-col md:flex-row items-center gap-6 rounded-2xl border border-sky-100 bg-white p-6 shadow"
+                  className="flex flex-col items-center gap-4 rounded-2xl border border-sky-100 bg-white p-6 shadow"
                 >
-                  <div className="flex flex-col items-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-2">
-                      <Icon className="h-7 w-7" />
-                    </div>
-                    <span className="text-3xl font-extrabold">{card.value}</span>
-                    <p className="text-sm text-slate-500">{card.label}</p>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-2">
+                    <Icon className="h-7 w-7" />
                   </div>
-                  <div className="w-full md:w-40 h-32 rounded-xl overflow-hidden border border-sky-100">
-                    <Image
-                      src={card.image}
-                      alt={card.label}
-                      width={160}
-                      height={128}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
+                  <span className="text-3xl font-extrabold">{card.value}</span>
+                  <p className="text-sm text-slate-500">{card.label}</p>
                 </motion.div>
               );
             })}
@@ -313,7 +262,7 @@ export default function Vision2Page() {
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10">
               <Image
-                src={images[4]}
+                src={images[3]}
                 alt="R&D Vision"
                 width={600}
                 height={400}
