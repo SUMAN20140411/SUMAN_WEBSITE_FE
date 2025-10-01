@@ -237,7 +237,101 @@ export default function Vision2Page() {
             })}
           </div>
         </section>
+        <section className="py-16 px-4 md:px-8">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center">
+    {/* LEFT: Diagram */}
+    <motion.div
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
+      className="flex-shrink-0 flex flex-col items-center"
+      style={{ minWidth: 340 }}
+    >
+      {/* Main Cylinder */}
+      <div className="relative flex flex-col items-center">
+        {/* Top oval */}
+        <div className="absolute left-1/2 -translate-x-1/2 -top-8 z-10">
+          <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full px-8 py-3 shadow-lg border-4 border-white text-center">
+            <span className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wide">NEO ’24</span>
+            <br />
+            <span className="text-xl font-bold text-white drop-shadow-lg">5<sup>th</sup> 6015</span>
+          </div>
+        </div>
+        {/* Cylinder */}
+        <div className="w-[220px] h-[160px] bg-gradient-to-b from-gray-300 via-gray-100 to-gray-400 rounded-full shadow-lg border-2 border-gray-400 relative flex items-end justify-center overflow-visible">
+          {/* Top surface */}
+          <div className="absolute left-1/2 -translate-x-1/2 -top-8 w-[220px] h-[50px] bg-gradient-to-r from-orange-400 to-orange-600 rounded-full z-0 opacity-80"></div>
+        </div>
+        {/* Bottom arc with values */}
+        <div className="relative w-[340px] h-[90px] mt-[-30px] flex items-center justify-between">
+          {/* Arc background */}
+          <svg width="340" height="90" viewBox="0 0 340 90" className="absolute left-0 top-0 z-0">
+            <path
+              d="M10,80 Q170,-30 330,80"
+              fill="none"
+              stroke="#1e293b"
+              strokeWidth="30"
+              opacity="0.25"
+            />
+          </svg>
+          {/* Value circles */}
+          {[
+            { label: "즐겁게", en: "Enjoy", color: "bg-sky-700", accent: "text-red-500", x: 30 },
+            { label: "새롭게", en: "Neo", color: "bg-sky-400", accent: "text-red-500", x: 110 },
+            { label: "치열하게", en: "Intensely", color: "bg-gray-700", accent: "text-red-500", x: 200 },
+            { label: "빠르게", en: "Fastly", color: "bg-orange-400", accent: "text-red-500", x: 280 },
+          ].map((item, idx) => (
+            <motion.div
+              key={item.label}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
+              className={`absolute z-10 flex flex-col items-center justify-center w-24 h-24 rounded-full shadow-lg ${item.color} text-white font-bold text-lg`}
+              style={{ left: item.x, top: 10 }}
+            >
+              <span className="leading-tight">{item.label}</span>
+              <span className={`text-base font-normal mt-1 ${item.accent}`}>({item.en})</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
 
+    {/* RIGHT: Title & Cards */}
+    <div className="flex-1 flex flex-col items-start">
+      {/* Big Title */}
+      <motion.h2
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+        className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight drop-shadow-lg"
+        style={{ letterSpacing: '0.02em' }}
+      >
+        새롭게 도약하고 성장하는 원년 2024년<br />
+        5년후 매출액 600억원, 순이익 150억을 달성하는<br />
+        <span className="text-sky-600">“확신(Confidence)”</span>의 <span className="text-blue-700">“종합 솔루션 서비스 회사”</span>로 성장
+      </motion.h2>
+      {/* Cards */}
+      <div className="flex flex-col gap-4 w-full mt-2">
+        {[
+          "2nd시험센터/반도체정밀가공진입(‘24)",
+          "2nd전지모듈/장비, 모빌리티 진입(‘26)",
+          "매출 600억/순이익 150억 달성(’28)",
+        ].map((text, idx) => (
+          <motion.div
+            key={text}
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
+            className="rounded-xl bg-white shadow border border-sky-100 px-6 py-4 text-lg font-semibold text-slate-700"
+          >
+            {text}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-sky-50 via-white to-slate-100">
           <div className="max-w-5xl mx-auto">
             {/* Diagram utama */}
