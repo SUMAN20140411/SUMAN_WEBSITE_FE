@@ -205,6 +205,7 @@ export default function Vision2Page() {
                     ))}
                   </div>
                 </div>
+                
                 {/* Years & Descriptions */}
                 <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
                   {milestones.map((item, idx) => (
@@ -276,16 +277,16 @@ export default function Vision2Page() {
               </svg>
             </motion.div>
           </div>
-          {/* Core Values Section - left align, same max width, animated, sejajar Vision */}
+          {/* Core Values Section - left align, same max width, animated, sejajar Vision & RND */}
           <div className="w-full pt-16">
-            <div className="max-w-[1400px] mx-auto px-4">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8">
               <motion.h3
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
                 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
-                style={{ marginLeft: 0 }} // sejajar Vision
+                style={{ marginLeft: 0 }} // sejajar Vision & RND
               >
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
               </motion.h3>
@@ -301,7 +302,7 @@ export default function Vision2Page() {
                     transition: { staggerChildren: 0.15, delayChildren: 0.2 },
                   },
                 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
               >
                 {coreValues.map((cv, idx) => {
                   const icons = [Users, Lightbulb, Layers, FlaskConical];
@@ -312,19 +313,20 @@ export default function Vision2Page() {
                       initial={{ opacity: 0, scale: 0.95, y: 24 }}
                       whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ duration: 0.6 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
-                      className="rounded-2xl border border-sky-100 bg-white p-6 shadow flex flex-col items-center"
+                      className="rounded-2xl border border-sky-100 bg-white p-4 md:p-5 shadow flex flex-col items-center"
+                      style={{ minWidth: 0, maxWidth: 220, margin: "0 auto" }}
                     >
                       <motion.div
                         whileHover={{ scale: 1.08, rotate: 2 }}
                         transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                        className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
+                        className="flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
                       >
-                        <Icon className="h-7 w-7" />
+                        <Icon className="h-6 w-6 md:h-7 md:w-7" />
                       </motion.div>
-                      <h4 className="text-lg font-semibold text-center text-slate-900">
+                      <h4 className="text-base md:text-lg font-semibold text-center text-slate-900">
                         {cv.title}
                       </h4>
-                      <p className="text-sm text-slate-600 text-center whitespace-pre-line mt-2">
+                      <p className="text-xs md:text-sm text-slate-600 text-center whitespace-pre-line mt-2">
                         {cv.desc}
                       </p>
                     </motion.div>
@@ -335,10 +337,11 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* R&D Vision with Image - left align title, animated, OPEN INNOVATION not in shape, font same as Vision */}
+        {/* R&D Vision with Image - left align title, animated */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
+              {/* Judul R&D bilingual, font sama dengan Vision */}
               <motion.h2
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -357,7 +360,7 @@ export default function Vision2Page() {
               >
                 {rnd.subtitle}
               </motion.h3>
-              {/* OPEN INNOVATION title, font same as Vision, bilingual */}
+              {/* OPEN INNOVATION bilingual, font sama Vision, tidak dalam shape */}
               <motion.h2
                 initial={{ opacity: 0, x: -32 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -365,7 +368,7 @@ export default function Vision2Page() {
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
                 className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
               >
-                {lang === "KOR" ? "OPEN INNOVATION" : "OPEN INNOVATION"}
+                {lang === "KOR" ? "오픈 이노베이션" : "OPEN INNOVATION"}
               </motion.h2>
               <motion.div
                 initial="hidden"
@@ -409,7 +412,7 @@ export default function Vision2Page() {
               className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10"
             >
               <Image
-                src={images[3]}
+                src="/images/careers/philosophy/communication.png"
                 alt="R&D Vision"
                 width={600}
                 height={400}
