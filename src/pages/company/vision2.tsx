@@ -242,17 +242,18 @@ export default function Vision2Page() {
                 </text>
               </svg>
             </div>
-      
-            {/* Core Values */}
+          </div>
+        </section>
+        {/* Core Values Section - move here, same background as Vision */}
+        <section className="w-full py-16 px-2 md:px-0 bg-gradient-to-br from-[#e3f4fb] via-white to-[#7fd3f4]">
+          <div className="max-w-[1400px] mx-auto">
             <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-center">
               {lang === "KOR" ? "핵심 가치" : "Core Values"}
             </h3>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {coreValues.map((cv, idx) => {
                 const icons = [Users, Lightbulb, Layers, FlaskConical];
                 const Icon = icons[idx % icons.length];
-
                 return (
                   <motion.div
                     key={cv.title}
@@ -264,11 +265,9 @@ export default function Vision2Page() {
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3">
                       <Icon className="h-7 w-7" />
                     </div>
-
                     <h4 className="text-lg font-semibold text-center text-slate-900">
                       {cv.title}
                     </h4>
-
                     <p className="text-sm text-slate-600 text-center whitespace-pre-line mt-2">
                       {cv.desc}
                     </p>
@@ -279,18 +278,16 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* R&D Vision with Image */}
-        <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        {/* R&D Vision with Image - dark version of Vision background */}
+        <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
               <span className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4">
                 {rnd.title}
               </span>
-
               <h3 className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6">
                 {rnd.subtitle}
               </h3>
-
               <div className="grid gap-6">
                 {[rnd.leftBox1Title, rnd.leftBox2Title].map((title, i) => (
                   <div
@@ -300,7 +297,6 @@ export default function Vision2Page() {
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-sky-200">
                       {i === 0 ? <Cpu className="h-6 w-6" /> : <FlaskConical className="h-6 w-6" />}
                     </div>
-
                     <div>
                       <h4 className="text-lg font-semibold text-white">{title}</h4>
                       <p className="mt-2 text-sm text-slate-200 leading-relaxed">
@@ -311,7 +307,6 @@ export default function Vision2Page() {
                 ))}
               </div>
             </div>
-
             <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10">
               <Image
                 src={images[3]}
@@ -320,16 +315,13 @@ export default function Vision2Page() {
                 height={400}
                 className="object-cover w-full h-full"
               />
-
               <div className="p-6">
                 <p className="text-sm font-semibold uppercase tracking-widest text-sky-200">
                   {rnd.rightBoxTop}
                 </p>
-
                 <h4 className="text-2xl md:text-3xl font-bold text-white mt-2">
                   {rnd.rightBoxTitle}
                 </h4>
-
                 <p className="text-sm md:text-base whitespace-pre-line text-slate-100 leading-relaxed mt-2">
                   {rnd.rightBoxDesc}
                 </p>
