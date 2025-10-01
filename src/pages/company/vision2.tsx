@@ -70,40 +70,26 @@ export default function Vision2Page() {
     "/images/company/vision_factory.jpg",
   ];
   
-  // Circle values
-   const visionTitle = lang === "KOR"
+
+// Vision title and subtitle
+  const visionTitle = lang === "KOR"
     ? <>
         2024 <b>도약의 원년</b>—5년 내<br />
-        <b>매출 600억·순이익 150억 달성,</b><br />
-        <b>‘확신(Confidence)’의 종합 솔루션 서비스 기업으로 성장</b>
+        <b>매출 600억</b>
+        <span className="text-sky-400 font-bold">·순이익 150억 달성,</span><br />
+        <span className="text-sky-400 font-bold">‘확신(Confidence)’</span>
+        <span className="text-sky-400 font-bold">의 종합 솔루션 서비스 기업으로 성장</span>
       </>
     : <>
         2024 <b>Leap Year</b>—Within 5 Years<br />
-        <b>Revenue 60B KRW · Net Profit 15B Achieved,</b><br />
-        <b>‘Confidence’-based Total Solution Service Company Growth</b>
+        <b>Revenue 60B KRW</b>
+        <span className="text-sky-400 font-bold">·Net Profit 15B Achieved,</span><br />
+        <span className="text-sky-400 font-bold">‘Confidence’</span>
+        <span className="text-sky-400 font-bold">-based Total Solution Service Company Growth</span>
       </>;
 
   // Timeline data
-  const timeline = [
-    {
-      year: "2024",
-      desc: lang === "KOR"
-        ? "이차전지 시험센터 구축\n반도체 정밀가공분야 진입"
-        : "Establish secondary battery test center\nEnter semiconductor precision processing",
-    },
-    {
-      year: "2026",
-      desc: lang === "KOR"
-        ? "전지모듈, 장비 및\n모빌리티 분야 확장"
-        : "Expand battery module, equipment\nand mobility field",
-    },
-    {
-      year: "2028",
-      desc: lang === "KOR"
-        ? "종합 솔루션 서비스\n회사로의 성장"
-        : "Growth into total solution\nservice company",
-    },
-  ];
+
 
   // Quadrant values
   const quadrants = lang === "KOR"
@@ -119,22 +105,8 @@ export default function Vision2Page() {
         { label: "Intensely", en: "Intensely" },
         { label: "Fastly", en: "Fastly" },
       ];
-
-  // Circle quadrant values
-  const circleValues = lang === "KOR"
-    ? [
-        { label: "즐겁게", en: "Enjoy" },
-        { label: "새롭게", en: "Neo" },
-        { label: "치열하게", en: "Intensely" },
-        { label: "빠르게", en: "Fastly" },
-      ]
-    : [
-        { label: "Enjoy", en: "Enjoy" },
-        { label: "Neo", en: "Neo" },
-        { label: "Intensely", en: "Intensely" },
-        { label: "Fastly", en: "Fastly" },
-      ];
-
+  const timeline = milestones;
+ 
   // Timeline colors
   const timelineColors = ["#0a2540", "#17416d", "#38bdf8"];
 
@@ -172,31 +144,48 @@ export default function Vision2Page() {
             <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
           </div>
         </div>
+        
         {/* Vision Section */}
-        <section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1200px] mx-auto">
+        <section className="w-full flex flex-col lg:flex-row items-center justify-center py-20 px-2 md:px-0">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
             {/* LEFT: Vision & Timeline */}
-            <div className="flex flex-col items-center justify-center w-full lg:w-[600px]">
-              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-center">
+            <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
+              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">
                 {lang === "KOR" ? "Our Vision" : "Our Vision"}
               </h2>
-              <div className="mb-10 text-center">
+              <div className="mb-10 text-left w-full">
                 <div className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
                   {visionTitle}
                 </div>
               </div>
               {/* Timeline */}
               <div className="w-full flex flex-col items-center mb-10">
+                {/* Target label */}
+                <div className="w-full text-center mb-2">
+                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">TARGET</span>
+                </div>
                 {/* Arrow above timeline */}
                 <div className="flex justify-center w-full relative mb-2">
-                  <svg width="340" height="30" className="block absolute left-1/2 -translate-x-1/2 -top-6 z-10">
+                  <svg width="340" height="30" className="block absolute left-1/2 -translate-x-1/2 -top-7 z-10">
                     <polygon points="170,0 160,18 180,18" fill="#38bdf8" />
                   </svg>
                   <div className="flex justify-between w-[340px] mx-auto">
-                    {/* 3 lines */}
-                    <div className="w-1 h-8 bg-[#17416d] rounded-full" />
-                    <div className="w-1 h-8 bg-[#38bdf8] rounded-full" />
-                    <div className="w-1 h-8 bg-[#bae6fd] rounded-full" />
+                    {/* 3 gradiasi garis */}
+                    <div className="w-24 h-5 rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
+                      }}
+                    />
+                    <div className="w-24 h-5 rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
+                      }}
+                    />
+                    <div className="w-24 h-5 rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)"
+                      }}
+                    />
                   </div>
                 </div>
                 {/* Years & Descriptions */}
@@ -204,8 +193,8 @@ export default function Vision2Page() {
                   {timeline.map((item, idx) => (
                     <div key={item.year} className="flex flex-col items-center w-[100px]">
                       <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">{item.year}</div>
-                      <div className="text-xs md:text-sm text-gray-500 text-center whitespace-pre-line">
-                        {item.desc}
+                      <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
+                        {item.text}
                       </div>
                     </div>
                   ))}
@@ -222,9 +211,14 @@ export default function Vision2Page() {
               >
                 {/* Gradient */}
                 <defs>
-                  <linearGradient id="quadGradBig" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#bae6fd" />
-                    <stop offset="100%" stopColor="#38bdf8" />
+                  <radialGradient id="quadGradBig" cx="50%" cy="50%" r="70%">
+                    <stop offset="0%" stopColor="#e3f4fb" />
+                    <stop offset="60%" stopColor="#38bdf8" />
+                    <stop offset="100%" stopColor="#009fe3" />
+                  </radialGradient>
+                  <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#fff" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#fff" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
                 {/* Four Quadrants */}
@@ -232,113 +226,31 @@ export default function Vision2Page() {
                 <path d="M260,260 L480,260 A220,220 0 0,1 260,480 Z" fill="url(#quadGradBig)" />
                 <path d="M260,260 L260,480 A220,220 0 0,1 40,260 Z" fill="url(#quadGradBig)" />
                 <path d="M260,260 L40,260 A220,220 0 0,1 260,40 Z" fill="url(#quadGradBig)" />
-                {/* Cross lines */}
-                <line x1="260" y1="40" x2="260" y2="480" stroke="#fff" strokeWidth="2"/>
-                <line x1="40" y1="260" x2="480" y2="260" stroke="#fff" strokeWidth="2"/>
+                {/* Cross lines gradiasi */}
+                <line x1="260" y1="40" x2="260" y2="480" stroke="url(#lineGrad)" strokeWidth="3"/>
+                <line x1="40" y1="260" x2="480" y2="260" stroke="url(#lineGrad)" strokeWidth="3"/>
                 {/* Texts (smaller font) */}
-                <text x="120" y="140" textAnchor="middle" fontSize="22" fill="#fff" fontWeight="500">
+                <text x="130" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
                   {quadrants[0].label}
-                  <tspan x="120" dy="1.2em" fontSize="14">{`(${quadrants[0].en})`}</tspan>
+                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[0].en})`}</tspan>
                 </text>
-                <text x="400" y="140" textAnchor="middle" fontSize="22" fill="#fff" fontWeight="500">
+                <text x="390" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
                   {quadrants[1].label}
-                  <tspan x="400" dy="1.2em" fontSize="14">{`(${quadrants[1].en})`}</tspan>
+                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[1].en})`}</tspan>
                 </text>
-                <text x="120" y="400" textAnchor="middle" fontSize="22" fill="#fff" fontWeight="500">
+                <text x="130" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
                   {quadrants[2].label}
-                  <tspan x="120" dy="1.2em" fontSize="14">{`(${quadrants[2].en})`}</tspan>
+                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[2].en})`}</tspan>
                 </text>
-                <text x="400" y="400" textAnchor="middle" fontSize="22" fill="#fff" fontWeight="500">
+                <text x="390" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
                   {quadrants[3].label}
-                  <tspan x="400" dy="1.2em" fontSize="14">{`(${quadrants[3].en})`}</tspan>
+                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[3].en})`}</tspan>
                 </text>
               </svg>
             </div>
           </div>
         </section>
-        {/* Vision Section */}
-        <section className="w-full flex flex-col lg:flex-row items-center justify-between py-16 px-4 md:px-12 gap-10">
-          {/* Left: Title & Timeline */}
-          <div className="flex-1 flex flex-col justify-center items-start w-full max-w-2xl">
-            <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-2">
-              {lang === "KOR" ? "Our Vision" : "Our Vision"}
-            </h2>
-            <div className="mb-8">
-              <div className="text-2xl md:text-4xl font-bold leading-tight mb-2 text-slate-900">
-                {visionTitle}
-              </div>
-            </div>
-            {/* Timeline Bar */}
-            <div className="w-full mb-8">
-              <div className="flex items-center w-full mb-2">
-                <div className="flex-1 flex items-center gap-2">
-                  <div className="flex-1 h-3 rounded-full bg-[#17416d]" />
-                  <div className="flex-1 h-3 rounded-full bg-[#17416d]" />
-                  <div className="flex-1 h-3 rounded-full bg-[#38bdf8]" />
-                  <div className="flex-1 h-3 rounded-full bg-[#bae6fd]" />
-                </div>
-                {/* Arrow */}
-                <svg width="40" height="20" className="ml-2">
-                  <line x1="0" y1="10" x2="32" y2="10" stroke="#cbd5e1" strokeWidth="3" />
-                  <polygon points="32,6 40,10 32,14" fill="#cbd5e1" />
-                </svg>
-              </div>
-              {/* Timeline Years & Descriptions */}
-              <div className="flex items-start w-full mt-2">
-                {milestones.map((m, idx) => (
-                  <div key={m.year} className="flex-1 flex flex-col items-center">
-                    <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1">{m.year}</div>
-                    <div className="text-sm md:text-base text-gray-500 text-center whitespace-pre-line">
-                      {m.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* Right: Large Circle with 4 Quadrants */}
-          <div className="flex-shrink-0 flex items-center justify-center w-full lg:w-[420px] h-[420px]">
-            <svg
-              viewBox="0 0 420 420"
-              width="100%"
-              height="100%"
-              className="max-w-[420px] max-h-[420px]"
-            >
-              {/* Gradients */}
-              <defs>
-                <linearGradient id="quadGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#bae6fd" />
-                  <stop offset="100%" stopColor="#38bdf8" />
-                </linearGradient>
-              </defs>
-              {/* Four Quadrants */}
-              <path d="M210,210 L210,30 A180,180 0 0,1 390,210 Z" fill="url(#quadGrad)" />
-              <path d="M210,210 L390,210 A180,180 0 0,1 210,390 Z" fill="url(#quadGrad)" />
-              <path d="M210,210 L210,390 A180,180 0 0,1 30,210 Z" fill="url(#quadGrad)" />
-              <path d="M210,210 L30,210 A180,180 0 0,1 210,30 Z" fill="url(#quadGrad)" />
-              {/* Cross lines */}
-              <line x1="210" y1="30" x2="210" y2="390" stroke="#fff" strokeWidth="2"/>
-              <line x1="30" y1="210" x2="390" y2="210" stroke="#fff" strokeWidth="2"/>
-              {/* Texts */}
-              <text x="110" y="120" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
-                {circleValues[0].label}
-                <tspan x="110" dy="1.2em" fontSize="18">{`(${circleValues[0].en})`}</tspan>
-              </text>
-              <text x="310" y="120" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
-                {circleValues[1].label}
-                <tspan x="310" dy="1.2em" fontSize="18">{`(${circleValues[1].en})`}</tspan>
-              </text>
-              <text x="110" y="320" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
-                {circleValues[2].label}
-                <tspan x="110" dy="1.2em" fontSize="18">{`(${circleValues[2].en})`}</tspan>
-              </text>
-              <text x="310" y="320" textAnchor="middle" fontSize="28" fill="#fff" fontWeight="500">
-                {circleValues[3].label}
-                <tspan x="310" dy="1.2em" fontSize="18">{`(${circleValues[3].en})`}</tspan>
-              </text>
-            </svg>
-          </div>
-        </section>
+        
 
         {/* Vision Modern Section (diagram + values) */}
         <section className="w-full flex flex-col lg:flex-row items-center justify-between py-16 px-4 md:px-12 gap-10">
@@ -408,9 +320,9 @@ export default function Vision2Page() {
           </div>
           {/* Right: Circles */}
           <div className="flex-shrink-0 grid grid-cols-2 gap-8">
-            {circleValues.map((item, idx) => (
+            {coreValues.map((item, idx) => (
               <motion.div
-                key={item.label}
+                key={item.title}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, amount: 0.5 }}
@@ -419,11 +331,7 @@ export default function Vision2Page() {
               >
                 <div className="flex items-center justify-center w-32 h-32 md:w-44 md:h-44 rounded-full bg-[#17416d]">
                   <span className="text-white text-lg md:text-2xl font-semibold text-center leading-tight">
-                    {item.label}
-                    <br />
-                    <span className="text-white text-base md:text-lg font-normal">
-                      ({item.en})
-                    </span>
+                    {item.title}
                   </span>
                 </div>
               </motion.div>
