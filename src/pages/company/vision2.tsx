@@ -108,7 +108,7 @@ export default function Vision2Page() {
   const timeline = milestones;
  
   // Timeline colors
-  const timelineColors = ["#0a2540", "#17416d", "#38bdf8"];
+  const timelineColors = ["#17416d", "#38bdf8", "#bae6fd"];
 
   return (
     <Layout>
@@ -144,6 +144,106 @@ export default function Vision2Page() {
             <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
           </div>
         </div>
+        {/* Vision Section */}
+        <section className="w-full flex flex-col lg:flex-row items-center justify-center py-20 px-2 md:px-0 bg-gradient-to-br from-[#e3f4fb] via-white to-[#7fd3f4]">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
+            {/* LEFT: Vision & Timeline */}
+            <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
+              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">
+                {lang === "KOR" ? "Our Vision" : "Our Vision"}
+              </h2>
+              <div className="mb-10 text-left w-full">
+                <div className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
+                  {visionTitle}
+                </div>
+              </div>
+              {/* Timeline */}
+              <div className="w-full flex flex-col items-center mb-10">
+                {/* Target label */}
+                <div className="w-full text-center mb-2">
+                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">TARGET</span>
+                </div>
+                {/* Arrow above timeline */}
+                <div className="flex justify-center w-full relative mb-2">
+                  <svg width="100%" height="30" className="block absolute left-0 right-0 mx-auto -top-7 z-10" style={{maxWidth: '100%'}}>
+                    <polygon points="50%,0 47%,18 53%,18" fill="#38bdf8" />
+                  </svg>
+                  <div className="flex justify-between w-full mx-auto max-w-[700px]">
+                    {/* 3 gradiasi garis sepanjang container */}
+                    {timelineColors.map((color, idx) => (
+                      <div
+                        key={color}
+                        className="flex-1 h-5 rounded-full mx-1"
+                        style={{
+                          background: idx === 0
+                            ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
+                            : idx === 1
+                            ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
+                            : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)"
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Years & Descriptions */}
+                <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
+                  {milestones.map((item, idx) => (
+                    <div key={item.year} className="flex flex-col items-center flex-1">
+                      <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">{item.year}</div>
+                      <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
+                        {item.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* RIGHT: Quadrant Circle */}
+            <div className="flex items-center justify-center w-full lg:w-[520px] h-[520px]">
+              <svg
+                viewBox="0 0 520 520"
+                width="100%"
+                height="100%"
+                className="max-w-[520px] max-h-[520px]"
+              >
+                {/* Gradient for whole circle */}
+                <defs>
+                  <radialGradient id="quadGradBigAll" cx="50%" cy="50%" r="70%">
+                    <stop offset="0%" stopColor="#e3f4fb" />
+                    <stop offset="60%" stopColor="#38bdf8" />
+                    <stop offset="100%" stopColor="#009fe3" />
+                  </radialGradient>
+                  <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#fff" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#fff" stopOpacity="0.2" />
+                  </linearGradient>
+                </defs>
+                {/* Full circle with gradient */}
+                <circle cx="260" cy="260" r="220" fill="url(#quadGradBigAll)" />
+                {/* Cross lines gradiasi */}
+                <line x1="260" y1="40" x2="260" y2="480" stroke="url(#lineGrad)" strokeWidth="3"/>
+                <line x1="40" y1="260" x2="480" y2="260" stroke="url(#lineGrad)" strokeWidth="3"/>
+                {/* Texts (smaller font) */}
+                <text x="130" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                  {quadrants[0].label}
+                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[0].en})`}</tspan>
+                </text>
+                <text x="390" y="160" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                  {quadrants[1].label}
+                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[1].en})`}</tspan>
+                </text>
+                <text x="130" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                  {quadrants[2].label}
+                  <tspan x="130" dy="1.2em" fontSize="13">{`(${quadrants[2].en})`}</tspan>
+                </text>
+                <text x="390" y="370" textAnchor="middle" fontSize="20" fill="#fff" fontWeight="500">
+                  {quadrants[3].label}
+                  <tspan x="390" dy="1.2em" fontSize="13">{`(${quadrants[3].en})`}</tspan>
+                </text>
+              </svg>
+            </div>
+          </div>
+        </section>
         
         {/* Vision Section */}
         <section className="w-full flex flex-col lg:flex-row items-center justify-center py-20 px-2 md:px-0">
