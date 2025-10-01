@@ -81,8 +81,7 @@ export default function Vision2Page() {
         <span className="text-sky-400 font-bold">의 종합 솔루션 서비스 기업으로 성장</span>
       </>
     : <>
-        2024 <b>Leap Year</b>—Within 5 Years<br />
-        <b>Revenue 60B KRW</b>
+        2024 <b>Leap Year</b>—Within 5 Years <b>Revenue 60B KRW</b>
         <span className="text-sky-400 font-bold">·Net Profit 15B Achieved,</span><br />
         <span className="text-sky-400 font-bold">‘Confidence’</span>
         <span className="text-sky-400 font-bold">-based Total Solution Service Company Growth</span>
@@ -105,8 +104,8 @@ export default function Vision2Page() {
         { label: "Intensely", en: "Intensely" },
         { label: "Fastly", en: "Fastly" },
       ];
-  const timeline = milestones;
- 
+   const timeline = milestones;
+
   // Timeline colors
   const timelineColors = ["#17416d", "#38bdf8", "#bae6fd"];
 
@@ -115,7 +114,8 @@ export default function Vision2Page() {
       <Head>
         <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-            <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
+
+      <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
         <motion.div
           className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
           animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
@@ -141,99 +141,84 @@ export default function Vision2Page() {
           </div>
 
           <div className="relative z-20 -mt-2">
-            <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
+            <BreadcrumbSection
+              path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"}
+            />
           </div>
         </div>
-         {/* Vision + Core Values Section */}
+
         {/* Vision + Core Values Section */}
         <section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
           <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
             {/* LEFT: Vision & Timeline */}
             <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
-              {/* Vision Title - animated, left align, bilingual */}
-              <motion.h2
-                initial={{ opacity: 0, x: -32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full"
-              >
-                {lang === "KOR" ? "비전" : "Vision"}
-              </motion.h2>
-              {/* Vision Main Text - animated */}
-              <motion.div
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
-                className="mb-10 text-left w-full"
-              >
+              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">
+                {lang === "KOR" ? "Our Vision" : "Our Vision"}
+              </h2>
+
+              <div className="mb-10 text-left w-full">
                 <div className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
                   {visionTitle}
                 </div>
-              </motion.div>
-              {/* Timeline - animated */}
-              <motion.div
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
-                className="w-full flex flex-col items-center mb-10"
-              >
-                {/* Target label - black color */}
+              </div>
+
+              {/* Timeline */}
+              <div className="w-full flex flex-col items-center mb-10">
+                {/* Target label */}
                 <div className="w-full text-center mb-2">
-                  <span className="tracking-[0.3em] text-black text-lg md:text-xl font-semibold">TARGET</span>
+                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">
+                    TARGET
+                  </span>
                 </div>
+
                 {/* Arrow above timeline */}
                 <div className="flex justify-center w-full relative mb-2">
-                  <svg width="100%" height="30" className="block absolute left-0 right-0 mx-auto -top-7 z-10" style={{maxWidth: '100%'}}>
+                  <svg
+                    width="100%"
+                    height="30"
+                    className="block absolute left-0 right-0 mx-auto -top-7 z-10"
+                    style={{ maxWidth: "100%" }}
+                  >
                     <polygon points="50%,0 47%,18 53%,18" fill="#38bdf8" />
                   </svg>
+
                   <div className="flex justify-between w-full mx-auto max-w-[700px]">
+                    {/* 3 gradiasi garis sepanjang container */}
                     {timelineColors.map((color, idx) => (
                       <div
                         key={color}
                         className="flex-1 h-5 rounded-full mx-1"
                         style={{
-                          background: idx === 0
-                            ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
-                            : idx === 1
-                            ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
-                            : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)"
+                          background:
+                            idx === 0
+                              ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
+                              : idx === 1
+                              ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
+                              : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)",
                         }}
                       />
                     ))}
                   </div>
                 </div>
-                
+
                 {/* Years & Descriptions */}
                 <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
                   {milestones.map((item, idx) => (
-                    <motion.div
-                      key={item.year}
-                      initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.5 }}
-                      transition={{ duration: 0.5 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
-                      className="flex flex-col items-center flex-1"
-                    >
-                      <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">{item.year}</div>
+                    <div key={item.year} className="flex flex-col items-center flex-1">
+                      <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">
+                        {item.year}
+                      </div>
                       <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
                         {item.text}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             </div>
-            {/* RIGHT: Quadrant Circle - animated */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 32 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
-              className="flex items-center justify-center w-full lg:w-[520px] h-[520px]"
-            >
+
+            {/* RIGHT: Quadrant Circle */}
+            <div className="flex items-center justify-center w-full lg:w-[520px] h-[520px]">
               <svg
                 viewBox="0 0 520 520"
                 width="100%"
@@ -252,183 +237,133 @@ export default function Vision2Page() {
                     <stop offset="100%" stopColor="#fff" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
+
                 {/* Full circle with gradient */}
                 <circle cx="260" cy="260" r="220" fill="url(#quadGradBigAll)" />
+
                 {/* Cross lines gradiasi */}
-                <line x1="260" y1="40" x2="260" y2="480" stroke="url(#lineGrad)" strokeWidth="3"/>
-                <line x1="40" y1="260" x2="480" y2="260" stroke="url(#lineGrad)" strokeWidth="3"/>
+                <line x1="260" y1="40" x2="260" y2="480" stroke="url(#lineGrad)" strokeWidth="3" />
+                <line x1="40" y1="260" x2="480" y2="260" stroke="url(#lineGrad)" strokeWidth="3" />
+
                 {/* Texts (font size +7%, center shift 20%) */}
                 <text x="155" y="148" textAnchor="middle" fontSize="22.9" fill="#fff" fontWeight="600">
                   {quadrants[0].label}
-                  <tspan x="155" dy="1.2em" fontSize="14.9">{`(${quadrants[0].en})`}</tspan>
+                  <tspan x="155" dy="1.2em" fontSize="14.9">
+                    {`(${quadrants[0].en})`}
+                  </tspan>
                 </text>
                 <text x="365" y="148" textAnchor="middle" fontSize="22.9" fill="#fff" fontWeight="600">
                   {quadrants[1].label}
-                  <tspan x="365" dy="1.2em" fontSize="14.9">{`(${quadrants[1].en})`}</tspan>
+                  <tspan x="365" dy="1.2em" fontSize="14.9">
+                    {`(${quadrants[1].en})`}
+                  </tspan>
                 </text>
                 <text x="155" y="382" textAnchor="middle" fontSize="22.9" fill="#fff" fontWeight="600">
                   {quadrants[2].label}
-                  <tspan x="155" dy="1.2em" fontSize="14.9">{`(${quadrants[2].en})`}</tspan>
+                  <tspan x="155" dy="1.2em" fontSize="14.9">
+                    {`(${quadrants[2].en})`}
+                  </tspan>
                 </text>
                 <text x="365" y="382" textAnchor="middle" fontSize="22.9" fill="#fff" fontWeight="600">
                   {quadrants[3].label}
-                  <tspan x="365" dy="1.2em" fontSize="14.9">{`(${quadrants[3].en})`}</tspan>
+                  <tspan x="365" dy="1.2em" fontSize="14.9">
+                    {`(${quadrants[3].en})`}
+                  </tspan>
                 </text>
               </svg>
-            </motion.div>
+            </div>
           </div>
-          {/* Core Values Section - judul sejajar dengan card pertama, card membesar, gap antar card kecil */}
+
+          {/* Core Values Section - now inside Vision section, same background */}
           <div className="w-full pt-16">
-            <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-              <motion.h3
-                initial={{ opacity: 0, x: -32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
-                style={{ marginLeft: "0.5rem" }} // sejajar dengan kotak pertama
-              >
+            <div className="max-w-[1400px] mx-auto">
+              <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-center">
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
-              </motion.h3>
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={{
-                  hidden: { opacity: 0, y: 32 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-                  },
-                }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3"
-              >
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {coreValues.map((cv, idx) => {
                   const icons = [Users, Lightbulb, Layers, FlaskConical];
                   const Icon = icons[idx % icons.length];
+
                   return (
                     <motion.div
                       key={cv.title}
-                      initial={{ opacity: 0, scale: 0.95, y: 24 }}
-                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.6 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
-                      className="rounded-2xl border border-sky-100 bg-white px-6 py-7 shadow flex flex-col items-center"
-                      style={{ minWidth: 0, maxWidth: 320, margin: "0 auto" }}
+                      className="rounded-2xl border border-sky-100 bg-white p-6 shadow flex flex-col items-center"
                     >
-                      <motion.div
-                        whileHover={{ scale: 1.08, rotate: 2 }}
-                        transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                        className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
-                      >
+                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3">
                         <Icon className="h-7 w-7" />
-                      </motion.div>
-                      <h4 className="text-base md:text-lg font-semibold text-center text-slate-900">
-                        {cv.title}
-                      </h4>
-                      <p className="text-xs md:text-sm text-slate-600 text-center whitespace-pre-line mt-2">
-                        {cv.desc}
-                      </p>
+                      </div>
+
+                      <h4 className="text-lg font-semibold text-center text-slate-900">{cv.title}</h4>
+
+                      <p className="text-sm text-slate-600 text-center whitespace-pre-line mt-2">{cv.desc}</p>
                     </motion.div>
                   );
                 })}
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
 
-                {/* R&D Vision with Image - left align title, animated, OPEN INNOVATION not in shape, font same as Vision */}
+        {/* R&D Vision with Image - dark version of Vision background */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <motion.h2
-                initial={{ opacity: 0, x: -32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
-              >
-                {lang === "KOR" ? "비전" : "Vision"}
-              </motion.h2>
-              <motion.h3
-                initial={{ opacity: 0, x: -32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6 text-left"
-              >
+              <span className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4">
+                {rnd.title}
+              </span>
+
+              <h3 className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6">
                 {rnd.subtitle}
-              </motion.h3>
-              {/* OPEN INNOVATION title, font same as Vision, bilingual */}
-              <motion.h2
-                initial={{ opacity: 0, x: -32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-2xl md:text-3xl font-semibold text-white mb-6 text-left"
-              >
-                {lang === "KOR" ? "OPEN INNOVATION" : "OPEN INNOVATION"}
-              </motion.h2>
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={{
-                  hidden: { opacity: 0, y: 32 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-                  },
-                }}
-                className="grid gap-6"
-              >
+              </h3>
+
+              <div className="grid gap-6">
                 {[rnd.leftBox1Title, rnd.leftBox2Title].map((title, i) => (
-                  <motion.div
+                  <div
                     key={title}
-                    initial={{ opacity: 0, scale: 0.95, y: 24 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 0.6 + i * 0.1, ease: [0.42, 0, 0.58, 1] }}
                     className="rounded-2xl border border-white/15 bg-white/10 p-6 shadow-lg backdrop-blur flex items-center gap-4"
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-sky-200">
                       {i === 0 ? <Cpu className="h-6 w-6" /> : <FlaskConical className="h-6 w-6" />}
                     </div>
+
                     <div>
                       <h4 className="text-lg font-semibold text-white">{title}</h4>
                       <p className="mt-2 text-sm text-slate-200 leading-relaxed">
                         {i === 0 ? rnd.leftBox1Desc : rnd.leftBox2Desc}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 24 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10"
-            >
-              <Image
-                src="/images/careers/philosophy/communication.png"
-                alt="R&D Vision"
-                width={600}
-                height={400}
-                className="object-cover w-full h-full"
-              />
+
+            <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10">
+              {/* Fixed-height wrapper + Image fill → box tidak ikut ukuran gambar */}
+              <div className="relative w-full h-[320px] md:h-[420px]">
+                <Image
+                  src="/images/careers/philosophy/communication.png" // ← gambar asli yang kamu sebut
+                  alt="R&D Vision"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 600px, 100vw"
+                />
+              </div>
+
               <div className="p-6">
                 <p className="text-sm font-semibold uppercase tracking-widest text-sky-200">
                   {rnd.rightBoxTop}
                 </p>
-                <h4 className="text-2xl md:text-3xl font-bold text-white mt-2">
-                  {rnd.rightBoxTitle}
-                </h4>
+                <h4 className="text-2xl md:text-3xl font-bold text-white mt-2">{rnd.rightBoxTitle}</h4>
                 <p className="text-sm md:text-base whitespace-pre-line text-slate-100 leading-relaxed mt-2">
                   {rnd.rightBoxDesc}
                 </p>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>
