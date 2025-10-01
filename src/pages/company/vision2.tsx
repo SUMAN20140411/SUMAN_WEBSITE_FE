@@ -28,6 +28,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 
+
 // Animation variants
 const fadeIn = {
   hidden: { opacity: 0, y: 32 },
@@ -46,8 +47,6 @@ const stagger = {
 
 export default function Vision2Page() {
   const { lang } = useLangStore();
-
-  // Data
   const hero = visionHeroText[lang];
   const overview = visionMainText[lang];
   const strategy = visionStrategyText[lang];
@@ -55,7 +54,7 @@ export default function Vision2Page() {
   const milestones = visionMilestones[lang];
   const rnd = visionRndText[lang];
 
-  // Example images (replace with your actual images)
+  // Example images
   const images = [
     "/images/company/vision_banner.jpg",
     "/images/business/process/coreKor2.png",
@@ -63,60 +62,117 @@ export default function Vision2Page() {
     "/images/company/vision_factory.jpg",
   ];
 
+  // Circle values
+  const circleValues = [
+    { label: lang === "KOR" ? "즐겁게" : "Enjoy", en: lang === "KOR" ? "Enjoy" : "Enjoy" },
+    { label: lang === "KOR" ? "새롭게" : "Neo", en: lang === "KOR" ? "Neo" : "Neo" },
+    { label: lang === "KOR" ? "치열하게" : "Intensely", en: lang === "KOR" ? "Intensely" : "Intensely" },
+    { label: lang === "KOR" ? "빠르게" : "Fastly", en: lang === "KOR" ? "Fastly" : "Fastly" },
+  ];
+
+  // Timeline colors
+  const timelineColors = ["#0a2540", "#17416d", "#38bdf8"];
+
   return (
     <Layout>
       <Head>
         <title>{hero.title}</title>
       </Head>
-
       <main className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-slate-100 text-slate-900 pt-[90px]">
         {/* Hero Section */}
         <section className="relative">
           <HeroSection title={hero.title} backgroundImage={images[0]} />
-          <BreadcrumbSection
-            path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"}
-          />
+          <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
         </section>
 
-        {/* Vision Overview with Image */}
-        <section className="relative py-16 px-4 md:px-8">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-              className="space-y-6"
-            >
-              <span className="inline-block rounded-full bg-sky-100 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-sky-600 mb-4">
-                {overview.topLabel}
-              </span>
-
-              <h1 className="text-4xl md:text-5xl font-black leading-tight mb-2">
-                <span className="block text-sky-600">{overview.blueTitle}</span>
-                <span className="block text-slate-900">{overview.blackTitle}</span>
-              </h1>
-
-              <p className="text-lg md:text-xl text-slate-600 leading-relaxed mt-4">
-                {strategy.mainGoal}
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white"
-            >
-              <Image
-                src={images[1]}
-                alt="Core Capabilities"
-                width={600}
-                height={400}
-                className="object-contain w-full h-full"
-              />
-            </motion.div>
+        {/* Vision Modern Section (diagram + values) */}
+        <section className="w-full flex flex-col lg:flex-row items-center justify-between py-16 px-4 md:px-12 gap-10">
+          {/* Left: Title & Timeline */}
+          <div className="flex-1 flex flex-col justify-center items-start w-full max-w-2xl">
+            <h2 className="text-lg md:text-xl font-semibold text-slate-700 mb-2">
+              {lang === "KOR" ? "Our Vision" : "Our Vision"}
+            </h2>
+            <div className="mb-8">
+              <div className="text-2xl md:text-4xl font-bold leading-tight mb-2 text-slate-900">
+                {lang === "KOR" ? (
+                  <>
+                    2024 <span className="font-extrabold">도약의 원년</span>—5년 내<br />
+                    <span className="font-extrabold">매출 600억</span>
+                    <span className="text-sky-400 font-extrabold">·순이익 150억 달성</span>,<br />
+                    <span className="text-sky-400 font-extrabold">‘확신(Confidence)’</span>
+                    <span className="text-sky-400 font-extrabold">의 종합 솔루션 서비스 기업으로 성장.</span>
+                  </>
+                ) : (
+                  <>
+                    2024 <span className="font-extrabold">Leap Year</span>—Within 5 Years<br />
+                    <span className="font-extrabold">Revenue 60B KRW</span>
+                    <span className="text-sky-400 font-extrabold">·Net Profit 15B Achieved</span>,<br />
+                    <span className="text-sky-400 font-extrabold">‘Confidence’</span>
+                    <span className="text-sky-400 font-extrabold">-based Total Solution Service Company Growth.</span>
+                  </>
+                )}
+              </div>
+            </div>
+            {/* Timeline */}
+            <div className="w-full mb-8">
+              <div className="flex items-center w-full mb-2">
+                <div className="flex-1 flex items-center">
+                  {milestones.map((m, idx) => (
+                    <div key={m.year} className="flex-1 flex flex-col items-center">
+                      <div className="w-full h-4 flex items-center">
+                        <div
+                          className="rounded-full"
+                          style={{
+                            background: timelineColors[idx % timelineColors.length],
+                            height: "100%",
+                            width: "100%",
+                            marginRight: idx < milestones.length - 1 ? 8 : 0,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {/* Arrow */}
+                <svg width="32" height="16" className="ml-2">
+                  <line x1="0" y1="8" x2="28" y2="8" stroke="#cbd5e1" strokeWidth="3" />
+                  <polygon points="28,4 32,8 28,12" fill="#cbd5e1" />
+                </svg>
+              </div>
+              <div className="flex items-start w-full">
+                {milestones.map((m, idx) => (
+                  <div key={m.year} className="flex-1 flex flex-col items-center">
+                    <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1">{m.year}</div>
+                    <div className="text-sm md:text-base text-gray-500 text-center whitespace-pre-line">
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Right: Circles */}
+          <div className="flex-shrink-0 grid grid-cols-2 gap-8">
+            {circleValues.map((item, idx) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
+                className="flex flex-col items-center justify-center w-40 h-40 md:w-56 md:h-56 rounded-full bg-[#e3f0fb]"
+              >
+                <div className="flex items-center justify-center w-32 h-32 md:w-44 md:h-44 rounded-full bg-[#17416d]">
+                  <span className="text-white text-lg md:text-2xl font-semibold text-center leading-tight">
+                    {item.label}
+                    <br />
+                    <span className="text-white text-base md:text-lg font-normal">
+                      ({item.en})
+                    </span>
+                  </span>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
