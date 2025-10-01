@@ -145,6 +145,7 @@ export default function Vision2Page() {
           </div>
         </div>
          {/* Vision + Core Values Section */}
+        {/* Vision + Core Values Section */}
         <section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
           <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
             {/* LEFT: Vision & Timeline */}
@@ -243,27 +244,50 @@ export default function Vision2Page() {
               </svg>
             </div>
           </div>
-          {/* Core Values Section - now inside Vision section, same background */}
+          {/* Core Values Section - left align, same max width, animated */}
           <div className="w-full pt-16">
-            <div className="max-w-[1400px] mx-auto">
-              <h3 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-center">
+            <div className="max-w-[1400px] mx-auto px-4">
+              <motion.h3
+                initial={{ opacity: 0, x: -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
+              >
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              </motion.h3>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={{
+                  hidden: { opacity: 0, y: 32 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+                  },
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
                 {coreValues.map((cv, idx) => {
                   const icons = [Users, Lightbulb, Layers, FlaskConical];
                   const Icon = icons[idx % icons.length];
                   return (
                     <motion.div
                       key={cv.title}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, scale: 0.95, y: 24 }}
+                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ duration: 0.6 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
                       className="rounded-2xl border border-sky-100 bg-white p-6 shadow flex flex-col items-center"
                     >
-                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3">
+                      <motion.div
+                        whileHover={{ scale: 1.08, rotate: 2 }}
+                        transition={{ type: "spring", stiffness: 160, damping: 18 }}
+                        className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3"
+                      >
                         <Icon className="h-7 w-7" />
-                      </div>
+                      </motion.div>
                       <h4 className="text-lg font-semibold text-center text-slate-900">
                         {cv.title}
                       </h4>
@@ -273,25 +297,53 @@ export default function Vision2Page() {
                     </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
-        {/* R&D Vision with Image - dark version of Vision background */}
+        {/* R&D Vision with Image - left align title, animated */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4">
+              <motion.span
+                initial={{ opacity: 0, x: -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4 text-left"
+              >
                 {rnd.title}
-              </span>
-              <h3 className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6">
+              </motion.span>
+              <motion.h3
+                initial={{ opacity: 0, x: -32 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6 text-left"
+              >
                 {rnd.subtitle}
-              </h3>
-              <div className="grid gap-6">
+              </motion.h3>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={{
+                  hidden: { opacity: 0, y: 32 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+                  },
+                }}
+                className="grid gap-6"
+              >
                 {[rnd.leftBox1Title, rnd.leftBox2Title].map((title, i) => (
-                  <div
+                  <motion.div
                     key={title}
+                    initial={{ opacity: 0, scale: 0.95, y: 24 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.6 + i * 0.1, ease: [0.42, 0, 0.58, 1] }}
                     className="rounded-2xl border border-white/15 bg-white/10 p-6 shadow-lg backdrop-blur flex items-center gap-4"
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-sky-200">
@@ -303,11 +355,16 @@ export default function Vision2Page() {
                         {i === 0 ? rnd.leftBox1Desc : rnd.leftBox2Desc}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 24 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+              className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10"
+            >
               <Image
                 src={images[3]}
                 alt="R&D Vision"
@@ -326,7 +383,7 @@ export default function Vision2Page() {
                   {rnd.rightBoxDesc}
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       </main>
