@@ -274,7 +274,38 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-
+        {/* Core Values Section - judul kiri sejajar dengan OPEN INNOVATION */}
+          <div className="w-full pt-16">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+              <h3
+                className="text-2xl md:text-3xl font-semibold text-slate-900 mb-8 text-left"
+                style={{ marginLeft: 0 }}
+              >
+                {lang === "KOR" ? "핵심 가치" : "Core Values"}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {coreValues.map((cv, idx) => {
+                  const icons = [Users, Lightbulb, Layers, FlaskConical];
+                  const Icon = icons[idx % icons.length];
+                  return (
+                    <motion.div
+                      key={cv.title}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6 + idx * 0.1, ease: [0.42, 0, 0.58, 1] }}
+                      className="rounded-2xl bg-white p-6 shadow flex flex-col items-center" // outline dihapus
+                    >
+                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 mb-3">
+                        <Icon className="h-7 w-7" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-center text-slate-900">{cv.title}</h4>
+                      <p className="text-sm text-slate-600 text-center whitespace-pre-line mt-2">{cv.desc}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         {/* R&D Vision with Image - dark version of Vision background */}
         <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
