@@ -292,10 +292,9 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-
-        {/* R&D Vision with Image - Layered Triangle Biz Model */}
+        {/* R&D Vision with Image - Large White Triangle + Diagonal Dividers */}
 <section className="bg-[#0A1633] w-full">
-  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 gap-y-16 items-center">
+  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
     <div className="lg:col-span-5 flex flex-col justify-center">
       <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
@@ -322,159 +321,28 @@ export default function Vision2Page() {
             aria-labelledby="bizModelGraphicTitle"
             role="img"
           >
-            <title id="bizModelGraphicTitle">Layered Triangle Biz Model Graphic</title>
-            {/* ====== Definitions: shadows & icons ====== */}
-            <defs>
-              {/* soft drop shadow */}
-              <filter id="ds" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
-                <feOffset dx="0" dy="8" result="off" />
-                <feColorMatrix
-                  in="off"
-                  type="matrix"
-                  values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.18 0"
-                />
-                <feBlend in="SourceGraphic" mode="normal" />
-              </filter>
-              {/* bulb icon */}
-              <symbol id="ic-bulb" viewBox="0 0 24 24">
-                <path
-                  d="M9 20h6m-5-3h4c0-1.657 3-2.5 3-6a5 5 0 10-10 0c0 3.5 3 4.343 3 6z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </symbol>
-              {/* search icon */}
-              <symbol id="ic-search" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-                <path d="M20 20l-4.2-4.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </symbol>
-              {/* user icon */}
-              <symbol id="ic-user" viewBox="0 0 24 24">
-                <path
-                  d="M12 13.5c3.59 0 6.5 2.02 6.5 4.5V20H5.5v-2c0-2.48 2.91-4.5 6.5-4.5z"
-                  fill="currentColor"
-                />
-                <circle cx="12" cy="7.5" r="3.3" fill="currentColor" />
-              </symbol>
-            </defs>
-            {/* ====== Triangle stack (white mountains) ====== */}
-            {/* Small (left) */}
-            <path
-              d="M160 370 L10 620 L320 620 Z"
+            <title id="bizModelGraphicTitle">Large White Triangle with Diagonal Dividers</title>
+            {/* Large white triangle */}
+            <polygon
+              points="600,60 1100,760 100,760"
               fill="#FFFFFF"
-              filter="url(#ds)"
             />
-            <path
-            d="M600 30 L540 150 L420 760 L300 760 Z"
-            fill="#E7EBF2"
-            opacity="0.65"
+            {/* Diagonal divider lines */}
+            <line
+              x1="320" y1="760" x2="600" y2="60"
+              stroke="#CFE8FF"
+              strokeWidth="4"
             />
-
-            {/* Large (main) - now section bg color */}
-            <g filter="url(#ds)">
-              <path
-                d="M600 30 L80 760 L1120 760 Z"
-                fill="#0A1633"
-              />
-              <path
-              d="M600 30 L540 150 L420 760 L300 760 Z"
-              fill="#E7EBF2"
-              opacity="0.65"
-              />
-
-            </g>
-            {/* Apex cap - now light blue */}
-            <path d="M600 30 L545 125 L655 125 Z" fill="#38bdf8" />
-            {/* ====== Right-edge steps (trapezoids) ====== */}
-            {/* 01 - top light blue */}
-            <path
-              d="M660 120 L880 120 L930 212 L660 212 Z"
-              fill="#CFE8FF"
+            <line
+              x1="600" y1="760" x2="600" y2="60"
+              stroke="#CFE8FF"
+              strokeWidth="4"
             />
-            {/* 02 - middle midBlue */}
-            <path
-              d="M660 260 L950 260 L1000 370 L660 370 Z"
-              fill="#0D70C0"
+            <line
+              x1="880" y1="760" x2="600" y2="60"
+              stroke="#CFE8FF"
+              strokeWidth="4"
             />
-            {/* 03 - bottom deepBlue */}
-            <path
-              d="M660 430 L980 430 L1060 600 L660 600 Z"
-              fill="#00215C"
-            />
-            {/* ====== Step numbers ====== */}
-            <g
-              fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
-              fontWeight="700"
-              fontSize="38"
-              fill="#FFFFFF"
-            >
-              <text x="720" y="185">01</text>
-              <text x="765" y="330">02</text>
-              <text x="840" y="520">03</text>
-            </g>
-            {/* ====== Icon disks along inner diagonal ====== */}
-            {/* Bulb */}
-            <g transform="translate(420,620)">
-              <circle r="40" fill="#00215C" />
-              <use href="#ic-bulb" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
-            </g>
-            {/* Search */}
-            <g transform="translate(560,510)">
-              <circle r="40" fill="#0D70C0" />
-              <use href="#ic-search" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
-            </g>
-            {/* User */}
-            <g transform="translate(700,360)" opacity="0.9">
-              <circle r="40" fill="#CFE8FF" />
-              <use href="#ic-user" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
-            </g>
-            {/* ====== Bottom ribbon ====== */}
-            <g>
-              <rect x="180" y="740" width="770" height="46" rx="2" fill="#FFFFFF" />
-              <text
-                x="565"
-                y="771"
-                textAnchor="middle"
-                fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
-                fontWeight="800"
-                fontSize="24"
-                fill="#0A1633"
-                letterSpacing="0.25em"
-              >
-                OPEN INNOVATION
-              </text>
-            </g>
-            {/* ====== Right-side labels (aligned to steps) ====== */}
-            <g
-              fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
-              fill="#FFFFFF"
-            >
-              {/* 01 */}
-              <text x="820" y="90" fontSize="24" fontWeight="800">
-                R&amp;BD 조기사업화 · 차세대 성장동력원 확보
-              </text>
-              <text x="820" y="128" fontSize="18" opacity="0.9">
-                단계별 ITEM Launching·사업화
-              </text>
-              {/* 02 */}
-              <text x="920" y="215" fontSize="24" fontWeight="800">
-                신사업Biz · R&amp;D
-              </text>
-              <text x="920" y="250" fontSize="18" opacity="0.9">신사업 발굴</text>
-              <text x="920" y="282" fontSize="18" opacity="0.9">TEM PJT 化</text>
-              <text x="920" y="314" fontSize="18" opacity="0.9">R&amp;BD Base</text>
-              <text x="920" y="346" fontSize="18" opacity="0.9">차별화</text>
-              {/* 03 */}
-              <text x="980" y="420" fontSize="24" fontWeight="800">
-                제조본부 · 개발본부
-              </text>
-              <text x="980" y="455" fontSize="18" opacity="0.9">ITEM 조기 정착</text>
-              <text x="980" y="487" fontSize="18" opacity="0.9">Mass Product 안정화</text>
-            </g>
           </svg>
         </div>
       </div>
