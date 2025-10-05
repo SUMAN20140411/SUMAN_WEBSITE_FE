@@ -28,7 +28,7 @@ export const visionMilestones = {
     },
     {
       year: "2026",
-      text: "전지모듈, 장비 및\n모빌리티 분야 확장",
+      text: "이차전지 전지 모듈 ･ 장비 및\n모빌리티 분야 확장",
     },
     {
       year: "2028",

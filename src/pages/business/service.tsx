@@ -17,136 +17,7 @@ import { FlowCard } from "@/components/FlowCard";
 import { FlowDiamond } from "@/components/FlowDiamond";
 import { FlowArrow } from "@/components/FlowArrow";
 
-// data
-import { processFlowContent } from "@/data/ProcessFlow";
 
-/* =========================
-   Process Flow (inlined)
-   ========================= */
-const ProcessFlowChart: React.FC = () => {
-  const lang = useLangStore((state) => state.lang);
-  const content = processFlowContent[lang];
-
-  return (
-    <div className="relative w-full">
-      {/* Top Lane */}
-      <div className="flex items-center justify-center gap-12 mb-32">
-        {content.topLane.map((step, index) => (
-          <React.Fragment key={step.id}>
-            <div className="relative">
-              {step.type === "diamond" ? (
-                <div className="rotate-45 bg-gray-200 p-6 relative">
-                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                  {step.ngTarget && (
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                      <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                        NG
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-gray-200 rounded-lg px-4 py-3">
-                  <div className="text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                </div>
-              )}
-            </div>
-            {index < content.topLane.length - 1 && <Arrow direction="right" />}
-          </React.Fragment>
-        ))}
-      </div>
-
-      {/* Middle Section - Inspection and Partner */}
-      <div className="relative -mt-16 mb-32">
-        <div className="absolute left-1/2 -translate-x-1/2">
-          {/* Vertical connector from 발주 */}
-          <div className="h-24 w-0.5 bg-gray-400 mx-auto" />
-
-          {/* 수입검사 Diamond */}
-          <div className="relative">
-            <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-              <div className="-rotate-45 text-gray-700 text-sm">수입검사</div>
-            </div>
-
-            {/* 협력사 section with NG */}
-            <div className="absolute -left-48 top-1/2 -translate-y-1/2">
-              <div className="flex items-center">
-                <div className="text-xs bg-red-600 text-white px-2 py-0.5 rounded absolute -top-6 left-1/2 -translate-x-1/2">
-                  NG
-                </div>
-                <Arrow direction="left" className="text-red-600" />
-                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md ml-2">
-                  <div className="text-gray-700 text-sm">협력사</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Vertical arrow to 가공/제작 */}
-            <div className="h-24 w-0.5 bg-gray-400 mx-auto mt-6" />
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Lane - Left to Right Flow */}
-      <div className="flex items-center justify-center gap-12">
-        {content.bottomLane.map((step, index) => (
-          <React.Fragment key={step.id}>
-            <div className="relative">
-              {step.type === "diamond" ? (
-                <div className="rotate-45 bg-[#E8F4FF] p-6 shadow-lg">
-                  <div className="-rotate-45 text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-gray-200 rounded-lg px-4 py-3 shadow-md">
-                  <div className="text-gray-700 text-sm whitespace-pre-line">
-                    {step.title}
-                  </div>
-                </div>
-              )}
-              {step.hasNGFrom && (
-                <div className="absolute -bottom-16 z-10">
-                  <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded">
-                    NG
-                  </span>
-                  <div className="h-10 w-0.5 bg-red-600 mx-auto mt-1" />
-                </div>
-              )}
-            </div>
-            {index < content.bottomLane.length - 1 && (
-              <Arrow direction="left" className="text-gray-400" />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Arrow component
-const Arrow: React.FC<{
-  direction: "left" | "right";
-  className?: string;
-}> = ({ direction, className = "text-gray-400" }) => (
-  <svg
-    className={`w-6 h-6 ${className} ${direction === "left" ? "rotate-180" : ""}`}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path
-      d="M5 12h14m0 0l-6-6m6 6l-6 6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
 
 /* =========================
    Core Capabilities Image Section
@@ -198,7 +69,7 @@ function CoreCapabilitiesImageSection() {
           </p>
         </motion.div>
 
-        {/* image (+20%): w-[71%]→w-[85.2%], max-w-5xl→max-w-[76.8rem] */}
+        {/* image (+10%): w-[85.2%]→w-[94%], max-w-[76.8rem]→max-w-[84rem] */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -208,7 +79,7 @@ function CoreCapabilitiesImageSection() {
             ease: [0.16, 1, 0.3, 1],
             delay: 0.05,
           }}
-          className="group relative mx-auto max-w-[76.8rem] w-[85.2%]"
+          className="group relative mx-auto max-w-[84rem] w-[94%]"
         >
           <motion.div
             whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
@@ -225,7 +96,7 @@ function CoreCapabilitiesImageSection() {
               fill
               priority
               className="object-contain"
-              sizes="(min-width: 1280px) 76.8rem, 85.2vw" // why: hindari blur saat dibesarkan
+              sizes="(min-width: 1280px) 84rem, 94vw" // tetap object-contain agar tidak terpotong
             />
           </motion.div>
         </motion.div>
