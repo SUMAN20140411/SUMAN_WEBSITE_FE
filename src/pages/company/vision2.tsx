@@ -362,17 +362,15 @@ export default function Vision2Page() {
               </symbol>
             </defs>
             {/* ====== Triangle stack (white mountains) ====== */}
-            {/* Small (left) */}
             <path
-              d="M160 370 L10 620 L320 620 Z"
-              fill="#FFFFFF"
-              filter="url(#ds)"
+            d="M946.667 516.667 L773.333 760 L1120 760 Z"
+            fill="#FFFFFF"
+            filter="url(#ds)"
             />
-            {/* Medium (middle-left) */}
             <path
-              d="M360 140 L160 540 L580 540 Z"
-              fill="#FFFFFF"
-              filter="url(#ds)"
+            d="M860 395 L600 760 L1120 760 Z"
+            fill="#FFFFFF"
+            filter="url(#ds)"
             />
             {/* Large (main) */}
             <g filter="url(#ds)">
