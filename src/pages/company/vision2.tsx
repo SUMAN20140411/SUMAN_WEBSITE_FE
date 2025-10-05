@@ -368,24 +368,24 @@ export default function Vision2Page() {
               fill="#FFFFFF"
               filter="url(#ds)"
             />
-            {/* Medium (middle-left) */}
             <path
-              d="M360 140 L160 540 L580 540 Z"
-              fill="#FFFFFF"
-              filter="url(#ds)"
+            d="M600 30 L540 150 L420 760 L300 760 Z"
+            fill="#E7EBF2"
+            opacity="0.65"
             />
+
             {/* Large (main) - now section bg color */}
             <g filter="url(#ds)">
               <path
                 d="M600 30 L80 760 L1120 760 Z"
                 fill="#0A1633"
               />
-              {/* inner fold along the left slope */}
               <path
-                d="M600 30 L470 260 L320 760 L80 760 Z"
-                fill="#E7EBF2"
-                opacity="0.75"
+              d="M600 30 L540 150 L420 760 L300 760 Z"
+              fill="#E7EBF2"
+              opacity="0.65"
               />
+
             </g>
             {/* Apex cap - now light blue */}
             <path d="M600 30 L545 125 L655 125 Z" fill="#38bdf8" />
