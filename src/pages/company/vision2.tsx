@@ -341,164 +341,75 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-        {/* Biz Model Section aligned with reference design */}
-        <section className="relative overflow-hidden bg-[#0c2d52] text-white py-20 px-4 md:px-8">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-sky-400/30 blur-[160px]" />
-            <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[#17416d]/40 blur-[160px]" />
-          </div>
-          <div className="relative z-10 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-            <div className="w-full lg:max-w-xl">
-              <motion.span
-                initial={{ opacity: 0, x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.6, ease: [0.42, 0, 0.58, 1] }}
-                className="inline-block text-sm md:text-base uppercase tracking-[0.4em] text-sky-200 mb-6"
-              >
-                {strategy.bizModelTitle}
-              </motion.span>
-              <motion.h3
-                initial={{ opacity: 0, x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="text-3xl md:text-4xl font-bold leading-snug whitespace-pre-line text-sky-50"
-              >
-                {rnd.subtitle}
-              </motion.h3>
-              <motion.p
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1], delay: 0.2 }}
-                className="mt-6 text-base md:text-lg text-slate-100 whitespace-pre-line"
-              >
-                {strategy.bizModelSubtitle}
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1], delay: 0.35 }}
-                className="mt-8 grid grid-cols-2 gap-4 text-xs md:text-sm text-slate-200"
-              >
-                {strategy.businessAreas.sectors.map((sector) => (
-                  <div
-                    key={sector}
-                    className="rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-center leading-relaxed whitespace-pre-line"
-                  >
-                    {sector}
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* Pyramid visual */}
-            <div className="w-full lg:flex-1 flex flex-col items-center lg:items-end gap-10">
-              <div className="relative w-full max-w-[360px]">
-                <svg
-                  viewBox="0 0 360 420"
-                  className="w-full drop-shadow-[0_25px_45px_rgba(8,35,71,0.45)]"
-                  role="img"
-                  aria-label={strategy.bizModelTitle}
-                >
-                  <defs>
-                    <linearGradient id="pyramidBase" x1="0%" y1="100%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#0a2a4a" />
-                      <stop offset="100%" stopColor="#1d5fa5" />
-                    </linearGradient>
-                    <linearGradient id="pyramidMid" x1="0%" y1="100%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#1b5fa1" />
-                      <stop offset="100%" stopColor="#4ab7f8" />
-                    </linearGradient>
-                    <linearGradient id="pyramidTop" x1="0%" y1="100%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#e0f4ff" />
-                      <stop offset="100%" stopColor="#f9fcff" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="180,30 350,360 10,360" fill="url(#pyramidBase)" stroke="#2f5f9b" strokeWidth="3" />
-                  <polygon points="180,30 300,360 60,360" fill="url(#pyramidMid)" stroke="#4f8fcb" strokeWidth="3" />
-                  <polygon points="180,30 250,360 110,360" fill="url(#pyramidTop)" stroke="#7fc5f5" strokeWidth="3" />
-                  <circle cx="180" cy="160" r="70" fill="#0d3f73" opacity="0.25" />
-                  <text
-                    x="180"
-                    y="150"
-                    textAnchor="middle"
-                    fontSize="28"
-                    fontWeight="700"
-                    fill="#f1f5f9"
-                    style={{ letterSpacing: "0.08em" }}
-                  >
-                    {neoTitleLines.map((line, idx) => (
-                      <tspan key={line} x="180" dy={idx === 0 ? 0 : 32}>
-                        {line}
-                      </tspan>
-                    ))}
-                  </text>
-                  <g fontFamily="'Pretendard', 'Noto Sans KR', sans-serif" fontWeight="600">
-                    <text x="295" y="140" fontSize="30" fill="#ffffff" opacity="0.7">
-                      01
-                    </text>
-                    <text x="280" y="240" fontSize="30" fill="#d0ecff">
-                      02
-                    </text>
-                    <text x="230" y="330" fontSize="30" fill="#7cc7ff">
-                      03
-                    </text>
-                  </g>
-                  <g>
-                    <circle cx="280" cy="120" r="26" fill="#0e3b68" stroke="#8ed4ff" strokeWidth="4" />
-                    <circle cx="255" cy="220" r="24" fill="#1d6fb0" stroke="#9ee0ff" strokeWidth="4" />
-                    <circle cx="205" cy="305" r="24" fill="#2a9ff2" stroke="#bee8ff" strokeWidth="4" />
-                  </g>
-                  <text
-                    x="180"
-                    y="342"
-                    textAnchor="middle"
-                    fontSize="18"
-                    letterSpacing="0.5em"
-                    fill="#8ed4ff"
-                  >
-                    {strategy.openInnovation}
-                  </text>
-                </svg>
-              </div>
-
-              <div className="w-full max-w-[420px] space-y-6 text-sm md:text-base">
-                {[
-                  {
-                    level: "01",
-                    title: strategy.businessAreas.development,
-                    accent: "bg-[#1e4f80]",
-                  },
-                  {
-                    level: "02",
-                    title: strategy.businessAreas.partnerships,
-                    accent: "bg-[#2d8bd3]",
-                  },
-                  {
-                    level: "03",
-                    title: strategy.businessAreas.manufacturing,
-                    accent: "bg-[#134069]",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.level}
-                    className="flex items-start gap-4 rounded-2xl border border-white/15 bg-white/5 p-5"
-                  >
-                    <span
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-semibold text-white ${item.accent}`}
-                    >
-                      {item.level}
-                    </span>
-                    <p className="text-slate-100 leading-relaxed whitespace-pre-line">{item.title}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* R&D Vision with Image - Pyramid Biz Model */}
+<section className="min-h-[768px] w-full bg-[#06223b] flex items-center justify-center px-0 py-0">
+  <div className="flex w-full max-w-[1600px] mx-auto items-center justify-between">
+    {/* LEFT: Text */}
+    <div className="flex flex-col justify-center pl-[60px] pt-[60px] w-[48%]">
+      <h2 className="text-4xl font-bold text-white mb-8">Biz Model</h2>
+      <h3 className="text-2xl md:text-3xl font-bold leading-tight whitespace-pre-line text-white mb-8">
+        끊임없는 연구개발과 스마트 공정<br />
+        혁신을 통해 <span className="text-[#38bdf8]">제조 효율의 새로운 기준을 만들어 갑니다</span>
+      </h3>
+    </div>
+    {/* RIGHT: Pyramid SVG + Text */}
+    <div className="flex flex-row items-center justify-center w-[52%] relative h-[700px]">
+      {/* Pyramid SVG */}
+      <svg viewBox="0 0 900 700" width="520" height="700" className="absolute left-0 top-0 z-10">
+        {/* Top triangle */}
+        <polygon points="450,70 510,180 390,180" fill="#002b5c" />
+        {/* Main pyramid */}
+        <polygon points="450,180 850,650 50,650" fill="#f8fafc" />
+        {/* Layer 1 */}
+        <polygon points="450,180 730,650 170,650" fill="#e0f2fe" />
+        {/* Layer 2 */}
+        <polygon points="450,180 610,650 290,650" fill="#38bdf8" />
+        {/* Layer 3 */}
+        <polygon points="450,180 450,650 450,650" fill="#17416d" />
+        {/* Circles & icons */}
+        <circle cx="450" cy="600" r="38" fill="#002b5c" />
+        <circle cx="610" cy="440" r="32" fill="#38bdf8" />
+        <circle cx="290" cy="440" r="32" fill="#bae6fd" />
+        {/* Lightbulb icon */}
+        <g>
+          <circle cx="450" cy="600" r="18" fill="none" stroke="#fff" strokeWidth="2"/>
+          <path d="M450 590 a10 10 0 1 1 0 20 a10 10 0 1 1 0-20" stroke="#fff" strokeWidth="2" fill="none"/>
+          <rect x="446" y="610" width="8" height="10" rx="2" fill="#fff"/>
+        </g>
+        {/* Magnifier icon */}
+        <g>
+          <circle cx="610" cy="440" r="14" fill="none" stroke="#fff" strokeWidth="2"/>
+          <line x1="620" y1="450" x2="628" y2="458" stroke="#fff" strokeWidth="2"/>
+        </g>
+        {/* User icon */}
+        <g>
+          <circle cx="290" cy="440" r="14" fill="none" stroke="#17416d" strokeWidth="2"/>
+          <ellipse cx="290" cy="450" rx="10" ry="6" fill="none" stroke="#17416d" strokeWidth="2"/>
+        </g>
+        {/* Pyramid numbers */}
+        <text x="730" y="320" textAnchor="middle" fontSize="38" fill="#bae6fd" fontWeight="bold" fontFamily="Segoe UI">01</text>
+        <text x="610" y="470" textAnchor="middle" fontSize="38" fill="#38bdf8" fontWeight="bold" fontFamily="Segoe UI">02</text>
+        <text x="450" y="640" textAnchor="middle" fontSize="38" fill="#002b5c" fontWeight="bold" fontFamily="Segoe UI">03</text>
+      </svg>
+      {/* Pyramid right text */}
+      <div className="flex flex-col gap-12 ml-[540px] z-20 pt-24">
+        <div>
+          <div className="text-white text-lg font-semibold mb-1">R&BD 조기사업화 · 차세대 성장동력 확보</div>
+          <div className="text-white text-base">단계별 ITEM Launching·사업화</div>
+        </div>
+        <div>
+          <div className="text-white text-lg font-semibold mb-1">신사업Biz · R&D</div>
+          <div className="text-white text-base">신사업 발굴<br />TEM PJT 化<br />R&BD Base<br />차별화</div>
+        </div>
+        <div>
+          <div className="text-white text-lg font-semibold mb-1">제조본부 · 개발본부</div>
+          <div className="text-white text-base">ITEM 조기 정착<br />Mass Product 안정화</div>
+        </div>
+        <div className="text-[#38bdf8] text-2xl font-bold mt-8 tracking-wide">OPEN INNOVATION</div>
+      </div>
+    </div>
+  </div>
+</section>
       </main>
     </Layout>
   );
