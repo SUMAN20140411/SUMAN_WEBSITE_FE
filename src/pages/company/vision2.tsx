@@ -86,6 +86,15 @@ export default function Vision2Page() {
       </>;
 
   // Timeline data
+  const C = {
+    bgNavy: "#0A1633",
+    panelWhite: "#F5F7FA",
+    panelShade: "#E7EBF2",
+    deepBlue: "#00215C",
+    midBlue: "#0D70C0",
+    lightBlue: "#CFE8FF",
+    white: "#FFFFFF",
+  };
 
 
   // Quadrant values
@@ -284,265 +293,194 @@ export default function Vision2Page() {
           </div>
         </section>
 
-        {/* R&D Vision with Image - dark version of Vision background */}
-        <section className="py-16 px-4 md:px-8 bg-gradient-to-br from-[#17416d] via-[#17416d] to-[#38bdf8] text-white">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="inline-block rounded-full bg-white/10 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-sky-200 mb-4">
-                {rnd.title}
-              </span>
-
-              <h3 className="text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line text-slate-50 mb-6">
-                {rnd.subtitle}
-              </h3>
-
-              <div className="grid gap-6">
-                {[rnd.leftBox1Title, rnd.leftBox2Title].map((title, i) => (
-                  <div
-                    key={title}
-                    className="rounded-2xl border border-white/15 bg-white/10 p-6 shadow-lg backdrop-blur flex items-center gap-4"
-                  >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-sky-200">
-                      {i === 0 ? <Cpu className="h-6 w-6" /> : <FlaskConical className="h-6 w-6" />}
-                    </div>
-
-                    <div>
-                      <h4 className="text-lg font-semibold text-white">{title}</h4>
-                      <p className="mt-2 text-sm text-slate-200 leading-relaxed">
-                        {i === 0 ? rnd.leftBox1Desc : rnd.leftBox2Desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-sky-100 bg-white/10">
-              {/* Fixed-height wrapper + Image fill → box tidak ikut ukuran gambar */}
-              <div className="relative w-full h-[320px] md:h-[420px]">
-                <Image
-                  src="/images/careers/philosophy/communication.png" // ← gambar asli yang kamu sebut
-                  alt="R&D Vision"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 768px) 600px, 100vw"
+        {/* R&D Vision with Image - Layered Triangle Biz Model */}
+<section className="bg-[#0A1633] w-full">
+  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 gap-y-16 items-center">
+    {/* LEFT COLUMN */}
+    <div className="lg:col-span-5 flex flex-col justify-center">
+      <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
+      <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-4">
+        끊임없는 연구개발과 스마트 공정<br />
+        혁신을 통해{" "}
+        <span
+          className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+        >
+          제조 효율의 새로운
+        </span>
+        <br />
+        기준을 만들어 갑니다
+      </h2>
+    </div>
+    {/* RIGHT COLUMN */}
+    <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
+      <div className="relative w-full">
+        <div className="relative w-full aspect-[16/11]">
+          <svg
+            viewBox="0 0 1200 825"
+            className="absolute inset-0 h-full w-full"
+            aria-labelledby="bizModelGraphicTitle"
+            role="img"
+          >
+            <title id="bizModelGraphicTitle">Layered Triangle Biz Model Graphic</title>
+            {/* ====== Definitions: shadows & icons ====== */}
+            <defs>
+              {/* soft drop shadow */}
+              <filter id="ds" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
+                <feOffset dx="0" dy="8" result="off" />
+                <feColorMatrix
+                  in="off"
+                  type="matrix"
+                  values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 0.18 0"
                 />
-              </div>
-
-              <div className="p-6">
-                <p className="text-sm font-semibold uppercase tracking-widest text-sky-200">
-                  {rnd.rightBoxTop}
-                </p>
-                <h4 className="text-2xl md:text-3xl font-bold text-white mt-2">{rnd.rightBoxTitle}</h4>
-                <p className="text-sm md:text-base whitespace-pre-line text-slate-100 leading-relaxed mt-2">
-                  {rnd.rightBoxDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="bg-[#0A1633] w-full">
-      <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 gap-y-16 items-center">
-        {/* LEFT COLUMN */}
-        <div className="lg:col-span-5 flex flex-col justify-center">
-          <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
-          <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-4">
-            끊임없는 연구개발과 스마트 공정<br />
-            혁신을 통해{" "}
-            <span
-              className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-              style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-            >
-              제조 효율의 새로운
-            </span>
-            <br />
-            기준을 만들어 갑니다
-          </h2>
-        </div>
-        {/* RIGHT COLUMN */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-          <div className="relative w-full aspect-[16/14] flex items-center justify-center">
-            {/* SVG TRIANGLE STACK */}
-            <svg
-              viewBox="0 0 1000 900"
-              className="w-full h-full"
-              fill="none"
-            >
-              {/* --- TRIANGLE STACK --- */}
-              {/* T3: Small left triangle */}
-              <filter id="shadowT3" x="-40%" y="-40%" width="180%" height="180%">
-                <feDropShadow dx="0" dy="12" stdDeviation="10" floodColor="#000" floodOpacity="0.12" />
+                <feBlend in="SourceGraphic" mode="normal" />
               </filter>
-              <polygon
-                points="160,460 320,820 0,820"
-                fill="#FFFFFF"
-                filter="url(#shadowT3)"
-              />
-              {/* T2: Medium triangle */}
-              <filter id="shadowT2" x="-40%" y="-40%" width="180%" height="180%">
-                <feDropShadow dx="0" dy="16" stdDeviation="12" floodColor="#000" floodOpacity="0.13" />
-              </filter>
-              <polygon
-                points="260,170 520,820 0,820"
-                fill="#FFFFFF"
-                filter="url(#shadowT2)"
-              />
-              {/* T1: Large triangle */}
-              <polygon
-                points="540,60 920,820 180,820"
+              {/* bulb icon */}
+              <symbol id="ic-bulb" viewBox="0 0 24 24">
+                <path
+                  d="M9 20h6m-5-3h4c0-1.657 3-2.5 3-6a5 5 0 10-10 0c0 3.5 3 4.343 3 6z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </symbol>
+              {/* search icon */}
+              <symbol id="ic-search" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M20 20l-4.2-4.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </symbol>
+              {/* user icon */}
+              <symbol id="ic-user" viewBox="0 0 24 24">
+                <path
+                  d="M12 13.5c3.59 0 6.5 2.02 6.5 4.5V20H5.5v-2c0-2.48 2.91-4.5 6.5-4.5z"
+                  fill="currentColor"
+                />
+                <circle cx="12" cy="7.5" r="3.3" fill="currentColor" />
+              </symbol>
+            </defs>
+            {/* ====== Triangle stack (white mountains) ====== */}
+            {/* Small (left) */}
+            <path
+              d="M160 370 L10 620 L320 620 Z"
+              fill="#FFFFFF"
+              filter="url(#ds)"
+            />
+            {/* Medium (middle-left) */}
+            <path
+              d="M360 140 L160 540 L580 540 Z"
+              fill="#FFFFFF"
+              filter="url(#ds)"
+            />
+            {/* Large (main) */}
+            <g filter="url(#ds)">
+              <path
+                d="M600 30 L80 760 L1120 760 Z"
                 fill="#F5F7FA"
               />
-              {/* Left inner bevel/fold */}
-              <polygon
-                points="540,60 260,170 520,820 180,820"
+              {/* inner fold along the left slope */}
+              <path
+                d="M600 30 L470 260 L320 760 L80 760 Z"
                 fill="#E7EBF2"
-                opacity="0.9"
+                opacity="0.75"
               />
-              {/* --- APEX CAP --- */}
-              <polygon
-                points="540,10 570,60 510,60"
-                fill="#00215C"
-              />
-              {/* --- RIGHT EDGE STEPS --- */}
-              {/* Step 01 */}
-              <polygon
-                points="920,820 920,610 820,520 820,820"
-                fill="#CFE8FF"
-              />
-              {/* Step 02 */}
-              <polygon
-                points="920,610 920,370 820,280 820,520"
-                fill="#0D70C0"
-              />
-              {/* Step 03 */}
-              <polygon
-                points="920,370 920,220 820,220 820,280"
-                fill="#00215C"
-              />
-              {/* Step inner shadow overlays */}
-              <linearGradient id="stepShadow" x1="920" y1="220" x2="820" y2="820" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#000" stopOpacity="0.10" />
-                <stop offset="100%" stopColor="#000" stopOpacity="0" />
-              </linearGradient>
-              <polygon
-                points="920,820 920,220 820,220 820,820"
-                fill="url(#stepShadow)"
-                opacity="0.18"
-              />
-              {/* --- ICON DISKS --- */}
-              {/* Bulb (bottom left) */}
-              <circle cx="270" cy="770" r="28" fill="#00215C" />
-              <g>
-                <circle cx="270" cy="770" r="13" stroke="#fff" strokeWidth="2" fill="none" />
-                <rect x="263" y="783" width="14" height="7" rx="2" fill="#fff" />
-                <line x1="270" y1="783" x2="270" y2="790" stroke="#fff" strokeWidth="2" />
-              </g>
-              {/* Search (middle) */}
-              <circle cx="410" cy="610" r="28" fill="#0D70C0" />
-              <g>
-                <circle cx="410" cy="610" r="13" stroke="#fff" strokeWidth="2" fill="none" />
-                <line x1="420" y1="620" x2="428" y2="628" stroke="#fff" strokeWidth="2" />
-              </g>
-              {/* User (upper) */}
-              <circle cx="520" cy="420" r="28" fill="#CFE8FF" fillOpacity="0.8" />
-              <g>
-                <circle cx="520" cy="415" r="8" stroke="#fff" strokeWidth="2" fill="none" />
-                <ellipse cx="520" cy="430" rx="10" ry="6" stroke="#fff" strokeWidth="2" fill="none" />
-              </g>
-              {/* --- STEP NUMBERS --- */}
+            </g>
+            {/* Apex cap */}
+            <path d="M600 30 L545 125 L655 125 Z" fill="#00215C" />
+            {/* ====== Right-edge steps (trapezoids) ====== */}
+            {/* 01 - top light blue */}
+            <path
+              d="M660 120 L880 120 L930 212 L660 212 Z"
+              fill="#CFE8FF"
+            />
+            {/* 02 - middle midBlue */}
+            <path
+              d="M660 260 L950 260 L1000 370 L660 370 Z"
+              fill="#0D70C0"
+            />
+            {/* 03 - bottom deepBlue */}
+            <path
+              d="M660 430 L980 430 L1060 600 L660 600 Z"
+              fill="#00215C"
+            />
+            {/* ====== Step numbers ====== */}
+            <g
+              fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
+              fontWeight="700"
+              fontSize="38"
+              fill="#FFFFFF"
+            >
+              <text x="720" y="185">01</text>
+              <text x="765" y="330">02</text>
+              <text x="840" y="520">03</text>
+            </g>
+            {/* ====== Icon disks along inner diagonal ====== */}
+            {/* Bulb */}
+            <g transform="translate(420,620)">
+              <circle r="40" fill="#00215C" />
+              <use href="#ic-bulb" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
+            </g>
+            {/* Search */}
+            <g transform="translate(560,510)">
+              <circle r="40" fill="#0D70C0" />
+              <use href="#ic-search" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
+            </g>
+            {/* User */}
+            <g transform="translate(700,360)" opacity="0.9">
+              <circle r="40" fill="#CFE8FF" />
+              <use href="#ic-user" x="-12" y="-12" width="24" height="24" fill="#FFFFFF" />
+            </g>
+            {/* ====== Bottom ribbon ====== */}
+            <g>
+              <rect x="180" y="740" width="770" height="46" rx="2" fill="#FFFFFF" />
               <text
-                x="870"
-                y="570"
+                x="565"
+                y="771"
                 textAnchor="middle"
-                fontSize="44"
-                fontWeight="bold"
-                fill="#45B8E8"
-                fontFamily="Segoe UI, Arial"
-                letterSpacing="2"
-              >
-                01
-              </text>
-              <text
-                x="870"
-                y="410"
-                textAnchor="middle"
-                fontSize="44"
-                fontWeight="bold"
-                fill="#CFE8FF"
-                fontFamily="Segoe UI, Arial"
-                letterSpacing="2"
-              >
-                02
-              </text>
-              <text
-                x="870"
-                y="270"
-                textAnchor="middle"
-                fontSize="44"
-                fontWeight="bold"
-                fill="#FFFFFF"
-                fontFamily="Segoe UI, Arial"
-                letterSpacing="2"
-              >
-                03
-              </text>
-              {/* --- BOTTOM RIBBON --- */}
-              <rect
-                x="180"
-                y="840"
-                width="740"
-                height="44"
-                rx="8"
-                fill="#fff"
-                filter="url(#shadowRibbon)"
-              />
-              <filter id="shadowRibbon" x="0" y="0" width="200%" height="200%">
-                <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#000" floodOpacity="0.10" />
-              </filter>
-              <text
-                x="550"
-                y="870"
-                textAnchor="middle"
-                fontSize="32"
-                fontWeight="bold"
+                fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
+                fontWeight="800"
+                fontSize="24"
                 fill="#0A1633"
-                fontFamily="Segoe UI, Arial"
-                letterSpacing="2"
+                letterSpacing="0.25em"
               >
                 OPEN INNOVATION
               </text>
-            </svg>
-            {/* --- RIGHT-SIDE TEXT BLOCKS --- */}
-            <div className="absolute top-0 right-0 h-full flex flex-col justify-between py-10 pl-10"
-              style={{ minWidth: 320, maxWidth: 370 }}>
-              {/* Step 01 */}
-              <div className="mt-[90px]">
-                <div className="text-white font-bold text-[1.25rem] mb-2">R&BD 조기사업화 · 차세대 성장동력원 확보</div>
-                <div className="text-white text-[1rem]">단계별 ITEM Launching·사업화</div>
-              </div>
-              {/* Step 02 */}
-              <div className="mt-[110px]">
-                <div className="text-white font-bold text-[1.25rem] mb-2">신사업Biz · R&D</div>
-                <ul className="text-white text-[1rem] space-y-1 pl-1">
-                  <li>신사업 발굴</li>
-                  <li>TEM PJT 化</li>
-                  <li>R&BD Base</li>
-                  <li>차별화</li>
-                </ul>
-              </div>
-              {/* Step 03 */}
-              <div className="mt-[110px]">
-                <div className="text-white font-bold text-[1.25rem] mb-2">제조본부 · 개발본부</div>
-                <ul className="text-white text-[1rem] space-y-1 pl-1">
-                  <li>ITEM 조기 정착</li>
-                  <li>Mass Product 안정화</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+            </g>
+            {/* ====== Right-side labels (aligned to steps) ====== */}
+            <g
+              fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto"
+              fill="#FFFFFF"
+            >
+              {/* 01 */}
+              <text x="820" y="90" fontSize="24" fontWeight="800">
+                R&amp;BD 조기사업화 · 차세대 성장동력원 확보
+              </text>
+              <text x="820" y="128" fontSize="18" opacity="0.9">
+                단계별 ITEM Launching·사업화
+              </text>
+              {/* 02 */}
+              <text x="920" y="215" fontSize="24" fontWeight="800">
+                신사업Biz · R&amp;D
+              </text>
+              <text x="920" y="250" fontSize="18" opacity="0.9">신사업 발굴</text>
+              <text x="920" y="282" fontSize="18" opacity="0.9">TEM PJT 化</text>
+              <text x="920" y="314" fontSize="18" opacity="0.9">R&amp;BD Base</text>
+              <text x="920" y="346" fontSize="18" opacity="0.9">차별화</text>
+              {/* 03 */}
+              <text x="980" y="420" fontSize="24" fontWeight="800">
+                제조본부 · 개발본부
+              </text>
+              <text x="980" y="455" fontSize="18" opacity="0.9">ITEM 조기 정착</text>
+              <text x="980" y="487" fontSize="18" opacity="0.9">Mass Product 안정화</text>
+            </g>
+          </svg>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
       </main>
     </Layout>
   );
