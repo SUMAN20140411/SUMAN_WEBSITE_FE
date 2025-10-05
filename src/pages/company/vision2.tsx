@@ -327,22 +327,29 @@ export default function Vision2Page() {
               points="600,60 1100,760 100,760"
               fill="#FFFFFF"
             />
-            {/* Diagonal divider lines */}
-            <line
-              x1="320" y1="760" x2="600" y2="60"
-              stroke="#CFE8FF"
-              strokeWidth="4"
-            />
-            <line
-              x1="600" y1="760" x2="600" y2="60"
-              stroke="#CFE8FF"
-              strokeWidth="4"
-            />
-            <line
-              x1="880" y1="760" x2="600" y2="60"
-              stroke="#CFE8FF"
-              strokeWidth="4"
-            />
+            {/* Diagonal divider lines — parallel to left edge, 3 buah */}
+<line
+  x1="380" y1="760"  /* titik di baseline */
+  x2="740" y2="256"  /* titik di sisi kanan */
+  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
+/>
+<line
+  x1="630" y1="760"
+  x2="865" y2="431"
+  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
+/>
+<line
+  x1="880" y1="760"
+  x2="990" y2="606"
+  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
+/>
+            {/* Icons at intersections */}
+            <svg x="600" y="60" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <Cpu /> </svg>
+            <svg x="740" y="256" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <Layers /> </svg>   
+            <svg x="865" y="431" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            </svg>
           </svg>
         </div>
       </div>
