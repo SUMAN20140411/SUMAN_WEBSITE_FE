@@ -362,21 +362,23 @@ export default function Vision2Page() {
               </symbol>
             </defs>
             {/* ====== Triangle stack (white mountains) ====== */}
+            {/* Small (left) */}
             <path
-            d="M946.667 516.667 L773.333 760 L1120 760 Z"
-            fill="#FFFFFF"
-            filter="url(#ds)"
+              d="M160 370 L10 620 L320 620 Z"
+              fill="#FFFFFF"
+              filter="url(#ds)"
             />
+            {/* Medium (middle-left) */}
             <path
-            d="M860 395 L600 760 L1120 760 Z"
-            fill="#FFFFFF"
-            filter="url(#ds)"
+              d="M360 140 L160 540 L580 540 Z"
+              fill="#FFFFFF"
+              filter="url(#ds)"
             />
-            {/* Large (main) */}
+            {/* Large (main) - now section bg color */}
             <g filter="url(#ds)">
               <path
                 d="M600 30 L80 760 L1120 760 Z"
-                fill="#F5F7FA"
+                fill="#0A1633"
               />
               {/* inner fold along the left slope */}
               <path
@@ -385,8 +387,8 @@ export default function Vision2Page() {
                 opacity="0.75"
               />
             </g>
-            {/* Apex cap */}
-            <path d="M600 30 L545 125 L655 125 Z" fill="#00215C" />
+            {/* Apex cap - now light blue */}
+            <path d="M600 30 L545 125 L655 125 Z" fill="#38bdf8" />
             {/* ====== Right-edge steps (trapezoids) ====== */}
             {/* 01 - top light blue */}
             <path
