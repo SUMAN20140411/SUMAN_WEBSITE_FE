@@ -341,75 +341,208 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-        {/* R&D Vision with Image - Pyramid Biz Model */}
-<section className="min-h-[768px] w-full bg-[#06223b] flex items-center justify-center px-0 py-0">
-  <div className="flex w-full max-w-[1600px] mx-auto items-center justify-between">
-    {/* LEFT: Text */}
-    <div className="flex flex-col justify-center pl-[60px] pt-[60px] w-[48%]">
-      <h2 className="text-4xl font-bold text-white mb-8">Biz Model</h2>
-      <h3 className="text-2xl md:text-3xl font-bold leading-tight whitespace-pre-line text-white mb-8">
-        끊임없는 연구개발과 스마트 공정<br />
-        혁신을 통해 <span className="text-[#38bdf8]">제조 효율의 새로운 기준을 만들어 갑니다</span>
-      </h3>
-    </div>
-    {/* RIGHT: Pyramid SVG + Text */}
-    <div className="flex flex-row items-center justify-center w-[52%] relative h-[700px]">
-      {/* Pyramid SVG */}
-      <svg viewBox="0 0 900 700" width="520" height="700" className="absolute left-0 top-0 z-10">
-        {/* Top triangle */}
-        <polygon points="450,70 510,180 390,180" fill="#002b5c" />
-        {/* Main pyramid */}
-        <polygon points="450,180 850,650 50,650" fill="#f8fafc" />
-        {/* Layer 1 */}
-        <polygon points="450,180 730,650 170,650" fill="#e0f2fe" />
-        {/* Layer 2 */}
-        <polygon points="450,180 610,650 290,650" fill="#38bdf8" />
-        {/* Layer 3 */}
-        <polygon points="450,180 450,650 450,650" fill="#17416d" />
-        {/* Circles & icons */}
-        <circle cx="450" cy="600" r="38" fill="#002b5c" />
-        <circle cx="610" cy="440" r="32" fill="#38bdf8" />
-        <circle cx="290" cy="440" r="32" fill="#bae6fd" />
-        {/* Lightbulb icon */}
-        <g>
-          <circle cx="450" cy="600" r="18" fill="none" stroke="#fff" strokeWidth="2"/>
-          <path d="M450 590 a10 10 0 1 1 0 20 a10 10 0 1 1 0-20" stroke="#fff" strokeWidth="2" fill="none"/>
-          <rect x="446" y="610" width="8" height="10" rx="2" fill="#fff"/>
-        </g>
-        {/* Magnifier icon */}
-        <g>
-          <circle cx="610" cy="440" r="14" fill="none" stroke="#fff" strokeWidth="2"/>
-          <line x1="620" y1="450" x2="628" y2="458" stroke="#fff" strokeWidth="2"/>
-        </g>
-        {/* User icon */}
-        <g>
-          <circle cx="290" cy="440" r="14" fill="none" stroke="#17416d" strokeWidth="2"/>
-          <ellipse cx="290" cy="450" rx="10" ry="6" fill="none" stroke="#17416d" strokeWidth="2"/>
-        </g>
-        {/* Pyramid numbers */}
-        <text x="730" y="320" textAnchor="middle" fontSize="38" fill="#bae6fd" fontWeight="bold" fontFamily="Segoe UI">01</text>
-        <text x="610" y="470" textAnchor="middle" fontSize="38" fill="#38bdf8" fontWeight="bold" fontFamily="Segoe UI">02</text>
-        <text x="450" y="640" textAnchor="middle" fontSize="38" fill="#002b5c" fontWeight="bold" fontFamily="Segoe UI">03</text>
-      </svg>
-      {/* Pyramid right text */}
-      <div className="flex flex-col gap-12 ml-[540px] z-20 pt-24">
-        <div>
-          <div className="text-white text-lg font-semibold mb-1">R&BD 조기사업화 · 차세대 성장동력 확보</div>
-          <div className="text-white text-base">단계별 ITEM Launching·사업화</div>
+        <section className="bg-[#0A1633] w-full">
+      <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 gap-y-16 items-center">
+        {/* LEFT COLUMN */}
+        <div className="lg:col-span-5 flex flex-col justify-center">
+          <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
+          <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-4">
+            끊임없는 연구개발과 스마트 공정<br />
+            혁신을 통해{" "}
+            <span
+              className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+              style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+            >
+              제조 효율의 새로운
+            </span>
+            <br />
+            기준을 만들어 갑니다
+          </h2>
         </div>
-        <div>
-          <div className="text-white text-lg font-semibold mb-1">신사업Biz · R&D</div>
-          <div className="text-white text-base">신사업 발굴<br />TEM PJT 化<br />R&BD Base<br />차별화</div>
+        {/* RIGHT COLUMN */}
+        <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
+          <div className="relative w-full aspect-[16/14] flex items-center justify-center">
+            {/* SVG TRIANGLE STACK */}
+            <svg
+              viewBox="0 0 1000 900"
+              className="w-full h-full"
+              fill="none"
+            >
+              {/* --- TRIANGLE STACK --- */}
+              {/* T3: Small left triangle */}
+              <filter id="shadowT3" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="12" stdDeviation="10" floodColor="#000" floodOpacity="0.12" />
+              </filter>
+              <polygon
+                points="160,460 320,820 0,820"
+                fill="#FFFFFF"
+                filter="url(#shadowT3)"
+              />
+              {/* T2: Medium triangle */}
+              <filter id="shadowT2" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="16" stdDeviation="12" floodColor="#000" floodOpacity="0.13" />
+              </filter>
+              <polygon
+                points="260,170 520,820 0,820"
+                fill="#FFFFFF"
+                filter="url(#shadowT2)"
+              />
+              {/* T1: Large triangle */}
+              <polygon
+                points="540,60 920,820 180,820"
+                fill="#F5F7FA"
+              />
+              {/* Left inner bevel/fold */}
+              <polygon
+                points="540,60 260,170 520,820 180,820"
+                fill="#E7EBF2"
+                opacity="0.9"
+              />
+              {/* --- APEX CAP --- */}
+              <polygon
+                points="540,10 570,60 510,60"
+                fill="#00215C"
+              />
+              {/* --- RIGHT EDGE STEPS --- */}
+              {/* Step 01 */}
+              <polygon
+                points="920,820 920,610 820,520 820,820"
+                fill="#CFE8FF"
+              />
+              {/* Step 02 */}
+              <polygon
+                points="920,610 920,370 820,280 820,520"
+                fill="#0D70C0"
+              />
+              {/* Step 03 */}
+              <polygon
+                points="920,370 920,220 820,220 820,280"
+                fill="#00215C"
+              />
+              {/* Step inner shadow overlays */}
+              <linearGradient id="stepShadow" x1="920" y1="220" x2="820" y2="820" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#000" stopOpacity="0.10" />
+                <stop offset="100%" stopColor="#000" stopOpacity="0" />
+              </linearGradient>
+              <polygon
+                points="920,820 920,220 820,220 820,820"
+                fill="url(#stepShadow)"
+                opacity="0.18"
+              />
+              {/* --- ICON DISKS --- */}
+              {/* Bulb (bottom left) */}
+              <circle cx="270" cy="770" r="28" fill="#00215C" />
+              <g>
+                <circle cx="270" cy="770" r="13" stroke="#fff" strokeWidth="2" fill="none" />
+                <rect x="263" y="783" width="14" height="7" rx="2" fill="#fff" />
+                <line x1="270" y1="783" x2="270" y2="790" stroke="#fff" strokeWidth="2" />
+              </g>
+              {/* Search (middle) */}
+              <circle cx="410" cy="610" r="28" fill="#0D70C0" />
+              <g>
+                <circle cx="410" cy="610" r="13" stroke="#fff" strokeWidth="2" fill="none" />
+                <line x1="420" y1="620" x2="428" y2="628" stroke="#fff" strokeWidth="2" />
+              </g>
+              {/* User (upper) */}
+              <circle cx="520" cy="420" r="28" fill="#CFE8FF" fillOpacity="0.8" />
+              <g>
+                <circle cx="520" cy="415" r="8" stroke="#fff" strokeWidth="2" fill="none" />
+                <ellipse cx="520" cy="430" rx="10" ry="6" stroke="#fff" strokeWidth="2" fill="none" />
+              </g>
+              {/* --- STEP NUMBERS --- */}
+              <text
+                x="870"
+                y="570"
+                textAnchor="middle"
+                fontSize="44"
+                fontWeight="bold"
+                fill="#45B8E8"
+                fontFamily="Segoe UI, Arial"
+                letterSpacing="2"
+              >
+                01
+              </text>
+              <text
+                x="870"
+                y="410"
+                textAnchor="middle"
+                fontSize="44"
+                fontWeight="bold"
+                fill="#CFE8FF"
+                fontFamily="Segoe UI, Arial"
+                letterSpacing="2"
+              >
+                02
+              </text>
+              <text
+                x="870"
+                y="270"
+                textAnchor="middle"
+                fontSize="44"
+                fontWeight="bold"
+                fill="#FFFFFF"
+                fontFamily="Segoe UI, Arial"
+                letterSpacing="2"
+              >
+                03
+              </text>
+              {/* --- BOTTOM RIBBON --- */}
+              <rect
+                x="180"
+                y="840"
+                width="740"
+                height="44"
+                rx="8"
+                fill="#fff"
+                filter="url(#shadowRibbon)"
+              />
+              <filter id="shadowRibbon" x="0" y="0" width="200%" height="200%">
+                <feDropShadow dx="0" dy="2" stdDeviation="6" floodColor="#000" floodOpacity="0.10" />
+              </filter>
+              <text
+                x="550"
+                y="870"
+                textAnchor="middle"
+                fontSize="32"
+                fontWeight="bold"
+                fill="#0A1633"
+                fontFamily="Segoe UI, Arial"
+                letterSpacing="2"
+              >
+                OPEN INNOVATION
+              </text>
+            </svg>
+            {/* --- RIGHT-SIDE TEXT BLOCKS --- */}
+            <div className="absolute top-0 right-0 h-full flex flex-col justify-between py-10 pl-10"
+              style={{ minWidth: 320, maxWidth: 370 }}>
+              {/* Step 01 */}
+              <div className="mt-[90px]">
+                <div className="text-white font-bold text-[1.25rem] mb-2">R&BD 조기사업화 · 차세대 성장동력원 확보</div>
+                <div className="text-white text-[1rem]">단계별 ITEM Launching·사업화</div>
+              </div>
+              {/* Step 02 */}
+              <div className="mt-[110px]">
+                <div className="text-white font-bold text-[1.25rem] mb-2">신사업Biz · R&D</div>
+                <ul className="text-white text-[1rem] space-y-1 pl-1">
+                  <li>신사업 발굴</li>
+                  <li>TEM PJT 化</li>
+                  <li>R&BD Base</li>
+                  <li>차별화</li>
+                </ul>
+              </div>
+              {/* Step 03 */}
+              <div className="mt-[110px]">
+                <div className="text-white font-bold text-[1.25rem] mb-2">제조본부 · 개발본부</div>
+                <ul className="text-white text-[1rem] space-y-1 pl-1">
+                  <li>ITEM 조기 정착</li>
+                  <li>Mass Product 안정화</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <div className="text-white text-lg font-semibold mb-1">제조본부 · 개발본부</div>
-          <div className="text-white text-base">ITEM 조기 정착<br />Mass Product 안정화</div>
-        </div>
-        <div className="text-[#38bdf8] text-2xl font-bold mt-8 tracking-wide">OPEN INNOVATION</div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
       </main>
     </Layout>
   );
