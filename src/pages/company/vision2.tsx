@@ -292,53 +292,67 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
+
         <section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
-    {/* LEFT COLUMN */}
-    <div className="lg:col-span-5 flex flex-col justify-start">
-  <div className="text-white text-[1.7rem] font-bold mb-4">Biz Model</div>
-  <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-2 text-left">
-    {lang === "KOR"
-      ? <>
-          끊임없는 연구개발과 스마트 공정<br />
-          혁신을 통해{" "}
-          <span
-            className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-          >
-            제조 효율의 새로운
-          </span>
-          <br />
-          <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
-        </>
-      : <>
-          Continuous R&D and smart process<br />
-          Creating new standards for{" "}
-          <span
-            className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-          >
-            manufacturing efficiency
-          </span>
-          <br />
-          <span className="text-[#45B8E8] font-bold">We set new standards</span>
-        </>
-    }
-  </h2>
-</div>
-    {/* RIGHT COLUMN */}
+    {/* LEFT COLUMN - IMAGE */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-      <div className="relative w-full" style={{ aspectRatio: "1210/768" }}>
+      <motion.div
+        className="relative w-full"
+        style={{ aspectRatio: "1210/768" }}
+        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #38bdf8" }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
         <Image
           src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
           alt="Biz Model Pyramid"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain rounded-xl"
           style={{ width: "110%", height: "110%" }}
         />
-      </div>
+      </motion.div>
+    </div>
+    {/* RIGHT COLUMN - TEXT */}
+    <div className="lg:col-span-5 flex flex-col justify-start">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+      >
+        <div className="text-white text-[1.7rem] font-bold mb-4">Biz Model</div>
+        <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-2 text-left">
+          {lang === "KOR"
+            ? <>
+                끊임없는 연구개발과 스마트 공정<br />
+                혁신을 통해{" "}
+                <span
+                  className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                  style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                >
+                  제조 효율의 새로운
+                </span>
+                <br />
+                <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
+              </>
+            : <>
+                Continuous R&D and smart process<br />
+                Creating new standards for{" "}
+                <span
+                  className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                  style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                >
+                  manufacturing efficiency
+                </span>
+                <br />
+                <span className="text-[#45B8E8] font-bold">We set new standards</span>
+              </>
+          }
+        </h2>
+      </motion.div>
     </div>
   </div>
 </section>
+  
       </main>
     </Layout>
   );
