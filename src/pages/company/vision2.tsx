@@ -69,21 +69,27 @@ export default function Vision2Page() {
     "/images/business/process/FLOWKOREA.png",
     "/images/company/vision_factory.jpg",
   ];
-  
 
-// Vision title and subtitle
-  const visionTitle = lang === "KOR"
-    ? <>
-        2024 <b>도약의 원년</b>—5년 내<br />
-        <b>매출 600억·순이익 150억 달성,</b><br />
-        <span className="text-sky-400 font-bold">‘확신(Confidence)’의</span><br />
+  // Vision title and subtitle
+  const visionTitle =
+    lang === "KOR" ? (
+      <>
+        2024 <b>도약의 원년</b>—5년 내
+        <br />
+        <b>매출 600억·순이익 150억 달성,</b>
+        <br />
+        <span className="text-sky-400 font-bold">‘확신(Confidence)’의</span>
+        <br />
         <span className="text-sky-400 font-bold"> 종합 솔루션 서비스 기업으로 성장</span>
       </>
-    : <>
-        2024 <b>Leap Year</b>—Within 5 Years <b>Revenue 60B KRW·Net Profit 15B Achieved,</b><br />
+    ) : (
+      <>
+        2024 <b>Leap Year</b>—Within 5 Years <b>Revenue 60B KRW·Net Profit 15B Achieved,</b>
+        <br />
         <span className="text-sky-400 font-bold">‘Confidence’-based</span>
         <span className="text-sky-400 font-bold"> Total Solution Service Company Growth</span>
-      </>;
+      </>
+    );
 
   // Timeline data
   const C = {
@@ -96,26 +102,27 @@ export default function Vision2Page() {
     white: "#FFFFFF",
   };
 
-
   // Quadrant values
-  const quadrants = lang === "KOR"
-    ? [
-        { label: "즐겁게", en: "Enjoy" },
-        { label: "새롭게", en: "Neo" },
-        { label: "치열하게", en: "Intensely" },
-        { label: "빠르게", en: "Fastly" },
-      ]
-    : [
-        { label: "Enjoy", en: "Enjoy" },
-        { label: "Neo", en: "Neo" },
-        { label: "Intensely", en: "Intensely" },
-        { label: "Fastly", en: "Fastly" },
-      ];
-   const timeline = milestones;
+  const quadrants =
+    lang === "KOR"
+      ? [
+          { label: "즐겁게", en: "Enjoy" },
+          { label: "새롭게", en: "Neo" },
+          { label: "치열하게", en: "Intensely" },
+          { label: "빠르게", en: "Fastly" },
+        ]
+      : [
+          { label: "Enjoy", en: "Enjoy" },
+          { label: "Neo", en: "Neo" },
+          { label: "Intensely", en: "Intensely" },
+          { label: "Fastly", en: "Fastly" },
+        ];
+  const timeline = milestones;
 
   // Timeline colors
   const timelineColors = ["#17416d", "#38bdf8", "#bae6fd"];
   const neoTitleLines = strategy.neoTitle.replace(" 5th", "\n5th").split("\n");
+
   return (
     <Layout>
       <Head>
@@ -141,20 +148,15 @@ export default function Vision2Page() {
               marginBottom: `-${HERO_TRIM_PX}px`,
             }}
           >
-            <HeroSection
-              title={hero.title}
-              backgroundImage="/images/sub_banner/company_banner.png"
-            />
+            <HeroSection title={hero.title} backgroundImage="/images/sub_banner/company_banner.png" />
           </div>
 
           <div className="relative z-20 -mt-2">
-            <BreadcrumbSection
-              path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"}
-            />
+            <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
           </div>
         </div>
 
-        {/* Vision + Core Values Section with Animation */}
+        {/* Vision + Core Values Section with Animation & Hover Effects */}
 <section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
   <motion.div
     initial={{ opacity: 0, y: 40 }}
@@ -170,7 +172,7 @@ export default function Vision2Page() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.7 }}
-        className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full"
+        className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full transition-all duration-200 hover:text-sky-500"
       >
         {lang === "KOR" ? "Our Vision" : "Our Vision"}
       </motion.h2>
@@ -180,7 +182,7 @@ export default function Vision2Page() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7 }}
-          className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900"
+          className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200 hover:text-sky-500"
         >
           {visionTitle}
         </motion.div>
@@ -199,11 +201,9 @@ export default function Vision2Page() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7 }}
-          className="w-full text-center mb-2"
+          className="w-full text-center mb-2 transition-all duration-200 hover:text-sky-500"
         >
-          <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">
-            TARGET
-          </span>
+          <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">TARGET</span>
         </motion.div>
         {/* Arrow above timeline */}
         <div className="flex justify-center w-full relative mb-2">
@@ -243,10 +243,10 @@ export default function Vision2Page() {
               transition={{ duration: 0.7, delay: idx * 0.15 }}
               className="flex flex-col items-center flex-1"
             >
-              <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">
+              <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center transition-all duration-200 hover:text-sky-500">
                 {item.year}
               </div>
-              <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
+              <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line transition-all duration-200 hover:text-sky-500">
                 {item.text}
               </div>
             </motion.div>
@@ -254,27 +254,21 @@ export default function Vision2Page() {
         </div>
       </motion.div>
     </div>
-    {/* RIGHT: Quadrant Circle - LOOK EXACTLY LIKE THE PASTED IMAGE */}
+    {/* RIGHT: Quadrant Circle - Hover Effect */}
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.5 }}
       transition={{ duration: 0.7 }}
-      className="flex items-center justify-center w-full lg:w-[520px] h-[520px]"
+      whileHover={{ scale: 1.04, filter: "drop-shadow(0 0 16px #38bdf8)" }}
+      className="flex items-center justify-center w-full lg:w-[520px] h-[520px] transition-all duration-300"
     >
       <div
-        className="w-full h-full flex items-center justify-center transition-all duration-300"
+        className="w-full h-full flex items-center justify-center"
         style={{ maxWidth: 520, maxHeight: 520 }}
-        onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.08)"}
-        onMouseLeave={e => e.currentTarget.style.filter = "brightness(1)"}
       >
-        <svg
-          viewBox="0 0 520 520"
-          width="100%"
-          height="100%"
-          className="max-w-[520px] max-h-[520px]"
-        >
-          {/* Outer Gradient Circle */}
+        <svg viewBox="0 0 520 520" width="100%" height="100%" className="max-w-[520px] max-h-[520px]">
+          {/* ...existing SVG code... */}
           <defs>
             <radialGradient id="circleGrad" cx="50%" cy="50%" r="70%">
               <stop offset="0%" stopColor="#e3f4fb" />
@@ -283,9 +277,7 @@ export default function Vision2Page() {
             </radialGradient>
           </defs>
           <circle cx="260" cy="260" r="240" fill="url(#circleGrad)" />
-          {/* Inner white circle outline */}
           <circle cx="260" cy="260" r="130" fill="none" stroke="#fff" strokeWidth="4" />
-          {/* Center Text - font size dikurangi, warna putih, style simple */}
           <text
             x="260"
             y="250"
@@ -335,8 +327,9 @@ export default function Vision2Page() {
     </motion.div>
   </motion.div>
 </section>
-        {/* R&D */}
-        <section className="bg-[#0A1633] w-full">
+
+{/* R&D Section - Hover Effect on Image & Animation on Text */}
+<section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
     <motion.div
@@ -352,44 +345,48 @@ export default function Vision2Page() {
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.7 }}
       >
-        <div className="text-white text-[2.2rem] font-bold mb-6">Biz Model</div>
-        <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
-          {lang === "KOR"
-            ? <>
-                끊임없는 연구개발과 스마트 공정<br />
-                혁신을 통해{" "}
-                <span
-                  className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-                  style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-                >
-                  제조 효율의 새로운
-                </span>
-                <br />
-                <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
-              </>
-            : <>
-                Continuous R&D and smart process<br />
-                Creating new standards for{" "}
-                <span
-                  className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-                  style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-                >
-                  manufacturing efficiency
-                </span>
-                <br />
-                <span className="text-[#45B8E8] font-bold">We set new standards</span>
-              </>
-          }
+        <div className="text-white text-[2.2rem] font-bold mb-6 transition-all duration-200 hover:text-sky-500">Biz Model</div>
+        <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left transition-all duration-200 hover:text-sky-500">
+          {lang === "KOR" ? (
+            <>
+              끊임없는 연구개발과 스마트 공정
+              <br />
+              혁신을 통해{" "}
+              <span
+                className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+              >
+                제조 효율의 새로운
+              </span>
+              <br />
+              <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
+            </>
+          ) : (
+            <>
+              Continuous R&D and smart process
+              <br />
+              Creating new standards for{" "}
+              <span
+                className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+              >
+                manufacturing efficiency
+              </span>
+              <br />
+              <span className="text-[#45B8E8] font-bold">We set new standards</span>
+            </>
+          )}
         </h2>
       </motion.div>
     </motion.div>
     {/* RIGHT COLUMN */}
-    <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
+    <motion.div
+      whileHover={{ scale: 1.04, filter: "drop-shadow(0 0 16px #38bdf8)" }}
+      className="lg:col-span-7 flex flex-col items-center justify-center w-full transition-all duration-300"
+    >
       <div
-        className="relative w-full transition-all duration-300"
+        className="relative w-full"
         style={{ aspectRatio: "1210/768" }}
-        onMouseEnter={e => e.currentTarget.style.filter = "contrast(1.08)"}
-        onMouseLeave={e => e.currentTarget.style.filter = "contrast(1)"}
       >
         <Image
           src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
@@ -398,7 +395,7 @@ export default function Vision2Page() {
           style={{ width: "110%", height: "110%" }}
         />
       </div>
-    </div>
+    </motion.div>
   </div>
 </section>
       </main>
