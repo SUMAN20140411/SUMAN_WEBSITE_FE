@@ -359,7 +359,7 @@ export default function Vision2Page() {
                 <div className="text-white text-[1.7rem] font-bold mb-6 transition-all duration-200 hover:scale-1.05 transition: { duration: 0.3 }">
                   Biz Model
                 </div>
-                <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-4 text-left transition-all duration-200 hover:text-sky-500">
+                <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-4 text-left transition-all duration-200 hover:scale-1.05 transition: { duration: 0.3 }">
                   {lang === "KOR" ? (
                     <>
                       끊임없는 연구개발과 스마트 공정
