@@ -296,37 +296,36 @@ export default function Vision2Page() {
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
     <div className="lg:col-span-5 flex flex-col justify-start">
-      <div className="text-white text-[2.2rem] font-bold mb-6">Biz Model</div>
-      {/* Headline bilingual, font size 1.5x bigger, style sesuai permintaan */}
-      <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
-        {lang === "KOR"
-          ? <>
-              끊임없는 연구개발과 스마트 공정<br />
-              혁신을 통해{" "}
-              <span
-                className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-                style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-              >
-                제조 효율의 새로운
-              </span>
-              <br />
-              <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
-            </>
-          : <>
-              Continuous R&D and smart process<br />
-              Creating new standards for{" "}
-              <span
-                className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-                style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-              >
-                manufacturing efficiency
-              </span>
-              <br />
-              <span className="text-[#45B8E8] font-bold">We set new standards</span>
-            </>
-        }
-      </h2>
-    </div>
+  <div className="text-white text-[1.2rem] font-bold mb-4">Biz Model</div>
+  <h2 className="text-white text-xl md:text-3xl font-bold leading-tight mb-2 text-left">
+    {lang === "KOR"
+      ? <>
+          끊임없는 연구개발과 스마트 공정<br />
+          혁신을 통해{" "}
+          <span
+            className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+          >
+            제조 효율의 새로운
+          </span>
+          <br />
+          <span className="text-[#45B8E8] font-bold">기준을 만들어 갑니다</span>
+        </>
+      : <>
+          Continuous R&D and smart process<br />
+          Creating new standards for{" "}
+          <span
+            className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+            style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+          >
+            manufacturing efficiency
+          </span>
+          <br />
+          <span className="text-[#45B8E8] font-bold">We set new standards</span>
+        </>
+    }
+  </h2>
+</div>
     {/* RIGHT COLUMN */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
       <div className="relative w-full" style={{ aspectRatio: "1210/768" }}>
