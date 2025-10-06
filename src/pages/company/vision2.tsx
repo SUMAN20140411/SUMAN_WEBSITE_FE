@@ -293,6 +293,7 @@ export default function Vision2Page() {
           </div>
         </section>
         {/* R&D Vision with Image - Large White Triangle + Diagonal Dividers */}
+        {/* R&D Vision with Image - Layered Pyramid with Image Backgrounds */}
 <section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
@@ -313,44 +314,95 @@ export default function Vision2Page() {
     </div>
     {/* RIGHT COLUMN */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-      <div className="relative w-full">
-        <div className="relative w-full aspect-[16/11]">
-          <svg
-            viewBox="0 0 1200 825"
-            className="absolute inset-0 h-full w-full"
-            aria-labelledby="bizModelGraphicTitle"
-            role="img"
+      <div className="relative w-full aspect-[16/9]">
+        {/* SVG Pyramid Layered */}
+        <svg
+          viewBox="0 0 1400 900"
+          className="absolute inset-0 w-full h-full"
+          aria-labelledby="bizModelGraphicTitle"
+          role="img"
+        >
+          <title id="bizModelGraphicTitle">Layered Pyramid Biz Model with Images</title>
+          <defs>
+            {/* Images for each layer */}
+            <pattern id="img-top" patternUnits="objectBoundingBox" width="1" height="1">
+              <image href="/images/sub_banner/company_banner.png" x="0" y="0" width="400" height="220" preserveAspectRatio="xMidYMid slice" />
+            </pattern>
+            <pattern id="img-mid" patternUnits="objectBoundingBox" width="1" height="1">
+              <image href="/images/business/process/coreKor2.png" x="0" y="0" width="900" height="260" preserveAspectRatio="xMidYMid slice" />
+            </pattern>
+            <pattern id="img-bot" patternUnits="objectBoundingBox" width="1" height="1">
+              <image href="/images/business/process/FLOWKOREA.png" x="0" y="0" width="900" height="260" preserveAspectRatio="xMidYMid slice" />
+            </pattern>
+          </defs>
+          {/* --- Layer 1: Top triangle --- */}
+          {/* Rectangle behind triangle */}
+          <rect x="470" y="60" width="900" height="160" fill="#2182a7" opacity="0.7" />
+          {/* Triangle with image */}
+          <polygon
+            points="700,60 900,320 500,320"
+            fill="url(#img-top)"
+            stroke="#2182a7"
+            strokeWidth="4"
+          />
+          {/* --- Layer 2: Middle trapezoid --- */}
+          {/* Rectangle behind trapezoid */}
+          <rect x="470" y="320" width="900" height="160" fill="#2182a7" opacity="0.7" />
+          {/* Trapezoid with image */}
+          <polygon
+            points="540,320 1060,320 1160,480 440,480"
+            fill="url(#img-mid)"
+            stroke="#2182a7"
+            strokeWidth="4"
+          />
+          {/* --- Layer 3: Bottom trapezoid --- */}
+          {/* Rectangle behind trapezoid */}
+          <rect x="470" y="480" width="900" height="160" fill="#2182a7" opacity="0.7" />
+          {/* Trapezoid with image */}
+          <polygon
+            points="480,480 1120,480 1220,740 380,740"
+            fill="url(#img-bot)"
+            stroke="#2182a7"
+            strokeWidth="4"
+          />
+          {/* --- Bottom Ribbon --- */}
+          <rect x="380" y="770" width="840" height="44" rx="8" fill="#fff" />
+          <text
+            x="800"
+            y="800"
+            textAnchor="middle"
+            fontFamily="Segoe UI, Arial"
+            fontWeight="bold"
+            fontSize="32"
+            fill="#0A1633"
+            letterSpacing="2"
           >
-            <title id="bizModelGraphicTitle">Large White Triangle with Diagonal Dividers</title>
-            {/* Large white triangle */}
-            <polygon
-              points="600,60 1100,760 100,760"
-              fill="#FFFFFF"
-            />
-            {/* Diagonal divider lines — parallel to left edge, 3 buah */}
-<line
-  x1="380" y1="760"  /* titik di baseline */
-  x2="740" y2="256"  /* titik di sisi kanan */
-  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
-/>
-<line
-  x1="630" y1="760"
-  x2="865" y2="431"
-  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
-/>
-<line
-  x1="880" y1="760"
-  x2="990" y2="606"
-  stroke="#CFE8FF" strokeWidth="4" strokeLinecap="round" opacity="0.85"
-/>
-            {/* Icons at intersections */}
-            <svg x="600" y="60" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-  <Cpu /> </svg>
-            <svg x="740" y="256" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-  <Layers /> </svg>   
-            <svg x="865" y="431" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0A1633" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            </svg>
-          </svg>
+            OPEN INNOVATION
+          </text>
+        </svg>
+        {/* --- Step Texts (absolutely positioned, right side) --- */}
+        <div className="absolute top-[80px] left-[950px] w-[400px]">
+          {/* Step 01 */}
+          <div className="mb-12">
+            <div className="text-white font-bold text-[1.25rem] mb-2">R&BD 조기사업화 · 차세대 성장동력원 확보</div>
+            <div className="text-white text-[1rem]">단계별 ITEM Launching·사업화</div>
+          </div>
+          {/* Step 02 */}
+          <div className="mb-12">
+            <div className="text-white font-bold text-[1.25rem] mb-2">신사업Biz · R&D</div>
+            <ul className="text-white text-[1rem] space-y-1 pl-1">
+              <li>신사업 발굴 TEAM PJT 化</li>
+              <li>R&BD Base 차별화</li>
+            </ul>
+          </div>
+          {/* Step 03 */}
+          <div>
+            <div className="text-white font-bold text-[1.25rem] mb-2">제조본부 · 개발본부</div>
+            <ul className="text-white text-[1rem] space-y-1 pl-1">
+              <li>ITEM 조기 정착</li>
+              <li>Mass Product 안정화</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
