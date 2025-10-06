@@ -356,7 +356,7 @@ export default function Vision2Page() {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7 }}
               >
-                <div className="text-white text-[1.7rem] font-bold mb-6 transition-all duration-200 hover:text-sky-500">
+                <div className="text-white text-[1.7rem] font-bold mb-6 transition-all duration-200 hover:scale-105">
                   Biz Model
                 </div>
                 <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-4 text-left transition-all duration-200 hover:text-sky-500">
@@ -395,7 +395,7 @@ export default function Vision2Page() {
 
             {/* RIGHT COLUMN */}
             <motion.div
-              whileHover={{ scale: 1.04, filter: "drop-shadow(0 0 16px #38bdf8)" }}
+              whileHover={{ scale: 1.04, transition: { duration: 0.3 } }}
               className="lg:col-span-7 flex flex-col items-center justify-center w-full transition-all duration-300"
             >
               <div className="relative w-full" style={{ aspectRatio: "1210/768" }}>
