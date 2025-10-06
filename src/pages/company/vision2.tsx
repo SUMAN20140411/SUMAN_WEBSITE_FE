@@ -154,173 +154,206 @@ export default function Vision2Page() {
           </div>
         </div>
 
-        {/* Vision + Core Values Section */}
-        <section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto">
-            {/* LEFT: Vision & Timeline */}
-            <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
-              <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">
-                {lang === "KOR" ? "Our Vision" : "Our Vision"}
-              </h2>
-
-              <div className="mb-10 text-left w-full">
-                <div className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
-                  {visionTitle}
-                </div>
-              </div>
-
-              {/* Timeline */}
-              <div className="w-full flex flex-col items-center mb-10">
-                {/* Target label */}
-                <div className="w-full text-center mb-2">
-                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">
-                    TARGET
-                  </span>
-                </div>
-
-                {/* Arrow above timeline */}
-                <div className="flex justify-center w-full relative mb-2">
-                  <svg
-                    width="100%"
-                    height="30"
-                    className="block absolute left-0 right-0 mx-auto -top-7 z-10"
-                    style={{ maxWidth: "100%" }}
-                  >
-                    <polygon points="50%,0 47%,18 53%,18" fill="#38bdf8" />
-                  </svg>
-
-                  <div className="flex justify-between w-full mx-auto max-w-[700px]">
-                    {/* 3 gradiasi garis sepanjang container */}
-                    {timelineColors.map((color, idx) => (
-                      <div
-                        key={color}
-                        className="flex-1 h-5 rounded-full mx-1"
-                        style={{
-                          background:
-                            idx === 0
-                              ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
-                              : idx === 1
-                              ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
-                              : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Years & Descriptions */}
-                <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
-                  {milestones.map((item, idx) => (
-                    <div key={item.year} className="flex flex-col items-center flex-1">
-                      <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">
-                        {item.year}
-                      </div>
-                      <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
-                        {item.text}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT: Quadrant Circle - LOOK EXACTLY LIKE THE PASTED IMAGE */}
-            <div className="flex items-center justify-center w-full lg:w-[520px] h-[520px]">
-              <svg
-                viewBox="0 0 520 520"
-                width="100%"
-                height="100%"
-                className="max-w-[520px] max-h-[520px]"
-              >
-                {/* Outer Gradient Circle */}
-                <defs>
-                  <radialGradient id="circleGrad" cx="50%" cy="50%" r="70%">
-                    <stop offset="0%" stopColor="#e3f4fb" />
-                    <stop offset="60%" stopColor="#38bdf8" />
-                    <stop offset="100%" stopColor="#009fe3" />
-                  </radialGradient>
-                </defs>
-                <circle cx="260" cy="260" r="240" fill="url(#circleGrad)" />
-                {/* Inner white circle outline */}
-                <circle cx="260" cy="260" r="130" fill="none" stroke="#fff" strokeWidth="4" />
-                {/* Center Text - font size dikurangi, warna putih, style simple */}
-                <text
-                  x="260"
-                  y="250"
-                  textAnchor="middle"
-                  fontSize="40"
-                  fontFamily="'Segoe UI', Arial, sans-serif"
-                  fontWeight="bold"
-                  fill="#fff"
-                  style={{ letterSpacing: "2px" }}
-                >
-                  NEO &#39;24
-                </text>
-                <text
-                  x="260"
-                  y="285"
-                  textAnchor="middle"
-                  fontSize="32"
-                  fontFamily="'Segoe UI', Arial, sans-serif"
-                  fontWeight="bold"
-                  fill="#fff"
-                  style={{ letterSpacing: "2px" }}
-                >
-                  5th 6015
-                </text>
-                {/* Top Left */}
-                <text x="120" y="140" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
-                  즐겁게
-                  <tspan x="120" dy="1.2em" fontSize="14" fontWeight="400">(Enjoy)</tspan>
-                </text>
-                {/* Top Right */}
-                <text x="400" y="140" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
-                  새롭게
-                  <tspan x="400" dy="1.2em" fontSize="14" fontWeight="400">(Neo)</tspan>
-                </text>
-                {/* Bottom Left */}
-                <text x="120" y="400" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
-                  치열하게
-                  <tspan x="120" dy="1.2em" fontSize="14" fontWeight="400">(Intensely)</tspan>
-                </text>
-                {/* Bottom Right */}
-                <text x="400" y="400" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
-                  빠르게
-                  <tspan x="400" dy="1.2em" fontSize="14" fontWeight="400">(Fastly)</tspan>
-                </text>
-              </svg>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-[#0A1633] w-full">
-  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
-    {/* LEFT COLUMN - IMAGE */}
-    <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-      <motion.div
-        className="relative w-full"
-        style={{ aspectRatio: "1210/768" }}
-        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #38bdf8" }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        {/* Vision + Core Values Section with Animation */}
+<section className="w-full flex flex-col items-center justify-center py-20 px-2 md:px-0">
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.4 }}
+    transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+    className="flex flex-col lg:flex-row items-center justify-center gap-0 w-full max-w-[1400px] mx-auto"
+  >
+    {/* LEFT: Vision & Timeline */}
+    <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
+      <motion.h2
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.7 }}
+        className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full"
       >
-        <Image
-          src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
-          alt="Biz Model Pyramid"
-          className="w-full h-full object-contain rounded-xl"
-          style={{ width: "110%", height: "110%" }}
-        />
-      </motion.div>
-    </div>
-    {/* RIGHT COLUMN - TEXT */}
-    <div className="lg:col-span-5 flex flex-col justify-start">
+        {lang === "KOR" ? "Our Vision" : "Our Vision"}
+      </motion.h2>
+      <div className="mb-10 text-left w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7 }}
+          className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900"
+        >
+          {visionTitle}
+        </motion.div>
+      </div>
+      {/* Timeline */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+        transition={{ duration: 0.7 }}
+        className="w-full flex flex-col items-center mb-10"
       >
-        <div className="text-white text-[1.7rem] font-bold mb-4">Biz Model</div>
-        <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-2 text-left">
+        {/* Target label */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7 }}
+          className="w-full text-center mb-2"
+        >
+          <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">
+            TARGET
+          </span>
+        </motion.div>
+        {/* Arrow above timeline */}
+        <div className="flex justify-center w-full relative mb-2">
+          <svg
+            width="100%"
+            height="30"
+            className="block absolute left-0 right-0 mx-auto -top-7 z-10"
+            style={{ maxWidth: "100%" }}
+          >
+            <polygon points="50%,0 47%,18 53%,18" fill="#38bdf8" />
+          </svg>
+          <div className="flex justify-between w-full mx-auto max-w-[700px]">
+            {timelineColors.map((color, idx) => (
+              <div
+                key={color}
+                className="flex-1 h-5 rounded-full mx-1"
+                style={{
+                  background:
+                    idx === 0
+                      ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
+                      : idx === 1
+                      ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
+                      : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        {/* Years & Descriptions */}
+        <div className="flex justify-between w-full mx-auto max-w-[700px] mt-2">
+          {milestones.map((item, idx) => (
+            <motion.div
+              key={item.year}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.7, delay: idx * 0.15 }}
+              className="flex flex-col items-center flex-1"
+            >
+              <div className="text-xl md:text-2xl font-bold text-slate-900 mb-1 text-center">
+                {item.year}
+              </div>
+              <div className="text-xs md:text-sm text-slate-700 text-center whitespace-pre-line">
+                {item.text}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+    {/* RIGHT: Quadrant Circle - LOOK EXACTLY LIKE THE PASTED IMAGE */}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.7 }}
+      className="flex items-center justify-center w-full lg:w-[520px] h-[520px]"
+    >
+      <div
+        className="w-full h-full flex items-center justify-center transition-all duration-300"
+        style={{ maxWidth: 520, maxHeight: 520 }}
+        onMouseEnter={e => e.currentTarget.style.filter = "brightness(1.08)"}
+        onMouseLeave={e => e.currentTarget.style.filter = "brightness(1)"}
+      >
+        <svg
+          viewBox="0 0 520 520"
+          width="100%"
+          height="100%"
+          className="max-w-[520px] max-h-[520px]"
+        >
+          {/* Outer Gradient Circle */}
+          <defs>
+            <radialGradient id="circleGrad" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stopColor="#e3f4fb" />
+              <stop offset="60%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#009fe3" />
+            </radialGradient>
+          </defs>
+          <circle cx="260" cy="260" r="240" fill="url(#circleGrad)" />
+          {/* Inner white circle outline */}
+          <circle cx="260" cy="260" r="130" fill="none" stroke="#fff" strokeWidth="4" />
+          {/* Center Text - font size dikurangi, warna putih, style simple */}
+          <text
+            x="260"
+            y="250"
+            textAnchor="middle"
+            fontSize="40"
+            fontFamily="'Segoe UI', Arial, sans-serif"
+            fontWeight="bold"
+            fill="#fff"
+            style={{ letterSpacing: "2px" }}
+          >
+            NEO &#39;24
+          </text>
+          <text
+            x="260"
+            y="285"
+            textAnchor="middle"
+            fontSize="32"
+            fontFamily="'Segoe UI', Arial, sans-serif"
+            fontWeight="bold"
+            fill="#fff"
+            style={{ letterSpacing: "2px" }}
+          >
+            5th 6015
+          </text>
+          {/* Top Left */}
+          <text x="120" y="140" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
+            즐겁게
+            <tspan x="120" dy="1.2em" fontSize="14" fontWeight="400">(Enjoy)</tspan>
+          </text>
+          {/* Top Right */}
+          <text x="400" y="140" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
+            새롭게
+            <tspan x="400" dy="1.2em" fontSize="14" fontWeight="400">(Neo)</tspan>
+          </text>
+          {/* Bottom Left */}
+          <text x="120" y="400" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
+            치열하게
+            <tspan x="120" dy="1.2em" fontSize="14" fontWeight="400">(Intensely)</tspan>
+          </text>
+          {/* Bottom Right */}
+          <text x="400" y="400" textAnchor="middle" fontSize="22" fontWeight="600" fill="#fff">
+            빠르게
+            <tspan x="400" dy="1.2em" fontSize="14" fontWeight="400">(Fastly)</tspan>
+          </text>
+        </svg>
+      </div>
+    </motion.div>
+  </motion.div>
+</section>
+        {/* R&D */}
+        <section className="bg-[#0A1633] w-full">
+  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
+    {/* LEFT COLUMN */}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+      className="lg:col-span-5 flex flex-col justify-start"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.7 }}
+      >
+        <div className="text-white text-[2.2rem] font-bold mb-6">Biz Model</div>
+        <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
           {lang === "KOR"
             ? <>
                 끊임없는 연구개발과 스마트 공정<br />
@@ -349,10 +382,25 @@ export default function Vision2Page() {
           }
         </h2>
       </motion.div>
+    </motion.div>
+    {/* RIGHT COLUMN */}
+    <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
+      <div
+        className="relative w-full transition-all duration-300"
+        style={{ aspectRatio: "1210/768" }}
+        onMouseEnter={e => e.currentTarget.style.filter = "contrast(1.08)"}
+        onMouseLeave={e => e.currentTarget.style.filter = "contrast(1)"}
+      >
+        <Image
+          src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
+          alt="Biz Model Pyramid"
+          className="w-full h-full object-contain"
+          style={{ width: "110%", height: "110%" }}
+        />
+      </div>
     </div>
   </div>
 </section>
-  
       </main>
     </Layout>
   );
