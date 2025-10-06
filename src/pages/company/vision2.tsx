@@ -296,8 +296,8 @@ export default function Vision2Page() {
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
     <div className="lg:col-span-5 flex flex-col justify-start">
-  <div className="text-white text-[1.2rem] font-bold mb-4">Biz Model</div>
-  <h2 className="text-white text-xl md:text-3xl font-bold leading-tight mb-2 text-left">
+  <div className="text-white text-[1.7rem] font-bold mb-4">Biz Model</div>
+  <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-2 text-left">
     {lang === "KOR"
       ? <>
           끊임없는 연구개발과 스마트 공정<br />
