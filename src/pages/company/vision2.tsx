@@ -295,10 +295,10 @@ export default function Vision2Page() {
         <section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
-    <div className="flex flex-col items-center justify-center w-full lg:w-[700px]">
-      <div className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full">Biz Model</div>
-      {/* Headline bilingual, font size 1.5x bigger */}
-      <div className="mb-10 text-left w-full text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900">
+    <div className="lg:col-span-5 flex flex-col justify-start">
+      <div className="text-white text-[2.2rem] font-bold mb-6">Biz Model</div>
+      {/* Headline bilingual, font size 1.5x bigger, style sesuai permintaan */}
+      <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
         {lang === "KOR"
           ? <>
               끊임없는 연구개발과 스마트 공정<br />
@@ -325,7 +325,7 @@ export default function Vision2Page() {
               <span className="text-[#45B8E8] font-bold">We set new standards</span>
             </>
         }
-      </div>
+      </h2>
     </div>
     {/* RIGHT COLUMN */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
