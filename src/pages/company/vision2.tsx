@@ -292,122 +292,181 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-        {/* R&D Vision with Image - Large White Triangle + Diagonal Dividers */}
-        {/* R&D Vision with Image - Layered Pyramid with Image Backgrounds */}
-<section className="bg-[#0A1633] w-full">
-  <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
-    {/* LEFT COLUMN */}
-    <div className="lg:col-span-5 flex flex-col justify-center">
-      <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
-      <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-4">
-        끊임없는 연구개발과 스마트 공정<br />
-        혁신을 통해{" "}
-        <span
-          className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-        >
-          제조 효율의 새로운
-        </span>
-        <br />
-        기준을 만들어 갑니다
-      </h2>
-    </div>
-    {/* RIGHT COLUMN */}
-    <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-      <div className="relative w-full aspect-[16/8]">
-        {/* SVG Pyramid Layered */}
-        <svg
-          viewBox="0 0 1540 990"
-          className="absolute inset-0 w-full h-full"
-          aria-labelledby="bizModelGraphicTitle"
-          role="img"
-        >
-          <title id="bizModelGraphicTitle">Layered Pyramid Biz Model with Images</title>
-          <defs>
-            {/* Images for each layer */}
-            <pattern id="img-top" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/sub_banner/company_banner.png" x="0" y="0" width="420" height="240" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-            <pattern id="img-mid" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/business/process/coreKor2.png" x="0" y="0" width="980" height="290" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-            <pattern id="img-bot" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/business/process/FLOWKOREA.png" x="0" y="0" width="980" height="290" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-          </defs>
-          {/* --- Layer 1: Top triangle --- */}
-          {/* Rectangle behind triangle */}
-          <rect x="520" y="80" width="1000" height="180" fill="#2182a7" opacity="0.7" />
-          {/* Triangle with image */}
-          <polygon
-            points="770,80 1150,370 390,370"
-            fill="url(#img-top)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Layer 2: Middle trapezoid --- */}
-          {/* Rectangle behind trapezoid */}
-          <rect x="520" y="370" width="1000" height="180" fill="#2182a7" opacity="0.7" />
-          {/* Trapezoid with image */}
-          <polygon
-            points="470,370 1070,370 1170,560 370,560"
-            fill="url(#img-mid)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Layer 3: Bottom trapezoid --- */}
-          {/* Rectangle behind trapezoid */}
-          <rect x="520" y="560" width="1000" height="180" fill="#2182a7" opacity="0.7" />
-          {/* Trapezoid with image */}
-          <polygon
-            points="410,560 1130,560 1230,850 310,850"
-            fill="url(#img-bot)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Bottom Ribbon --- */}
-          <rect x="310" y="880" width="920" height="54" rx="8" fill="#fff" />
-          <text
-            x="770"
-            y="915"
-            textAnchor="middle"
-            fontFamily="Segoe UI, Arial"
-            fontWeight="bold"
-            fontSize="38"
-            fill="#0A1633"
-            letterSpacing="2"
-          >
-            OPEN INNOVATION
-          </text>
-        </svg>
-        {/* --- Step Texts (absolutely positioned, right side) --- */}
-        <div className="absolute top-[110px] left-[1080px] w-[420px]">
-          {/* Step 01 */}
-          <div className="mb-16">
-            <div className="text-white font-bold text-[1.35rem] mb-2">R&BD 조기사업화 · 차세대 성장동력원 확보</div>
-            <div className="text-white text-[1.05rem]">단계별 ITEM Launching·사업화</div>
+         {/* R&D Section */}
+        <section className="relative overflow-hidden bg-[#07162f] py-20 px-6 text-white md:px-10">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-32 -left-28 h-72 w-72 rounded-full bg-sky-500/25 blur-[140px]" />
+            <div className="absolute bottom-[-8rem] right-[-6rem] h-80 w-80 rounded-full bg-cyan-400/20 blur-[160px]" />
           </div>
-          {/* Step 02 */}
-          <div className="mb-16">
-            <div className="text-white font-bold text-[1.35rem] mb-2">신사업Biz · R&D</div>
-            <ul className="text-white text-[1.05rem] space-y-1 pl-1">
-              <li>신사업 발굴 TEAM PJT 化</li>
-              <li>R&BD Base 차별화</li>
-            </ul>
+
+          <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 lg:flex-row lg:items-center">
+            <div className="w-full lg:max-w-xl">
+              <span className="inline-block text-sm uppercase tracking-[0.45em] text-sky-200">
+                {rnd.title}
+              </span>
+              <h3 className="mt-6 text-3xl font-bold leading-snug text-sky-50 md:text-4xl whitespace-pre-line">
+                {rnd.subtitle}
+              </h3>
+              <p className="mt-6 text-base text-slate-200 md:text-lg whitespace-pre-line">
+                {rnd.rightBoxTop}
+              </p>
+
+              <div className="mt-10 grid gap-5 sm:grid-cols-2">
+                {[
+                  {
+                    icon: <Cpu className="h-6 w-6" />, // planning icon
+                    title: rnd.leftBox1Title,
+                    desc: rnd.leftBox1Desc,
+                  },
+                  {
+                    icon: <FlaskConical className="h-6 w-6" />, // research icon
+                    title: rnd.leftBox2Title,
+                    desc: rnd.leftBox2Desc,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"
+                  >
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10 text-sky-200">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-white">{item.title}</h4>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-200">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex w-full flex-1 flex-col items-center gap-10 lg:items-end">
+              <div className="relative w-full max-w-[460px]">
+                <svg
+                  viewBox="0 0 520 360"
+                  className="w-full drop-shadow-[0_30px_60px_rgba(5,22,44,0.6)]"
+                  role="img"
+                  aria-label={rnd.rightBoxTitle}
+                >
+                  <defs>
+                    {["0", "1", "2"].map((layer, idx) => (
+                      <clipPath key={layer} id={`rnd-layer-${layer}`}>
+                        <polygon
+                          points={[
+                            "50,320 500,320 340,60",
+                            "100,320 500,320 340,150",
+                            "160,320 500,320 340,220",
+                          ][idx]}
+                        />
+                      </clipPath>
+                    ))}
+
+                    {["0", "1", "2"].map((layer, idx) => (
+                      <linearGradient
+                        key={layer}
+                        id={`rnd-gradient-${layer}`}
+                        x1="0%"
+                        y1="100%"
+                        x2="100%"
+                        y2="0%"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor={idx === 0 ? "#07162f" : idx === 1 ? "#0d2e52" : "#114273"}
+                          stopOpacity="0.82"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor={idx === 0 ? "#174c84" : idx === 1 ? "#1f6eb8" : "#3aa6f7"}
+                          stopOpacity="0.9"
+                        />
+                      </linearGradient>
+                    ))}
+                  </defs>
+
+                  {[
+                    "/images/company/vision_banner.jpg",
+                    "/images/business/process/coreKor2.png",
+                    "/images/company/vision_factory.jpg",
+                  ].map((src, idx) => (
+                    <g key={src} clipPath={`url(#rnd-layer-${idx})`}>
+                      <image
+                        href={src}
+                        x="0"
+                        y="0"
+                        width="520"
+                        height="360"
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                      <rect x="0" y="0" width="520" height="360" fill={`url(#rnd-gradient-${idx})`} />
+                    </g>
+                  ))}
+
+                  {["50,320 500,320 340,60", "100,320 500,320 340,150", "160,320 500,320 340,220"].map(
+                    (points, idx) => (
+                      <polygon
+                        key={points}
+                        points={points}
+                        fill="none"
+                        stroke={idx === 0 ? "#8fd8ff" : idx === 1 ? "#5fb5f2" : "#2f8ad6"}
+                        strokeWidth="3"
+                      />
+                    ),
+                  )}
+
+                  <g fontFamily="'Pretendard', 'Noto Sans KR', sans-serif" fontWeight="600">
+                    <text x="110" y="130" fontSize="28" fill="#f1f5f9" opacity="0.85">
+                      01
+                    </text>
+                    <text x="170" y="210" fontSize="28" fill="#dbeafe" opacity="0.9">
+                      02
+                    </text>
+                    <text x="240" y="285" fontSize="28" fill="#bae6fd">
+                      03
+                    </text>
+                  </g>
+
+                  <text
+                    x="260"
+                    y="340"
+                    textAnchor="middle"
+                    fontSize="18"
+                    letterSpacing="0.45em"
+                    fill="#8dd4ff"
+                  >
+                    {rnd.rightBoxTitle}
+                  </text>
+                </svg>
+              </div>
+
+              <div className="w-full max-w-[420px] space-y-6 text-sm text-slate-100 md:text-base">
+                {[
+                  { level: "01", text: strategy.businessAreas.development },
+                  { level: "02", text: strategy.businessAreas.partnerships },
+                  { level: "03", text: strategy.businessAreas.manufacturing },
+                ].map((item) => {
+                  const [headline, ...rest] = item.text.split("\n");
+                  return (
+                    <div
+                      key={item.level}
+                      className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-5"
+                    >
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white">
+                        {item.level}
+                      </span>
+                      <div className="leading-relaxed whitespace-pre-line">
+                        <span className="block text-base font-semibold text-white">{headline}</span>
+                        {rest.length > 0 && (
+                          <span className="mt-1 block text-sm text-slate-200 md:text-base">{rest.join("\n")}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          {/* Step 03 */}
-          <div>
-            <div className="text-white font-bold text-[1.35rem] mb-2">제조본부 · 개발본부</div>
-            <ul className="text-white text-[1.05rem] space-y-1 pl-1">
-              <li>ITEM 조기 정착</li>
-              <li>Mass Product 안정화</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        </section>
       </main>
     </Layout>
   );
