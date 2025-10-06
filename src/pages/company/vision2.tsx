@@ -293,12 +293,14 @@ export default function Vision2Page() {
           </div>
         </section>
         {/* R&D Vision with Image - Use OI_kor/OI_eng Image Instead of SVG Shapes */}
-<section className="bg-[#0A1633] w-full">
+        <section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
-    <div className="lg:col-span-5 flex flex-col justify-center">
-      <div className="text-white text-[1.7rem] font-bold mb-6">Biz Model</div>
-      <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-4">
+    <div className="lg:col-span-5 flex flex-col justify-start">
+      {/* Overline - NOT centered */}
+      <div className="text-white text-[1.7rem] font-bold mb-6 text-left">Biz Model</div>
+      {/* Headline - bigger, NOT centered */}
+      <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
         끊임없는 연구개발과 스마트 공정<br />
         혁신을 통해{" "}
         <span
@@ -315,7 +317,7 @@ export default function Vision2Page() {
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
       <div className="relative w-full aspect-[1210/768] flex items-center justify-center">
         <Image
-          src={lang === "KOR" ? "/images/company/vision/OI_kor.png" : "/images/company/vision/OI_eng.png"}
+          src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
           alt="Biz Model Pyramid"
           className="w-full h-full object-contain"
         />
