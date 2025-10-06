@@ -172,7 +172,7 @@ export default function Vision2Page() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7 }}
-                className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full transition-all duration-200 hover:text-sky-500"
+                className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full transition-all duration-200 transition: { duration: 0.3 }"
               >
                 {lang === "KOR" ? "Our Vision" : "Our Vision"}
               </motion.h2>
@@ -183,7 +183,7 @@ export default function Vision2Page() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.5 }}
                   transition={{ duration: 0.7 }}
-                  className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200 hover:text-sky-500"
+                  className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200 transition: { duration: 0.3 }"
                 >
                   {visionTitle}
                 </motion.div>
@@ -266,7 +266,7 @@ export default function Vision2Page() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.7 }}
-              whileHover={{ scale: 1.04, filter: "drop-shadow(0 0 16px #38bdf8)" }}
+              whileHover={{ scale: 1.04, filter: "drop-shadow(0 0 16px #38bdf8)" , transition: { duration: 0.3 } }}
               className="flex items-center justify-center w-full lg:w-[520px] h-[520px] transition-all duration-300"
             >
               <div className="w-full h-full flex items-center justify-center" style={{ maxWidth: 520, maxHeight: 520 }}>
@@ -356,7 +356,7 @@ export default function Vision2Page() {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7 }}
               >
-                <div className="text-white text-[1.7rem] font-bold mb-6 transition-all duration-200 hover:scale-105">
+                <div className="text-white text-[1.7rem] font-bold mb-6 transition-all duration-200 hover:scale-1.05 transition: { duration: 0.3 }">
                   Biz Model
                 </div>
                 <h2 className="text-white text-2xl md:text-4xl font-bold leading-tight mb-4 text-left transition-all duration-200 hover:text-sky-500">
