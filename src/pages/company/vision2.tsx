@@ -315,7 +315,7 @@ export default function Vision2Page() {
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
       <div className="relative w-full aspect-[1210/768] flex items-center justify-center">
         <Image
-          src={lang === "KOR" ? "/images/OI_kor.png" : "/images/OI_eng.png"}
+          src={lang === "KOR" ? "/images/company/vision/OI_kor.png" : "/images/company/vision/OI_eng.png"}
           alt="Biz Model Pyramid"
           className="w-full h-full object-contain"
         />
