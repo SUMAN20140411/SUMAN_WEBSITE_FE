@@ -293,25 +293,34 @@ export default function Vision2Page() {
           </div>
         </section>
         {/* R&D Vision with Image - Use OI_kor/OI_eng Image Instead of SVG Shapes */}
-        <section className="bg-[#0A1633] w-full">
+        {/* R&D Vision with Image - Korean & English, Custom Headline */}
+<section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
     <div className="lg:col-span-5 flex flex-col justify-start">
       {/* Overline - NOT centered */}
-      <div className="text-white text-[1.7rem] font-bold mb-6 text-left">Biz Model</div>
+      <div className="text-white text-[1.7rem] font-bold mb-2 text-left">Biz Model</div>
       {/* Headline - bigger, NOT centered */}
-      <h2 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4 text-left">
+      <div className="text-white text-2xl md:text-3xl font-bold leading-tight mb-2 text-left">
         끊임없는 연구개발과 스마트 공정<br />
-        혁신을 통해{" "}
-        <span
-          className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
-          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-        >
-          제조 효율의 새로운
-        </span>
-        <br />
+        혁신을 통해 <span className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent" style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>제조 효율의 새로운</span><br />
         기준을 만들어 갑니다
-      </h2>
+      </div>
+      {/* Subtitle - smaller, Korean or English */}
+      <div className="text-white text-xl md:text-2xl font-semibold leading-tight mt-4 text-left">
+        {lang === "KOR"
+          ? <>
+              끊임없는 연구개발과 스마트 공정<br />
+              혁신을 통해 제조 효율의 새로운<br />
+              기준을 만들어 갑니다
+            </>
+          : <>
+              Continuous R&D and smart process<br />
+              Creating new standards for manufacturing efficiency<br />
+              through innovation
+            </>
+        }
+      </div>
     </div>
     {/* RIGHT COLUMN */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
