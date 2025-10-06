@@ -292,7 +292,7 @@ export default function Vision2Page() {
             </div>
           </div>
         </section>
-        {/* R&D Vision with Image - Layered Pyramid with Image Backgrounds */}
+        {/* R&D Vision with Image - Use OI_kor/OI_eng Image Instead of SVG Shapes */}
 <section className="bg-[#0A1633] w-full">
   <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 lg:py-28 grid grid-cols-1 lg:grid-cols-12 items-center">
     {/* LEFT COLUMN */}
@@ -313,96 +313,12 @@ export default function Vision2Page() {
     </div>
     {/* RIGHT COLUMN */}
     <div className="lg:col-span-7 flex flex-col items-center justify-center w-full">
-      <div className="relative w-full aspect-[16/7]">
-        {/* SVG Pyramid Layered */}
-        <svg
-          viewBox="0 0 1848 1020"
-          className="absolute inset-0 w-full h-full"
-          aria-labelledby="bizModelGraphicTitle"
-          role="img"
-        >
-          <title id="bizModelGraphicTitle">Layered Pyramid Biz Model with Images</title>
-          <defs>
-            {/* Images for each layer */}
-            <pattern id="img-top" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/sub_banner/company_banner.png" x="0" y="0" width="504" height="288" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-            <pattern id="img-mid" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/business/process/coreKor2.png" x="0" y="0" width="1176" height="348" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-            <pattern id="img-bot" patternUnits="objectBoundingBox" width="1" height="1">
-              <image href="/images/business/process/FLOWKOREA.png" x="0" y="0" width="1176" height="348" preserveAspectRatio="xMidYMid slice" />
-            </pattern>
-          </defs>
-          {/* --- Layer 1: Top triangle --- */}
-          {/* Rectangle behind triangle */}
-          <rect x="624" y="96" width="1200" height="216" fill="#2182a7" opacity="0.7" />
-          {/* Triangle with image */}
-          <polygon
-            points="924,96 1380,444 468,444"
-            fill="url(#img-top)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Layer 2: Middle trapezoid --- */}
-          {/* Rectangle behind trapezoid */}
-          <rect x="624" y="444" width="1200" height="216" fill="#2182a7" opacity="0.7" />
-          {/* Trapezoid with image */}
-          <polygon
-            points="562,444 1284,444 1404,660 442,660"
-            fill="url(#img-mid)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Layer 3: Bottom trapezoid --- */}
-          {/* Rectangle behind trapezoid */}
-          <rect x="624" y="660" width="1200" height="216" fill="#2182a7" opacity="0.7" />
-          {/* Trapezoid with image */}
-          <polygon
-            points="494,660 1356,660 1476,976 374,976"
-            fill="url(#img-bot)"
-            stroke="#2182a7"
-            strokeWidth="4"
-          />
-          {/* --- Bottom Ribbon --- */}
-          <rect x="374" y="976" width="1104" height="54" rx="8" fill="#fff" />
-          <text
-            x="926"
-            y="1010"
-            textAnchor="middle"
-            fontFamily="Segoe UI, Arial"
-            fontWeight="bold"
-            fontSize="38"
-            fill="#0A1633"
-            letterSpacing="2"
-          >
-            OPEN INNOVATION
-          </text>
-        </svg>
-        {/* --- Step Texts (absolutely positioned, right side) --- */}
-        <div className="absolute top-[120px] left-[1320px] w-[420px]">
-          {/* Step 01 */}
-          <div className="mb-16">
-            <div className="text-white font-bold text-[1.35rem] mb-2">R&BD 조기사업화 · 차세대 성장동력원 확보</div>
-            <div className="text-white text-[1.05rem]">단계별 ITEM Launching·사업화</div>
-          </div>
-          {/* Step 02 */}
-          <div className="mb-16">
-            <div className="text-white font-bold text-[1.35rem] mb-2">신사업Biz · R&D</div>
-            <ul className="text-white text-[1.05rem] space-y-1 pl-1">
-              <li>신사업 발굴 TEAM PJT 化</li>
-              <li>R&BD Base 차별화</li>
-            </ul>
-          </div>
-          {/* Step 03 */}
-          <div>
-            <div className="text-white font-bold text-[1.35rem] mb-2">제조본부 · 개발본부</div>
-            <ul className="text-white text-[1.05rem] space-y-1 pl-1">
-              <li>ITEM 조기 정착</li>
-              <li>Mass Product 안정화</li>
-            </ul>
-          </div>
-        </div>
+      <div className="relative w-full aspect-[1210/768] flex items-center justify-center">
+        <Image
+          src={lang === "KOR" ? "/images/OI_kor.png" : "/images/OI_eng.png"}
+          alt="Biz Model Pyramid"
+          className="w-full h-full object-contain"
+        />
       </div>
     </div>
   </div>
