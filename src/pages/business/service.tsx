@@ -17,7 +17,74 @@ import { FlowCard } from "@/components/FlowCard";
 import { FlowDiamond } from "@/components/FlowDiamond";
 import { FlowArrow } from "@/components/FlowArrow";
 
-
+export const capabilities = [
+{
+title: {
+KOR: "중대형 구조물 가공·제작 기술",
+ENG: "Large Structure Processing & Manufacturing"
+},
+description: {
+KOR: "중대형 구조물의 금형 설계, 가공, 제작",
+ENG: "Mold design, processing, and manufacturing of large structures"
+},
+icon: "/images/business/equipment/sea.png"
+},
+{
+title: {
+KOR: "고객 맞춤형 정밀 설계 기술",
+ENG: "Custom Precision Design Technology"
+},
+description: {
+KOR: "2D/3D 설계, 모델링 · 설계 협업 시스템",
+ENG: "2D/3D design, modeling, and collaborative systems"
+},
+icon: "/images/business/equipment/sea.png"
+},
+{
+title: {
+KOR: "시스템 아키텍처 기술",
+ENG: "System Architecture Technology"
+},
+description: {
+KOR: "실시간 하중반영 바퀴 · 틸트 제어",
+ENG: "Real-time load-responsive wheel and tilt control"
+},
+icon: "/images/business/equipment/research.png"
+},
+{
+title: {
+KOR: "고정밀 Jig 개발 · 제작 기술",
+ENG: "High-Precision Jig Development"
+},
+description: {
+KOR: "고객 맞춤형 Jig 설계 · 개발 · 제작 기술",
+ENG: "Custom-designed Jig development and manufacturing"
+},
+icon: "/images/business/equipment/layers.png"
+},
+{
+title: {
+KOR: "주문형 장비 · 설비 제작기술",
+ENG: "Custom Equipment and Facility Manufacturing"
+},
+description: {
+KOR: "고객 맞춤형 장비 · 설비 제작 기술 – 측정장비, 가공장비 등",
+ENG: "Custom-made equipment and facilities – measurement and machining devices"
+},
+icon: "/images/business/equipment/laptop.png"
+},
+{
+title: {
+KOR: "Custom 모듈화 조립 기술",
+ENG: "Custom Modular Assembly Technology"
+},
+description: {
+KOR: "이차전지 특화형 전극 시험, 분석 모듈 조립, 평가 기술",
+ENG: "Battery-specialized module testing, analysis, assembly, and evaluation"
+},
+icon: "/images/business/equipment/line-chart.png"
+}
+];
 
 /* =========================
    Core Capabilities Image Section
@@ -100,6 +167,18 @@ function CoreCapabilitiesImageSection() {
             />
           </motion.div>
         </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+{capabilities.map((cap, index) => (
+<div
+key={index}
+className="bg-white text-gray-900 rounded-2xl p-6 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 hover:scale-105"
+>
+<Image src={cap.icon} alt="icon" className="w-16 h-16 mx-auto mb-4" />
+<h3 className="font-bold text-lg mb-2 text-center">{cap.title[lang]}</h3>
+<p className="text-sm text-center text-gray-600">{cap.description[lang]}</p>
+</div>
+))}
+</div>
       </div>
     </section>
   );
