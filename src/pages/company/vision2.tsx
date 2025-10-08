@@ -205,7 +205,7 @@ export default function Vision2Page() {
                   transition={{ duration: 0.7 }}
                   className="w-full text-center mb-2 transition-all duration-200 hover:text-sky-500"
                 >
-                  <span className="tracking-[0.3em] text-white text-lg md:text-xl font-semibold">TARGET</span>
+                  <span className="tracking-[0.3em] text-black text-lg md:text-xl font-semibold">TARGET</span>
                 </motion.div>
 
                 {/* Arrow above timeline */}
@@ -345,7 +345,7 @@ export default function Vision2Page() {
     transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
     className="w-full max-w-[1200px] mx-auto mt-16"
   >
-    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10 text-center tracking-tight">
+    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10 text-left tracking-tight">
       {lang === "KOR" ? "핵심 가치" : "Core Values"}
     </h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -419,83 +419,6 @@ export default function Vision2Page() {
             ? <>지속적인 R&D 투자를 통해<br />기술 혁신을 넘어 실질적인<br />비즈니스 성과를 창출합니다.</>
             : <>Through continuous R&D investment,<br />we create real business outcomes<br />beyond technological innovation.</>
           }
-        </div>
-      </motion.div>
-    </div>
-  </motion.div>
-</section>
-
-        
-{/* Core Values Section - 핵심 가치 */}
-<section className="w-full flex flex-col items-center justify-center py-16 px-2 md:px-0 bg-[#0A1633]">
-  <motion.div
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.4 }}
-    transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-    className="w-full max-w-[1200px] mx-auto"
-  >
-    <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 text-center tracking-tight">
-      핵심 가치
-    </h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-      {/* 유연조직 */}
-      <motion.div
-        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #17416d" }}
-        className="bg-gradient-to-br from-[#1a2747] to-[#233a5e] rounded-2xl shadow-lg p-8 flex flex-col items-center text-center border border-[#233a5e] transition-all duration-300"
-      >
-        <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-white/10 border border-white/20">
-          <Cpu size={32} className="text-sky-400" />
-        </div>
-        <div className="font-bold text-lg mb-2 text-white tracking-tight">유연조직</div>
-        <div className="text-gray-300 text-sm leading-relaxed">
-          급변하는 시장에 유연하게 반응하며<br />
-          끊임없이 혁신하는 조직입니다.
-        </div>
-      </motion.div>
-      {/* 전문인력 */}
-      <motion.div
-        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #17416d" }}
-        className="bg-gradient-to-br from-[#1a2747] to-[#233a5e] rounded-2xl shadow-lg p-8 flex flex-col items-center text-center border border-[#233a5e] transition-all duration-300"
-      >
-        <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-white/10 border border-white/20">
-          <Users size={32} className="text-emerald-400" />
-        </div>
-        <div className="font-bold text-lg mb-2 text-white tracking-tight">전문인력</div>
-        <div className="text-gray-300 text-sm leading-relaxed">
-          각 분야 최고의 전문성을 갖춘<br />
-          인력들이 모여<br />
-          차별화된 가치를 제공합니다.
-        </div>
-      </motion.div>
-      {/* 기술융합 */}
-      <motion.div
-        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #17416d" }}
-        className="bg-gradient-to-br from-[#1a2747] to-[#233a5e] rounded-2xl shadow-lg p-8 flex flex-col items-center text-center border border-[#233a5e] transition-all duration-300"
-      >
-        <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-white/10 border border-white/20">
-          <Layers size={32} className="text-indigo-400" />
-        </div>
-        <div className="font-bold text-lg mb-2 text-white tracking-tight">기술융합</div>
-        <div className="text-gray-300 text-sm leading-relaxed">
-          기술의 경계를 허물고 융합하여<br />
-          미래를 선도하는<br />
-          기술 혁신을 이루어갑니다
-        </div>
-      </motion.div>
-      {/* R&BD */}
-      <motion.div
-        whileHover={{ scale: 1.05, boxShadow: "0 8px 32px #17416d" }}
-        className="bg-gradient-to-br from-[#1a2747] to-[#233a5e] rounded-2xl shadow-lg p-8 flex flex-col items-center text-center border border-[#233a5e] transition-all duration-300"
-      >
-        <div className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-white/10 border border-white/20">
-          <FlaskConical size={32} className="text-pink-400" />
-        </div>
-        <div className="font-bold text-lg mb-2 text-white tracking-tight">R&BD</div>
-        <div className="text-gray-300 text-sm leading-relaxed">
-          지속적인 R&D 투자를 통해<br />
-          기술 혁신을 넘어 실질적인<br />
-          비즈니스 성과를 창출합니다.
         </div>
       </motion.div>
     </div>
