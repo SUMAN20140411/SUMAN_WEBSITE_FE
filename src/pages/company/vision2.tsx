@@ -172,7 +172,7 @@ export default function Vision2Page() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7 }}
-                className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6 text-left w-full transition-all duration-200 transition: { duration: 0.3 }"
+                className="text-2xl md:text-3xl font-bold text-slate-700 mb-6 text-left w-full transition-all duration-200 transition: { duration: 0.3 }"
               >
                 {lang === "KOR" ? "Our Vision" : "Our Vision"}
               </motion.h2>
