@@ -205,7 +205,7 @@ export default function Vision2Page() {
                   transition={{ duration: 0.7 }}
                   className="w-full text-center mb-2 transition-all duration-200 hover:text-sky-500"
                 >
-                  <span className="tracking-[0.3em] text-black text-lg md:text-xl font-semibold">TARGET</span>
+                  <span className="tracking-[0.3em] text-gray text-lg md:text-xl font-light">TARGET</span>
                 </motion.div>
 
                 {/* Arrow above timeline */}
@@ -346,7 +346,7 @@ export default function Vision2Page() {
     className="w-full max-w-[1200px] mx-auto mt-16"
   >
     <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-10 text-left tracking-tight">
-      {lang === "KOR" ? "핵심 가치" : "Core Values"}
+      {lang === "KOR" ? "Core Values" : "Core Values"}
     </h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
       {/* 유연조직 / Flexible Organization */}
