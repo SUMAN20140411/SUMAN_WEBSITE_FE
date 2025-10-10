@@ -239,6 +239,90 @@ export default function Vision2Page() {
           <div className="relative z-20 -mt-2">
             <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
           </div>
+          {/* FIRST SECTION */}
+        <section className="relative w-full pb-0">
+          <div className="max-w-[1280px] mx-auto px-4 md:px-8 pt-10 pb-0">
+            {/* Main Title */}
+            <h1 className="text-center font-black text-sky-500 text-3xl md:text-5xl leading-tight mb-8">
+              {lang === "KOR"
+                ? <>‘확신(Confidence)’의<br />종합 솔루션 서비스 기업으로 성장</>
+                : <>‘Confidence’-based<br />Total Solution Service Company Growth</>
+              }
+            </h1>
+            {/* Timeline & KPI */}
+            <div className="flex flex-col lg:flex-row gap-8 items-center justify-center mb-12">
+              {/* Timeline */}
+              <div className="flex-1 w-full">
+                <div className="flex flex-row items-end justify-center gap-0 mb-6">
+                  {milestones.map((item, idx) => (
+                    <div key={item.year} className="flex-1 flex flex-col items-center">
+                      <div
+                        className={`h-3 w-full rounded-full mb-3`}
+                        style={{
+                          background:
+                            idx === 0
+                              ? "linear-gradient(90deg,#17416d 60%,#38bdf8 100%)"
+                              : idx === 1
+                              ? "linear-gradient(90deg,#38bdf8 60%,#b3e0f7 100%)"
+                              : "linear-gradient(90deg,#b3e0f7 60%,#e3f4fb 100%)",
+                        }}
+                      />
+                      <div className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">{item.year}</div>
+                      <div className="text-sm md:text-base text-slate-700 text-center whitespace-pre-line leading-relaxed">{item.text}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* KPI Cards */}
+              <div className="flex flex-col gap-6 w-full max-w-[340px]">
+                {kpiCards.map((card, idx) => {
+                  const Icon = card.icon;
+                  return (
+                    <div
+                      key={card.label}
+                      className="flex items-center gap-4 bg-white rounded-2xl shadow-[0_4px_24px_0_rgba(10,19,46,0.08)] px-7 py-6 border border-slate-100"
+                    >
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+                        <Icon className="h-7 w-7" />
+                      </div>
+                      <div>
+                        <div className="flex items-end gap-2">
+                          <span className="text-4xl md:text-5xl font-extrabold text-slate-900">{card.value}</span>
+                          <span className="text-lg md:text-xl font-semibold text-slate-500">{card.suffix}</span>
+                        </div>
+                        <div className="text-sm text-slate-500 font-medium mt-1">{card.label}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            {/* Core Values */}
+            <div className="w-full mt-10 bg-gradient-to-br from-sky-50/40 via-white to-emerald-50/30 rounded-3xl px-2 py-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8 text-left px-4">
+                {lang === "KOR" ? "핵심 가치" : "Core Values"}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
+                {coreValues.map((cv, idx) => {
+                  const icons = [Users, Lightbulb, Layers, FlaskConical];
+                  const Icon = icons[idx % icons.length];
+                  return (
+                    <div
+                      key={cv.title}
+                      className="flex flex-col items-start bg-white/80 border border-slate-200 rounded-2xl shadow-md p-7 min-h-[180px] transition-all duration-200"
+                    >
+                      <div className="mb-3">
+                        <Icon className="h-6 w-6 text-sky-600" />
+                      </div>
+                      <div className="font-bold text-lg mb-2 text-slate-900">{cv.title}</div>
+                      <div className="text-gray-600 text-sm whitespace-pre-line leading-relaxed">{cv.desc}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
 
           {/* Vision overview */}
           <motion.section
