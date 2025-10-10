@@ -182,16 +182,16 @@ export default function Vision2Page() {
               </motion.h2>
 
               <div className="mb-10 text-left w-full">
-                <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.7 }}
-                className="text-2xl md:text-4xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200"
-                >
-                  {visionTitle}
-                </motion.div>
-              </div>
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.5 }}
+    transition={{ duration: 0.7 }}
+    className="text-xl md:text-3xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200"
+  >
+    {visionTitle}
+  </motion.div>
+</div>
 
               {/* Timeline */}
               <motion.div

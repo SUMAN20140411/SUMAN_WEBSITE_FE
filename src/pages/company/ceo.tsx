@@ -81,24 +81,6 @@ export default function CeoPage() {
                   />
                 </div>
               </div>
-
-              {/* Closing text */}
-              {closing && (
-                <p className="mt-6 text-base sm:text-lg leading-relaxed tracking-tight text-gray-800">
-                  {closing}
-                </p>
-              )}
-
-              {/* Border + Signature — naikkan 2cm pada laptop */}
-              <footer className="mt-6 lg:-mt-[2cm] lg:ml-[1cm] border-t border-gray-200 pt-6 text-lg text-gray-900">
-                <div className="text-sm font-semibold uppercase tracking-[0.45em] text-[rgb(70,177,225)]">
-                  {lang === "KOR" ? "Signature" : "Signature"}
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-base sm:text-lg">
-                  <span className="text-gray-600">{signatureTitle}</span>
-                  <strong className="font-semibold text-slate-900">{signatureName}</strong>
-                </div>
-              </footer>
             </motion.article>
 
             {/* RIGHT: main photo */}
