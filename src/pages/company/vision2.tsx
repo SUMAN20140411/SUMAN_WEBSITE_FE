@@ -187,7 +187,7 @@ export default function Vision2Page() {
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.5 }}
     transition={{ duration: 0.7 }}
-    className="text-xl md:text-3xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200"
+    className="text-1xl md:text-3xl font-bold leading-tight mb-4 text-slate-900 transition-all duration-200"
   >
     {visionTitle}
   </motion.div>

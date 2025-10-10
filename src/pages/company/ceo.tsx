@@ -7,7 +7,6 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import Image from "next/image";
 import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
-import { ceoText } from "@/data/ceo";
 import { useLangStore } from "@/stores/langStore";
 
 const slideInRight = {
@@ -30,8 +29,6 @@ const textReveal = {
 
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
-
-  const { closing, signatureTitle, signatureName } = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
@@ -70,16 +67,17 @@ export default function CeoPage() {
             >
               {/* Foto tanda tangan */}
               <div className="lg:ml-[1cm]">
-                <div className="relative w-full h-[360px] sm:h-[420px] lg:h-[550px]">
-                  <Image
-                    src={ceoSignImg}
-                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                    fill
-                    priority
-                    className="object-contain"
-                    sizes="(min-width:1024px) 50vw, 90vw"
-                  />
-                </div>
+                <div className="relative w-full h-[396px] sm:h-[462px] lg:h-[605px]">
+  <Image
+    src={ceoSignImg}
+    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+    fill
+    priority
+    className="object-contain"
+    sizes="(min-width:1024px) 50vw, 90vw"
+  />
+</div>
+
               </div>
             </motion.article>
 
