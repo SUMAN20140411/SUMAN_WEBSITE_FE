@@ -74,9 +74,9 @@ export default function Vision2Page() {
   const visionTitle =
     lang === "KOR" ? (
       <>
-        2024 <b>도약의 원년</b>—5년 내
+        <b>도약과 성장의 원년 2024년 —</b>
         <br />
-        <b>매출 600억·순이익 150억 달성,</b>
+        <b>5년 후 매출 600억 순이익 150억 달성,</b>
         <br />
         <span className="text-sky-400 font-bold">‘확신(Confidence)’의</span>
         <br />
@@ -84,11 +84,15 @@ export default function Vision2Page() {
       </>
     ) : (
       <>
-        2024 <b>Leap Year</b>—Within 5 Years <b>Revenue 60B KRW·Net Profit 15B Achieved,</b>
+        <b>2024, The First Year of Leap and Growth —</b>
         <br />
-        <span className="text-sky-400 font-bold">‘Confidence’-based</span>
-        <span className="text-sky-400 font-bold"> Total Solution Service Company Growth</span>
-      </>
+        <b>Achieve 60 Billion Revenue & 15 Billion Net Profit in 5 Years,</b>
+       <br />
+        <span className="text-sky-400 font-bold">A ‘Confidence’-based</span>
+        <br />
+        <span className="text-sky-400 font-bold"> Total Solution Service Company</span>
+    </>
+        
     );
 
   // Timeline data

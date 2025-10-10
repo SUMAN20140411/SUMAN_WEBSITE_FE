@@ -117,7 +117,7 @@ export default function HistoryPage() {
                   </div>
                   <div className="flex items-baseline text-sm md:text-base">
                     <span className="font-semibold text-blue-600 mr-2">
-                      {lang === "KOR" ? "인사 / 충무" : "HR / General Affairs"}
+                      {lang === "KOR" ? "인사 / 총무" : "HR / General Affairs"}
                     </span>
                     <a
                       href="mailto:suman5713@suman.co.kr"
