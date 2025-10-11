@@ -452,15 +452,16 @@ export default function Vision2Page() {
                       viewport={{ once: true, amount: 0.3 }}
                       className="group relative rounded-2xl bg-gradient-to-b from-white via-sky-50/30 to-sky-100/60 p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-500/10 text-sky-600">
+                      <div className="flex flex-col text-left">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-500/10 text-sky-600 mb-3">
                           <Icon className="h-6 w-6" />
                         </div>
-                        <div className="flex-1">
-                          <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
-                            {cv.title}
-                          </p>
-                        </div>
+                        <h4 className="text-lg font-semibold text-slate-900 mb-2 whitespace-pre-line leading-tight">
+                          {cv.title}
+                        </h4>
+                        <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
+                          {cv.desc}
+                        </p>
                       </div>
                     </motion.div>
                   );
@@ -470,79 +471,30 @@ export default function Vision2Page() {
             {/* Tambah spacing di bawah core values */}
             <div className="pb-12"></div>
           </motion.section>
-
           {/* Biz model */}
-          <section className="bg-slate-900">
-            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 text-white space-y-10">
+          <motion.section 
+            className="bg-[#010104] text-white py-20 px-4 md:px-8 rounded-t-3xl overflow-hidden relative"
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.3 }}
+            style={{
+              backgroundImage: 'url("/images/vision_R&D_bg.png")',
+              backgroundSize: "cover",
+              backgroundPosition: "center 245px",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
+            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 text-white space-y-10 relative z-10">
               <div className="space-y-4 text-left">
-                <h3 className="text-xl md:text-2xl font-semibold text-white">{strategy.bizModelTitle}</h3>
+                <h3 className="text-xl md:text-2xl font-semibold text-white">{lang === "KOR" ? "비즈니스 모델" : "Business Model"}</h3>
                 <p className="text-base md:text-lg font-medium text-white italic">
-                  {strategy.bizModelSlogan}
+                  {lang === "KOR" ? "개방형 혁신으로 미래를 선도합니다" : "Leading the future through open innovation"}
                 </p>
               </div>
 
-              {/* Open Innovation Diagram */}
-              <div className="relative flex flex-col items-center space-y-12">
-                {/* Top Three Cards */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3 w-full max-w-5xl">
-                  {[
-                    {
-                      title: "신사업Biz / R&D",
-                      subtitle: "신사업 발굴/ITEM PJT 化\nR&BD Base / 차별화",
-                    },
-                    {
-                      title: "R&BD 조기사업화",
-                      subtitle: "단계별 ITEM Launching\n/ 사업화",
-                    },
-                    {
-                      title: "제조본부/개발본부",
-                      subtitle: "ITEM 조기 정착\n/ Mass Product 안정화",
-                    },
-                  ].map((card, index) => (
-                    <motion.div
-                      key={card.title}
-                      variants={zoomIn}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.3 }}
-                      className="group relative cursor-pointer"
-                    >
-                        <div className="rounded-3xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 p-6 shadow-2xl text-center hover:shadow-3xl transition-all duration-300 hover:scale-105 relative overflow-hidden group">
-                          <h4 className="text-lg font-bold text-white mb-3">{card.title}</h4>
-                          
-                          <div className="transition-all duration-500 ease-in-out max-h-0 overflow-hidden group-hover:max-h-96">
-                            <div className="rounded-2xl bg-slate-600/30 px-4 py-3 mt-2 transform scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500">
-                              <p className="text-sm text-slate-200 whitespace-pre-line leading-relaxed font-medium">
-                                {card.subtitle}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                </div>
-
-                {/* Central Circle */}
-                <motion.div
-                  variants={zoomIn}
-                  initial="hidden" 
-                  animate="visible"
-                  transition={{ delay: 0.6 }}
-                  className="relative z-10"
-                >
-                  <div className="w-60 h-60 rounded-full bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 cursor-pointer">
-                    <div className="text-center">
-                      <h3 className="text-2xl font-light text-white mb-1 tracking-wide">OPEN</h3>
-                      <h3 className="text-3xl font-bold text-white tracking-wider">INNOVATION</h3>
-                      <div className="w-16 h-0.5 bg-white/60 mx-auto mt-2"></div>
-                    </div>
-                  </div>
-                  {/* Connecting lines from center to bottom */}
-                  
-                </motion.div>
-
-                {/* Bottom Four Cards */}
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-4 w-full max-w-6xl">
+                {/* Bottom Four Cards - New Style (10% shorter) */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-x-12 gap-y-8 w-full max-w-6xl">
                   {[
                     { title: "자동차 정밀부품가공", desc: "고정밀 자동차 부품\n제조 및 가공 기술" },
                     { title: "이차전지", desc: "차세대 배터리\n기술 개발 및 생산" }, 
@@ -555,25 +507,37 @@ export default function Vision2Page() {
                       initial="hidden"
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.3 }}
-                      className="group relative cursor-pointer"
+                      className="relative flex flex-col justify-end p-4 shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-out min-h-[342px]"
+                      style={{
+                        backgroundImage: `url(/images/vision_${
+                          ["Flex", "pro", "tek", "rnbd"][index]
+                        }.png)`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        clipPath:
+                          "polygon(30px 0%, 100% 0%, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0% 100%, 0% 30px)",
+                      }}
                     >
-                        <div className="rounded-2xl bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-6 py-4 text-center text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 relative overflow-hidden group">
-                          <span className="text-sm font-semibold whitespace-pre-line leading-relaxed block mb-2">{sector.title}</span>
-                          
-                          <div className="transition-all duration-500 ease-in-out max-h-0 overflow-hidden group-hover:max-h-96">
-                            <div className="rounded-xl bg-slate-600/30 px-3 py-2 mt-2 transform scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500">
-                              <p className="text-xs text-slate-200 whitespace-pre-line leading-relaxed">
-                                {sector.desc}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                      <div
+                        className="absolute inset-0 bg-black opacity-40"
+                        style={{
+                          clipPath:
+                            "polygon(30px 0%, 100% 0%, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0% 100%, 0% 30px)",
+                        }}
+                      ></div>
+                      <div className="relative text-white flex flex-col flex-grow justify-start pt-54">
+                        <h3 className="text-[23px] font-semibold mb-2">
+                          {sector.title}
+                        </h3>
+                        <p className="text-[14px] whitespace-pre-line">
+                          {sector.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </div>
             </div>
-          </section>
+          </motion.section>
         </div>
       </main>
       <hr className="w-full border-gray-200 mt-0 mb-0" />

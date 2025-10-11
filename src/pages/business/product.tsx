@@ -53,13 +53,19 @@ export default function ServicePage() {
             />
           </div>
 
-          {/* Products Section (blue block) */}
+          {/* Products Section */}
           {section && (
-            <motion.div className="relative z-10 bg-[#000B24] pt-20 pb-20 px-4 md:px-8 rounded-none mt-0 overflow-hidden">
-              <div
-                className="absolute inset-0 pointer-events-none flex bg-no-repeat bg-top bg-contain"
-                style={{ backgroundImage: "url('/images/business/layer2.png')" }}
-              />
+            <section className="relative z-0 bg-[#0a132e] px-4 pb-20 pt-20 md:pb-20 md:pt-20">
+              <div className="pointer-events-none absolute inset-0">
+                <Image
+                  src="/images/business/layer.png"
+                  alt={lang === "KOR" ? "배경 이미지" : "Background image"}
+                  fill
+                  style={{ objectFit: "cover", objectPosition: "top" }}
+                  priority
+                />
+              </div>
+              
               <div className="max-w-7xl mx-auto relative z-10">
                 {/* Title: bilingual & same size as '핵심 연구 분야' */}
                 <motion.h2
@@ -87,7 +93,7 @@ export default function ServicePage() {
 
                 {/* Grid */}
                 <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-5"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
@@ -96,7 +102,7 @@ export default function ServicePage() {
                   {productCategories.map((product, index) => (
                     <motion.div
                       key={index}
-                      className="bg-[#7E7E7E]/25 rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out group mt-15 hover:bg-white"
+                      className="bg-[#7E7E7E]/25 rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out group mt-5 hover:bg-white"
                       variants={itemVariants}
                     >
                       <div className="relative w-full h-44 mx-auto mt-4">
@@ -130,7 +136,7 @@ export default function ServicePage() {
                   {footerText}
                 </motion.p>
               </div>
-            </motion.div>
+            </section>
           )}
         </main>
       </Layout>

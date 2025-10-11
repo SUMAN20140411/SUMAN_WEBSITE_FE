@@ -40,7 +40,7 @@ function CoreCapabilitiesImageSection() {
 
   return (
     // ↑ Perpanjang section ~20%: pt-12→pt-14, md:pt-20→md:pt-24, pb-6→pb-7, md:pb-8→md:pb-10
-    <section className="relative z-0 bg-[#0a132e] px-4 pb-7 pt-14 md:pb-10 md:pt-24 overflow-hidden">
+    <section className="relative z-0 bg-[#0a132e] px-4 pb-1 pt-14 md:pb-10 md:pt-24 overflow-hidden">
       {/* background */}
       <div className="pointer-events-none absolute inset-0">
         <Image
@@ -59,7 +59,7 @@ function CoreCapabilitiesImageSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 text-left md:mb-12"
+          className="mb- text-left md:mb-"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">
             {titleText}

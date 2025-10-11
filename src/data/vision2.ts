@@ -28,7 +28,7 @@ export const visionMilestones = {
     },
     {
       year: "2026",
-      text: "이차전지 전지 모듈 ･ 장비 및\n모빌리티 분야 확장",
+      text: "전지모듈, 장비 및\n모빌리티 분야 확장",
     },
     {
       year: "2028",
@@ -38,7 +38,7 @@ export const visionMilestones = {
   ENG: [
     {
       year: "2024",
-      text: "Establishment of Secondary Battery Test Center\nEntry into Semiconductor Precision Processing",
+      text: "Establishment of Second Test Center\nEntry into Semiconductor Precision Processing",
     },
     {
       year: "2026",
@@ -51,7 +51,72 @@ export const visionMilestones = {
   ],
 };
 
-// New strategy section data
+export const visionCoreValue = {
+  KOR: [
+    {
+      title: "ENJOY (즐겁게)",
+      desc: "즐겁고 활기찬 조직문화로\n최고의 성과를 만들어갑니다",
+    },
+    {
+      title: "NEO (새롭게)",
+      desc: "새로운 기술과 아이디어로\n끊임없이 혁신합니다",
+    },
+    {
+      title: "INTENSELY (치열하게)",
+      desc: "치열한 노력과 집중으로\n탁월한 결과를 만들어냅니다",
+    },
+    {
+      title: "QUICKLY (빠르게)",
+      desc: "신속한 대응과 실행으로\n경쟁 우위를 확보합니다",
+    },
+  ],
+  ENG: [
+    {
+      title: "ENJOY",
+      desc: "We create the best results\nwith a joyful and vibrant organizational culture",
+    },
+    {
+      title: "NEO",
+      desc: "We continuously innovate\nwith new technologies and ideas",
+    },
+    {
+      title: "INTENSELY",
+      desc: "We create excellent results\nthrough intense effort and focus",
+    },
+    {
+      title: "QUICKLY",
+      desc: "We secure competitive advantage\nthrough rapid response and execution",
+    },
+  ],
+};
+
+export const visionRndText = {
+  KOR: {
+    title: "OPEN INNOVATION",
+    subtitle: "끊임없는 연구개발과 스마트 공정 혁신을 통해\n제조 효율의 새로운 기준을 만들어갑니다",
+    leftBox1Title: "R&D 기획",
+    leftBox1Desc: "PJT 운영 및 R&D 사업화 전략수립",
+    leftBox2Title: "R&D",
+    leftBox2Desc: "단계별 연구 ITEM 초기개발 / 차별화",
+    rightBoxTop: "제조기술 효율성 극대화",
+    rightBoxTitle: "R&BD 조기 사업화 / 차세대 성장동력 확보",
+    rightBoxDesc: "단계별 ITEM Launching / 사업화",
+  },
+  ENG: {
+    title: "R&D",
+    subtitle:
+      "We create new standards in manufacturing efficiency\nthrough continuous R&D and smart process innovation",
+    leftBox1Title: "R&D Planning",
+    leftBox1Desc: "Project operation and commercialization strategy",
+    leftBox2Title: "R&D",
+    leftBox2Desc: "Initial development and differentiation by phase",
+    rightBoxTop: "Maximizing Manufacturing Efficiency",
+    rightBoxTitle: "Early Commercialization of R&BD / Securing Growth Engines",
+    rightBoxDesc: "Phased ITEM Launching / Commercialization",
+  },
+};
+
+// Strategy section data  
 export const visionStrategyText = {
   KOR: {
     title: "발전 방향 및 중장기 경영 전략",
@@ -96,71 +161,6 @@ export const visionStrategyText = {
       partnerships: "New Business Biz / R&D\nNew Business Development/ITEM PJT\nR&BD Base / Differentiation",
       sectors: ["Automotive\n(Precision Parts Processing)", "Secondary Battery\n(Components/Module Services/\nManufacturing/Reliability Testing)", "Semiconductor/Electronics\n(Components/Solution Services/\nOptical Output Services)", "Next-Generation Growth\nTechnology / Products"]
     }
-  },
-};
-
-export const visionCoreValue = {
-  KOR: [
-    {
-      title: "즐겁게 (Enjoyable)",
-      desc: "",
-    },
-    {
-      title: "새롭게 (Neo)",
-      desc: "",
-    },
-    {
-      title: "지혜롭게 (Wisely)",
-      desc: "",
-    },
-    {
-      title: "빠르게 (Fastly)",
-      desc: "",
-    },
-  ],
-  ENG: [
-    {
-      title: "Enjoyable",
-      desc: "",
-    },
-    {
-      title: "Neo",
-      desc: "",
-    },
-    {
-      title: "Wisely",
-      desc: "",
-    },
-    {
-      title: "Fastly",
-      desc: "",
-    },
-  ],
-};
-
-export const visionRndText = {
-  KOR: {
-    title: "OPEN INNOVATION",
-    subtitle: "끊임없는 연구개발과 스마트 공정 혁신을 통해\n제조 효율의 새로운 기준을 만들어갑니다",
-    leftBox1Title: "R&D 기획",
-    leftBox1Desc: "PJT 운영 및 R&D 사업화 전략수립",
-    leftBox2Title: "R&D",
-    leftBox2Desc: "단계별 연구 ITEM 초기개발 / 차별화",
-    rightBoxTop: "제조기술 효율성 극대화",
-    rightBoxTitle: "R&BD 조기 사업화 / 차세대 성장동력 확보",
-    rightBoxDesc: "단계별 ITEM Launching / 사업화",
-  },
-  ENG: {
-    title: "R&D",
-    subtitle:
-      "We create new standards in manufacturing efficiency\nthrough continuous R&D and smart process innovation",
-    leftBox1Title: "R&D Planning",
-    leftBox1Desc: "Project operation and commercialization strategy",
-    leftBox2Title: "R&D",
-    leftBox2Desc: "Initial development and differentiation by phase",
-    rightBoxTop: "Maximizing Manufacturing Efficiency",
-    rightBoxTitle: "Early Commercialization of R&BD / Securing Growth Engines",
-    rightBoxDesc: "Phased ITEM Launching / Commercialization",
   },
 };
 
