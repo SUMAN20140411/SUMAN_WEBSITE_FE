@@ -39,9 +39,9 @@ const RecruitmentBoard: React.FC = () => {
         </div>
 
         {/* 🔽 Platform Cards */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
           <section className="py-16 md:py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10 text-left">
                 {lang === "KOR" ? "채용 사이트" : "Recruitment Site"}
               </h2>
@@ -153,7 +153,7 @@ const DocumentDownloadBanner: React.FC = () => {
         ];
 
   return (
-    <section className="bg-white mt-2 px-4">
+    <section className="bg-white mt-2 px-6 md:px-[60px] lg:px-[0px]">
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="relative overflow-hidden rounded-3xl border border-[#d9e2ff] bg-gradient-to-br from-white via-[#f5f7ff] to-white p-8 sm:p-10 shadow-[0_30px_80px_-40px_rgba(29,55,98,0.35)]"
