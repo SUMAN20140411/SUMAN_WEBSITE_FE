@@ -23,8 +23,7 @@ export default function ServicePage() {
       transition: { duration: 0.5, ease: "easeOut" } as Transition,
     },
   };
-  const CM_TO_PX = 37.8;
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
+  
   const leftAlignTextVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -42,24 +41,15 @@ export default function ServicePage() {
         <Head>
           <title>{lang === "KOR" ? "제품 소개 " : "Product "}</title>
         </Head>
-        <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-          {/* Hero with negative trims */}
-          <div
-            style={{
-              marginTop: `-${HERO_TRIM_PX}px`,
-              marginBottom: `-${HERO_TRIM_PX}px`,
-            }}
-          >
-            <HeroSection
-              title={lang === "KOR" ? "제품 소개" : "Product"}
-              backgroundImage="/images/sub_banner/business_hero.png"
-            />
-          </div>
+        <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+          <HeroSection
+            title={lang === "KOR" ? "제품 소개" : "Products"}
+            backgroundImage="/images/sub_banner/business_hero.png"
+          />
 
-          {/* Breadcrumb */}
-          <div className="relative z-30 -mt-2">
+          <div className="relative z-30 -mt-8 sm:-mt-10">
             <BreadcrumbSection
-              path={lang === "KOR" ? "사업분야 > 제품소개" : "Business > Product"}
+              path={lang === "KOR" ? "사업분야 > 제품 소개" : "Business > Products"}
             />
           </div>
 

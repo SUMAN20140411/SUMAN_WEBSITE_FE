@@ -40,10 +40,6 @@ export default function CertificationsPage() {
   const visibleCerts = certData.slice(0, 8);
   const moreCerts = certData.slice(8);
 
-  // === match ceo.tsx hero trim (1cm top & bottom) ===
-  const CM_TO_PX = 37.8;
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
-
   return (
     <>
       <Head>
@@ -51,23 +47,13 @@ export default function CertificationsPage() {
       </Head>
 
       <Layout>
-        {/* Match ceo.tsx: header offset + trimmed hero + tight breadcrumb */}
-        <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-          {/* === trimmed HeroSection (1cm top/bottom), NO subtitle (same as ceo.tsx) === */}
-          <div
-            style={{
-              marginTop: `-${HERO_TRIM_PX}px`,
-              marginBottom: `-${HERO_TRIM_PX}px`,
-            }}
-          >
-            <HeroSection
-              title={lang === "KOR" ? "인증 현황" : "Certifications"}
-              backgroundImage="/images/sub_banner/company_banner.png"
-            />
-          </div>
+        <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+          <HeroSection
+            title={lang === "KOR" ? "인증 현황" : "Certifications"}
+            backgroundImage="/images/sub_banner/company_banner.png"
+          />
 
-          {/* breadcrumb snug to hero like ceo.tsx */}
-          <div className="relative z-30 -mt-2">
+          <div className="relative z-30 -mt-8 sm:-mt-10">
             <BreadcrumbSection
               path={lang === "KOR" ? "회사소개 > 인증 현황" : "Company > Certifications"}
             />

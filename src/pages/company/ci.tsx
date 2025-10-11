@@ -35,31 +35,22 @@ export default function OrgPage() {
 
   const monoAlt = lang === "KOR" ? "SUMAN 흑백 로고" : "SUMAN Mono Logo";
   const colorAlt = lang === "KOR" ? "SUMAN 컬러 로고" : "SUMAN Color Logo";
-  const CM_TO_PX = 37.8;                       // UPDATED
-  const HERO_TRIM_PX = Math.round(CM_TO_PX); 
+  
   return (
     <Layout>
       <Head>
         <title>{pageTitle}</title>
       </Head>
 
-      {/* Match rnd.tsx: big hero + breadcrumb just below it */}
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-       <div                                       // UPDATED
-          style={{                                 // UPDATED
-            marginTop: `-${HERO_TRIM_PX}px`,       // UPDATED
-            marginBottom: `-${HERO_TRIM_PX}px`,    // UPDATED
-          }}                                       // UPDATED
-        > 
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
         <HeroSection
           title={heroTitle}
-          //subtitle={heroSubtitle}
           backgroundImage="/images/sub_banner/company_banner.png"
         />
-        </div>
 
-        <div className="relative z-30 -mt-2"> 
-        <BreadcrumbSection path={breadcrumbPath} /> </div>
+        <div className="relative z-30 -mt-8 sm:-mt-10">
+          <BreadcrumbSection path={breadcrumbPath} />
+        </div>
 
         {/* Page content (unchanged) */}
         <section className="content-wrapper py-24 px-4 md:px-8 bg-white flex justify-center items-center overflow-x-hidden">

@@ -40,28 +40,17 @@ export default function App() {
     hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition },
   };
 
-  const CM_TO_PX = 37.8;
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
-
   return (
     <Layout>
       <Head>
         <title>{lang === "KOR" ? "연구분야 | 수만" : "Research Fields | SUMAN"}</title>
       </Head>
 
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* Hero */}
-        <div
-          style={{
-            marginTop: `-${HERO_TRIM_PX}px`,
-            marginBottom: `-${HERO_TRIM_PX}px`,
-          }}
-        >
-          <HeroSection title={hero.title} backgroundImage="/images/sub_banner/business_hero.png" />
-        </div>
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+        <HeroSection title={hero.title} backgroundImage="/images/sub_banner/business_hero.png" />
 
         {/* Breadcrumb */}
-        <div className="relative z-30 -mt-2">
+        <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
             path={lang === "KOR" ? "사업분야 > 연구분야" : "Business > Research Fields"}
           />
@@ -69,13 +58,13 @@ export default function App() {
 
         {/* Main Business Areas Section */}
         <motion.section
-          className="py-16 md:py-24 px-4 md:px-8 bg-white"
+          className="bg-white"
           variants={fadeIn}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20">
             {/* ⬇ Left-aligned & bigger title */}
             <motion.div className="text-left mb-16" variants={fadeIn}>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -238,23 +227,25 @@ export default function App() {
 
         {/* Additional Info Section */}
         <motion.section
-          className="py-16 px-4 md:px-8 bg-gray-50"
+          className="bg-gray-50"
           variants={fadeIn}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <div className="max-w-6xl mx-auto text-center">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-              {lang === "KOR"
-                ? "혁신적인 기술력으로 고객과 함께 성장합니다"
-                : "Growing together with customers through innovative technology"}
-            </h3>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              {lang === "KOR"
-                ? "반도체, 자동화, 모빌리티 분야에서 축적된 기술력과 경험을 바탕으로 고객의 요구에 맞는 맞춤형 솔루션을 제공하며, 지속적인 연구개발을 통해 미래 기술을 선도하고 있습니다."
-                : "Based on our accumulated technical expertise and experience in semiconductors, automation, and mobility, we provide customized solutions that meet customer needs and lead future technology through continuous R&D."}
-            </p>
+          <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20">
+            <div className="text-center">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                {lang === "KOR"
+                  ? "혁신적인 기술력으로 고객과 함께 성장합니다"
+                  : "Growing together with customers through innovative technology"}
+              </h3>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                {lang === "KOR"
+                  ? "반도체, 자동화, 모빌리티 분야에서 축적된 기술력과 경험을 바탕으로 고객의 요구에 맞는 맞춤형 솔루션을 제공하며, 지속적인 연구개발을 통해 미래 기술을 선도하고 있습니다."
+                  : "Based on our accumulated technical expertise and experience in semiconductors, automation, and mobility, we provide customized solutions that meet customer needs and lead future technology through continuous R&D."}
+              </p>
+            </div>
           </div>
         </motion.section>
       </main>

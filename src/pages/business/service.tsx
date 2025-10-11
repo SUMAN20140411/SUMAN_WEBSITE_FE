@@ -131,34 +131,20 @@ export default function ServicePage() {
     },
   };
 
-  const CM_TO_PX = 37.8;
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
-
   return (
     <Layout>
       <Head>
         <title>{langCode === "KOR" ? "기술소개 " : "Technology"}</title>
       </Head>
 
-      <main
-        className="min-h-screen bg-white text-slate-900"
-        style={{ paddingTop: "90px" }}
-      >
-        {/* hero trim */}
-        <div
-          style={{
-            marginTop: `-${HERO_TRIM_PX}px`,
-            marginBottom: `-${HERO_TRIM_PX}px`,
-          }}
-        >
-          <HeroSection
-            title={langCode === "KOR" ? "기술 소개" : "Technology"}
-            backgroundImage="/images/sub_banner/business_hero.png"
-          />
-        </div>
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+        <HeroSection
+          title={langCode === "KOR" ? "기술 소개" : "Technology"}
+          backgroundImage="/images/sub_banner/business_hero.png"
+        />
 
         {/* breadcrumb */}
-        <div className="relative -mt-2 z-30">
+        <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
             path={
               langCode === "KOR"

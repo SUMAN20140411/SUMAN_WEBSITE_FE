@@ -55,49 +55,52 @@ export default function CeoPage() {
         </div>
 
         <section className="bg-white">
-          <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-start lg:gap-16 lg:py-20">
-            {/* LEFT */}
+          <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
+            
+            {/* LEFT - Gambar Pertama (Signature) - Align Kiri */}
             <motion.article
-              className="lg:w-1/2"
+              className="lg:w-1/2 flex justify-start"
               variants={textReveal}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              {/* Foto tanda tangan */}
-              <div className="lg:ml-[1cm]">
-                <div className="relative w-full h-[396px] sm:h-[462px] lg:h-[605px]">
-  <Image
-    src={ceoSignImg}
-    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-    fill
-    priority
-    className="object-contain"
-    sizes="(min-width:1024px) 50vw, 90vw"
-  />
-</div>
-
+              <div className="w-full">
+                <div className="relative w-full aspect-square max-w-[550px]">
+                  <Image
+                    src={ceoSignImg}
+                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
+                    fill
+                    priority
+                    className="object-contain object-left"
+                    sizes="(min-width:1024px) 50vw, 90vw"
+                  />
+                </div>
               </div>
             </motion.article>
 
-            {/* RIGHT: main photo */}
+            {/* Border - Responsive */}
+            <div className="w-full h-px lg:w-px lg:h-auto lg:min-h-[480px] bg-gray-200"></div>
+
+            {/* RIGHT - Gambar Kedua (CEO Photo) - Align Kanan desktop, Center mobile */}
             <motion.div
-              className="ceo-image-column md:w-[48%] lg:translate-x-3 xl:translate-x-4 flex items-center justify-center"
+              className="lg:w-1/2 flex justify-center lg:justify-end"
               variants={slideInRight}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              <div className="w-full max-h-[550px] h-[360px] sm:h-[420px] lg:h-[550px] overflow-hidden flex items-center justify-center p-2">
-                <Image
-                  src="/images/company/ceo/ceo.jpeg"
-                  alt="SUMAN CEO"
-                  className="w-full h-full object-contain"
-                  width={700}
-                  height={500}
-                  priority
-                />
+              <div className="w-full flex items-center justify-center lg:justify-end">
+                <div className="relative aspect-square w-full max-w-[450px]">
+                  <Image
+                    src="/images/company/ceo/ceo.jpeg"
+                    alt="SUMAN CEO"
+                    fill
+                    priority
+                    className="object-cover object-center lg:object-right rounded-lg"
+                  />
+                </div>
               </div>
             </motion.div>
           </div>

@@ -17,7 +17,7 @@ export default function HeroSection({
   backgroundImage,
 }: HeroSectionProps) {
   return (
-    <section className="hero-section relative h-[300px] flex items-center text-white overflow-hidden">
+    <section className="hero-section relative h-[230px] md:h-[309px] lg:h-[333px] flex items-center text-white overflow-hidden">
       <Image
         src={backgroundImage}
         alt={`${title} 배경 이미지`}
@@ -33,7 +33,7 @@ export default function HeroSection({
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        {/* 새로운 div를 추가하여 max-w-7xl mx-auto와 헤더와 동일한 패딩 적용 */}
+        {/* Container untuk max-w-7xl mx-auto dan header dengan padding seimbang */}
         <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
           <h1 className="text-4xl md:text-5xl font-bold mb-2">{title}</h1>
           <p className="text-lg md:text-xl font-medium">{subtitle}</p>

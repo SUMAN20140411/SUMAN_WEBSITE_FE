@@ -123,13 +123,13 @@ export default function Header() {
         aria-label="Main Navigation"
         className="fixed top-0 left-0 w-full z-50 bg-white transition-shadow duration-300 shadow-md"
       >
-        {/* Main Nav Container (same spacing, height) */}
+        {/* Main Nav Container (aligned with content) */}
         <div
-          className="w-full mx-auto max-w-screen-2xl px-4 lg:px-20 flex justify-between items-center text-sm lg:text-base font-medium text-black"
+          className="w-full mx-auto max-w-7xl px-6 md:px-[60px] lg:px-[0px] flex justify-between items-center text-sm lg:text-base font-medium text-black"
           style={{ height: "90px" }}
         >
-          {/* Logo (same ml-10) */}
-          <Link href={logoHref} className="flex items-center h-full mr-auto lg:mr-0 ml-10">
+          {/* Logo (aligned to left edge) */}
+          <Link href={logoHref} className="flex items-center h-full mr-auto lg:mr-0">
             <Image
               src="/images/logo_suman.png"
               alt="SUMAN CO., Ltd company logo"

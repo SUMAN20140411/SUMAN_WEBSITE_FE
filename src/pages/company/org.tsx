@@ -34,8 +34,6 @@ export default function OrgPage() {
     },
   };
 
-  const CM_TO_PX = 37.8; // UPDATED
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
   const currentContent = content[lang];
 
   return (
@@ -44,39 +42,26 @@ export default function OrgPage() {
         <title>{currentContent.pageTitle}</title>
       </Head>
 
-      <main
-        className="min-h-screen bg-white text-slate-900"
-        style={{ paddingTop: "90px" }}
-      >
-        {/* === UPDATED: Bungkus HeroSection dengan negative margin top/bottom (1cm per sisi) === */}
-        <div
-          style={{
-            marginTop: `-${HERO_TRIM_PX}px`,
-            marginBottom: `-${HERO_TRIM_PX}px`,
-          }}
-        >
-          <HeroSection
-            title={currentContent.title}
-            // subtitle={currentContent.subtitle}
-            backgroundImage="/images/sub_banner/company_banner.png"
-          />
-        </div>
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+        <HeroSection
+          title={currentContent.title}
+          backgroundImage="/images/sub_banner/company_banner.png"
+        />
 
-        <div className="relative z-30 -mt-2">
+        <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection path={currentContent.breadcrumb} />
         </div>
 
-        <main className="content-wrapper py-20 px-4 md:px-8 bg-white flex justify-center items-center">
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
+        <section className="bg-white">
+          <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20">
             <motion.div
-              className="w-full"
+              className="w-full flex justify-center"
               variants={fadeIn}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              {/* Reduced padding to make image 12% bigger */}
-              <div className="relative w-full h-auto rounded-lg px-0 md:px-[4%] lg:px-[8%]">
+              <div className="relative w-full max-w-6xl">
                 <Image
                   src={currentContent.image}
                   alt={currentContent.alt}
@@ -84,14 +69,14 @@ export default function OrgPage() {
                   height={800}
                   layout="responsive"
                   objectFit="contain"
-                  className="w-full h-auto rounded-lg"
-                  sizes="(min-width:1024px) 84vw, (min-width:768px) 92vw, 100vw" // Adjusted sizes
+                  className="w-full h-auto"
+                  sizes="(min-width:1024px) 90vw, 95vw"
                   priority
                 />
               </div>
             </motion.div>
           </div>
-        </main>
+        </section>
 
         <hr className="my-8 border-gray-200 w-full" />
       </main>

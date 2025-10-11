@@ -37,29 +37,22 @@ export default function HistoryPage() {
     ["--arrow-shift-down" as any]: "clamp(80px, 10vw, 190px)", // base down shift (~up to 5cm)
     ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)",     // lift up (~3cm)
   } as React.CSSProperties;
-  const CM_TO_PX = 37.8;                       // UPDATED
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);  
+  
   return (
     <>
     <Layout>
       <Head>
         <title>{lang === "KOR" ? "연혁 | 수만" : "History | SUMAN"}</title>
       </Head>
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* === UPDATED: Bungkus HeroSection dengan negative margin top/bottom (1cm per sisi) === */}
-        <div                                       // UPDATED
-          style={{                                 // UPDATED
-            marginTop: `-${HERO_TRIM_PX}px`,       // UPDATED
-            marginBottom: `-${HERO_TRIM_PX}px`,    // UPDATED
-          }}                                       // UPDATED
-        >
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
         <HeroSection
           title={<span className="text-5xl font-bold tracking-wide">{content.title}</span>}
           backgroundImage="/images/sub_banner/company_banner.png"
         />
+        
+        <div className="relative z-30 -mt-8 sm:-mt-10">
+          <BreadcrumbSection path={content.breadcrumb} />
         </div>
-        <div className="relative z-30 -mt-2"> 
-          <BreadcrumbSection path={content.breadcrumb} /> </div>
 
         {/* =================== HISTORY HERO BLOCK =================== */}
         <section className="relative w-full min-h-[520px] md:min_h-[620px] md:min-h-[620px]">

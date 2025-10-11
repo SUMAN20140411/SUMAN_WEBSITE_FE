@@ -36,8 +36,6 @@ import {
   Zap,
 } from "lucide-react";
 
-const HERO_TRIM_PX = 38;
-
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 32 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
@@ -241,7 +239,7 @@ export default function Vision2Page() {
       <Head>
         <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-            <main className="relative min-h-screen overflow-hidden bg-white text-slate-00 pt-[90px]">
+            <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
         <motion.div
           className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
           animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
@@ -254,31 +252,24 @@ export default function Vision2Page() {
         />
 
         <div className="relative z-10">
-          <div
-            style={{
-              marginTop: `-${HERO_TRIM_PX}px`,
-              marginBottom: `-${HERO_TRIM_PX}px`,
-            }}
-          >
-            <HeroSection
-              title={hero.title}
-              backgroundImage="/images/sub_banner/company_banner.png"
-            />
-          </div>
+          <HeroSection
+            title={hero.title}
+            backgroundImage="/images/sub_banner/company_banner.png"
+          />
 
-          <div className="relative z-20 -mt-2">
+          <div className="relative z-20 -mt-8 sm:-mt-10">
             <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
           </div>
 
           {/* Our Value Section */}
           <motion.section
-            className="relative py-4 md:py-6 px-4 md:px-8"
+            className="bg-white"
             variants={fadeInUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
           >
-            <div className="relative max-w-6xl mx-auto">
+            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 ">
               <div className="space-y-4 text-left">
                 <h3 className="text-3xl md:text-4xl font-bold text-slate-800">
                   {lang === "KOR" ? "Our Vision" : "Our Vision"}
@@ -289,13 +280,13 @@ export default function Vision2Page() {
 
           {/* Strategy & KPI */}
           <motion.section
-            className="relative pt-0 pb-6 px-4 md:px-8"
+            className="relative bg-white"
             variants={fadeInUp}
             initial="hidden"
             animate="visible"
           >
             <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50 to-slate-100" />
-            <div className="max-w-6xl mx-auto space-y-16">
+            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] pb-16 lg:pb-20 space-y-16">
               <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
                 <motion.div 
                   className="space-y-8" 
@@ -434,7 +425,7 @@ export default function Vision2Page() {
               animate={{ opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 8, repeat: Infinity, repeatType: "mirror" }}
             />
-            <div className="relative mt-8 max-w-6xl mx-auto">
+            <div className="relative mt-8 max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <motion.h3
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -476,14 +467,13 @@ export default function Vision2Page() {
                 })}
               </motion.div>
             </div>
+            {/* Tambah spacing di bawah core values */}
+            <div className="pb-12"></div>
           </motion.section>
 
           {/* Biz model */}
-          <section
-            className="relative py-16 md:py-20 px-4 md:px-8"
-          >
-            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-            <div className="relative max-w-6xl mx-auto text-white space-y-10">
+          <section className="bg-slate-900">
+            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 text-white space-y-10">
               <div className="space-y-4 text-left">
                 <h3 className="text-xl md:text-2xl font-semibold text-white">{strategy.bizModelTitle}</h3>
                 <p className="text-base md:text-lg font-medium text-white italic">

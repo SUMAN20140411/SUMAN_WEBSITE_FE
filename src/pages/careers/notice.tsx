@@ -16,28 +16,19 @@ const cardAppearTransition: Transition = {
 const RecruitmentBoard: React.FC = () => {
   const lang = useLangStore((state) => state.lang) || "KOR";
 
-  // === trim hero 1cm atas & bawah (≈ 37.8px) — sama seperti ceo.tsx ===
-  const CM_TO_PX = 37.8;
-  const HERO_TRIM_PX = Math.round(CM_TO_PX);
-
   return (
     <Layout>
       <Head>
         <title>{lang === "KOR" ? "채용공고 | 수만" : "Recruit Notice | SUMAN"}</title>
       </Head>
 
-      {/* ===================== UPDATED: wrap with <main> like rnd.tsx ===================== */}
-      <main className="min-h-screen bg-white text-slate-900" style={{ paddingTop: "90px" }}>
-        {/* ===================== UPDATED: Hero same trimming style as ceo.tsx ============== */}
-        <div style={{ marginTop: `-${HERO_TRIM_PX}px`, marginBottom: `-${HERO_TRIM_PX}px` }}>
-          <HeroSection
-            title={lang === "KOR" ? "채용공고" : "Recruit Notice"}
-            backgroundImage="/images/sub_banner/careers_hero.png"
-          />
-        </div>
+      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+        <HeroSection
+          title={lang === "KOR" ? "채용공고" : "Recruit Notice"}
+          backgroundImage="/images/sub_banner/careers_hero.png"
+        />
 
-        {/* ===================== breadcrumb wrapper (tidak diubah) ==================== */}
-        <div className="relative z-30">
+        <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
             path={
               lang === "KOR"
