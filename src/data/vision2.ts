@@ -64,8 +64,9 @@ export const visionStrategyText = {
       "매출 600억/순이익 150억 달성(28)"
     ],
     coreValues: ["즐겁게 (Enjoy)", "새롭게 (Neo)", "지혜롭게 (Intensely)", "빠르게 (Fastly)"],
-    bizModelTitle: "Biz Model",
-    bizModelSubtitle: "\"확신(Confidence)\"의 \"종합 솔루션 서비스\"를 제공하는 \"신뢰의 강한 기업\"",
+    bizModelTitle: "비즈니스 모델",
+    bizModelSlogan: "분석부터 실행까지, 원스톱으로 성과.",
+    bizModelSubtitle: "고객의 다양한 요구사항을 통합적으로 해결하는 토탈 솔루션 파트너로 성장합니다.",
     openInnovation: "OPEN INNOVATION",
     businessAreas: {
       development: "R&BD 조기사업화\n/ 차세대 성장동력 확보",
@@ -86,7 +87,8 @@ export const visionStrategyText = {
     ],
     coreValues: ["Enjoy", "Neo", "Intensely", "Fastly"],
     bizModelTitle: "Business Model",
-    bizModelSubtitle: "\"Reliable Strong Company\" providing \"Confidence\"-based \"Total Solution Services\"",
+    bizModelSlogan: "From Analysis to Execution, One-Stop Results.",
+    bizModelSubtitle: "Growing as a total solution partner that comprehensively addresses diverse customer requirements.",
     openInnovation: "OPEN INNOVATION",
     businessAreas: {
       development: "Early R&BD Commercialization\n/ Securing Next-Generation Growth Engines",
@@ -100,38 +102,38 @@ export const visionStrategyText = {
 export const visionCoreValue = {
   KOR: [
     {
-      title: "유연조직",
-      desc: "급변하는 시장에 유연하게 반응하며\n끊임없이 혁신하는 조직입니다.",
+      title: "즐겁게 (Enjoyable)",
+      desc: "",
     },
     {
-      title: "전문인력",
-      desc: "각 분야 최고의 전문성을 갖춘\n인력들이 모여\n차별화된 가치를 제공합니다.",
+      title: "새롭게 (Neo)",
+      desc: "",
     },
     {
-      title: "기술융합",
-      desc: "기술의 경계를 허물고 융합하여\n미래를 선도하는\n기술 혁신을 이루어갑니다",
+      title: "지혜롭게 (Wisely)",
+      desc: "",
     },
     {
-      title: "R&BD",
-      desc: "지속적인 R&D 투자를 통해\n기술 혁신을 넘어 실질적인\n비즈니스 성과를 창출합니다.",
+      title: "빠르게 (Fastly)",
+      desc: "",
     },
   ],
   ENG: [
     {
-      title: "Agile Organization",
-      desc: "We respond flexibly to rapidly changing markets\nand continue to innovate.",
+      title: "Enjoyable",
+      desc: "",
     },
     {
-      title: "Expert Workforce",
-      desc: "Top experts in each field gather to\ndeliver differentiated value.",
+      title: "Neo",
+      desc: "",
     },
     {
-      title: "Technology Convergence",
-      desc: "We break down boundaries and converge technologies\nfor future-leading innovation.",
+      title: "Wisely",
+      desc: "",
     },
     {
-      title: "R&BD",
-      desc: "Through continuous R&D investment,\nwe create tangible business outcomes\nbeyond technological innovation.",
+      title: "Fastly",
+      desc: "",
     },
   ],
 };
