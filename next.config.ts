@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export configuration (commented out for development)
-  // output: 'export',
+  // Static export configuration (enabled for production deployment)
+  output: 'export',
   
   // Image optimization disabled (required for static sites)
   images: {
