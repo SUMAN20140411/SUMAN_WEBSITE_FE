@@ -459,14 +459,14 @@ export default function Vision2Page() {
 
           {/* R&D Section - Hover Effect on Image & Animation on Text */}
           <section className="w-full">
-           <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-4 lg:py-6 grid grid-cols-1 lg:grid-cols-12 items-center">
+           <div className="mt-8 max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-11 lg:py-6 grid grid-cols-1 lg:grid-cols-12 items-center">
               {/* LEFT COLUMN */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
-                className="lg:col-span-5 flex flex-col justify-center items-start"
+                className="lg:col-span-5 flex flex-col justify-center items-start w-full mb-10 lg:mb-0 lg:pr-10 "
               >
                 <motion.div
                   initial={{ opacity: 0, y: 32 }}
@@ -475,10 +475,10 @@ export default function Vision2Page() {
                   transition={{ duration: 0.7 }}
                   className="text-left"
                 >
-                  <div className="text-slate-900 text-xl md:text-2xl font-semibold mb-6 transition-all duration-200 hover:scale-105">
+                  <div className="text-slate-900 text-xl md:text-2xl font-semibold mb-2 transition-all duration-200 hover:scale-105">
                     비즈니스 모델
                   </div>
-                  <h2 className="text-slate-900 text-xl md:text-2xl font-semibold leading-relaxed mb-4 text-left transition-all duration-200 hover:scale-105">
+                  <h2 className="text-slate-900 text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105">
                     {lang === "KOR" ? (
                       <>
                         끊임없는 연구개발과 스마트 공정 혁신을 통해{" "} <br/><span
@@ -495,10 +495,10 @@ export default function Vision2Page() {
                           className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
                           style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                         >
-                          manufacturing efficiency
+                          manufacturing efficiency<br/> We set new standards<br/>
                         </span>
                         <br />
-                        <span className="text-[#45B8E8] font-bold">We set new standards</span>
+                        <span className="text-[#45B8E8] font-bold"></span>
                       </>
                     )}
                   </h2>
@@ -508,14 +508,14 @@ export default function Vision2Page() {
               {/* RIGHT COLUMN */}
               <motion.div
                 whileHover={{ scale: 1.04, transition: { duration: 0.3 } }}
-                className="lg:col-span-7 flex flex-col items-start justify-start w-full transition-all duration-300 mt-0 pt-0"
+                className="lg:col-span-7 flex flex-col items-start justify-start w-full transition-all duration-300 mt-0 pt-0 lg:mt-0 lg:pt-3 ml-12"
               >
-                <div className="relative w-full mt-0" style={{ aspectRatio: "1210/768" }}>
+                <div className="relative w-full mt-3" style={{ aspectRatio: "1210/768" }}>
                   <Image
                     src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
                     alt="Biz Model Pyramid"
                     className="w-full h-full object-contain"
-                    style={{ width: "110%", height: "110%" }}
+                    style={{ width: "90%", height: "90%" }}
                     width={1210}
                     height={768}
                   />

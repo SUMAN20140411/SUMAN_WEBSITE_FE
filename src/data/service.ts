@@ -106,8 +106,8 @@ export const serviceContent = {
     // 각 섹션 타이틀
     sectionList: [
       {
-        maintitle: "최적의 생산 환경을 위한",
-        mainsubtitle: "다양한 설비를 갖추고 있습니다",
+        maintitle: "최적의 생산 환경을 위한 다양한 설비를 갖추고 있습니다",
+        //mainsubtitle: "다양한 설비를 갖추고 있습니다",
         production: "생산가공 / 조립",
         measurement: "신뢰성 (측정 / 분석)",
         process: "제조 및 품질 프로세스는 자재 선정부터 최종 검사까지",

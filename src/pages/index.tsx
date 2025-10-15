@@ -76,7 +76,7 @@ export default function HomePage({ content }: HomePageProps) {
           </video>
 
           {/* Hero text (font +10%) */}
-          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-6 md:px-[120px] text-left">
+          <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-7 md:px-[120px] text-left h-full max-w-7xl ">
             <div className="w-full max-w-4xl">
               {content.section1Text.subtitle ? (
                 <motion.h1
