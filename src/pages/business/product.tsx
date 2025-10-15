@@ -55,21 +55,13 @@ export default function ServicePage() {
 
           {/* Products Section */}
           {section && (
-            <section className="relative z-0 bg-[#0a132e] px-4 pb-20 pt-20 md:pb-20 md:pt-20">
-              <div className="pointer-events-none absolute inset-0">
-                <Image
-                  src="/images/business/layer.png"
-                  alt={lang === "KOR" ? "배경 이미지" : "Background image"}
-                  fill
-                  style={{ objectFit: "cover", objectPosition: "top" }}
-                  priority
-                />
-              </div>
+            <section className="relative z-0 bg-gradient-to-b from-sky-50/80 via-sky-50/40 to-slate-100 px-4 pb-20 pt-20 md:pb-20 md:pt-20">
+              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-sky-50/80 via-sky-50/40 to-slate-100" />
               
               <div className="max-w-7xl mx-auto relative z-10">
                 {/* Title: bilingual & same size as '핵심 연구 분야' */}
                 <motion.h2
-                  className="text-white text-4xl md:text-5xl font-bold tracking-tight mb-4"
+                  className="text-slate-800 text-4xl md:text-5xl font-bold tracking-tight mb-4"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
@@ -80,7 +72,7 @@ export default function ServicePage() {
 
                 {/* Tagline: subtitle sizing like R&D subtitle */}
                 <motion.p
-                  className="text-slate-200 text-base md:text-lg leading-relaxed max-w-3xl"
+                  className="text-slate-600 text-base md:text-lg leading-relaxed max-w-3xl"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
@@ -102,7 +94,7 @@ export default function ServicePage() {
                   {productCategories.map((product, index) => (
                     <motion.div
                       key={index}
-                      className="bg-[#7E7E7E]/25 rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out group mt-5 hover:bg-white"
+                      className="bg-white rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group mt-5"
                       variants={itemVariants}
                     >
                       <div className="relative w-full h-44 mx-auto mt-4">
@@ -110,14 +102,14 @@ export default function ServicePage() {
                       </div>
                       <div className="p-4">
                         {product.label && (
-                          <span className="tracking-wide font-light text-[#CACACA] text-base transition-colors duration-300 group-hover:text-gray-700">
+                          <span className="tracking-wide font-light text-slate-500 text-base">
                             {product.label}
                           </span>
                         )}
-                        <h3 className="tracking-wide text-2xl font-semibold text-white mb-1 mt-5 transition-colors duration-300 group-hover:text-black">
+                        <h3 className="tracking-wide text-2xl font-semibold text-slate-800 mb-1 mt-5">
                           {product.name}
                         </h3>
-                        <p className="tracking-wide font-light text-[#CACACA] text-sm mb-7 transition-colors duration-300 group-hover:text-gray-700">
+                        <p className="tracking-wide font-light text-slate-600 text-sm mb-7">
                           {product.subtitle}
                         </p>
                       </div>
@@ -127,7 +119,7 @@ export default function ServicePage() {
 
                 {/* Footer */}
                 <motion.p
-                  className="text-[#B2B2B2] font-light text-sm md:text-base mt-7 text-right tracking-wide"
+                  className="text-slate-500 font-light text-sm md:text-base mt-7 text-right tracking-wide"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}

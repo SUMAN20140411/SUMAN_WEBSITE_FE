@@ -21,14 +21,14 @@ const WellnessCard = ({ item }: { item: WellnessItem }) => {
     return (
       <motion.div
         whileHover={{ scale: 1.05 }}
-        className="p-6 bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center"
+        className="p-6 bg-[#0A1633] rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center"
       >
-        <div className="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+        <div className="w-20 h-20 mb-4 bg-white/10 rounded-full flex items-center justify-center text-white">
           <LucideIcons.Image className="w-12 h-12" />
         </div>
-        <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-        <p className="text-sm text-gray-500">{item.description}</p>
-        <p className="text-xs text-red-500 mt-2">Error: Icon not found</p>
+        <h3 className="text-lg font-semibold mb-1 text-white">{item.title}</h3>
+        <p className="text-sm text-gray-300">{item.description}</p>
+        <p className="text-xs text-red-400 mt-2">Error: Icon not found</p>
       </motion.div>
     );
   }
@@ -36,13 +36,13 @@ const WellnessCard = ({ item }: { item: WellnessItem }) => {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className="p-6 bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center"
+      className="p-6 bg-[#0A1633] rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center"
     >
-      <div className="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center text-blue-500">
+      <div className="w-20 h-20 mb-4 bg-white/10 rounded-full flex items-center justify-center text-white">
         <IconComponent className="w-12 h-12" />
       </div>
-      <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-      <p className="text-sm text-gray-500">{item.description}</p>
+      <h3 className="text-lg font-semibold mb-1 text-white">{item.title}</h3>
+      <p className="text-sm text-gray-300">{item.description}</p>
     </motion.div>
   );
 };
@@ -78,7 +78,7 @@ export default function WellnessPage() {
         />
       </Head>
 
-      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+      <main className="min-h-screen bg-gradient-to-b from-white via-sky-50/30 to-white pt-[90px] text-slate-900">
         <HeroSection
           title={lang === "KOR" ? "복리후생" : "Employee Benefits"}
           backgroundImage="/images/sub_banner/careers_hero.png"
@@ -92,7 +92,7 @@ export default function WellnessPage() {
 
         {/* === PAGE LAYOUT mengikuti product.tsx (BIG LAYOUT ONLY) === */}
         <motion.div
-          className="relative z-10 bg-[#000B24] pt-20 pb-20 px-4 md:px-8 rounded-none mt-0 overflow-hidden"
+          className="relative z-10 bg-gradient-to-b from-sky-50/50 via-white to-sky-50/30 pt-20 pb-20 px-4 md:px-8 rounded-none mt-0 overflow-hidden"
         >
           <div
             className="absolute inset-0 pointer-events-none flex bg-no-repeat bg-top bg-contain"
@@ -108,7 +108,7 @@ export default function WellnessPage() {
               viewport={{ once: true, amount: 0.3 }}
               variants={titleFade}
             >
-              <p className="text-white/80 text-lg max-w-3xl mx-auto leading-relaxed">
+              <p className="text-slate-600 text-lg max-w-3xl mx-auto leading-relaxed">
                 {lang === "KOR"
                   ? "임직원 모두의 행복과 성장을 위해 실질적인 복지 혜택을 제공합니다."
                   : "We provide practical benefits that support every employee’s well-being and growth."}

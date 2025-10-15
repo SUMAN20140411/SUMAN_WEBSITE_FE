@@ -22,7 +22,7 @@ const RecruitmentBoard: React.FC = () => {
         <title>{lang === "KOR" ? "채용공고 | 수만" : "Recruit Notice | SUMAN"}</title>
       </Head>
 
-      <main className="min-h-screen bg-white pt-[90px] text-slate-900">
+      <main className="min-h-screen bg-gradient-to-b from-white via-sky-50/30 to-white pt-[90px] text-slate-900">
         <HeroSection
           title={lang === "KOR" ? "채용공고" : "Recruit Notice"}
           backgroundImage="/images/sub_banner/careers_hero.png"
@@ -40,7 +40,7 @@ const RecruitmentBoard: React.FC = () => {
 
         {/* 🔽 Platform Cards */}
         <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
-          <section className="py-16 md:py-20 bg-white">
+          <section className="py-16 md:py-20 bg-gradient-to-b from-sky-50/50 via-white to-sky-50/30">
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10 text-left">
                 {lang === "KOR" ? "채용 사이트" : "Recruitment Site"}
@@ -153,7 +153,7 @@ const DocumentDownloadBanner: React.FC = () => {
         ];
 
   return (
-    <section className="bg-white mt-2 px-6 md:px-[60px] lg:px-[0px]">
+    <section className="bg-gradient-to-b from-white via-sky-50/40 to-white mt-2 px-6 md:px-[60px] lg:px-[0px]">
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="relative overflow-hidden rounded-3xl border border-[#d9e2ff] bg-gradient-to-br from-white via-[#f5f7ff] to-white p-8 sm:p-10 shadow-[0_30px_80px_-40px_rgba(29,55,98,0.35)]"

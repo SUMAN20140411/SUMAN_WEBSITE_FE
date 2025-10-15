@@ -1,24 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 정적 내보내기 설정
-  output: 'export',
+  // Static export configuration (commented out for development)
+  // output: 'export',
   
-  // 이미지 최적화 비활성화 (정적 사이트에서 필요)
+  // Image optimization disabled (required for static sites)
   images: {
     unoptimized: true,
   },
   
-  // 후행 슬래시 추가 (선택사항)
+  // Add trailing slash (optional)
   trailingSlash: true,
   
-  // 베이스 경로 설정 (필요한 경우)
+  // Base path configuration (if needed)
   // basePath: '',
   // assetPrefix: '',
 
-  // 실험적 기능
+  // Experimental features
   experimental: {
-    // 필요한 경우에만 활성화
+    // Enable only when needed
   },
 }
 

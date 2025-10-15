@@ -1,6 +1,7 @@
 "use client";
 
 import Head from "next/head";
+import Image from "next/image";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
@@ -131,11 +132,11 @@ const AnimatedCounter = ({ end, duration = 2, suffix = "" }: AnimatedCounterProp
       onViewportEnter={() => setSeen(true)}
       className="inline-flex items-baseline gap-2"
     >
-      <span className="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+      <span className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-[#46B8E8] via-[#46B8E8] to-[#46B8E8] bg-clip-text text-transparent">
         {count}
       </span>
       {suffix ? (
-        <span className="text-lg md:text-xl font-semibold text-slate-500">{suffix}</span>
+        <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-[#46B8E8] to-[#46B8E8] bg-clip-text text-transparent">{suffix}</span>
       ) : null}
     </motion.span>
   );
@@ -239,17 +240,7 @@ export default function Vision2Page() {
       <Head>
         <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
       </Head>
-            <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
-        <motion.div
-          className="pointer-events-none absolute -top-32 -left-20 h-80 w-80 -z-10 rounded-full bg-sky-200/60 blur-3xl"
-          animate={{ x: [-20, 30, -15], y: [0, 25, -20] }}
-          transition={floatTransition}
-        />
-        <motion.div
-          className="pointer-events-none absolute bottom-[-12rem] right-[-12rem] h-[28rem] w-[28rem] -z-10 rounded-full bg-emerald-200/40 blur-3xl"
-          animate={{ x: [0, -40, 20], y: [10, -30, 15] }}
-          transition={{ ...floatTransition, duration: 16 }}
-        />
+            <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-white via-sky-50/30 to-white text-slate-900 pt-[90px]">
 
         <div className="relative z-10">
           <HeroSection
@@ -285,7 +276,6 @@ export default function Vision2Page() {
             initial="hidden"
             animate="visible"
           >
-            <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50 to-slate-100" />
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] pb-16 lg:pb-20 space-y-16">
               <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
                 <motion.div 
@@ -305,16 +295,16 @@ export default function Vision2Page() {
                       variants={fadeInUp}
                       className="text-4xl md:text-5xl font-black leading-tight text-slate-900 mb-8 "
                     >
-                      <span className="block text-sky-600">{overview.blueTitle}</span>
+                      <span className="block text-[#46B8E8]">{overview.blueTitle}</span>
                       <span className="block">{overview.blackTitle}</span>
                     </motion.h1>
                   </motion.div>
                   
                   <motion.div
                     variants={zoomIn}
-                    className="rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-500/10 via-white to-white p-8 shadow-inner "
+                    className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                   >
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-500">
+                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#46B8E8]">
                       {strategy.neoTitle}
                     </p>
                     <p className="mt-4 whitespace-pre-line text-base md:text-lg leading-relaxed text-slate-700">
@@ -327,7 +317,7 @@ export default function Vision2Page() {
                   variants={slideInRight}
                   initial="hidden"
                   animate="visible"
-                  className="rounded-3xl border border-sky-100 bg-gradient-to-br from-sky-500/10 via-white to-white p-8 shadow-inner mt- lg:mt-1"
+                  className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                 >
                   <motion.div 
                     className="space-y-6"
@@ -344,10 +334,10 @@ export default function Vision2Page() {
                           whileHover={{ y: -4 }}
                           className="flex items-center gap-5 rounded-2xl border border-slate-100 bg-slate-50/60 p-5 transition-transform"
                         >
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#46B8E8]/10 text-[#46B8E8]">
                             <Icon className="h-6 w-6" />
                           </div>
-                          <div>
+                          <div className="flex flex-col">
                             <AnimatedCounter end={card.value} suffix={card.suffix} />
                             <p className="text-sm font-medium text-slate-500">{card.label}</p>
                           </div>
@@ -374,22 +364,22 @@ export default function Vision2Page() {
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.2, ease: "easeOut" }}
-                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-sky-200 via-sky-300 to-sky-400 origin-left"
+                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#46B8E8]/70 via-[#46B8E8] to-[#46B8E8] origin-left"
                     >
                       {/* Timeline markers */}
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-sky-300 border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-sky-600">2024</span>
+                        <div className="w-3 h-3 rounded-full bg-[#46B8E8] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#46B8E8]">2024</span>
                       </div>
                       
                       <div className="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                        <div className="w-3 h-3 rounded-full bg-sky-400 border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-sky-600">2026</span>
+                        <div className="w-3 h-3 rounded-full bg-[#46B8E8] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#46B8E8]">2026</span>
                       </div>
                       
                       <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-sky-500 border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-sky-600">2028</span>
+                        <div className="w-3 h-3 rounded-full bg-[#46B8E8] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#46B8E8]">2028</span>
                       </div>
                     </motion.div>
                   </div>
@@ -402,10 +392,10 @@ export default function Vision2Page() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="group relative rounded-2xl bg-gradient-to-b from-white via-sky-50/30 to-sky-100/60 p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                        className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-500/10 text-sky-600">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#46B8E8]/10 text-[#46B8E8]">
                             <span className="text-lg font-bold">{index + 1}</span>
                           </div>
                           <div className="flex-1">
@@ -420,11 +410,6 @@ export default function Vision2Page() {
                 </div>
               </div>
             </div>
-            <motion.div
-              className="pointer-events-none absolute inset-x-0 top-8 -z-10 h-40 bg-gradient-to-r from-sky-100/50 via-white to-emerald-100/40 blur-2xl"
-              animate={{ opacity: [0.4, 0.8, 0.4] }}
-              transition={{ duration: 8, repeat: Infinity, repeatType: "mirror" }}
-            />
             <div className="relative mt-8 max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <motion.h3
                 initial={{ opacity: 0, y: 20 }}
@@ -450,94 +435,96 @@ export default function Vision2Page() {
                       variants={zoomIn}
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.3 }}
-                      className="group relative rounded-2xl bg-gradient-to-b from-white via-sky-50/30 to-sky-100/60 p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                      className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
                     >
-                      <div className="flex flex-col text-left">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-500/10 text-sky-600 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#46B8E8]/10 text-[#46B8E8]">
                           <Icon className="h-6 w-6" />
                         </div>
-                        <h4 className="text-lg font-semibold text-slate-900 mb-2 whitespace-pre-line leading-tight">
-                          {cv.title}
-                        </h4>
-                        <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
-                          {cv.desc}
-                        </p>
+                        <div className="flex-1">
+                          <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
+                            {cv.title}
+                          </p>
+                        </div>
                       </div>
                     </motion.div>
                   );
                 })}
               </motion.div>
             </div>
-            {/* Tambah spacing di bawah core values */}
-            <div className="pb-12"></div>
+            {/* Minimal spacing after core values */}
+            <div className="pb-2"></div>
           </motion.section>
-          {/* Biz model */}
-          <motion.section 
-            className="bg-[#010104] text-white py-20 px-4 md:px-8 rounded-t-3xl overflow-hidden relative"
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
-            style={{
-              backgroundImage: 'url("/images/vision_R&D_bg.png")',
-              backgroundSize: "cover",
-              backgroundPosition: "center 245px",
-              backgroundRepeat: "no-repeat",
-            }}
-          >
-            <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 text-white space-y-10 relative z-10">
-              <div className="space-y-4 text-left">
-                <h3 className="text-xl md:text-2xl font-semibold text-white">{lang === "KOR" ? "비즈니스 모델" : "Business Model"}</h3>
-                <p className="text-base md:text-lg font-medium text-white italic">
-                  {lang === "KOR" ? "개방형 혁신으로 미래를 선도합니다" : "Leading the future through open innovation"}
-                </p>
-              </div>
 
-                {/* Bottom Four Cards - New Style (10% shorter) */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-x-12 gap-y-8 w-full max-w-6xl">
-                  {[
-                    { title: "자동차 정밀부품가공", desc: "고정밀 자동차 부품\n제조 및 가공 기술" },
-                    { title: "이차전지", desc: "차세대 배터리\n기술 개발 및 생산" }, 
-                    { title: "반도체·전기전자", desc: "정밀 전자부품\n설계 및 제조" },
-                    { title: "차세대 기술·제품", desc: "미래 기술 융합\n혁신 제품 개발" }
-                  ].map((sector, index) => (
-                    <motion.div
-                      key={sector.title}
-                      variants={zoomIn}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.3 }}
-                      className="relative flex flex-col justify-end p-4 shadow-md overflow-hidden hover:scale-105 transition-transform duration-300 ease-out min-h-[342px]"
-                      style={{
-                        backgroundImage: `url(/images/vision_${
-                          ["Flex", "pro", "tek", "rnbd"][index]
-                        }.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        clipPath:
-                          "polygon(30px 0%, 100% 0%, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0% 100%, 0% 30px)",
-                      }}
-                    >
-                      <div
-                        className="absolute inset-0 bg-black opacity-40"
-                        style={{
-                          clipPath:
-                            "polygon(30px 0%, 100% 0%, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0% 100%, 0% 30px)",
-                        }}
-                      ></div>
-                      <div className="relative text-white flex flex-col flex-grow justify-start pt-54">
-                        <h3 className="text-[23px] font-semibold mb-2">
-                          {sector.title}
-                        </h3>
-                        <p className="text-[14px] whitespace-pre-line">
-                          {sector.desc}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
+
+          {/* R&D Section - Hover Effect on Image & Animation on Text */}
+          <section className="w-full">
+           <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-4 lg:py-6 grid grid-cols-1 lg:grid-cols-12 items-center">
+              {/* LEFT COLUMN */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.7, ease: [0.42, 0, 0.58, 1] }}
+                className="lg:col-span-5 flex flex-col justify-center items-start"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 32 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.7 }}
+                  className="text-left"
+                >
+                  <div className="text-slate-900 text-xl md:text-2xl font-semibold mb-6 transition-all duration-200 hover:scale-105">
+                    비즈니스 모델
+                  </div>
+                  <h2 className="text-slate-900 text-xl md:text-2xl font-semibold leading-relaxed mb-4 text-left transition-all duration-200 hover:scale-105">
+                    {lang === "KOR" ? (
+                      <>
+                        끊임없는 연구개발과 스마트 공정 혁신을 통해{" "} <br/><span
+                          className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                        > 
+                        </span>
+                        <span className="text-[#45B8E8] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
+                      </>
+                    ) : (
+                      <>
+                        Continuous R&D and smart process Creating new standards for{" "}
+                        <span
+                          className="bg-gradient-to-r from-[#45B8E8] to-[#7EE3F6] bg-clip-text text-transparent"
+                          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                        >
+                          manufacturing efficiency
+                        </span>
+                        <br />
+                        <span className="text-[#45B8E8] font-bold">We set new standards</span>
+                      </>
+                    )}
+                  </h2>
+                </motion.div>
+              </motion.div>
+
+              {/* RIGHT COLUMN */}
+              <motion.div
+                whileHover={{ scale: 1.04, transition: { duration: 0.3 } }}
+                className="lg:col-span-7 flex flex-col items-start justify-start w-full transition-all duration-300 mt-0 pt-0"
+              >
+                <div className="relative w-full mt-0" style={{ aspectRatio: "1210/768" }}>
+                  <Image
+                    src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
+                    alt="Biz Model Pyramid"
+                    className="w-full h-full object-contain"
+                    style={{ width: "110%", height: "110%" }}
+                    width={1210}
+                    height={768}
+                  />
                 </div>
+              </motion.div>
             </div>
-          </motion.section>
+          </section>
+        
+        {/* Close continuous background wrapper */}
         </div>
       </main>
       <hr className="w-full border-gray-200 mt-0 mb-0" />
