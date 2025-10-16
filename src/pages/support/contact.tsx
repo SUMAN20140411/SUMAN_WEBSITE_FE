@@ -91,10 +91,10 @@ export default function HistoryPage() {
                       {lang === "KOR" ? "영업 / 마케팅" : "Sales / Marketing"}
                     </span>
                     <a
-                      href="mailto:bksikk@suman.co.kr"
+                      href="mailto:bksik77@suman.co.kr"
                       className="text-gray-800 no-underline hover:text-blue-600"
                     >
-                      bksikk@suman.co.kr
+                      bksik77@suman.co.kr
                     </a>
                   </div>
                   <div className="flex items-baseline text-sm md:text-base">
