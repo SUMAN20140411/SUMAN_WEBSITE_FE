@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const handleRouteChange = (url: string) => {
     if (typeof window.gtag !== 'undefined') {
-      window.gtag('config', 'G-50XKFW176B', {
+      window.gtag('config', 'G-HMD20SMTK5', {
         page_path: url,
       });
     }
@@ -33,7 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
     </Head>
       {/* GA4 스크립트 삽입 */}
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=G-FE5VF18659`}
+        src={`https://www.googletagmanager.com/gtag/js?id=G-HMD20SMTK5`}
         strategy="afterInteractive"
       />
       <Script id="gtag-init" strategy="afterInteractive">
@@ -41,7 +41,7 @@ export default function App({ Component, pageProps }: AppProps) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-FE5VF18659', {
+          gtag('config', 'G-HMD20SMTK5', {
             page_path: window.location.pathname,
           });
         `}
