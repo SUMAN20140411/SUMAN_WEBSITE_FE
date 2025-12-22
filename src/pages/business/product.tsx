@@ -55,8 +55,8 @@ export default function ServicePage() {
 
           {/* Products Section */}
           {section && (
-            <section className="relative z-0 bg-gradient-to-b from-slate-50/80 via-slate-50/40 to-slate-100 px-4 pb-20 pt-20 md:pb-20 md:pt-20">
-              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50/80 via-slate-50/40 to-slate-100" />
+            <section className="relative z-0 bg-gradient-to-b from-slate-100/50 via-[#f0f5ff] to-slate-50/60 px-4 pb-20 pt-20 md:pb-20 md:pt-20">
+              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-100/50 via-[#f0f5ff] to-slate-50/60" />
               
               <div className="max-w-7xl mx-auto relative z-10">
                 {/* Title: bilingual & same size as '핵심 연구 분야' */}
@@ -94,7 +94,8 @@ export default function ServicePage() {
                   {productCategories.map((product, index) => (
                     <motion.div
                       key={index}
-                      className="bg-white rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group mt-5"
+                      className="rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group mt-5"
+                      style={{ backgroundColor: '#1E40AF' }}
                       variants={itemVariants}
                     >
                       <div className="relative w-full h-44 mx-auto mt-4">
@@ -102,14 +103,14 @@ export default function ServicePage() {
                       </div>
                       <div className="p-4">
                         {product.label && (
-                          <span className="tracking-wide font-light text-slate-500 text-base">
+                          <span className="tracking-wide font-light text-white/70 text-base">
                             {product.label}
                           </span>
                         )}
-                        <h3 className="tracking-wide text-2xl font-semibold text-slate-800 mb-1 mt-5">
+                        <h3 className="tracking-wide text-2xl font-semibold text-white mb-1 mt-5">
                           {product.name}
                         </h3>
-                        <p className="tracking-wide font-light text-slate-600 text-sm mb-7">
+                        <p className="tracking-wide font-light text-white/80 text-sm mb-7">
                           {product.subtitle}
                         </p>
                       </div>
