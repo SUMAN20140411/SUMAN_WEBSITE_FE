@@ -55,8 +55,8 @@ export default function ServicePage() {
 
           {/* Products Section */}
           {section && (
-            <section className="relative z-0 bg-gradient-to-b from-sky-50/80 via-sky-50/40 to-slate-100 px-4 pb-20 pt-20 md:pb-20 md:pt-20">
-              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-sky-50/80 via-sky-50/40 to-slate-100" />
+            <section className="relative z-0 bg-gradient-to-b from-slate-50/80 via-slate-50/40 to-slate-100 px-4 pb-20 pt-20 md:pb-20 md:pt-20">
+              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50/80 via-slate-50/40 to-slate-100" />
               
               <div className="max-w-7xl mx-auto relative z-10">
                 {/* Title: bilingual & same size as '핵심 연구 분야' */}

@@ -29,8 +29,8 @@ function SVGVisualSection() {
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
 
   return (
-    <section className="relative z-0 bg-gradient-to-b from-sky-100/50 via-white to-sky-50/60 px-4 py-12 md:py-16 overflow-hidden border-t border-slate-200">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-sky-100/60 via-sky-50/40 to-white" />
+    <section className="relative z-0 bg-gradient-to-b from-slate-100/50 via-white to-slate-50/60 px-4 py-12 md:py-16 overflow-hidden border-t border-slate-200">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-100/60 via-slate-50/40 to-white" />
       <div className="relative mx-auto max-w-7xl">
         {/* Title */}
         <motion.div
@@ -40,10 +40,10 @@ function SVGVisualSection() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="mb-8 text-center md:mb-10"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-sky-700 drop-shadow-sm">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight drop-shadow-sm" style={{ color: '#1E40AF' }}>
             {langCode === "KOR" ? "기술 역량 도식도" : "Technical Capability Diagram"}
           </h2>
-          <p className="mt-3 text-base md:text-lg text-sky-600">
+          <p className="mt-3 text-base md:text-lg" style={{ color: '#1E40AF' }}>
             {langCode === "KOR" 
               ? "우리의 핵심 기술 역량과 시스템 구성" 
               : "Our core technical capabilities and system architecture"}
@@ -138,7 +138,7 @@ export default function ServicePage() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="pointer-events-none absolute -top-32 -left-20 h-[120vh] w-[120vh] -z-10 rounded-full bg-sky-200/70 blur-3xl"
+          className="pointer-events-none absolute -top-32 -left-20 h-[120vh] w-[120vh] -z-10 rounded-full bg-slate-200/70 blur-3xl"
         />
         <motion.div
           animate={{
@@ -151,7 +151,7 @@ export default function ServicePage() {
             ease: "easeInOut",
             delay: 2,
           }}
-          className="pointer-events-none absolute top-[30vh] left-[30%] h-[80vh] w-[80vh] -z-10 rounded-full bg-sky-300/50 blur-3xl"
+          className="pointer-events-none absolute top-[30vh] left-[30%] h-[80vh] w-[80vh] -z-10 rounded-full bg-slate-300/50 blur-3xl"
         />
         <motion.div
           animate={{
@@ -191,7 +191,7 @@ export default function ServicePage() {
             initial="hidden"
             animate="visible"
           >
-            <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-sky-50/30 to-white" />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50/30 to-white" />
             <div className="max-w-7xl mx-auto px-4 py-16 lg:py-20 space-y-10 divide-y divide-slate-200">
               
               {/* Core Capabilities Section */}
@@ -273,7 +273,8 @@ export default function ServicePage() {
                   {/* Production Equipment */}
                   <div className="space-y-4">
                     <motion.span
-                      className="inline-block rounded-full bg-sky-500/10 px-6 py-2 text-base font-medium text-sky-600 sm:text-lg"
+                      className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
+                      style={{ backgroundColor: 'rgba(30, 64, 175, 0.1)', color: '#1E40AF' }}
                       variants={fadeUp}
                     >
                       {section?.production}
@@ -283,7 +284,7 @@ export default function ServicePage() {
                       {equipmentList.map((equipment: any, index: number) => (
                         <motion.div
                           key={`prod-${index}`}
-                          className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-100/70 to-sky-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
+                          className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
                           variants={fadeUp}
                           whileHover={{ y: -4 }}
                         >
@@ -297,7 +298,7 @@ export default function ServicePage() {
                             )}
                           </div>
 
-                          <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-sky-400/60 px-3 md:h-12">
+                          <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12" style={{ backgroundColor: '#1E40AF' }}>
                             <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
                               {equipment.name}
                             </p>
@@ -312,7 +313,8 @@ export default function ServicePage() {
                   {/* Measurement Equipment */}
                   <div className="space-y-6">
                     <motion.span
-                    className="inline-block rounded-full bg-sky-500/10 px-6 py-2 text-base font-medium text-sky-600 sm:text-lg"
+                    className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
+                    style={{ backgroundColor: 'rgba(30, 64, 175, 0.1)', color: '#1E40AF' }}
                     variants={fadeUp}
                     >
                       {section?.measurement}
@@ -322,7 +324,7 @@ export default function ServicePage() {
                       {measurementEquipmentList.map((equipment: any, index: number) => (
                         <motion.div
                           key={`meas-${index}`}
-                         className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-sky-200 bg-gradient-to-br from-sky-50 via-sky-100/70 to-sky-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
+                          className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
                           variants={fadeUp}
                           whileHover={{ y: -4 }}
                         >
@@ -336,7 +338,7 @@ export default function ServicePage() {
                             )}
                           </div>
 
-                          <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center bg-sky-400/60 px-3 md:h-12">
+                          <div className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12" style={{ backgroundColor: '#1E40AF' }}>
                             <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
                               {equipment.name}
                             </p>

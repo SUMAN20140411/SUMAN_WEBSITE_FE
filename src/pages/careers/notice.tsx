@@ -40,7 +40,7 @@ const RecruitmentBoard: React.FC = () => {
 
         {/* 🔽 Platform Cards */}
         <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
-          <section className="py-16 md:py-20 bg-gradient-to-b from-sky-50/50 via-white to-sky-50/30">
+          <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50/50 via-white to-slate-50/30">
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10 text-left">
                 {lang === "KOR" ? "채용 사이트" : "Recruitment Site"}
@@ -54,7 +54,7 @@ const RecruitmentBoard: React.FC = () => {
                 <RecruitmentCard
                   title="JOB KOREA"
                   link="https://www.jobkorea.co.kr/net/company/45215125/Recruit"
-                  highlight="blue-600"
+                  highlight="blue-800"
                 />
                 <RecruitmentCard
                   title="고용24"
@@ -153,23 +153,23 @@ const DocumentDownloadBanner: React.FC = () => {
         ];
 
   return (
-    <section className="bg-gradient-to-b from-white via-sky-50/40 to-white mt-2 px-6 md:px-[60px] lg:px-[0px]">
+    <section className="bg-gradient-to-b from-slate-100/50 via-[#f0f5ff] to-slate-50/60 mt-2 px-6 md:px-[60px] lg:px-[0px]">
       <div className="max-w-7xl mx-auto">
         <motion.div
-          className="relative overflow-hidden rounded-3xl border border-[#d9e2ff] bg-gradient-to-br from-white via-[#f5f7ff] to-white p-8 sm:p-10 shadow-[0_30px_80px_-40px_rgba(29,55,98,0.35)]"
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#f5f8ff] via-[#eef3ff] to-[#f0f5ff] p-8 sm:p-10 shadow-[0_30px_80px_-40px_rgba(30,64,175,0.35)]"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0, transition: cardAppearTransition }}
           viewport={{ once: true, amount: 0.3 }}
         >
           <motion.span
             aria-hidden="true"
-            className="absolute -right-20 -top-24 h-48 w-48 rounded-full bg-sky-200/50 blur-3xl"
+            className="absolute -right-20 -top-24 h-48 w-48 rounded-full bg-blue-300/40 blur-3xl"
             animate={{ y: [0, -14, 0], scale: [1, 1.06, 1] }}
             transition={{ duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
           />
           <motion.span
             aria-hidden="true"
-            className="absolute -bottom-24 left-10 h-52 w-52 rounded-full bg-indigo-200/40 blur-[120px]"
+            className="absolute -bottom-24 left-10 h-52 w-52 rounded-full bg-blue-200/30 blur-[120px]"
             animate={{ y: [0, 16, 0], scale: [1, 1.05, 1] }}
             transition={{ duration: 10, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 0.8 }}
           />
