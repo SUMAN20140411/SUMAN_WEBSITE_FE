@@ -230,7 +230,7 @@ export default function ServicePage() {
                     className="relative aspect-[16/9] w-full"
                   >
                     <Image
-                      src={langCode === "KOR" ? "/images/business/process/Picture5.png" : "/images/business/process/coreEng2.png"}
+                      src={langCode === "KOR" ? "/images/business/process/Picture6.png" : "/images/business/process/Picture6Eng.png"}
                       alt={
                         langCode === "KOR"
                           ? "핵심 역량 및 기술"
