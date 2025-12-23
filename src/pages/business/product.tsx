@@ -95,7 +95,7 @@ export default function ServicePage() {
                     <motion.div
                       key={index}
                       className="rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group mt-5"
-                      style={{ backgroundColor: '#1E40AF' }}
+                      style={{ backgroundColor: '#ffffff' }}
                       variants={itemVariants}
                     >
                       <div className="relative w-full h-44 mx-auto mt-4">
@@ -103,14 +103,14 @@ export default function ServicePage() {
                       </div>
                       <div className="p-4">
                         {product.label && (
-                          <span className="tracking-wide font-light text-white/70 text-base">
+                          <span className="tracking-wide font-light text-slate-500 text-base">
                             {product.label}
                           </span>
                         )}
-                        <h3 className="tracking-wide text-2xl font-semibold text-white mb-1 mt-5">
+                        <h3 className="tracking-wide text-2xl font-semibold text-slate-900 mb-1 mt-5">
                           {product.name}
                         </h3>
-                        <p className="tracking-wide font-light text-white/80 text-sm mb-7">
+                        <p className="tracking-wide font-light text-slate-600 text-sm mb-7">
                           {product.subtitle}
                         </p>
                       </div>

@@ -132,11 +132,11 @@ const AnimatedCounter = ({ end, duration = 2, suffix = "" }: AnimatedCounterProp
       onViewportEnter={() => setSeen(true)}
       className="inline-flex items-baseline gap-2"
     >
-      <span className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-[#1E40AF] via-[#2563EB] to-[#1E40AF] bg-clip-text text-transparent">
+      <span className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-[#4B5563] via-[#5A6B7F] to-[#4B5563] bg-clip-text text-transparent">
         {count}
       </span>
       {suffix ? (
-        <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-[#1E40AF] to-[#2563EB] bg-clip-text text-transparent">{suffix}</span>
+        <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-[#4B5563] to-[#5A6B7F] bg-clip-text text-transparent">{suffix}</span>
       ) : null}
     </motion.span>
   );
@@ -295,7 +295,7 @@ export default function Vision2Page() {
                       variants={fadeInUp}
                       className="text-4xl md:text-5xl font-black leading-tight text-slate-900 mb-8 "
                     >
-                      <span className="block text-[#1E40AF]">{overview.blueTitle}</span>
+                      <span className="block text-[#4B5563]">{overview.blueTitle}</span>
                       <span className="block">{overview.blackTitle}</span>
                     </motion.h1>
                   </motion.div>
@@ -304,7 +304,7 @@ export default function Vision2Page() {
                     variants={zoomIn}
                     className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                   >
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#1E40AF]">
+                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#4B5563]">
                       {strategy.neoTitle}
                     </p>
                     <p className="mt-4 whitespace-pre-line text-base md:text-lg leading-relaxed text-slate-700">
@@ -334,7 +334,7 @@ export default function Vision2Page() {
                           whileHover={{ y: -4 }}
                           className="flex items-center gap-5 rounded-2xl border border-slate-100 bg-slate-50/60 p-5 transition-transform"
                         >
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1E40AF]/10 text-[#1E40AF]">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#4B5563]/10 text-[#4B5563]">
                             <Icon className="h-6 w-6" />
                           </div>
                           <div className="flex flex-col">
@@ -364,22 +364,22 @@ export default function Vision2Page() {
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.2, ease: "easeOut" }}
-                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#1E40AF]/70 via-[#2563EB] to-[#1E40AF] origin-left"
+                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#4B5563]/70 via-[#5A6B7F] to-[#4B5563] origin-left"
                     >
                       {/* Timeline markers */}
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#1E40AF] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#1E40AF]">2024</span>
+                        <div className="w-3 h-3 rounded-full bg-[#4B5563] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#4B5563]">2024</span>
                       </div>
                       
                       <div className="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#2563EB] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2563EB]">2026</span>
+                        <div className="w-3 h-3 rounded-full bg-[#5A6B7F] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#5A6B7F]">2026</span>
                       </div>
                       
                       <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#1E40AF] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#1E40AF]">2028</span>
+                        <div className="w-3 h-3 rounded-full bg-[#4B5563] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#4B5563]">2028</span>
                       </div>
                     </motion.div>
                   </div>
@@ -395,7 +395,7 @@ export default function Vision2Page() {
                         className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1E40AF]/10 text-[#1E40AF]">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#4B5563]/10 text-[#4B5563]">
                             <span className="text-lg font-bold">{index + 1}</span>
                           </div>
                           <div className="flex-1">
@@ -438,7 +438,7 @@ export default function Vision2Page() {
                       className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#1E40AF]/10 text-[#1E40AF]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#4B5563]/10 text-[#4B5563]">
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
@@ -482,23 +482,23 @@ export default function Vision2Page() {
                     {lang === "KOR" ? (
                       <>
                         끊임없는 연구개발과 스마트 공정 혁신을 통해{" "} <br/><span
-                          className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] bg-clip-text text-transparent"
+                          className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
                           style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                         > 
                         </span>
-                        <span className="text-[#1E40AF] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
+                        <span className="text-[#4B5563] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
                       </>
                     ) : (
                       <>
                         Continuous R&D and smart process Creating new standards for{" "}
                         <span
-                          className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] bg-clip-text text-transparent"
+                          className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
                           style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                         >
                           manufacturing efficiency<br/> We set new standards<br/>
                         </span>
                         <br />
-                        <span className="text-[#1E40AF] font-bold"></span>
+                        <span className="text-[#4B5563] font-bold"></span>
                       </>
                     )}
                   </h2>
