@@ -8,6 +8,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
 import { useLangStore } from "@/stores/langStore";
+import { ceoText } from "@/data/ceo";
 
 const slideInRight = {
   hidden: { opacity: 0, y: 80 },
@@ -29,15 +30,11 @@ const textReveal = {
 
 export default function CeoPage() {
   const lang = useLangStore((state) => state.lang);
+  const content = ceoText[lang];
 
   const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
-
-  const ceoSignImg =
-    lang === "KOR"
-      ? "/images/company/ceo/ceoKor.png"
-      : "/images/company/ceo/ceoEng.png";
 
   return (
     <Layout>
@@ -57,25 +54,37 @@ export default function CeoPage() {
         <section className="bg-white">
           <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
             
-            {/* LEFT - Gambar Pertama (Signature) - Align Kiri */}
+            {/* LEFT - Text Content */}
             <motion.article
-              className="lg:w-1/2 flex justify-start"
+              className="lg:w-1/2 flex flex-col"
               variants={textReveal}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               style={{ fontFamily }}
             >
-              <div className="w-full">
-                <div className="relative w-full aspect-square max-w-[550px]">
-                  <Image
-                    src={ceoSignImg}
-                    alt={lang === "KOR" ? "CEO 서명 이미지" : "CEO signature image"}
-                    fill
-                    priority
-                    className="object-contain object-left"
-                    sizes="(min-width:1024px) 50vw, 90vw"
-                  />
+              <div className="w-full max-w-[550px]">
+                {/* Hero Text */}
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-1">
+                  {content.hero.primary}
+                </h2>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">
+                  {content.hero.secondary}
+                </h3>
+
+                {/* Paragraphs */}
+                <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed">
+                  {content.paragraphs.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
+
+                {/* Signature */}
+                <div className="mt-6">
+                  <p className="text-xs text-gray-400 tracking-widest mb-2">SIGNATURE</p>
+                  <p className="text-gray-700">
+                    {content.signatureTitle} <span className="font-bold text-gray-900">{content.signatureName}</span>
+                  </p>
                 </div>
               </div>
             </motion.article>
