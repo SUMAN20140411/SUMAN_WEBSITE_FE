@@ -28,7 +28,6 @@ export default function CertificationsPage() {
     { labelKOR: "ISO 14001", labelENG: "ISO 14001", img: "/images/company/Certifications/ISO_14001.png" },
     { labelKOR: "ISO 45001", labelENG: "ISO 45001", img: "/images/company/Certifications/ISO_45001.png" },
     { labelKOR: "기업부설연구소", labelENG: "Company Research Institute", img: "/images/company/Certifications/기업부설연구소 인정서.png" },
-    { labelKOR: "벤처기업 확인서", labelENG: "Venture Business Certificate", img: "/images/company/Certifications/main_venture.png" },
     { labelKOR: "소재 부품 장비 전문기업", labelENG: "Materials & Equipment Specialist", img: "/images/company/Certifications/소재부품장비 전문기업확인서.png" },
     { labelKOR: "피스톤링 제조기술 특허", labelENG: "Piston Ring Patent", img: "/images/company/Certifications/특허_피스톤제조.png" },
     { labelKOR: "스웰링 측정용 지그 특허", labelENG: "Swelling Jig Patent", img: "/images/company/Certifications/특허_스웰링측정용지그.png" },
