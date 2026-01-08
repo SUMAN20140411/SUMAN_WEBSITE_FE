@@ -328,7 +328,27 @@ export default function ServicePage() {
                           variants={fadeUp}
                           whileHover={{ y: -4 }}
                         >
-                          <div className="relative mb-2 h-[220px] w-full">{equipment.image && (
+                          <div className="relative mb-2 h-[220px] w-full">
+                            {equipment.image2 ? (
+                              <div className="flex gap-1 h-full w-full">
+                                <div className="relative flex-1 h-full">
+                                  <Image
+                                    src={equipment.image}
+                                    alt={equipment.name}
+                                    fill
+                                    className="rounded-[10px] object-contain"
+                                  />
+                                </div>
+                                <div className="relative flex-1 h-full">
+                                  <Image
+                                    src={equipment.image2}
+                                    alt={equipment.name}
+                                    fill
+                                    className="rounded-[10px] object-contain"
+                                  />
+                                </div>
+                              </div>
+                            ) : equipment.image && (
                               <Image
                                 src={equipment.image}
                                 alt={equipment.name}
