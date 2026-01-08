@@ -202,7 +202,7 @@ export const serviceContent = {
       { name: "3D 측정기 (비접촉식)", image: "/images/business/equipment/equip11.png" },
       { name: "3D 측정기 (접촉식)", image: "/images/business/equipment/jobcek.jpg" },
       { name: "투영기", image: "/images/business/equipment/tuyong.png" },
-      { name: "기타 계측기", image: "/images/business/equipment/gyee.png" },
+      { name: "광학 현미경 외 계측기", image: "/images/business/equipment/gyee.png", image2: "/images/business/equipment/gyee2.png" },
  
     ],
     // product 영역
