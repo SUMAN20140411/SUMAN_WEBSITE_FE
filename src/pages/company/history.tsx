@@ -147,7 +147,7 @@ export default function HistoryPage() {
               viewport={{ once: true }}
             >
               <p className="drop-shadow-md text-gray-200 bg-black/25 px-3 py-1 rounded-md inline-block">
-                {content.sales /* e.g., "매출액 87억원 (2024년도 기준)" */}
+                {content.sales /* e.g., "매출액 88억원 (2024년도 기준)" */}
               </p>
               <p className="drop-shadow-md text-gray-200 bg-black/25 px-3 py-1 rounded-md inline-block">
                 {content.staff /* e.g., "임직원 수 45명 (2024년도 기준)" */}
