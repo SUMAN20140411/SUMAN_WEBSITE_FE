@@ -9,7 +9,7 @@ export const historyText = {
       "자동차 / 전기전자 정밀가공 / 장비 분야 확대",
       "자동차 정밀가공 사업 진출",
     ],
-    sales: "매출액 87억원 (2024년도 기준)",
+    sales: "매출액 88억원 (2024년도 기준)",
     staff: "임직원 수 45명 (2024년도 기준)",
     timelineTitle: "About us",
     timeline: [
