@@ -110,10 +110,10 @@ export default function App() {
                   </div>
                   <div className="p-6">
                     <h4 className="text-xl font-bold text-gray-900 mb-4">
-                      {businessData.semiconductor.title}
+                      {lang === "KOR" ? "이차전지 제조 및 신뢰성 장비" : "Secondary Battery & Reliability Equipment"}
                     </h4>
                     <div className="space-y-3">
-                      {businessData.semiconductor.services.map((service, index) => (
+                      {businessData.semiconductor.additionalServices.map((service, index) => (
                         <div key={index} className="flex items-start space-x-3">
                           <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                           <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
@@ -122,10 +122,10 @@ export default function App() {
                     </div>
                     <div className="mt-6 pt-4 border-top border-gray-100">
                       <h4 className="text-xl font-bold text-gray-900 mb-4">
-                        {lang === "KOR" ? "이차전지 제조 및 신뢰성 장비" : "Secondary Battery & Reliability Equipment"}
+                        {businessData.semiconductor.title}
                       </h4>
                       <div className="space-y-3">
-                        {businessData.semiconductor.additionalServices.map((service, index) => (
+                        {businessData.semiconductor.services.map((service, index) => (
                           <div key={index} className="flex items-start space-x-3">
                             <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                             <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
