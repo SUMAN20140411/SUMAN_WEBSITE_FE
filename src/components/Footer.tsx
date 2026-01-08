@@ -32,7 +32,7 @@ export default function Footer() {
   return (
     <footer className="bg-white text-black text-sm">
       {/* Container utama dengan tata letak minimalis */}
-      <div className="max-w-7xl mx-auto px-6 py-6 text-xs text-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4 tracking-wide">
+      <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-6 text-xs text-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4 tracking-wide">
         {/* Kiri: Informasi kontak */}
         <div>
           <p> 
