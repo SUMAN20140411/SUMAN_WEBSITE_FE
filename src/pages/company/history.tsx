@@ -120,8 +120,9 @@ export default function HistoryPage() {
                   <stop offset="100%" stopColor="white" stopOpacity="1" />
                 </linearGradient>
               </defs>
+              {/* Line - extended a bit more towards the arrow tip */}
               <motion.path
-                d="M 150 233 Q 460 220, 555 50"
+                d="M 150 233 Q 460 220, 555 48"
                 stroke="url(#arrow-gradient)"
                 strokeWidth="6"
                 fill="none"
@@ -129,12 +130,13 @@ export default function HistoryPage() {
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 2, ease: "easeInOut" }}
               />
+              {/* Arrow tip - on top of the line */}
               <motion.path
-                d="M 566 31 L 561 54 L 549 46 Z"
+                d="M 566 30 L 561 53 L 549 45 Z"
                 fill="white"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.8, duration: 0.1 }}
+                transition={{ delay: 1.9, duration: 0.3 }}
               />
             </svg>
 
