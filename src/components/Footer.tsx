@@ -58,7 +58,7 @@ export default function Footer() {
             </span>
           </div>
           {/* Right: Contact info, aligned with addresses */}
-          <div className="space-y-2 flex flex-col justify-start md:pl-8">
+          <div className="space-y-2 flex flex-col justify-start pl-0 md:pl-2" style={{ marginLeft: 0 }}>
             <span className="invisible">-</span>
             <span>
               {lang === "KOR"
