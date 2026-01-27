@@ -132,11 +132,11 @@ const AnimatedCounter = ({ end, duration = 2, suffix = "" }: AnimatedCounterProp
       onViewportEnter={() => setSeen(true)}
       className="inline-flex items-baseline gap-2"
     >
-      <span className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-[#4B5563] via-[#5A6B7F] to-[#4B5563] bg-clip-text text-transparent">
+      <span className="text-5xl md:text-6xl font-extrabold tracking-tight text-[#2c5282]">
         {count}
       </span>
       {suffix ? (
-        <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-[#4B5563] to-[#5A6B7F] bg-clip-text text-transparent">{suffix}</span>
+        <span className="text-lg md:text-xl font-semibold text-[#2c5282]">{suffix}</span>
       ) : null}
     </motion.span>
   );
@@ -262,7 +262,7 @@ export default function Vision2Page() {
           >
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 ">
               <div className="space-y-4 text-left">
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-800">
+                <h3 className="text-3xl md:text-4xl font-bold text-black">
                   {lang === "KOR" ? "Our Vision" : "Our Vision"}
                 </h3>
               </div>
@@ -293,9 +293,9 @@ export default function Vision2Page() {
                    
                     <motion.h1
                       variants={fadeInUp}
-                      className="text-4xl md:text-5xl font-black leading-tight text-slate-900 mb-8 "
+                      className="text-4xl md:text-5xl font-black leading-tight text-black mb-8 "
                     >
-                      <span className="block text-[#4B5563]">{overview.blueTitle}</span>
+                      <span className="block text-[#2c5282]">{overview.blueTitle}</span>
                       <span className="block">{overview.blackTitle}</span>
                     </motion.h1>
                   </motion.div>
@@ -304,10 +304,10 @@ export default function Vision2Page() {
                     variants={zoomIn}
                     className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                   >
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#4B5563]">
+                    <p className="text-2xl md:text-3xl font-bold uppercase tracking-[0.15em] text-[#2c5282]">
                       {strategy.neoTitle}
                     </p>
-                    <p className="mt-4 whitespace-pre-line text-base md:text-lg leading-relaxed text-slate-700">
+                    <p className="mt-4 whitespace-pre-line text-lg md:text-xl leading-relaxed text-black">
                       {strategy.mainGoal}
                     </p>
                   </motion.div>
@@ -317,7 +317,7 @@ export default function Vision2Page() {
                   variants={slideInRight}
                   initial="hidden"
                   animate="visible"
-                  className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
+                  className="rounded-3xl bg-slate-50/80 p-8 shadow-sm h-full flex flex-col justify-center"
                 >
                   <motion.div 
                     className="space-y-6"
@@ -332,14 +332,14 @@ export default function Vision2Page() {
                           key={card.label}
                           variants={zoomIn}
                           whileHover={{ y: -4 }}
-                          className="flex items-center gap-5 rounded-2xl border border-slate-100 bg-slate-50/60 p-5 transition-transform"
+                          className="flex items-center gap-5 rounded-2xl bg-white/90 p-6 transition-transform shadow-sm"
                         >
-                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#4B5563]/10 text-[#4B5563]">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#2c5282]">
                             <Icon className="h-6 w-6" />
                           </div>
                           <div className="flex flex-col">
                             <AnimatedCounter end={card.value} suffix={card.suffix} />
-                            <p className="text-sm font-medium text-slate-500">{card.label}</p>
+                            <p className="text-sm font-medium text-[#2c5282]/70">{card.label}</p>
                           </div>
                         </motion.div>
                       );
@@ -351,7 +351,7 @@ export default function Vision2Page() {
               <div>
                 <motion.h3
                   variants={fadeInUp}
-                  className="text-xl md:text-2xl font-semibold text-slate-900"
+                  className="text-xl md:text-2xl font-semibold text-black"
                 >
                   {lang === "KOR" ? "단계별 성장 로드맵" : "Staged Growth Roadmap"}
                 </motion.h3>
@@ -364,22 +364,22 @@ export default function Vision2Page() {
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 1.2, ease: "easeOut" }}
-                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#4B5563]/70 via-[#5A6B7F] to-[#4B5563] origin-left"
+                      className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#2c5282] via-[#2c5282] to-[#2c5282] origin-left"
                     >
                       {/* Timeline markers */}
                       <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#4B5563] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#4B5563]">2024</span>
+                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2024</span>
                       </div>
                       
                       <div className="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#5A6B7F] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#5A6B7F]">2026</span>
+                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2026</span>
                       </div>
                       
                       <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#4B5563] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#4B5563]">2028</span>
+                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
+                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2028</span>
                       </div>
                     </motion.div>
                   </div>
@@ -392,14 +392,14 @@ export default function Vision2Page() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
+                        className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-[#2c5282]/20"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#4B5563]/10 text-[#4B5563]">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2c5282]/10 text-[#2c5282]">
                             <span className="text-lg font-bold">{index + 1}</span>
                           </div>
                           <div className="flex-1">
-                            <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
+                            <p className="whitespace-pre-line text-sm text-black leading-relaxed">
                               {item.text}
                             </p>
                           </div>
@@ -415,7 +415,7 @@ export default function Vision2Page() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-xl md:text-2xl font-semibold text-slate-900"
+                className="text-xl md:text-2xl font-semibold text-black"
               >
                 {lang === "KOR" ? "핵심 가치" : "Core Values"}
               </motion.h3>
@@ -435,14 +435,14 @@ export default function Vision2Page() {
                       variants={zoomIn}
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.3 }}
-                      className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-200"
+                      className="group relative rounded-2xl bg-white p-6 text-left shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-[#2c5282]/20"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#4B5563]/10 text-[#4B5563]">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2c5282]/10 text-[#2c5282]">
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed">
+                          <p className="whitespace-pre-line text-sm text-[#2c5282] leading-relaxed">
                             {cv.title}
                           </p>
                         </div>
@@ -475,10 +475,10 @@ export default function Vision2Page() {
                   transition={{ duration: 0.7 }}
                   className="text-left"
                 >
-                  <div className="text-slate-900 text-xl md:text-2xl font-semibold mb-2 transition-all duration-200 hover:scale-105">
+                  <div className="text-black text-xl md:text-2xl font-semibold mb-2 transition-all duration-200 hover:scale-105">
                     비즈니스 모델
                   </div>
-                  <h2 className="text-slate-900 text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105">
+                  <h2 className="text-black text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105">
                     {lang === "KOR" ? (
                       <>
                         끊임없는 연구개발과 스마트 공정 혁신을 통해{" "} <br/><span
@@ -486,7 +486,7 @@ export default function Vision2Page() {
                           style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
                         > 
                         </span>
-                        <span className="text-[#4B5563] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
+                        <span className="text-[#2c5282] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
                       </>
                     ) : (
                       <>

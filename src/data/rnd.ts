@@ -12,8 +12,8 @@ export const heroText = {
 export const businessAreasData = {
   KOR: {
     semiconductor: {
-      title: "반도체 제조 장비",
-      subtitle: "Semiconductor / 2ⁿᵈ Battery",
+      title: "반도체/디스플레이/이차전지",
+      subtitle: "Semiconductor / Display / 2ⁿᵈ Battery",
       services: [
         "정밀 가공 부품 설계",
         "모듈 및 Assembly 설계/조립/제작",
@@ -52,7 +52,7 @@ export const businessAreasData = {
   ENG: {
     semiconductor: {
       title: "Semiconductor Manufacturing Equipment",
-      subtitle: "Semiconductor / 2ⁿᵈ Battery",
+      subtitle: "Semiconductor / Display / 2ⁿᵈ Battery",
       services: [
         "Precision machined parts design",
         "Module and Assembly design/assembly/manufacturing",

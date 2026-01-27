@@ -30,25 +30,56 @@ export default function Footer() {
   const popupContent = getPopupContent();
 
   return (
-    <footer className="bg-white text-black text-sm">
+    <footer className="bg-white text-black text-sm border-t border-gray-100">
       {/* Container utama dengan tata letak minimalis */}
-      <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-6 text-xs text-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4 tracking-wide">
-        {/* Kiri: Informasi kontak */}
-        <div>
-          <p> 
-            {lang === "KOR"
-              ? "㈜ SUMAN | 본사: 대전광역시 대덕구 문평서로 17번길 105(문평동) | 천안사업장: 충남 천안시 서북구 2공단 4로 40-11(성성동) G1 비즈캠퍼스 401호"
-              : "SUMAN Co., Ltd. | HQ: 105, Munpyeongseo-ro 17beon-gil, Daedeok-gu, Daejeon | Cheonan: 40-11, 2gongdan 4-ro, Seobuk-gu, Cheonan-si "}
-          </p>
-          <p>
-            {lang === "KOR"
-              ? "| 시험센터: 대전광역시 유성구 테크노 2로 309-26(탑립동 929-1) | 대표전화 : 042-934-1517 | FAX : 042-934-1516 | E-Mail : suman20140411@suman.co.kr"
-              : "| Test Center: 309-26, Techno 2-ro, Yuseong-gu, Daejeon | Tel: +82-42-934-1517 | Fax: +82-42-934-1516 | Email: suman20140411@suman.co.kr"}
-          </p>
+      <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 text-sm text-gray-600 flex flex-col gap-6 tracking-wide">
+        {/* Two column layout */}
+
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-0">
+          {/* Left: Company name and addresses */}
+          <div className="space-y-2 flex flex-col justify-start">
+            <span className="font-bold text-gray-800 text-base">
+              {lang === "KOR" ? "㈜수만" : "SUMAN Co., Ltd."}
+            </span>
+            <span>
+              {lang === "KOR"
+                ? "| 본사: 대전광역시 대덕구 문평서로 17번길 105(문평동)"
+                : "| HQ: 105, Munpyeongseo-ro 17beon-gil, Daedeok-gu, Daejeon"}
+            </span>
+            <span>
+              {lang === "KOR"
+                ? "| 천안지사: 충남 천안시 서북구 2공단 4로 40-11(성성동) G1 비즈캠퍼스 401호"
+                : "| Cheonan: 40-11, 2gongdan 4-ro, Seobuk-gu, Cheonan-si, G1 Biz Campus 401"}
+            </span>
+            <span>
+              {lang === "KOR"
+                ? "| 시험센터: 대전광역시 유성구 테크노 2로 309-26(탑립동 929-1)"
+                : "| Test Center: 309-26, Techno 2-ro, Yuseong-gu, Daejeon"}
+            </span>
+          </div>
+          {/* Right: Contact info, aligned with addresses */}
+          <div className="space-y-2 flex flex-col justify-start md:pl-8">
+            <span className="invisible">-</span>
+            <span>
+              {lang === "KOR"
+                ? "| 대표전화 : 042-934-1517"
+                : "| Tel: +82-42-934-1517"}
+            </span>
+            <span>
+              {lang === "KOR"
+                ? "| FAX : 042-934-1516"
+                : "| Fax: +82-42-934-1516"}
+            </span>
+            <span>
+              {lang === "KOR"
+                ? "| E-Mail : suman20140411@suman.co.kr"
+                : "| Email: suman20140411@suman.co.kr"}
+            </span>
+          </div>
         </div>
 
-        {/* Kanan: Tautan kebijakan */}
-        <div className="flex flex-wrap gap-4 text-gray-500 tracking-wide">
+        {/* Policy links */}
+        <div className="flex flex-wrap gap-4 text-gray-500 tracking-wide pt-4 border-t border-gray-200">
           <button
             onClick={() => setPopupType("privacy")}
             className="hover:underline cursor-pointer"
