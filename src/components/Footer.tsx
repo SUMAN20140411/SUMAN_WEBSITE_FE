@@ -79,7 +79,7 @@ export default function Footer() {
         </div>
 
         {/* Policy links */}
-        <div className="flex flex-wrap gap-4 text-gray-500 tracking-wide pt-4 border-t border-gray-200">
+        <div className="flex flex-wrap gap-4 text-gray-500 tracking-wide pt-4">
           <button
             onClick={() => setPopupType("privacy")}
             className="hover:underline cursor-pointer"
