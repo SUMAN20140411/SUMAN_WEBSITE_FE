@@ -197,7 +197,7 @@ export default function Vision2Page() {
             title: "Sustainable Value",
             desc: "Deliver long-term trust with ESG- and quality-focused management.",
           },
-        ];
+        ]; 
 
   const kpiCards: KpiCard[] =
     lang === "KOR"
@@ -304,7 +304,7 @@ export default function Vision2Page() {
                     variants={zoomIn}
                     className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                   >
-                    <p className="text-2xl md:text-3xl font-bold uppercase tracking-[0.15em] text-[#2c5282]">
+                    <p className="text-2xl md:text-3xl font-bold uppercase tracking-[0.15em] text-black">
                       {strategy.neoTitle}
                     </p>
                     <p className="mt-4 whitespace-pre-line text-lg md:text-xl leading-relaxed text-black">
@@ -442,7 +442,7 @@ export default function Vision2Page() {
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <p className="whitespace-pre-line text-sm text-[#2c5282] leading-relaxed">
+                          <p className="whitespace-pre-line text-sm text-black leading-relaxed">
                             {cv.title}
                           </p>
                         </div>
