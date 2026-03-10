@@ -15,7 +15,9 @@ export type ciPageContent = {
   section2: {
     title: string;
     description: string;
-    logoFiles: string[];
+    logoFiles: {
+      file: string;
+    }[];
   };
   colors: {
     name: string;
