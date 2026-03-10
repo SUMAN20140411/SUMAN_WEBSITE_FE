@@ -9,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const content = (await homePage.find({
+  const content = await homePage.find({
     locale: "ko-KR",
     populate: [
       "section1",
@@ -20,12 +20,11 @@ export const getStaticProps: GetStaticProps = async () => {
       "section4",
       "section4.services"
     ] // populates all relations/media 1 level deep
-  })) as unknown as { data: homePageContent };
+  });
   return { props: { content: content?.data } };
 };
 
 export default function HomePage({ content }: { content: homePageContent }) {
-  console.log(content);
   const labelClass =
     "text-base sm:text-lg lg:text-2xl font-semibold text-black";
   const buttonClass =
