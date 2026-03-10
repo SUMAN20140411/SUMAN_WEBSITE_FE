@@ -1,6 +1,6 @@
 import strapiClient from "../../api/strapiClient";
 
-export const orgPage = strapiClient.single("org-page");
+export const orgPage = strapiClient.single("organization-page");
 
 export type orgPageContent = {
   pageInfo: {
@@ -9,11 +9,15 @@ export type orgPageContent = {
     hero: string;
   };
   orgChart: {
+    logo: string;
+    board: string;
     ceo: string;
     advisor: string;
     departments: {
       name: string;
-      teams: string[];
+      teams: {
+        text: string;
+      }[];
     }[];
   };
 };
