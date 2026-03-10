@@ -1,7 +1,6 @@
 import BreadcrumbSection from "@/components/BreadcrumbSection";
 import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
-import { historyText } from "@/data/history";
 import {
   historyPage,
   historyPageContent
@@ -50,7 +49,6 @@ export const getStaticProps: GetStaticProps = async () => {
       "section2.historyList"
     ]
   });
-  console.log(content?.data);
   return { props: { content: content?.data } };
 };
 
