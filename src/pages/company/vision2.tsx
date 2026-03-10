@@ -157,7 +157,6 @@ export const getStaticProps: GetStaticProps = async () => {
       "section4"
     ] // populates all relations/media 1 level deep
   });
-  console.log(content?.data);
   return { props: { content: content?.data } };
 };
 
@@ -166,7 +165,6 @@ export default function Vision2Page({
 }: {
   content: visionPageContent;
 }) {
-  console.log(content);
   const { lang } = useLangStore();
 
   const hero = visionHeroText[lang];
