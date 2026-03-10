@@ -1,22 +1,23 @@
 // app/company/ceo/page.tsx
 "use client";
 
-import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
-import Image from "next/image";
-import Head from "next/head";
-import { motion, type Transition } from "framer-motion";
+import HeroSection from "@/components/HeroSection";
+import Layout from "@/components/Layout";
+import { ceoPage, ceoPageContent } from "@/lib/strapi/company/ceoPage";
 import { useLangStore } from "@/stores/langStore";
-import { ceoText } from "@/data/ceo";
+import { motion, type Transition } from "framer-motion";
+import { GetStaticProps } from "next";
+import Head from "next/head";
+import Image from "next/image";
 
 const slideInRight = {
   hidden: { opacity: 0, y: 80 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 2, ease: "easeOut" } as Transition,
-  },
+    transition: { duration: 2, ease: "easeOut" } as Transition
+  }
 };
 
 const textReveal = {
@@ -24,36 +25,56 @@ const textReveal = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 1.6, ease: "easeOut" } as Transition,
-  },
+    transition: { duration: 1.6, ease: "easeOut" } as Transition
+  }
 };
 
-export default function CeoPage() {
-  const lang = useLangStore((state) => state.lang);
-  const content = ceoText[lang];
+export const getStaticProps: GetStaticProps = async () => {
+  const content = await ceoPage.find({
+    locale: "ko-KR",
+    populate: ["pageInfo", "messages", "signatures"] // populates all relations/media 1 level deep
+  });
+  return { props: { content: content?.data } };
+};
 
-  const heroTitle = lang === "KOR" ? "CEO 인사말" : "CEO Message";
+export default function CeoPage({ content }: { content: ceoPageContent }) {
+  const lang = useLangStore((state) => state.lang);
+
+  const heroTitle =
+    content.pageInfo.title || (lang === "KOR" ? "CEO 인사말" : "CEO Message");
   const fontFamily =
     "'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', 'Nanum Gothic', sans-serif";
 
   return (
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "CEO 인사말 | 수만" : "CEO Message | SUMAN"}</title>
+        <title>
+          {content.pageInfo.title ||
+            (lang === "KOR" ? "CEO 인사말 | 수만" : "CEO Message | SUMAN")}
+        </title>
       </Head>
 
       <main className="min-h-screen bg-white pt-[90px] text-slate-900">
-        <HeroSection title={heroTitle} backgroundImage="/images/sub_banner/ceo_hero.png" />
+        <HeroSection
+          title={heroTitle}
+          backgroundImage={
+            content.pageInfo.hero || "/images/sub_banner/ceo_hero.png"
+          }
+        />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={lang === "KOR" ? "회사 소개 > CEO 인사말" : "Company > CEO Message"}
+            path={
+              content.pageInfo.pageLocation ||
+              (lang === "KOR"
+                ? "회사 소개 > CEO 인사말"
+                : "Company > CEO Message")
+            }
           />
         </div>
 
         <section className="bg-white">
           <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
-            
             {/* LEFT - Text Content */}
             <motion.article
               className="lg:w-1/2 flex flex-col"
@@ -66,24 +87,29 @@ export default function CeoPage() {
               <div className="w-full max-w-[550px]">
                 {/* Hero Text */}
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-500 mb-1">
-                  {content.hero.primary}
+                  {content.title}
                 </h2>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">
-                  {content.hero.secondary}
+                  {content.subtitle}
                 </h3>
 
                 {/* Paragraphs */}
                 <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed">
-                  {content.paragraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
+                  {content.messages.map((paragraph, index) => (
+                    <p key={Math.random()}>{paragraph.text}</p>
                   ))}
                 </div>
 
                 {/* Signature */}
                 <div className="mt-6">
-                  <p className="text-xs text-gray-400 tracking-widest mb-2">SIGNATURE</p>
+                  <p className="text-xs text-gray-400 tracking-widest mb-2">
+                    SIGNATURE
+                  </p>
                   <p className="text-gray-700">
-                    {content.signatureTitle} <span className="font-bold text-gray-900">{content.signatureName}</span>
+                    {content.signatures[0].position}{" "}
+                    <span className="font-bold text-gray-900">
+                      {content.signatures[0].name}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -103,7 +129,7 @@ export default function CeoPage() {
               <div className="w-full flex items-center justify-center lg:justify-end">
                 <div className="relative aspect-square w-full max-w-[450px]">
                   <Image
-                    src="/images/company/ceo/ceo.jpeg"
+                    src={content.img || "/images/company/ceo/ceo.jpeg"}
                     alt="SUMAN CEO"
                     fill
                     priority
