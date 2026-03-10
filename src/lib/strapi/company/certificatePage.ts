@@ -1,6 +1,6 @@
 import strapiClient from "@/lib/api/strapiClient";
 
-export const certificatePage = strapiClient.single("certificate-page");
+export const certificatePage = strapiClient.single("certification-page");
 
 export type certificatePageContent = {
   pageInfo: {
