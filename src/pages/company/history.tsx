@@ -16,8 +16,8 @@ export default function HistoryPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: "easeOut" } as Transition,
-    },
+      transition: { duration: 0.7, ease: "easeOut" } as Transition
+    }
   };
 
   const staggerContainerVariants = {
@@ -26,30 +26,33 @@ export default function HistoryPage() {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
+        delayChildren: 0.2
+      }
+    }
   };
 
   // Base shift (≈ previously 5cm) & lift up ≈ 3cm -> net ≈ 2cm down.
   // 3cm ≈ 114px (approx). Use clamp to stay responsive across screens.
   const arrowShiftStyle = {
     ["--arrow-shift-down" as any]: "clamp(80px, 10vw, 190px)", // base down shift (~up to 5cm)
-    ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)",     // lift up (~3cm)
+    ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)" // lift up (~3cm)
   } as React.CSSProperties;
-  
+
   return (
-    <>
     <Layout>
       <Head>
         <title>{lang === "KOR" ? "연혁 | 수만" : "History | SUMAN"}</title>
       </Head>
       <main className="min-h-screen bg-white pt-[90px] text-slate-900">
         <HeroSection
-          title={<span className="text-5xl font-bold tracking-wide">{content.title}</span>}
+          title={
+            <span className="text-5xl font-bold tracking-wide">
+              {content.title}
+            </span>
+          }
           backgroundImage="/images/sub_banner/company_banner.png"
         />
-        
+
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection path={content.breadcrumb} />
         </div>
@@ -59,8 +62,9 @@ export default function HistoryPage() {
           <div
             className="absolute inset-0 bg-cover z-0"
             style={{
-              backgroundImage: "url('/images/company/history/history_suman.png')",
-              backgroundPosition: "center 70%",
+              backgroundImage:
+                "url('/images/company/history/history_suman.png')",
+              backgroundPosition: "center 70%"
             }}
           >
             <div className="absolute inset-0 bg-[#020c23]/85 z-10" />
@@ -90,7 +94,7 @@ export default function HistoryPage() {
                         transition={{
                           duration: 0.5,
                           delay: 0.5 + index * 0.2,
-                          ease: "easeOut",
+                          ease: "easeOut"
                         }}
                         viewport={{ once: true }}
                       >
@@ -111,11 +115,17 @@ export default function HistoryPage() {
               style={{
                 transform:
                   "translateY(calc(var(--arrow-shift-down) - var(--arrow-shift-up)))",
-                ...arrowShiftStyle,
+                ...arrowShiftStyle
               }}
             >
               <defs>
-                <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="arrow-gradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor="white" stopOpacity="0" />
                   <stop offset="100%" stopColor="white" stopOpacity="1" />
                 </linearGradient>
@@ -212,7 +222,7 @@ export default function HistoryPage() {
                           transition={{
                             duration: 0.25,
                             delay: idx * 0.05,
-                            ease: "easeOut",
+                            ease: "easeOut"
                           }}
                           viewport={{ once: true }}
                         >
@@ -261,8 +271,7 @@ export default function HistoryPage() {
         </div>
 
         <hr className="my-8 border-gray-200" />
-        </main>
-      </Layout>
-    </>
+      </main>
+    </Layout>
   );
 }
