@@ -13,10 +13,8 @@ export type locationPageContent = {
     locations: {
       name: string;
       address: string;
-      geoLoc: {
-        latitude: number;
-        longitude: number;
-      };
+      latitude: number;
+      longitude: number;
     }[];
   };
 };
