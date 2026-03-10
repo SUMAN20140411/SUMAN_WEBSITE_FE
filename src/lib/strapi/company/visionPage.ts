@@ -1,7 +1,7 @@
 import { BlocksContent } from "@strapi/blocks-react-renderer";
 import strapiClient from "../../api/strapiClient";
 
-export const vision = strapiClient.single("vision-page");
+export const visionPage = strapiClient.single("vision-page");
 
 export type visionPageContent = {
   pageInfo: {
@@ -17,26 +17,27 @@ export type visionPageContent = {
     targetIncome: string;
     subsection: {
       title: string;
-      description: BlocksContent[];
+      description: BlocksContent;
     };
   };
   section2: {
     title: string;
     subsection: {
       title: string;
-      description: BlocksContent[];
+      description: BlocksContent;
     }[];
   };
   section3: {
     title: string;
     subsection: {
       title: string;
-      description: BlocksContent[];
+      description: BlocksContent;
     }[];
   };
   section4: {
     title: string;
     subtitle: string;
+    emphasizedSubtitle: string;
     img: string;
   };
 };
