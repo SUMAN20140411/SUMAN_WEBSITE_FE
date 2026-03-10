@@ -1,57 +1,52 @@
 "use client";
 
-import Head from "next/head";
-import Image from "next/image";
-import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
-import { motion, Variants, Transition } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useLangStore } from "@/stores/langStore";
+import HeroSection from "@/components/HeroSection";
+import Layout from "@/components/Layout";
 import {
+  visionCoreValue,
   visionHeroText,
   visionMainText,
-  visionStrategyText,
-  visionCoreValue,
   visionMilestones,
   visionRndText,
+  visionStrategyText
 } from "@/data/vision2";
+import { visionPage, visionPageContent } from "@/lib/strapi/company/visionPage";
+import { useLangStore } from "@/stores/langStore";
+import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import { motion, Transition, Variants } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
-  ClipboardList,
+  Brain,
   Cpu,
-  Factory,
-  FlaskConical,
   Globe2,
   Handshake,
   Leaf,
-  Lightbulb,
   LineChart,
-  Sparkles,
-  Target,
-  Users,
-  Layers,
-  Heart,
   Star,
-  Brain,
-  Zap,
+  Target,
+  Zap
 } from "lucide-react";
+import { GetStaticProps } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
 };
 
 const staggerChildren: Variants = {
   hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1, 
-    transition: { 
-      staggerChildren: 0.2, 
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
       delayChildren: 0.3,
       duration: 0.6
-    } 
-  },
+    }
+  }
 };
 
 const zoomIn: Variants = {
@@ -60,33 +55,33 @@ const zoomIn: Variants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.7, ease: "easeOut" },
-  },
+    transition: { duration: 0.7, ease: "easeOut" }
+  }
 };
 
 const slideInLeft: Variants = {
   hidden: { opacity: 0, x: -50 },
-  visible: { 
-    opacity: 1, 
-    x: 0, 
-    transition: { duration: 0.8, ease: "easeOut" } 
-  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.8, ease: "easeOut" }
+  }
 };
 
 const slideInRight: Variants = {
   hidden: { opacity: 0, x: 50 },
-  visible: { 
-    opacity: 1, 
-    x: 0, 
-    transition: { duration: 0.8, ease: "easeOut", delay: 0.4 } 
-  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.8, ease: "easeOut", delay: 0.4 }
+  }
 };
 
 const floatTransition: Transition = {
   duration: 12,
   repeat: Infinity,
   repeatType: "mirror",
-  ease: "easeInOut",
+  ease: "easeInOut"
 };
 
 type AnimatedCounterProps = {
@@ -108,7 +103,11 @@ type KpiCard = {
   label: string;
 };
 
-const AnimatedCounter = ({ end, duration = 2, suffix = "" }: AnimatedCounterProps) => {
+const AnimatedCounter = ({
+  end,
+  duration = 2,
+  suffix = ""
+}: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const [seen, setSeen] = useState(false);
 
@@ -136,13 +135,38 @@ const AnimatedCounter = ({ end, duration = 2, suffix = "" }: AnimatedCounterProp
         {count}
       </span>
       {suffix ? (
-        <span className="text-lg md:text-xl font-semibold text-[#2c5282]">{suffix}</span>
+        <span className="text-lg md:text-xl font-semibold text-[#2c5282]">
+          {suffix}
+        </span>
       ) : null}
     </motion.span>
   );
 };
 
-export default function Vision2Page() {
+export const getStaticProps: GetStaticProps = async () => {
+  const content = await visionPage.find({
+    locale: "ko-KR",
+    populate: [
+      "pageInfo",
+      "section1",
+      "section1.subsection",
+      "section2",
+      "section2.subsection",
+      "section3",
+      "section3.subsection",
+      "section4"
+    ] // populates all relations/media 1 level deep
+  });
+  console.log(content?.data);
+  return { props: { content: content?.data } };
+};
+
+export default function Vision2Page({
+  content
+}: {
+  content: visionPageContent;
+}) {
+  console.log(content);
   const { lang } = useLangStore();
 
   const hero = visionHeroText[lang];
@@ -158,76 +182,76 @@ export default function Vision2Page() {
           {
             icon: Globe2,
             title: "글로벌 기술 확장",
-            desc: "핵심 역량을 기반으로 글로벌 솔루션 네트워크를 구축합니다.",
+            desc: "핵심 역량을 기반으로 글로벌 솔루션 네트워크를 구축합니다."
           },
           {
             icon: Handshake,
             title: "파트너십 강화",
-            desc: "산학연 협업으로 혁신적인 비즈니스 기회를 발굴합니다.",
+            desc: "산학연 협업으로 혁신적인 비즈니스 기회를 발굴합니다."
           },
           {
             icon: Cpu,
             title: "스마트 제조 혁신",
-            desc: "스마트 공정과 데이터 기반 운영으로 생산성을 높입니다.",
+            desc: "스마트 공정과 데이터 기반 운영으로 생산성을 높입니다."
           },
           {
             icon: Leaf,
             title: "지속 가능한 가치",
-            desc: "ESG와 품질 중심 경영으로 장기적인 신뢰를 만들어갑니다.",
-          },
+            desc: "ESG와 품질 중심 경영으로 장기적인 신뢰를 만들어갑니다."
+          }
         ]
       : [
           {
             icon: Globe2,
             title: "Global Technology Reach",
-            desc: "Build a worldwide solution network anchored in our core capabilities.",
+            desc: "Build a worldwide solution network anchored in our core capabilities."
           },
           {
             icon: Handshake,
             title: "Stronger Partnerships",
-            desc: "Create innovative business opportunities through strategic collaborations.",
+            desc: "Create innovative business opportunities through strategic collaborations."
           },
           {
             icon: Cpu,
             title: "Smart Manufacturing",
-            desc: "Boost productivity with smart processes and data-driven operations.",
+            desc: "Boost productivity with smart processes and data-driven operations."
           },
           {
             icon: Leaf,
             title: "Sustainable Value",
-            desc: "Deliver long-term trust with ESG- and quality-focused management.",
-          },
-        ]; 
+            desc: "Deliver long-term trust with ESG- and quality-focused management."
+          }
+        ];
 
   const kpiCards: KpiCard[] =
     lang === "KOR"
       ? [
           {
             icon: Target,
-            value: 600,
+            value: parseInt(content.section1.targetSales),
             suffix: "억원",
-            label: "목표 매출액",
+            label: "목표 매출액"
           },
           {
             icon: LineChart,
-            value: 150,
+            value: parseInt(content.section1.targetIncome),
             suffix: "억원",
-            label: "목표 순이익",
-          },
+            label: "목표 순이익"
+          }
         ]
       : [
           {
             icon: Target,
-            value: 600,
+            value: parseInt(content.section1.targetSales),
             suffix: "B KRW",
-            label: "Target Revenue",
+            label: "Target Revenue"
           },
           {
             icon: LineChart,
-            value: 150,
+            value: parseInt(content.section1.targetIncome),
             suffix: "B KRW",
-            label: "Target Net Profit",
-          },
+            label: "Target Net Profit"
+          }
         ];
 
   const overviewDescription =
@@ -238,18 +262,26 @@ export default function Vision2Page() {
   return (
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "기업 비전" : "Vision"}</title>
+        <title>
+          {content.pageInfo.title || (lang === "KOR" ? "기업 비전" : "Vision")}
+        </title>
       </Head>
-            <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-white via-sky-50/30 to-white text-slate-900 pt-[90px]">
-
+      <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-white via-sky-50/30 to-white text-slate-900 pt-[90px]">
         <div className="relative z-10">
           <HeroSection
-            title={hero.title}
-            backgroundImage="/images/sub_banner/company_banner.png"
+            title={content.pageInfo.title || hero.title}
+            backgroundImage={
+              content.pageInfo.hero || "/images/sub_banner/company_banner.png"
+            }
           />
 
           <div className="relative z-20 -mt-8 sm:-mt-10">
-            <BreadcrumbSection path={lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision"} />
+            <BreadcrumbSection
+              path={
+                content.pageInfo.pageLocation ||
+                (lang === "KOR" ? "회사소개 > 기업 비전" : "Company > Vision")
+              }
+            />
           </div>
 
           {/* Our Value Section */}
@@ -263,7 +295,8 @@ export default function Vision2Page() {
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-8 lg:py-12 ">
               <div className="space-y-4 text-left">
                 <h3 className="text-3xl md:text-4xl font-bold text-black">
-                  {lang === "KOR" ? "Our Vision" : "Our Vision"}
+                  {content.section1.title ||
+                    (lang === "KOR" ? "Our Vision" : "Our Vision")}
                 </h3>
               </div>
             </div>
@@ -278,10 +311,10 @@ export default function Vision2Page() {
           >
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] pb-16 lg:pb-20 space-y-16">
               <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
-                <motion.div 
-                  className="space-y-8" 
+                <motion.div
+                  className="space-y-8"
                   variants={slideInLeft}
-                  initial="hidden" 
+                  initial="hidden"
                   animate="visible"
                 >
                   <motion.div
@@ -290,26 +323,38 @@ export default function Vision2Page() {
                     animate="visible"
                     className="space-y-6"
                   >
-                   
                     <motion.h1
                       variants={fadeInUp}
                       className="text-4xl md:text-5xl font-black leading-tight text-black mb-8 "
                     >
-                      <span className="block text-[#2c5282]">{overview.blueTitle}</span>
-                      <span className="block">{overview.blackTitle}</span>
+                      <span className="block text-[#2c5282]">
+                        {content.section1.emphasizedSubtitle ||
+                          overview.blueTitle}
+                      </span>
+                      <span className="block">
+                        {content.section1.subtitle || overview.blackTitle}
+                      </span>
                     </motion.h1>
                   </motion.div>
-                  
+
                   <motion.div
                     variants={zoomIn}
                     className="rounded-3xl border border-slate-200 bg-white p-8 shadow-lg"
                   >
                     <p className="text-2xl md:text-3xl font-bold uppercase tracking-[0.15em] text-black">
-                      {strategy.neoTitle}
+                      {content.section1.subsection.title || strategy.neoTitle}
                     </p>
-                    <p className="mt-4 whitespace-pre-line text-lg md:text-xl leading-relaxed text-black">
-                      {strategy.mainGoal}
-                    </p>
+                    {content.section1.subsection.description ? (
+                      <div className="mt-4 whitespace-pre-line text-lg md:text-xl leading-relaxed text-black">
+                        <BlocksRenderer
+                          content={content.section1.subsection.description}
+                        />
+                      </div>
+                    ) : (
+                      <p className="mt-4 whitespace-pre-line text-lg md:text-xl leading-relaxed text-black">
+                        strategy.mainGoal
+                      </p>
+                    )}
                   </motion.div>
                 </motion.div>
 
@@ -319,7 +364,7 @@ export default function Vision2Page() {
                   animate="visible"
                   className="rounded-3xl bg-slate-50/80 p-8 shadow-sm h-full flex flex-col justify-center"
                 >
-                  <motion.div 
+                  <motion.div
                     className="space-y-6"
                     variants={staggerChildren}
                     initial="hidden"
@@ -338,8 +383,13 @@ export default function Vision2Page() {
                             <Icon className="h-6 w-6" />
                           </div>
                           <div className="flex flex-col">
-                            <AnimatedCounter end={card.value} suffix={card.suffix} />
-                            <p className="text-sm font-medium text-[#2c5282]/70">{card.label}</p>
+                            <AnimatedCounter
+                              end={card.value}
+                              suffix={card.suffix}
+                            />
+                            <p className="text-sm font-medium text-[#2c5282]/70">
+                              {card.label}
+                            </p>
                           </div>
                         </motion.div>
                       );
@@ -353,7 +403,10 @@ export default function Vision2Page() {
                   variants={fadeInUp}
                   className="text-xl md:text-2xl font-semibold text-black"
                 >
-                  {lang === "KOR" ? "단계별 성장 로드맵" : "Staged Growth Roadmap"}
+                  {content.section2.title ||
+                    (lang === "KOR"
+                      ? "단계별 성장 로드맵"
+                      : "Staged Growth Roadmap")}
                 </motion.h3>
                 <div className="relative mt-16">
                   {/* Vision Timeline Above Cards */}
@@ -367,27 +420,39 @@ export default function Vision2Page() {
                       className="relative h-1 mx-6 rounded-full bg-gradient-to-r from-[#2c5282] via-[#2c5282] to-[#2c5282] origin-left"
                     >
                       {/* Timeline markers */}
-                      <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2024</span>
-                      </div>
-                      
-                      <div className="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2026</span>
-                      </div>
-                      
-                      <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
-                        <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
-                        <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">2028</span>
-                      </div>
+
+                      {content.section2.subsection.map((item, index) => (
+                        <div
+                          key={index}
+                          className="absolute top-1/2 transform -translate-y-1/2"
+                          style={{
+                            left:
+                              index === 0
+                                ? "0"
+                                : index ===
+                                  content.section2.subsection.length - 1
+                                ? "100%"
+                                : `calc(${
+                                    (index /
+                                      (content.section2.subsection.length -
+                                        1)) *
+                                    100
+                                  }% - 16px)`
+                          }}
+                        >
+                          <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
+                          <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">
+                            {item.title || ""}
+                          </span>
+                        </div>
+                      ))}
                     </motion.div>
                   </div>
-                  
+
                   <div className="relative grid gap-6 md:grid-cols-3">
-                    {milestones.map((item, index) => (
+                    {content.section2.subsection.map((item, index) => (
                       <motion.div
-                        key={item.year}
+                        key={item.title}
                         variants={zoomIn}
                         initial="hidden"
                         whileInView="visible"
@@ -396,12 +461,18 @@ export default function Vision2Page() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2c5282]/10 text-[#2c5282]">
-                            <span className="text-lg font-bold">{index + 1}</span>
+                            <span className="text-lg font-bold">
+                              {index + 1}
+                            </span>
                           </div>
                           <div className="flex-1">
-                            <p className="whitespace-pre-line text-sm text-black leading-relaxed">
-                              {item.text}
-                            </p>
+                            {item.description ? (
+                              <BlocksRenderer content={item.description} />
+                            ) : (
+                              <p className="whitespace-pre-line text-sm text-black leading-relaxed">
+                                {item.title || ""}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </motion.div>
@@ -417,7 +488,8 @@ export default function Vision2Page() {
                 viewport={{ once: true }}
                 className="text-xl md:text-2xl font-semibold text-black"
               >
-                {lang === "KOR" ? "핵심 가치" : "Core Values"}
+                {content.section3.title ||
+                  (lang === "KOR" ? "핵심 가치" : "Core Values")}
               </motion.h3>
               <motion.div
                 className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
@@ -426,7 +498,7 @@ export default function Vision2Page() {
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
               >
-                {coreValues.map((cv, idx) => {
+                {content.section3.subsection.map((cv, idx) => {
                   const icons = [Handshake, Star, Brain, Zap];
                   const Icon = icons[idx % icons.length];
                   return (
@@ -456,10 +528,9 @@ export default function Vision2Page() {
             <div className="pb-2"></div>
           </motion.section>
 
-
           {/* R&D Section - Hover Effect on Image & Animation on Text */}
           <section className="w-full">
-           <div className="mt-8 max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-11 lg:py-6 grid grid-cols-1 lg:grid-cols-12 items-center">
+            <div className="mt-8 max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-11 lg:py-6 grid grid-cols-1 lg:grid-cols-12 items-center">
               {/* LEFT COLUMN */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -476,29 +547,40 @@ export default function Vision2Page() {
                   className="text-left"
                 >
                   <div className="text-black text-xl md:text-2xl font-semibold mb-2 transition-all duration-200 hover:scale-105">
-                    비즈니스 모델
+                    {content.section4.title || "비즈니스 모델"}
                   </div>
                   <h2 className="text-black text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105">
                     {lang === "KOR" ? (
                       <>
-                        끊임없는 연구개발과 스마트 공정 혁신을 통해{" "} <br/><span
+                        {content.section4.subtitle ||
+                          "끊임없는 연구개발과 스마트 공정 혁신을 통해"}{" "}
+                        <br />
+                        <span
                           className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
-                          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
-                        > 
+                          style={{
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent"
+                          }}
+                        ></span>
+                        <span className="text-[#2c5282] font-bold">
+                          {content.section4.emphasizedSubtitle ||
+                            "제조 효율의 새로운 기준을 만들어 갑니다"}
                         </span>
-                        <span className="text-[#2c5282] font-bold">제조 효율의 새로운 기준을 만들어 갑니다</span>
                       </>
                     ) : (
                       <>
-                        Continuous R&D and smart process Creating new standards for{" "}
+                        {content.section4.subtitle ||
+                          "Continuous R&D and smart process "}{" "}
                         <span
                           className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
-                          style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+                          style={{
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent"
+                          }}
                         >
-                          manufacturing efficiency<br/> We set new standards<br/>
+                          {content.section4.emphasizedSubtitle ||
+                            "Creating new standards for manufacturing efficiency"}
                         </span>
-                        <br />
-                        <span className="text-[#4B5563] font-bold"></span>
                       </>
                     )}
                   </h2>
@@ -510,10 +592,18 @@ export default function Vision2Page() {
                 whileHover={{ scale: 1.04, transition: { duration: 0.3 } }}
                 className="lg:col-span-7 flex flex-col items-start justify-start w-full transition-all duration-300 mt-0 pt-0 lg:mt-0 lg:pt-3 ml-12"
               >
-                <div className="relative w-full mt-3" style={{ aspectRatio: "1210/768" }}>
+                <div
+                  className="relative w-full mt-3"
+                  style={{ aspectRatio: "1210/768" }}
+                >
                   <Image
-                    src={lang === "KOR" ? "/images/company/vision/IO_kor.png" : "/images/company/vision/IO_eng.png"}
-                    alt="Biz Model Pyramid"
+                    src={
+                      content.section4.img ||
+                      (lang === "KOR"
+                        ? "/images/company/vision/IO_kor.png"
+                        : "/images/company/vision/IO_eng.png")
+                    }
+                    alt={content.section4.title || "Biz Model Pyramid"}
                     className="w-full h-full object-contain"
                     style={{ width: "90%", height: "90%" }}
                     width={1210}
@@ -523,8 +613,8 @@ export default function Vision2Page() {
               </motion.div>
             </div>
           </section>
-        
-        {/* Close continuous background wrapper */}
+
+          {/* Close continuous background wrapper */}
         </div>
       </main>
       <hr className="w-full border-gray-200 mt-0 mb-0" />
