@@ -10,6 +10,11 @@ import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
 import { serviceContent } from "@/data/service";
 import { useLangStore } from "@/stores/langStore";
+import { GetStaticProps } from "next";
+import {
+  servicePage,
+  servicePageContent
+} from "@/lib/strapi/business/servicePage";
 
 // flow components (named exports)
 
@@ -102,10 +107,31 @@ function SVGVisualSection() {
   );
 }
 
+export const getStaticProps: GetStaticProps = async () => {
+  const content = await servicePage.find({
+    locale: "ko-KR",
+    populate: [
+      "pageInfo",
+      "section1",
+      "section2",
+      "section3",
+      "section2.deviceCategories",
+      "section2.deviceCategories.equipment"
+    ]
+  });
+
+  return { props: { content: content?.data } };
+};
+
 /* =========================
         Page content
    ========================= */
-export default function ServicePage() {
+export default function ServicePage({
+  content
+}: {
+  content: servicePageContent;
+}) {
+  console.log(content);
   const { lang } = useLangStore();
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
   const { equipmentList, measurementEquipmentList } = serviceContent[langCode];
@@ -138,7 +164,7 @@ export default function ServicePage() {
   return (
     <Layout>
       <Head>
-        <title>{langCode === "KOR" ? "기술소개 " : "Technology"}</title>
+        <title>{content.pageInfo?.title || "기술소개"}</title>
       </Head>
 
       <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 pt-[90px]">
@@ -184,18 +210,16 @@ export default function ServicePage() {
 
         <div className="relative z-10">
           <HeroSection
-            title={langCode === "KOR" ? "기술 소개" : "Technology"}
-            backgroundImage="/images/sub_banner/business_hero.png"
+            title={content.pageInfo?.title || "기술 소개"}
+            backgroundImage={
+              content.pageInfo?.hero || "/images/sub_banner/business_hero.png"
+            }
           />
 
           {/* breadcrumb */}
           <div className="relative z-20 -mt-8 sm:-mt-10">
             <BreadcrumbSection
-              path={
-                langCode === "KOR"
-                  ? "사업분야 > 기술소개"
-                  : "Business > Technology"
-              }
+              path={content.pageInfo?.pageLocation || "사업분야 > 기술소개"}
             />
           </div>
 
@@ -218,14 +242,11 @@ export default function ServicePage() {
                   className="text-left"
                 >
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
-                    {langCode === "KOR"
-                      ? "핵심 역량 및 기술"
-                      : "Core Capabilities & Technologies"}
+                    {content.section1?.title || "핵심 역량 및 기술"}
                   </h2>
                   <p className="mt-3 text-base md:text-lg text-slate-600 -mb-6">
-                    {langCode === "KOR"
-                      ? "정밀가공 · 모듈화 · 장비 기술"
-                      : "Precision · Modularization · Equipment"}
+                    {content.section1?.subtitle ||
+                      "정밀가공 · 모듈화 · 장비 기술"}
                   </p>
                 </motion.div>
 
@@ -247,15 +268,10 @@ export default function ServicePage() {
                   >
                     <Image
                       src={
-                        langCode === "KOR"
-                          ? "/images/business/process/coreKorr1.png"
-                          : "/images/business/process/CoreEngg1.png"
+                        content.section1?.img ||
+                        "/images/business/process/coreKorr1.png"
                       }
-                      alt={
-                        langCode === "KOR"
-                          ? "핵심 역량 및 기술"
-                          : "Core Capabilities & Technologies"
-                      }
+                      alt={content.section1?.title || "핵심 역량 및 기술"}
                       fill
                       priority
                       className="object-contain"
@@ -274,12 +290,11 @@ export default function ServicePage() {
                   className="text-left"
                 >
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
-                    {langCode === "KOR" ? "주요 설비" : "Main Equipment"}
+                    {content.section2?.title || "주요 설비"}
                   </h2>
                   <p className="mt-3 text-base md:text-lg text-slate-600">
-                    {section?.maintitle}
+                    {content.section2?.subtitle || "주요 설비"}
                     <br />
-                    {/*{section?.mainsubtitle}*/}
                   </p>
                 </motion.div>
 
@@ -290,122 +305,55 @@ export default function ServicePage() {
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.2 }}
                 >
-                  {/* Production Equipment */}
-                  <div className="space-y-4">
-                    <motion.span
-                      className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
-                      style={{
-                        backgroundColor: "rgba(75, 85, 99, 0.1)",
-                        color: "#4B5563"
-                      }}
-                      variants={fadeUp}
-                    >
-                      {section?.production}
-                    </motion.span>
+                  {content.section2?.deviceCategories?.map((category) => (
+                    <div className="space-y-4" key={category.title}>
+                      <motion.span
+                        className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
+                        style={{
+                          backgroundColor: "rgba(75, 85, 99, 0.1)",
+                          color: "#4B5563"
+                        }}
+                        variants={fadeUp}
+                      >
+                        {category.title}
+                      </motion.span>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                      {equipmentList.map((equipment: any, index: number) => (
-                        <motion.div
-                          key={`prod-${index}`}
-                          className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
-                          variants={fadeUp}
-                          whileHover={{ y: -4 }}
-                        >
-                          <div className="relative mb-2 h-[220px] w-full">
-                            {equipment.image && (
-                              <Image
-                                src={equipment.image}
-                                alt={equipment.name}
-                                fill
-                                className="rounded-[10px] object-cover"
-                              />
-                            )}
-                          </div>
-
-                          <div
-                            className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12"
-                            style={{ backgroundColor: "#4B5563" }}
-                          >
-                            <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
-                              {equipment.name}
-                            </p>
-                          </div>
-
-                          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Measurement Equipment */}
-                  <div className="space-y-6">
-                    <motion.span
-                      className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
-                      style={{
-                        backgroundColor: "rgba(75, 85, 99, 0.1)",
-                        color: "#4B5563"
-                      }}
-                      variants={fadeUp}
-                    >
-                      {section?.measurement}
-                    </motion.span>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                      {measurementEquipmentList.map(
-                        (equipment: any, index: number) => (
-                          <motion.div
-                            key={`meas-${index}`}
-                            className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
-                            variants={fadeUp}
-                            whileHover={{ y: -4 }}
-                          >
-                            <div className="relative mb-2 h-[220px] w-full">
-                              {equipment.image2 ? (
-                                <div className="flex gap-1 h-full w-full">
-                                  <div className="relative flex-1 h-full">
-                                    <Image
-                                      src={equipment.image}
-                                      alt={equipment.name}
-                                      fill
-                                      className="rounded-[10px] object-contain"
-                                    />
-                                  </div>
-                                  <div className="relative flex-1 h-full">
-                                    <Image
-                                      src={equipment.image2}
-                                      alt={equipment.name}
-                                      fill
-                                      className="rounded-[10px] object-contain"
-                                    />
-                                  </div>
-                                </div>
-                              ) : (
-                                equipment.image && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                        {category.equipment.map(
+                          (equipment: any, index: number) => (
+                            <motion.div
+                              key={`prod-${index}`}
+                              className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
+                              variants={fadeUp}
+                              whileHover={{ y: -4 }}
+                            >
+                              <div className="relative mb-2 h-[220px] w-full">
+                                {equipment.img && (
                                   <Image
-                                    src={equipment.image}
-                                    alt={equipment.name}
+                                    src={equipment.img}
+                                    alt={equipment.name || ""}
                                     fill
                                     className="rounded-[10px] object-cover"
                                   />
-                                )
-                              )}
-                            </div>
+                                )}
+                              </div>
 
-                            <div
-                              className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12"
-                              style={{ backgroundColor: "#4B5563" }}
-                            >
-                              <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
-                                {equipment.name}
-                              </p>
-                            </div>
+                              <div
+                                className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12"
+                                style={{ backgroundColor: "#4B5563" }}
+                              >
+                                <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
+                                  {equipment.name}
+                                </p>
+                              </div>
 
-                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
-                          </motion.div>
-                        )
-                      )}
+                              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
+                            </motion.div>
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </motion.div>
               </div>
 
@@ -419,12 +367,10 @@ export default function ServicePage() {
                   className="text-left"
                 >
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
-                    {langCode === "KOR" ? "프로세스" : "Process"}
+                    {content.section3?.title || "프로세스"}
                   </h2>
                   <p className="mt-3 text-base md:text-lg text-slate-600">
-                    {lang === "KOR"
-                      ? "제품 제조 및 품질 프로세스"
-                      : "Product Manufacturing & Quality Process"}
+                    {content.section3?.subtitle || "제품 제조 및 품질 프로세스"}
                   </p>
                 </motion.div>
 
@@ -446,14 +392,11 @@ export default function ServicePage() {
                   >
                     <Image
                       src={
-                        lang === "KOR"
-                          ? "/images/business/process/processKor.png"
-                          : "/images/business/process/processEng.png"
+                        content.section3?.img ||
+                        "/images/business/process/processKor.png"
                       }
                       alt={
-                        lang === "KOR"
-                          ? "제품 제조 및 품질 프로세스"
-                          : "Product Manufacturing & Quality Process"
+                        content.section3?.title || "제품 제조 및 품질 프로세스"
                       }
                       fill
                       priority
