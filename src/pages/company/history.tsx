@@ -1,15 +1,65 @@
-import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
-import { motion, type Transition } from "framer-motion";
-import Head from "next/head";
-import { useLangStore } from "@/stores/langStore";
+import HeroSection from "@/components/HeroSection";
+import Layout from "@/components/Layout";
 import { historyText } from "@/data/history";
+import {
+  historyPage,
+  historyPageContent
+} from "@/lib/strapi/company/historyPage";
+import { useLangStore } from "@/stores/langStore";
+import { motion, type Transition } from "framer-motion";
+import { GetStaticProps } from "next";
+import Head from "next/head";
 import React from "react";
+import Markdown, { Components } from "react-markdown";
 
-export default function HistoryPage() {
+const headerComponent: Components["h2"] = ({ children }) => (
+  <motion.div
+    className="timeline-item mb-3 relative ml-[20px] sm:ml-[90px] md:ml-[155px]"
+    initial={{ opacity: 0, x: -30, y: -10 }}
+    whileInView={{ opacity: 1, x: 0, y: 0 }}
+    transition={{
+      duration: 0.25,
+      delay: 0.05,
+      ease: "easeOut"
+    }}
+    viewport={{ once: true }}
+  >
+    <p
+      className={`text-lg font-semibold tracking-wide ${
+        children?.toString()?.includes("⦁")
+          ? "text-black font-bold"
+          : children?.toString()?.includes("➔")
+          ? "text-[#8C8C8C] text-base"
+          : "text-[#4C4C4C]"
+      }`}
+    >
+      {children}
+    </p>
+  </motion.div>
+);
+
+export const getStaticProps: GetStaticProps = async () => {
+  const content = await historyPage.find({
+    locale: "ko-KR",
+    populate: [
+      "pageInfo",
+      "section1",
+      "section1.keywords",
+      "section2",
+      "section2.historyList"
+    ]
+  });
+  console.log(content?.data);
+  return { props: { content: content?.data } };
+};
+
+export default function HistoryPage({
+  content
+}: {
+  content: historyPageContent;
+}) {
   const { lang } = useLangStore();
-  const content = historyText[lang];
 
   const fadeInRiseVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -47,14 +97,16 @@ export default function HistoryPage() {
         <HeroSection
           title={
             <span className="text-5xl font-bold tracking-wide">
-              {content.title}
+              {content.pageInfo.title}
             </span>
           }
-          backgroundImage="/images/sub_banner/company_banner.png"
+          backgroundImage={
+            content.pageInfo.hero || "/images/sub_banner/company_banner.png"
+          }
         />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
-          <BreadcrumbSection path={content.breadcrumb} />
+          <BreadcrumbSection path={content.pageInfo.pageLocation} />
         </div>
 
         {/* =================== HISTORY HERO BLOCK =================== */}
@@ -62,8 +114,10 @@ export default function HistoryPage() {
           <div
             className="absolute inset-0 bg-cover z-0"
             style={{
-              backgroundImage:
-                "url('/images/company/history/history_suman.png')",
+              backgroundImage: `url(${
+                content.section1.hero ||
+                "/images/company/history/history_suman.png"
+              })`,
               backgroundPosition: "center 70%"
             }}
           >
@@ -81,11 +135,11 @@ export default function HistoryPage() {
                 {/* Left: title + bullets */}
                 <div className="lg:col-span-8">
                   <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-3 tracking-wide whitespace-pre-line">
-                    {content.summaryTitle}
+                    {content.section1.title}
                   </h2>
 
                   <ul className="text-base md:text-lg lg:text-xl flex flex-col items-start space-y-4 md:space-y-5 mt-6 tracking-wide">
-                    {content.bulletList.map((text, index) => (
+                    {content.section1.keywords.map((keyword, index) => (
                       <motion.li
                         key={index}
                         className="relative w-fit bg-white/15 text-white font-medium py-3 px-5 md:py-3.5 md:px-6 rounded-full z-10"
@@ -98,7 +152,7 @@ export default function HistoryPage() {
                         }}
                         viewport={{ once: true }}
                       >
-                        {text}
+                        {keyword.title}
                       </motion.li>
                     ))}
                   </ul>
@@ -159,10 +213,16 @@ export default function HistoryPage() {
               viewport={{ once: true }}
             >
               <p className="drop-shadow-md text-gray-200 bg-black/25 px-3 py-1 rounded-md inline-block">
-                {content.sales /* e.g., "매출액 88억원 (2024년도 기준)" */}
+                {
+                  content.section1
+                    .sales /* e.g., "매출액 88억원 (2024년도 기준)" */
+                }
               </p>
               <p className="drop-shadow-md text-gray-200 bg-black/25 px-3 py-1 rounded-md inline-block">
-                {content.staff /* e.g., "임직원 수 45명 (2024년도 기준)" */}
+                {
+                  content.section1
+                    .worker /* e.g., "임직원 수 45명 (2024년도 기준)" */
+                }
               </p>
             </motion.div>
           </div>
@@ -179,7 +239,7 @@ export default function HistoryPage() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                {content.timelineTitle}
+                {content.section2.title}
               </motion.h2>
 
               <div className="max-w-5xl mx-auto relative pl-6 sm:pl-26 md:pl-36">
@@ -198,47 +258,32 @@ export default function HistoryPage() {
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.3 }}
                 >
-                  {content.timeline.map((entry, index) => (
+                  {content.section2.historyList.map((history, index) => (
                     <motion.div key={index} variants={fadeInRiseVariants}>
                       <div className="timeline-entry mt-16 mb-10 relative">
                         <div className="flex items-center sm:absolute sm:-left-2 sm:top-[18px] sm:ml-[-24px] mb-4 sm:mb-0">
                           <h3 className="timeline-year text-xl sm:text-3xl md:text-3xl font-bold text-black bg-white pr-4 z-10 sm:-translate-x-full">
-                            {entry.year}
+                            {history.period}
                           </h3>
                         </div>
                         <div className="bg-gray-100 p-6 rounded-[30px] w-full sm:ml-[60px] md:ml-[100px]">
                           <p className="text-2xl font-bold text-black tracking-wide ml-4">
-                            {entry.label}
+                            {history.title}
                           </p>
                         </div>
                       </div>
 
-                      {entry.items.map((item, idx) => (
-                        <motion.div
-                          key={idx}
-                          className="timeline-item mb-3 relative ml-[20px] sm:ml-[90px] md:ml-[155px]"
-                          initial={{ opacity: 0, x: -30, y: -10 }}
-                          whileInView={{ opacity: 1, x: 0, y: 0 }}
-                          transition={{
-                            duration: 0.25,
-                            delay: idx * 0.05,
-                            ease: "easeOut"
+                      {history.description ? (
+                        <Markdown
+                          components={{
+                            h2: headerComponent,
+                            h3: headerComponent,
+                            h4: headerComponent
                           }}
-                          viewport={{ once: true }}
                         >
-                          <p
-                            className={`text-lg font-semibold tracking-wide ${
-                              item.includes("⦁")
-                                ? "text-black font-bold"
-                                : item.includes("➔")
-                                ? "text-[#8C8C8C] text-base"
-                                : "text-[#4C4C4C]"
-                            }`}
-                          >
-                            {item}
-                          </p>
-                        </motion.div>
-                      ))}
+                          {history.description}
+                        </Markdown>
+                      ) : null}
                     </motion.div>
                   ))}
                 </motion.div>

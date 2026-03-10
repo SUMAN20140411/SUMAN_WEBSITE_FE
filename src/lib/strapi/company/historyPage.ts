@@ -1,7 +1,6 @@
-import { BlocksContent } from "@strapi/blocks-react-renderer";
 import strapiClient from "../../api/strapiClient";
 
-export const history = strapiClient.single("history-page");
+export const historyPage = strapiClient.single("history-page");
 
 export type historyPageContent = {
   pageInfo: {
@@ -15,7 +14,7 @@ export type historyPageContent = {
     worker: string;
     hero: string;
     keywords: {
-      text: string;
+      title: string;
       body: string;
     }[];
   };
