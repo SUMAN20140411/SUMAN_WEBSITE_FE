@@ -1,21 +1,27 @@
 // src/pages/careers/wellnessMain.tsx
 
-import { motion, type Variants } from "framer-motion"; // UPDATED: import Variants
-import React from "react";
-import * as LucideIcons from "lucide-react";
-import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
+import HeroSection from "@/components/HeroSection";
+import Layout from "@/components/Layout";
+import {
+  iconMap,
+  wellnessContent,
+  WellnessData,
+  WellnessItem
+} from "@/data/wellnessData";
 import { useLangStore } from "@/stores/langStore";
-import Image from "next/image";
+import { motion, type Variants } from "framer-motion"; // UPDATED: import Variants
+import * as LucideIcons from "lucide-react";
 import Head from "next/head";
-import { wellnessContent, iconMap, WellnessItem, WellnessData } from "@/data/wellnessData";
+import Image from "next/image";
+import React from "react";
 
 // --- Wellness Card Component (keep style & effect) ---
 const WellnessCard = ({ item }: { item: WellnessItem }) => {
   const iconName = iconMap[item.iconKey];
-  const IconComponent =
-    LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+  const IconComponent = LucideIcons[
+    iconName as keyof typeof LucideIcons
+  ] as React.ComponentType<{ className?: string }>;
 
   if (!IconComponent) {
     return (
@@ -50,7 +56,8 @@ const WellnessCard = ({ item }: { item: WellnessItem }) => {
 // --- Main Wellness Page ---
 export default function WellnessPage() {
   const { lang } = useLangStore();
-  const currentData: WellnessData = wellnessContent[lang] || wellnessContent.KOR;
+  const currentData: WellnessData =
+    wellnessContent[lang] || wellnessContent.KOR;
 
   // ===================== UPDATED: animasi judul/subtitle ala rnd.tsx =====================
   // Ganti easing string -> cubic-bezier agar cocok dgn tipe Easing pada motion-dom / framer-motion
@@ -59,15 +66,16 @@ export default function WellnessPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }, // UPDATED
-    },
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } // UPDATED
+    }
   };
 
   return (
-    <>
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "복리후생 | 수만" : "Employee Benefits | SUMAN"}</title>
+        <title>
+          {lang === "KOR" ? "복리후생 | 수만" : "Employee Benefits | SUMAN"}
+        </title>
         <meta
           name="description"
           content={
@@ -86,14 +94,16 @@ export default function WellnessPage() {
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={lang === "KOR" ? "인재 채용 > 복리후생" : "Recruitment > Employee Benefits"}
+            path={
+              lang === "KOR"
+                ? "인재 채용 > 복리후생"
+                : "Recruitment > Employee Benefits"
+            }
           />
         </div>
 
         {/* === PAGE LAYOUT mengikuti product.tsx (BIG LAYOUT ONLY) === */}
-        <motion.div
-          className="relative z-10 bg-gradient-to-b from-sky-50/50 via-white to-sky-50/30 pt-20 pb-20 px-4 md:px-8 rounded-none mt-0 overflow-hidden"
-        >
+        <motion.div className="relative z-10 bg-gradient-to-b from-sky-50/50 via-white to-sky-50/30 pt-20 pb-20 px-4 md:px-8 rounded-none mt-0 overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none flex bg-no-repeat bg-top bg-contain"
             // style={{ backgroundImage: "url('/images/business/layer2.png')" }}
@@ -129,7 +139,9 @@ export default function WellnessPage() {
                   />
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
                     {/* ===================== UPDATED: ukuran judul per-section ala rnd.tsx ===================== */}
-                    <h2 className="text-3xl md:text-4xl font-bold mb-2">{section.title}</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-2">
+                      {section.title}
+                    </h2>
                     {/* ===================== UPDATED: tampilkan subtitle jika ada, ala rnd.tsx ================ */}
                   </div>
                 </div>
@@ -151,13 +163,19 @@ export default function WellnessPage() {
                     viewport={{ once: true, amount: 0.3 }}
                     variants={{
                       hidden: { opacity: 0 },
-                      visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+                      visible: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.1 }
+                      }
                     }}
                   >
                     {section.items.map((item: WellnessItem, idx) => (
                       <motion.div
                         key={idx}
-                        variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                        variants={{
+                          hidden: { opacity: 0, y: 20 },
+                          visible: { opacity: 1, y: 0 }
+                        }}
                       >
                         <WellnessCard item={item} />
                       </motion.div>
@@ -171,8 +189,7 @@ export default function WellnessPage() {
 
         {/* Hapus garis pemisah agar blok biru menempel ke footer (seperti product.tsx) */}
         {/* <hr className="my-6 border-gray-200 w-full" /> */}
-        </main>
-      </Layout>
-    </>
+      </main>
+    </Layout>
   );
 }
