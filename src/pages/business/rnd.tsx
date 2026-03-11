@@ -9,8 +9,28 @@ import Image from "next/image";
 import { CheckCircle, Cog, Cpu, Car } from "lucide-react";
 import { useEffect } from "react";
 import Head from "next/head";
+import { rndPage, rndPageContent } from "@/lib/strapi/business/rndPage";
+import Markdown, { Components } from "react-markdown";
 
-export default function App() {
+const colors = ["text-blue-600", "text-green-600", "text-purple-600"];
+
+const h2Component: Components["h2"] = ({ children }) => (
+  <h4 className="text-xl font-bold text-gray-900 mb-4">{children}</h4>
+);
+
+export const getStaticProps = async () => {
+  const rndPageContent = await rndPage.find({
+    locale: "ko-KR",
+    populate: ["pageInfo", "section1", "section1.researchItems", "section2"]
+  });
+  return {
+    props: {
+      content: rndPageContent?.data
+    }
+  };
+};
+
+export default function App({ content }: { content: rndPageContent }) {
   const { lang } = useLangStore();
 
   useEffect(() => {
@@ -22,37 +42,50 @@ export default function App() {
 
   const fadeIn: Record<"hidden" | "visible", any> = {
     hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
   };
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } as Transition },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" } as Transition
+    }
   };
 
   const cardHover = {
     rest: { scale: 1, y: 0 },
-    hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition },
+    hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition }
   };
 
   return (
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "연구분야 | 수만" : "Research Fields | SUMAN"}</title>
+        <title>{content?.pageInfo?.title || "연구분야 | 수만"}</title>
       </Head>
 
       <main className="min-h-screen bg-white pt-[90px] text-slate-900">
-        <HeroSection title={hero.title} backgroundImage="/images/sub_banner/business_hero.png" />
+        <HeroSection
+          title={content?.pageInfo?.title || "연구분야"}
+          backgroundImage={
+            content?.pageInfo?.hero || "/images/sub_banner/business_hero.png"
+          }
+        />
 
         {/* Breadcrumb */}
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={lang === "KOR" ? "사업분야 > 연구분야" : "Business > Research Fields"}
+            path={content?.pageInfo?.pageLocation || "사업분야 > 연구분야"}
           />
         </div>
 
@@ -68,12 +101,11 @@ export default function App() {
             {/* ⬇ Left-aligned & bigger title */}
             <motion.div className="text-left mb-16" variants={fadeIn}>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                {lang === "KOR" ? "핵심 연구 분야" : "Core Research Fields"}
+                {content?.section1?.title || "핵심 연구 분야"}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl">
-                {lang === "KOR"
-                  ? "최첨단 기술과 혁신적인 솔루션으로 다양한 산업 분야에서 고객의 성공을 지원합니다."
-                  : "Supporting customer success across various industries with cutting-edge technology and innovative solutions."}
+                {content?.section1?.description ||
+                  "최첨단 기술과 혁신적인 솔루션으로 다양한 산업 분야에서 고객의 성공을 지원합니다."}
               </p>
             </motion.div>
 
@@ -85,142 +117,58 @@ export default function App() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {/* Semiconductor */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-                variants={itemVariants}
-                whileHover="hover"
-                initial="rest"
-              >
-                <motion.div variants={cardHover}>
-                  <div className="relative h-64">
-                    <Image
-                      src="/images/business/rnd/semiconductor.png"
-                      alt="Semiconductor Equipment"
-                      className="w-full h-full object-cover"
-                      fill
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <Cpu className="w-8 h-8 mb-2" />
-                      <h3 className="text-lg font-semibold">
-                        {businessData.semiconductor.subtitle}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">
-                      {lang === "KOR" ? "이차전지 제조 및 신뢰성 장비" : "Secondary Battery & Reliability Equipment"}
-                    </h4>
-                    <div className="space-y-3">
-                      {businessData.semiconductor.additionalServices.map((service, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-6 pt-4 border-top border-gray-100">
-                      <h4 className="text-xl font-bold text-gray-900 mb-4">
-                        {businessData.semiconductor.title}
-                      </h4>
-                      <div className="space-y-3">
-                        {businessData.semiconductor.services.map((service, index) => (
-                          <div key={index} className="flex items-start space-x-3">
-                            <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                          </div>
-                        ))}
+              {content?.section1?.researchItems.map((item, index) => (
+                <motion.div
+                  key={`research-item-${index}`}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+                  variants={itemVariants}
+                  whileHover="hover"
+                  initial="rest"
+                >
+                  <motion.div variants={cardHover}>
+                    <div className="relative h-64">
+                      <Image
+                        src={
+                          item.hero
+                            ? item.hero.url
+                            : "/images/business/rnd/semiconductor.png"
+                        }
+                        alt={item.title || "Semiconductor Equipment"}
+                        className="w-full h-full object-cover"
+                        fill
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <Cpu className="w-8 h-8 mb-2" />
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-
-              {/* Factory Automation */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-                variants={itemVariants}
-                whileHover="hover"
-                initial="rest"
-              >
-                <motion.div variants={cardHover}>
-                  <div className="relative h-64">
-                    <Image
-                      src="https://images.unsplash.com/photo-1716191299980-a6e8827ba10b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYWN0b3J5JTIwYXV0b21hdGlvbiUyMGluZHVzdHJpYWwlMjByb2JvdHN8ZW58MXx8fHwxNzU2MzcyODUxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                      alt="Factory Automation"
-                      className="w-full h-full object-cover"
-                      fill
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <Cog className="w-8 h-8 mb-2" />
-                      <h3 className="text-lg font-semibold">{businessData.automation.subtitle}</h3>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">
-                      {businessData.automation.title}
-                    </h4>
-                    <div className="space-y-3 mb-6">
-                      {businessData.automation.services.map((service, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                      <h4 className="text-xl font-bold text-gray-900 mb-4">
-                        {lang === "KOR" ? "시스템 통합(System Integration)" : "System Integration"}
-                      </h4>
+                    <div className="p-6">
                       <div className="space-y-3">
-                        {businessData.automation.systemIntegration.map((service, index) => (
-                          <div key={index} className="flex items-start space-x-3">
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                          </div>
-                        ))}
+                        <Markdown
+                          components={{
+                            h2: h2Component,
+                            h3: ({ children }) => (
+                              <div className="flex items-start space-x-3">
+                                <CheckCircle
+                                  className={`w-5 h-5 ${
+                                    colors[index % colors.length]
+                                  } mt-0.5 flex-shrink-0`}
+                                />
+                                <span className="text-sm text-gray-700 leading-relaxed">
+                                  {children}
+                                </span>
+                              </div>
+                            )
+                          }}
+                        >
+                          {item.description}
+                        </Markdown>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-
-              {/* Mobility */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-                variants={itemVariants}
-                whileHover="hover"
-                initial="rest"
-              >
-                <motion.div variants={cardHover}>
-                  <div className="relative h-64">
-                    <Image
-                      src="/images/business/rnd/mobilerobot.png"
-                      alt="Mobility Robot"
-                      className="w-full h-full object-cover"
-                      fill
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <Car className="w-8 h-8 mb-2" />
-                      <h3 className="text-lg font-semibold">{businessData.mobility.subtitle}</h3>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-xl font-bold text-gray-900 mb-4">{businessData.mobility.title}</h4>
-                    <div className="space-y-3">
-                      {businessData.mobility.services.map((service, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <CheckCircle className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-gray-700 leading-relaxed">{service}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
+              ))}
             </motion.div>
           </div>
         </motion.section>
@@ -236,14 +184,12 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px] py-16 lg:py-20">
             <div className="text-center">
               <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-                {lang === "KOR"
-                  ? "혁신적인 기술력으로 고객과 함께 성장합니다"
-                  : "Growing together with customers through innovative technology"}
+                {content?.section2?.title ||
+                  "혁신적인 기술력으로 고객과 함께 성장합니다"}
               </h3>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                {lang === "KOR"
-                  ? "반도체, 자동화, 모빌리티 분야에서 축적된 기술력과 경험을 바탕으로 고객의 요구에 맞는 맞춤형 솔루션을 제공하며, 지속적인 연구개발을 통해 미래 기술을 선도하고 있습니다."
-                  : "Based on our accumulated technical expertise and experience in semiconductors, automation, and mobility, we provide customized solutions that meet customer needs and lead future technology through continuous R&D."}
+                {content?.section2?.description ||
+                  "반도체, 자동화, 모빌리티 분야에서 축적된 기술력과 경험을 바탕으로 고객의 요구에 맞는 맞춤형 솔루션을 제공하며, 지속적인 연구개발을 통해 미래 기술을 선도하고 있습니다."}
               </p>
             </div>
           </div>
