@@ -1,40 +1,58 @@
-import React from "react";
-import Layout from "@/components/Layout";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
 import HeroSection from "@/components/HeroSection";
-import Link from "next/link";
+import Layout from "@/components/Layout";
+import { noticePage, noticePageContent } from "@/lib/strapi/careers/noticePage";
 import { useLangStore } from "@/stores/langStore";
-import Head from "next/head";
 import { motion, type Transition } from "framer-motion";
 import { ArrowDownToLine, FileText } from "lucide-react";
+import Head from "next/head";
+import Link from "next/link";
+import React from "react";
 
 const cardAppearTransition: Transition = {
   duration: 0.7,
-  ease: [0.22, 1, 0.36, 1],
+  ease: [0.22, 1, 0.36, 1]
 };
 
-const RecruitmentBoard: React.FC = () => {
+export const getStaticProps = async () => {
+  const content = await noticePage.find({
+    locale: "ko-KR",
+    populate: [
+      "pageInfo",
+      "section1",
+      "section1.jobSites",
+      "section2",
+      "section2.forms",
+      "section2.forms.file"
+    ]
+  });
+  return {
+    props: { content: content?.data }
+  };
+};
+
+const RecruitmentBoard: React.FC<{ content: noticePageContent }> = ({
+  content
+}) => {
   const lang = useLangStore((state) => state.lang) || "KOR";
 
   return (
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "채용공고 | 수만" : "Recruit Notice | SUMAN"}</title>
+        <title>{content?.pageInfo?.title || "채용공고 | 수만"}</title>
       </Head>
 
       <main className="min-h-screen bg-gradient-to-b from-white via-sky-50/30 to-white pt-[90px] text-slate-900">
         <HeroSection
-          title={lang === "KOR" ? "채용공고" : "Recruit Notice"}
-          backgroundImage="/images/sub_banner/careers_hero.png"
+          title={content?.pageInfo?.title || "채용공고"}
+          backgroundImage={
+            content?.pageInfo?.hero || "/images/sub_banner/careers_hero.png"
+          }
         />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={
-              lang === "KOR"
-                ? "인재채용 > 채용공고"
-                : "Recruitment > Recruit Notice"
-            }
+            path={content?.pageInfo?.pageLocation || "인재채용 > 채용공고"}
           />
         </div>
 
@@ -43,28 +61,23 @@ const RecruitmentBoard: React.FC = () => {
           <section className="py-16 md:py-20 bg-gradient-to-b from-slate-50/50 via-white to-slate-50/30">
             <div className="max-w-7xl mx-auto px-6 md:px-[60px] lg:px-[0px]">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10 text-left">
-                {lang === "KOR" ? "채용 사이트" : "Recruitment Site"}
+                {content?.section1?.title || "채용 사이트"}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <RecruitmentCard
-                  title="Saramin"
-                  link="https://m.saramin.co.kr/job-search/company-info-view/recruit?csn=ZDVyVitYUjJKUno3Y2NmWXl6K0pWQT09&t_ref_content=generic"
-                />
-                <RecruitmentCard
-                  title="JOB KOREA"
-                  link="https://www.jobkorea.co.kr/net/company/45215125/Recruit"
-                  highlight="blue-800"
-                />
-                <RecruitmentCard
-                  title="고용24"
-                  link="https://www.work24.go.kr"
-                />
+                {content?.section1?.jobSites?.map((site) => (
+                  <RecruitmentCard
+                    key={site.link}
+                    title={site.name}
+                    description={site.description}
+                    link={site.link}
+                  />
+                ))}
               </div>
             </div>
           </section>
 
-          <DocumentDownloadBanner />
+          <DocumentDownloadBanner content={content?.section2} />
         </div>
 
         <hr className="my-6 border-gray-200 w-full" />
@@ -74,83 +87,38 @@ const RecruitmentBoard: React.FC = () => {
   );
 };
 
+const accentColors = [
+  "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
+  "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
+  "from-[#6366F1] via-[#4F46E5] to-[#4338CA]"
+];
+
+const getFileExtension = (name: string) => {
+  return name.split(".")?.at(-1)?.toUpperCase();
+};
+
 // 📎 Download Banner Section (KOR/ENG Support)
-const DocumentDownloadBanner: React.FC = () => {
-  const lang = useLangStore((state) => state.lang) || "KOR";
+const DocumentDownloadBanner: React.FC<{
+  content: noticePageContent["section2"];
+}> = ({ content }) => {
+  const sectionCopy = {
+    heading: content?.title || "자료실",
+    highlight: content?.subtitle || "지원서 양식",
+    description:
+      content?.description ||
+      "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요."
+  };
 
-  const sectionCopy =
-    lang === "KOR"
-      ? {
-          heading: "자료실",
-          highlight: "지원서 양식",
-          description: "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요.",
-        }
-      : {
-          heading: "Related Document",
-          highlight: "Application Forms",
-          description: "Choose the application template you need and download it instantly.",
-        };
-
-  const documents =
-    lang === "KOR"
-      ? [
-          {
-            id: "word",
-            href: "/images/입사지원서 양식 다운로드(Word).docx",
-            title: "입사지원서 양식 (Word)",
-            description: "간편하게 수정 가능한 Microsoft Word 양식입니다.",
-            badge: "DOCX",
-            accent: "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
-            buttonLabel: "Word 파일 받기",
-          },
-          {
-            id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(한글).hwp",
-            title: "입사지원서 양식 (HWP)",
-            description: "한글 전용 문서 편집기에 최적화된 양식입니다.",
-            badge: "HWP",
-            accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
-            buttonLabel: "HWP 파일 받기",
-          },
-          {
-            id: "notice",
-            href: "/images/부문 신입 및 경력직 채용 공고문_2025.00.00.docx",
-            title: "채용 공고문",
-            description: "현재 채용 진행중인 내부 공고가 없습니다.",
-            badge: "DOCX",
-            accent: "from-[#6366F1] via-[#4F46E5] to-[#4338CA]",
-            buttonLabel: "공고문 다운로드",
-          },
-        ]
-      : [
-          {
-            id: "word",
-            href: "/images/입사지원서 양식 다운로드(Word).docx",
-            title: "Application Form Template (Word)",
-            description: "Editable Microsoft Word version of the application form.",
-            badge: "DOCX",
-            accent: "from-[#38BDF8] via-[#2563EB] to-[#1D4ED8]",
-            buttonLabel: "Download Word Template",
-          },
-          {
-            id: "hwp",
-            href: "/images/입사지원서 양식 다운로드(한글).hwp",
-            title: "Application Form Template (HWP)",
-            description: "Hangul word processor version of the application form.",
-            badge: "HWP",
-            accent: "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
-            buttonLabel: "Download HWP Template",
-          },
-          {
-            id: "notice",
-            href: "/images/부문 신입 및 경력직 채용 공고문_2025.00.00.docx",
-            title: "Recruitment Notice",
-            description: "Download the latest recruitment announcement document.",
-            badge: "DOCX",
-            accent: "from-[#6366F1] via-[#4F46E5] to-[#4338CA]",
-            buttonLabel: "Download Notice",
-          },
-        ];
+  const documents = content?.forms?.map((form, index) => ({
+    id: form.name,
+    href:
+      `${process.env.NEXT_PUBLIC_STRAPI_UPLOAD_URL}${form.file?.url}` || "#",
+    title: form.name,
+    description: form.description,
+    badge: form.file?.name ? getFileExtension(form.file.name) : "DOCX",
+    accent: accentColors[index % accentColors.length],
+    buttonLabel: form.downloadText
+  }));
 
   return (
     <section className="bg-gradient-to-b from-slate-100/50 via-[#f0f5ff] to-slate-50/60 mt-2 px-6 md:px-[60px] lg:px-[0px]">
@@ -165,13 +133,24 @@ const DocumentDownloadBanner: React.FC = () => {
             aria-hidden="true"
             className="absolute -right-20 -top-24 h-48 w-48 rounded-full bg-blue-300/40 blur-3xl"
             animate={{ y: [0, -14, 0], scale: [1, 1.06, 1] }}
-            transition={{ duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+            transition={{
+              duration: 9,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut"
+            }}
           />
           <motion.span
             aria-hidden="true"
             className="absolute -bottom-24 left-10 h-52 w-52 rounded-full bg-blue-200/30 blur-[120px]"
             animate={{ y: [0, 16, 0], scale: [1, 1.05, 1] }}
-            transition={{ duration: 10, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 0.8 }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+              delay: 0.8
+            }}
           />
 
           <div className="relative z-10 flex flex-col gap-8">
@@ -180,8 +159,12 @@ const DocumentDownloadBanner: React.FC = () => {
                 {/*<Sparkles className="h-4 w-4 text-[#1D3762]" />*/}
                 {sectionCopy.highlight}
               </span>
-              <h2 className="text-2xl font-bold text-[#0A1633] sm:text-3xl">{sectionCopy.heading}</h2>
-              <p className="max-w-2xl text-sm text-[#3B4B77] sm:text-base">{sectionCopy.description}</p>
+              <h2 className="text-2xl font-bold text-[#0A1633] sm:text-3xl">
+                {sectionCopy.heading}
+              </h2>
+              <p className="max-w-2xl text-sm text-[#3B4B77] sm:text-base">
+                {sectionCopy.description}
+              </p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
@@ -189,11 +172,15 @@ const DocumentDownloadBanner: React.FC = () => {
                 <motion.a
                   key={doc.id}
                   href={doc.href}
-                  download
+                  download={doc.href !== "#" ? doc.title : undefined}
                   aria-label={`${doc.buttonLabel} - ${doc.title}`}
                   className="group relative overflow-hidden rounded-2xl border border-[#d7def5] bg-white/80 p-6 shadow-lg shadow-[#1d3762]/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#1d3762]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D3762]/40"
                   initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0, transition: cardAppearTransition }}
+                  whileInView={{
+                    opacity: 1,
+                    y: 0,
+                    transition: cardAppearTransition
+                  }}
                   viewport={{ once: true, amount: 0.3 }}
                 >
                   <div
@@ -210,8 +197,12 @@ const DocumentDownloadBanner: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-[#102042] sm:text-xl">{doc.title}</h3>
-                      <p className="mt-2 text-sm text-[#42527A]">{doc.description}</p>
+                      <h3 className="text-lg font-semibold text-[#102042] sm:text-xl">
+                        {doc.title}
+                      </h3>
+                      <p className="mt-2 text-sm text-[#42527A]">
+                        {doc.description}
+                      </p>
                     </div>
                   </div>
                   <div className="relative z-10 mt-6 flex items-center justify-between text-sm font-semibold text-[#1D3762]">
@@ -235,17 +226,16 @@ const DocumentDownloadBanner: React.FC = () => {
 // 💼 Recruitment Card Component
 const RecruitmentCard: React.FC<{
   title: string;
+  description?: string;
   link: string;
   highlight?: string;
-}> = ({ title, link, highlight = "gray-800" }) => {
-  const lang = useLangStore((state) => state.lang) || "KOR";
-
+}> = ({ title, description, link, highlight = "gray-800" }) => {
   return (
     <div className="flex flex-col bg-[#0A1633] rounded-xl p-6 md:p-8 text-white min-h-[220px]">
       <div className="flex-grow">
         <h3 className="text-lg font-semibold mb-2">{title}</h3>
         <p className="text-sm text-gray-300 mb-6">
-          {lang === "KOR" ? "지금 바로 지원해 보세요" : "Apply now"}
+          {description || "지금 바로 지원해 보세요"}
         </p>
       </div>
       <Link
