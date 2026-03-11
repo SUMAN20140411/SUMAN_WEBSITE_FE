@@ -15,30 +15,39 @@ export default function HistoryPage() {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut" as const,
-      },
-    },
+        ease: "easeOut" as const
+      }
+    }
   };
-  
+
   const contactInfo = [
-    { label: lang === "KOR" ? "이름 / 소속 / 연락처 / 문의부서 / 문의내용" : "Name / Affiliation / Phone / Department / Inquiry Contents", value: "" },
+    {
+      label:
+        lang === "KOR"
+          ? "이름 / 소속 / 연락처 / 문의부서 / 문의내용"
+          : "Name / Affiliation / Phone / Department / Inquiry Contents",
+      value: ""
+    }
   ];
 
   return (
-    <>
     <Layout>
       <Head>
-        <title>{lang === "KOR" ? "문의하기 | 수만" : "Contact Us | SUMAN"}</title>
+        <title>
+          {lang === "KOR" ? "문의하기 | 수만" : "Contact Us | SUMAN"}
+        </title>
       </Head>
       <main className="min-h-screen bg-white pt-[90px] text-slate-900">
         <HeroSection
           title={lang === "KOR" ? "문의하기" : "Contact Us"}
           backgroundImage="/images/sub_banner/support_banner.png"
         />
-        
+
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={lang === "KOR" ? "고객지원 > 문의하기" : "Support > Contact Us"}
+            path={
+              lang === "KOR" ? "고객지원 > 문의하기" : "Support > Contact Us"
+            }
           />
         </div>
 
@@ -137,8 +146,7 @@ export default function HistoryPage() {
           </div>
         </div>
         <hr className="my-8 border-gray-200 w-full" />
-        </main>
-      </Layout>
-    </>
+      </main>
+    </Layout>
   );
 }
