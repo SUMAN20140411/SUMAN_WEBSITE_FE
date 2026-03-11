@@ -66,7 +66,6 @@ export default function WellnessPage({
 }: {
   content: wellnessPageContent;
 }) {
-  console.log(content);
   const { lang } = useLangStore();
   const currentData: WellnessData =
     wellnessContent[lang] || wellnessContent.KOR;
