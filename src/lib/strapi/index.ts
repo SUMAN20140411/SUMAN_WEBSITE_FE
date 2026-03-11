@@ -8,6 +8,7 @@ export type Media = {
   id: string;
   name: string;
   url: string;
+  mime: string;
   alternativeText: string;
   caption: string;
 };
