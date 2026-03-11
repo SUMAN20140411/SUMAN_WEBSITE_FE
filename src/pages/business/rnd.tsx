@@ -1,15 +1,15 @@
 // app/rnd.tsx  (updated)
-import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
-import { motion, type Transition } from "framer-motion";
-import { useLangStore } from "@/stores/langStore";
-import { heroText, businessAreasData } from "@/data/rnd";
-import Image from "next/image";
-import { CheckCircle, Cog, Cpu, Car } from "lucide-react";
-import { useEffect } from "react";
-import Head from "next/head";
+import HeroSection from "@/components/HeroSection";
+import Layout from "@/components/Layout";
+import { businessAreasData, heroText } from "@/data/rnd";
 import { rndPage, rndPageContent } from "@/lib/strapi/business/rndPage";
+import { useLangStore } from "@/stores/langStore";
+import { motion, type Transition } from "framer-motion";
+import { CheckCircle, Cpu } from "lucide-react";
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect } from "react";
 import Markdown, { Components } from "react-markdown";
 
 const colors = ["text-blue-600", "text-green-600", "text-purple-600"];
