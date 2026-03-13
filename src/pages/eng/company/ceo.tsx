@@ -9,13 +9,13 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     const content = await engCeoPage.find({
       locale: "en",
-      populate: ["pageInfo", "messages", "signatures"] // populates all relations/media 1 level deep
+      populate: ["pageInfo", "signatures"] // populates all relations/media 1 level deep
     });
     return { props: { content: content?.data } };
   } catch {
     const fallback = await engCeoPage.find({
       locale: "ko-KR",
-      populate: ["pageInfo", "messages", "signatures"]
+      populate: ["pageInfo", "signatures"]
     });
     return { props: { content: fallback?.data } };
   }

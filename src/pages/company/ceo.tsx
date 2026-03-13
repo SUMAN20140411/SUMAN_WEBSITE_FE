@@ -10,6 +10,7 @@ import { motion, type Transition } from "framer-motion";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Markdown from "react-markdown";
 
 const slideInRight = {
   hidden: { opacity: 0, y: 80 },
@@ -32,7 +33,7 @@ const textReveal = {
 export const getStaticProps: GetStaticProps = async () => {
   const content = await ceoPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "messages", "signatures"] // populates all relations/media 1 level deep
+    populate: ["pageInfo", "signatures"] // populates all relations/media 1 level deep
   });
   return { props: { content: content?.data } };
 };
@@ -95,9 +96,7 @@ export default function CeoPage({ content }: { content: ceoPageContent }) {
 
                 {/* Paragraphs */}
                 <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed">
-                  {content.messages.map((paragraph, index) => (
-                    <p key={Math.random()}>{paragraph.text}</p>
-                  ))}
+                  <Markdown>{content.message}</Markdown>
                 </div>
 
                 {/* Signature */}
