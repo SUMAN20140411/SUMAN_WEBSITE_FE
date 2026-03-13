@@ -9,7 +9,7 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     const content = await philosophyPage.find({
       locale: "en",
-      populate: ["pageInfo", "section1", "keywords", "keywords.hero"]
+      populate: ["pageInfo", "section1", "keywords"]
     });
 
     return {
@@ -20,7 +20,7 @@ export const getStaticProps: GetStaticProps = async () => {
   } catch {
     const fallback = await philosophyPage.find({
       locale: "ko-KR",
-      populate: ["pageInfo", "section1", "keywords", "keywords.hero"]
+      populate: ["pageInfo", "section1", "keywords"]
     });
 
     return {

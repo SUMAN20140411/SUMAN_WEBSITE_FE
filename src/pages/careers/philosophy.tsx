@@ -63,7 +63,6 @@ export default function TalentPage({
 }: {
   content: philosophyPageContent;
 }) {
-  console.log(content);
   const lang = useLangStore((state) => state.lang);
   const currentText = Herotext[lang];
   const traits = traitData[lang];
@@ -237,8 +236,7 @@ export default function TalentPage({
                         desc: trait.description
                       }}
                       bgImage={
-                        trait.hero?.url ||
-                        "/images/careers/philosophy/sincerity.png"
+                        trait.hero || "/images/careers/philosophy/sincerity.png"
                       }
                       className="w-full max-w-[308px] sm:max-w-[330px] md:max-w-[352px] xl:max-w-[374px]"
                     />
