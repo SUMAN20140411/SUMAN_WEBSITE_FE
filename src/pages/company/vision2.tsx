@@ -465,7 +465,16 @@ export default function Vision2Page({
                           </div>
                           <div className="flex-1">
                             {item.description ? (
-                              <BlocksRenderer content={item.description} />
+                              <BlocksRenderer
+                                content={item.description}
+                                blocks={{
+                                  paragraph: ({ children }) => (
+                                    <p className="whitespace-pre-line text-sm text-black leading-relaxed">
+                                      {children}
+                                    </p>
+                                  )
+                                }}
+                              />
                             ) : (
                               <p className="whitespace-pre-line text-sm text-black leading-relaxed">
                                 {item.title || ""}
@@ -547,8 +556,8 @@ export default function Vision2Page({
                   <div className="text-black text-xl md:text-2xl font-semibold mb-2 transition-all duration-200 hover:scale-105">
                     {content.section4.title || "비즈니스 모델"}
                   </div>
-                  <h2 className="text-black text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105">
-                    {lang === "KOR" ? (
+                  <h2 className="text-black text-xl md:text-2xl font-semibold leading-relaxed text-left transition-all duration-200 hover:scale-105 whitespace-pre-line">
+                    {
                       <>
                         {content.section4.subtitle ||
                           "끊임없는 연구개발과 스마트 공정 혁신을 통해"}{" "}
@@ -565,22 +574,7 @@ export default function Vision2Page({
                             "제조 효율의 새로운 기준을 만들어 갑니다"}
                         </span>
                       </>
-                    ) : (
-                      <>
-                        {content.section4.subtitle ||
-                          "Continuous R&D and smart process "}{" "}
-                        <span
-                          className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
-                          style={{
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent"
-                          }}
-                        >
-                          {content.section4.emphasizedSubtitle ||
-                            "Creating new standards for manufacturing efficiency"}
-                        </span>
-                      </>
-                    )}
+                    }
                   </h2>
                 </motion.div>
               </motion.div>
