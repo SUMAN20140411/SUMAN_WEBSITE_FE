@@ -1,47 +1,77 @@
-import Header from "@/components/HeaderEng";
 import Footer from "@/components/Footer";
+import Header from "@/components/HeaderEng";
+import { homePage, homePageContent } from "@/lib/strapi/company/homePage";
 import { motion, type Transition } from "framer-motion";
-import Image from "next/image";
-import Head from "next/head";
-import Link from "next/link";
-import { homeContentEng } from "@/data/home";
 import { GetStaticProps } from "next";
-import type { HomePageProps } from "@/types/home";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 
 export const getStaticProps: GetStaticProps = async () => {
-  return { props: { content: homeContentEng } };
+  const content = await homePage.find({
+    locale: "en",
+    populate: [
+      "section1",
+      "section2",
+      "section2.keywords",
+      "section3",
+      "section3.solutions",
+      "section4",
+      "section4.services"
+    ] // populates all relations/media 1 level deep
+  });
+  return { props: { content: content?.data } };
 };
 
-export default function HomePage({ content }: HomePageProps) {
+export default function EnHomePage({ content }: { content: homePageContent }) {
   const heroFontFamily = "'Malgun Gothic', '맑은 고딕', sans-serif";
-  const labelClass = "text-base sm:text-lg lg:text-2xl font-semibold text-black";
+  const labelClass =
+    "text-base sm:text-lg lg:text-2xl font-semibold text-black";
   const buttonClass =
     "text-sm sm:text-base bg-gray-100 text-gray-800 rounded-full px-4 py-2 hover:bg-gray-300 transition";
 
   const fadeInVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } as Transition },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" } as Transition
+    }
   };
 
   const circleVariants = {
     hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" } as Transition },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" } as Transition
+    }
   };
   const heroContainerVariants = {
     hidden: {},
-    visible: { transition: { staggerChildren: 0.18 } },
+    visible: { transition: { staggerChildren: 0.18 } }
   };
 
   const heroLineVariants = {
-    hidden: (index: number) => ({ opacity: 0, y: 48, x: index % 2 === 0 ? -28 : 28, scale: 0.94, filter: "blur(8px)" }),
+    hidden: (index: number) => ({
+      opacity: 0,
+      y: 48,
+      x: index % 2 === 0 ? -28 : 28,
+      scale: 0.94,
+      filter: "blur(8px)"
+    }),
     visible: (index: number) => ({
       opacity: 1,
       y: 0,
       x: 0,
       scale: 1,
       filter: "blur(0px)",
-      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 } as Transition,
-    }),
+      transition: {
+        duration: 0.9,
+        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.08
+      } as Transition
+    })
   };
 
   const heroSheenVariants = {
@@ -49,19 +79,38 @@ export default function HomePage({ content }: HomePageProps) {
     visible: (index: number) => ({
       x: "120%",
       opacity: [0, 0.65, 0],
-      transition: { duration: 1.1, ease: "easeInOut", delay: index * 0.08 + 0.26 } as Transition,
-    }),
+      transition: {
+        duration: 1.1,
+        ease: "easeInOut",
+        delay: index * 0.08 + 0.26
+      } as Transition
+    })
   };
 
   return (
     <>
       <Head>
         <title>SUMAN | 2차전지·반도체 신뢰성 장비 전문 기업</title>
-        <meta name="description" content="수만은 2차전지 생산 장비와 반도체 신뢰성 평가 장비를 개발하는 정밀 제조 기업입니다." />
-        <meta name="keywords" content="수만, 주식회사 수만, SUMAN, suman, 정밀기술, 2차전지 장비, 반도체 신뢰성" />
-        <meta property="og:title" content="(주) 수만 | 정밀 제조 기술의 선두주자" />
-        <meta property="og:description" content="2차전지 생산 장비와 반도체 신뢰성 평가 시스템을 제공하는 정밀 기술 기업, 수만." />
-        <meta property="og:image" content="https://www.suman.co.kr/images/logo_suman.png" />
+        <meta
+          name="description"
+          content="수만은 2차전지 생산 장비와 반도체 신뢰성 평가 장비를 개발하는 정밀 제조 기업입니다."
+        />
+        <meta
+          name="keywords"
+          content="수만, 주식회사 수만, SUMAN, suman, 정밀기술, 2차전지 장비, 반도체 신뢰성"
+        />
+        <meta
+          property="og:title"
+          content="(주) 수만 | 정밀 제조 기술의 선두주자"
+        />
+        <meta
+          property="og:description"
+          content="2차전지 생산 장비와 반도체 신뢰성 평가 시스템을 제공하는 정밀 기술 기업, 수만."
+        />
+        <meta
+          property="og:image"
+          content="https://www.suman.co.kr/images/logo_suman.png"
+        />
         <meta property="og:url" content="https://www.suman.co.kr" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="수만" />
@@ -73,15 +122,24 @@ export default function HomePage({ content }: HomePageProps) {
       <main>
         {/* Hero */}
         <section className="relative h-screen">
-          <video autoPlay muted loop playsInline className="absolute w-full h-full object-cover">
-            <source src="/videos/main_banner_1.mp4" type="video/mp4" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute w-full h-full object-cover"
+          >
+            <source
+              src={content.section1.hero || "/videos/main_banner_1.mp4"}
+              type="video/mp4"
+            />
             브라우저가 video 태그를 지원하지 않습니다.
           </video>
 
           {/* Hero text (font +10%) */}
           <div className="absolute inset-0 flex flex-col justify-center items-start text-white z-10 px-4 sm:px-6 md:px-[120px] text-left">
             <div className="w-full max-w-4xl">
-              {content.section1Text.subtitle ? (
+              {content.section1.title ? (
                 <motion.h1
                   className="font-semibold tracking-[0.45em] uppercase text-white/70 mb-6
                              text-[0.825rem] sm:text-[0.9625rem] md:text-[1.1rem]" /* why: +10% */
@@ -90,7 +148,7 @@ export default function HomePage({ content }: HomePageProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1 }}
                 >
-                  {content.section1Text.subtitle}
+                  {content.section1.title}
                 </motion.h1>
               ) : null}
 
@@ -101,7 +159,7 @@ export default function HomePage({ content }: HomePageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.3 }}
               >
-                {content.section1Text.lines.map((line, index) => (
+                {content.section1.description.split("\n").map((line, index) => (
                   <p
                     key={index}
                     className="font-light mb-4 whitespace-nowrap
@@ -116,8 +174,16 @@ export default function HomePage({ content }: HomePageProps) {
         </section>
 
         {/* Core Value */}
-        <section className="relative w-full min-h-[900px] bg-cover bg-center text-white px-4 sm:px-6" style={{ aspectRatio: "1440/400" }}>
-          <Image src={content.section2.bgImage} alt="배경" fill className="absolute inset-0 w-full h-full object-cover z-0" />
+        <section
+          className="relative w-full min-h-[900px] bg-cover bg-center text-white px-4 sm:px-6"
+          style={{ aspectRatio: "1440/400" }}
+        >
+          <Image
+            src={content.section2.hero || "/images/main/main_tech.jpg"}
+            alt="배경"
+            fill
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          />
           {/* header */}
           <motion.div
             className="relative z-20 w-full pt-20 px-4 sm:px-6 md:px-[120px] flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-0 mb-10"
@@ -126,7 +192,9 @@ export default function HomePage({ content }: HomePageProps) {
             transition={{ duration: 1 }}
             viewport={{ once: true, amount: 0.3 }}
           >
-            <p className="text-base sm:text-lg lg:text-2xl font-semibold text-white">Core Value</p>
+            <p className="text-base sm:text-lg lg:text-2xl font-semibold text-white">
+              {content.section2.title}
+            </p>
             <div className="flex-grow" />
             <Link href="/company/vision2">
               <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
@@ -145,7 +213,7 @@ export default function HomePage({ content }: HomePageProps) {
               viewport={{ once: true, amount: 0.3 }}
             >
               <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 md:mb-7 tracking-wide text-white">
-                {content.section2.title}
+                {content.section2.subTitle}
               </h2>
               <p className="text-sm md:text-sm lg:text-xl text-white/70 leading-relaxed whitespace-pre-line tracking-wide">
                 {content.section2.description}
@@ -159,17 +227,25 @@ export default function HomePage({ content }: HomePageProps) {
               transition={{ duration: 1 }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              {(content.section2.keywords as string[]).map((title, idx) => (
+              {content.section2.keywords.map((keyword, idx) => (
                 <motion.div
                   key={idx}
                   className="w-28 h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 rounded-full bg-white/10 border border-white/10 flex flex-col justify-center items-center text-sm md:text-base text-white backdrop-blur-sm hover:bg-white/20 transition"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: idx * 0.3, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.6,
+                    delay: idx * 0.3,
+                    ease: "easeOut"
+                  }}
                   viewport={{ once: true, amount: 0.3 }}
                 >
-                  <p className="font-bold text-base md:text-lg lg:text-xl tracking-wide">{title}</p>
-                  <p className="text-xs md:text-xs lg:text-base tracking-wide">{content.section2.translations?.[idx] ?? ""}</p>
+                  <p className="font-bold text-base md:text-lg lg:text-xl tracking-wide">
+                    {keyword.title}
+                  </p>
+                  <p className="text-xs md:text-xs lg:text-base tracking-wide">
+                    {keyword.korTitle}
+                  </p>
                 </motion.div>
               ))}
             </motion.div>
@@ -192,7 +268,7 @@ export default function HomePage({ content }: HomePageProps) {
             transition={{ duration: 1 }}
             viewport={{ once: true, amount: 0.3 }}
           >
-            <p className={labelClass}>Solutions</p>
+            <p className={labelClass}>{content.section3.title}</p>
             <div className="flex-grow" />
             <Link href="/business/service">
               <motion.button
@@ -202,7 +278,7 @@ export default function HomePage({ content }: HomePageProps) {
                 transition={{ duration: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
               >
-                Explore Products & Equipment →
+                {content.section3.buttonLabel} →
               </motion.button>
             </Link>
           </motion.div>
@@ -219,14 +295,14 @@ export default function HomePage({ content }: HomePageProps) {
               {content.section3.title}
             </h2>
             <p className=" text-xl md:text-2xl lg:text-4xl font-bold tracking-wide">
-              {content.section3.subtitle}
+              {content.section3.description}
             </p>
           </motion.div>
 
           {/* cards */}
           <div className="w-full px-4 sm:px-[60px] md:px-[120px] lg:px-[160px]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-10">
-              {content.section3.cards.map((card, index) => (
+              {content.section3.solutions.map((solution, index) => (
                 <motion.div
                   key={index}
                   className="relative w-full h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
@@ -236,14 +312,30 @@ export default function HomePage({ content }: HomePageProps) {
                   viewport={{ once: true, amount: 0.3 }}
                 >
                   <div className="relative w-full h-full">
-                    <Image src={card.img} alt={card.title} fill className="object-cover" sizes="100%" priority />
+                    <Image
+                      src={
+                        solution.hero ||
+                        "/images/main/solution/index_solution.jpg"
+                      }
+                      alt={solution.title}
+                      fill
+                      className="object-cover"
+                      sizes="100%"
+                      priority
+                    />
                     <div className="absolute bottom-0 w-full h-2/3 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
                   </div>
 
                   <div className="absolute bottom-0 lg:bottom-3 z-20 w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-xs md:text-sm lg:text-base tracking-wide leading-tight sm:leading-snug">
-                    <p className="text-xs md:text-sm lg:text-lg mb-1 md:mb-2 lg:mb-7 ">{card.subtitle}</p>
-                    <h3 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-1 lg:mb-2">{card.title}</h3>
-                    <p className="text-xs md:text-xs lg:text-base text-gray-300">{card.description}</p>
+                    <p className="text-xs md:text-sm lg:text-lg mb-1 md:mb-2 lg:mb-7 ">
+                      {solution.title}
+                    </p>
+                    <h3 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-1 lg:mb-2">
+                      {solution.korTitle}
+                    </h3>
+                    <p className="text-xs md:text-xs lg:text-base text-gray-300">
+                      {solution.description}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -266,65 +358,63 @@ export default function HomePage({ content }: HomePageProps) {
             viewport={{ once: true, amount: 0.3 }}
             variants={fadeInVariants}
           >
-            <p className={`${labelClass} mt-12`}>Service</p>
+            <p className={`${labelClass} mt-12`}>{content.section4.title}</p>
             <h2 className="text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal mt-5 mb-5">
-              We provide customized equipment and manufacturing services tailored to your needs.
+              {content.section4.subtitle}
             </h2>
 
-            <p className="text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed mb-8">
-              Suman thoroughly analyzes each customer specific <br />requirements to deliver optimized custom equipment, <br />facilities, and high-quality precision-machined parts.
+            <p className="text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed mb-8 whitespace-pre-line">
+              {content.section4.description}
             </p>
           </motion.div>
 
           <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
             <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image src="/images/main/service/index_solution.jpg" alt="솔루션 서비스" fill className="object-cover rounded-full" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">Solution Service</h3>
-              </motion.div>
-
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image src="/images/main/service/index_equipment.png" alt="맞춤형 장비/설비" fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">Custom Equipment & Facilities</h3>
-              </motion.div>
-
-              <motion.div
-                className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={circleVariants}
-              >
-                <Image src="/images/main/service/index_parts.png" alt="정밀 가공 부품" fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">Precision-Machined Components</h3>
-              </motion.div>
+              {content.section4.services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={circleVariants}
+                >
+                  <Image
+                    src={
+                      service.hero || "/images/main/service/index_solution.jpg"
+                    }
+                    alt={service.title}
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                    {service.title}
+                  </h3>
+                </motion.div>
+              ))}
             </div>
           </div>
         </motion.section>
 
         {/* Contact */}
         <section className="relative w-full mt-0">
-          <Image src={content.footer_banner[0]} alt="footer banner" width={1440} height={220} className="w-full object-cover" style={{ aspectRatio: "1440/220" }} />
+          <Image
+            src={"/images/main/main_banner.png"}
+            alt="footer banner"
+            width={1440}
+            height={220}
+            className="w-full object-cover"
+            style={{ aspectRatio: "1440/220" }}
+          />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-white px-4 sm:px-6 pointer-events-none">
-            <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl font-semibold mb-2 sm:mb-4 lg:mb-7 tracking-wide">Contact us</h2>
+            <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl font-semibold mb-2 sm:mb-4 lg:mb-7 tracking-wide">
+              Contact us
+            </h2>
             <Link href="/support/contact">
               <button className="cursor-pointer pointer-events-auto border border-gray-300 text-sm sm:text-base lg:text-lg text-white px-4 sm:px-8 lg:px-12 py-1 sm:py-2 flex items-center gap-2 hover:bg-gray-300 hover:text-black transition tracking-wide">
-                Contact Us <span className="text-sm sm:text-base lg:text-xl">→</span>
+                Contact Us{" "}
+                <span className="text-sm sm:text-base lg:text-xl">→</span>
               </button>
             </Link>
           </div>

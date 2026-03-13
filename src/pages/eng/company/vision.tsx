@@ -1,2 +1,2 @@
-import visionPage from "@/pages/company/vision";
-export default visionPage;
+import VisionPage from "@/pages/company/vision";
+export default VisionPage;
