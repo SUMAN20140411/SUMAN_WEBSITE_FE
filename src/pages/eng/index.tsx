@@ -291,9 +291,6 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
             transition={{ duration: 1 }}
             viewport={{ once: true, amount: 0.3 }}
           >
-            <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-0 md:mb-3 tracking-wide text-black">
-              {content.section3.title}
-            </h2>
             <p className=" text-xl md:text-2xl lg:text-4xl font-bold tracking-wide">
               {content.section3.description}
             </p>
