@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import { businessAreasData, heroText } from "@/data/rnd";
 import { rndPage, rndPageContent } from "@/lib/strapi/business/rndPage";
 import { useLangStore } from "@/stores/langStore";
+import { Icon } from "@iconify/react";
 import { motion, type Transition } from "framer-motion";
 import { CheckCircle, Cpu } from "lucide-react";
 import Head from "next/head";
@@ -129,9 +130,7 @@ export default function App({ content }: { content: rndPageContent }) {
                     <div className="relative h-64">
                       <Image
                         src={
-                          item.hero
-                            ? item.hero.url
-                            : "/images/business/rnd/semiconductor.png"
+                          item.hero || "/images/business/rnd/semiconductor.png"
                         }
                         alt={item.title || "Semiconductor Equipment"}
                         className="w-full h-full object-cover"
@@ -139,7 +138,16 @@ export default function App({ content }: { content: rndPageContent }) {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                       <div className="absolute bottom-4 left-4 text-white">
-                        <Cpu className="w-8 h-8 mb-2" />
+                        {item.icon ? (
+                          <Icon
+                            icon={item.icon.iconName || "Home"}
+                            width={32}
+                            height={32}
+                            className="mb-2"
+                          />
+                        ) : (
+                          <Cpu className="w-8 h-8 mb-2" />
+                        )}
                         <h3 className="text-lg font-semibold">{item.title}</h3>
                       </div>
                     </div>
@@ -159,7 +167,8 @@ export default function App({ content }: { content: rndPageContent }) {
                                   {children}
                                 </span>
                               </div>
-                            )
+                            ),
+                            hr: () => <hr className="my-4 border-gray-200" />
                           }}
                         >
                           {item.description}

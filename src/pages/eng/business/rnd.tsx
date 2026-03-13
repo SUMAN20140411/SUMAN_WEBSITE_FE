@@ -6,23 +6,13 @@ export const getStaticProps: GetStaticProps = async () => {
   try {
     const content = await rndPage.find({
       locale: "en",
-      populate: [
-        "pageInfo",
-        "section1",
-        "section1.researchItems.hero",
-        "section2"
-      ]
+      populate: ["pageInfo", "section1", "section1.researchItems", "section2"]
     });
     return { props: { content: content?.data } };
   } catch {
     const fallback = await rndPage.find({
       locale: "ko-KR",
-      populate: [
-        "pageInfo",
-        "section1",
-        "section1.researchItems.hero",
-        "section2"
-      ]
+      populate: ["pageInfo", "section1", "section1.researchItems", "section2"]
     });
     return { props: { content: fallback?.data } };
   }
