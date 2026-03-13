@@ -138,10 +138,9 @@ export default function WellnessPage({
                 <div className="relative h-64 overflow-hidden mb-12 rounded-lg shadow-lg">
                   <Image
                     src={
-                      content?.section2?.hero?.url ||
-                      "/images/wellness/life_bg.png"
+                      content?.section2?.hero || "/images/wellness/life_bg.png"
                     }
-                    alt={content?.section2?.hero?.alternativeText || "복리후생"}
+                    alt={content?.section2?.title || "복리후생"}
                     fill
                     className="w-full h-full object-cover object-center brightness-75"
                     priority={sectionIndex === 0}
