@@ -109,10 +109,10 @@ export default function CertificationsPage({
     }
   ];
 
-  let certDataToUse =
-    content.certificates.length > 0
+  const certDataToUse =
+    content.certificates?.length > 0
       ? content.certificates
-      : certificatesData.length > 0
+      : certificatesData?.length > 0
       ? certificatesData
       : certData.map((cert) => ({ name: cert.labelKOR, file: cert.img }));
 
