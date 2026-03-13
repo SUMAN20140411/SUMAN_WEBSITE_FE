@@ -131,7 +131,6 @@ export default function ServicePage({
 }: {
   content: servicePageContent;
 }) {
-  console.log(content);
   const { lang } = useLangStore();
   const langCode = (lang === "KOR" ? "KOR" : "ENG") as "KOR" | "ENG";
   const { equipmentList, measurementEquipmentList } = serviceContent[langCode];
