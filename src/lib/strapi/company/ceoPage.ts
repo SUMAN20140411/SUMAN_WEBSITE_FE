@@ -10,9 +10,7 @@ export type ceoPageContent = {
   };
   title: string;
   subtitle: string;
-  messages: {
-    text: string;
-  }[];
+  message: string;
   signatures: {
     position: string;
     name: string;
