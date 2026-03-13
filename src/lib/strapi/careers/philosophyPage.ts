@@ -1,4 +1,4 @@
-import { IconHub, Media, PageInfo } from "..";
+import { IconHub, PageInfo } from "..";
 import strapiClient from "../../api/strapiClient";
 
 export const philosophyPage = strapiClient.single("philosophy-page");
@@ -17,6 +17,6 @@ export type philosophyPageContent = {
   keywords: {
     title: string;
     description: string;
-    hero: Media;
+    hero: string;
   }[];
 };

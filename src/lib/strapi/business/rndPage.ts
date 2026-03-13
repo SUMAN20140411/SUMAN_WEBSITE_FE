@@ -1,5 +1,5 @@
 import strapiClient from "@/lib/api/strapiClient";
-import { IconHub, Media, PageInfo } from "..";
+import { IconHub, PageInfo } from "..";
 
 export const rndPage = strapiClient.single("rnd-page");
 
@@ -9,7 +9,7 @@ export type rndPageContent = {
     title: string;
     description: string;
     researchItems: {
-      hero: Media;
+      hero: string;
       title: string;
       description: string;
       icon: IconHub;

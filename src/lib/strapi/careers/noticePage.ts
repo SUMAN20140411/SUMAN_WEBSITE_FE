@@ -1,5 +1,5 @@
 import strapiClient from "@/lib/api/strapiClient";
-import { Media, PageInfo } from "..";
+import { PageInfo } from "..";
 
 export const noticePage = strapiClient.single("notice-page");
 
@@ -21,7 +21,7 @@ export type noticePageContent = {
       name: string;
       description: string;
       downloadText: string;
-      file: Media;
+      file: string;
     }[];
   };
 };

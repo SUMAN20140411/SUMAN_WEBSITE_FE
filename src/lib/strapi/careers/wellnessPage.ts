@@ -1,5 +1,5 @@
 import strapiClient from "@/lib/api/strapiClient";
-import { IconHub, Media, PageInfo } from "..";
+import { IconHub, PageInfo } from "..";
 
 export const wellnessPage = strapiClient.single("wellness-page");
 
@@ -11,7 +11,7 @@ export type wellnessPageContent = {
   };
   section2: {
     title: string;
-    hero: Media;
+    hero: string;
     benefits: {
       name: string;
       description: string;
