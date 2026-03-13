@@ -153,7 +153,8 @@ export default function OrgPage({ content }: { content: ciPageContent }) {
                 {content.colors?.map((color) => (
                   <div
                     key={color.name}
-                    className={`w-full max-w-sm p-5 shadow-md flex flex-col justify-between bg-[${color.color}] relative`}
+                    className="w-full max-w-sm p-5 shadow-md flex flex-col justify-between relative"
+                    style={{ backgroundColor: color.color }}
                   >
                     <div className="mb-2 tracking-wide">
                       <h4 className="text-white text-2xl font-medium leading-tight">
