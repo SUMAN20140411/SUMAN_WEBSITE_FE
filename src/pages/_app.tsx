@@ -26,8 +26,12 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events]);
 
   useEffect(() => {
-    router.pathname.includes("/eng") ? setLang("ENG") : setLang("KOR");
-  }, [router.pathname]);
+    if (router.pathname.includes("/eng")) {
+      setLang("ENG");
+    } else {
+      setLang("KOR");
+    }
+  }, [router.pathname, setLang]);
 
   return (
     <>
