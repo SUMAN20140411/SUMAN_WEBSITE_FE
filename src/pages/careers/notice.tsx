@@ -22,8 +22,7 @@ export const getStaticProps = async () => {
       "section1",
       "section1.jobSites",
       "section2",
-      "section2.forms",
-      "section2.forms.file"
+      "section2.forms"
     ]
   });
   return {
@@ -111,11 +110,10 @@ const DocumentDownloadBanner: React.FC<{
 
   const documents = content?.forms?.map((form, index) => ({
     id: form.name,
-    href:
-      `${process.env.NEXT_PUBLIC_STRAPI_UPLOAD_URL}${form.file?.url}` || "#",
+    href: `${form.file}` || "#",
     title: form.name,
     description: form.description,
-    badge: form.file?.name ? getFileExtension(form.file.name) : "DOCX",
+    badge: form.file ? getFileExtension(form.file || "") : "DOCX",
     accent: accentColors[index % accentColors.length],
     buttonLabel: form.downloadText
   }));

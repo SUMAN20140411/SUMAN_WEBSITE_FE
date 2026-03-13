@@ -11,8 +11,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1",
         "section1.jobSites",
         "section2",
-        "section2.forms",
-        "section2.forms.file"
+        "section2.forms"
       ]
     });
 
@@ -29,8 +28,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1",
         "section1.jobSites",
         "section2",
-        "section2.forms",
-        "section2.forms.file"
+        "section2.forms"
       ]
     });
 
