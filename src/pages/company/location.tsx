@@ -5,74 +5,28 @@ import Head from "next/head";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import BreadcrumbSection from "@/components/BreadcrumbSection";
-import { useLangStore } from "@/stores/langStore";
+import { GetStaticProps } from "next";
+import {
+  locationPage,
+  locationPageContent
+} from "@/lib/strapi/company/locationPage";
 
-const kakaoMapConfigs: {
-  [key: string]: {
-    latitude: number;
-    longitude: number;
-    level?: number;
-    address: string;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const content = await locationPage.find({
+    locale: "ko-KR",
+    populate: ["pageInfo", "section1", "section1.locations"]
+  });
+  return {
+    props: { content: content?.data }
   };
-} = {
-  본사: {
-    latitude: 36.439533,
-    longitude: 127.394547,
-    level: 3,
-    address: "대전광역시 대덕구 문평동 43-10",
-  },
-  천안지사: {
-    latitude: 36.848807,
-    longitude: 127.122367,
-    level: 3,
-    address: "충청남도 천안시 서북구 성성동 336-4 G1비즈캠퍼스 4F 401호",
-  },
-  시험센터: {
-    latitude: 36.414282,
-    longitude: 127.413725,
-    level: 3,
-    address: "대전광역시 유성구 테크노2로 187 B동 120호",
-  },
 };
 
-const locationsData = [
-  {
-    key: "본사",
-    title: {
-      KOR: "본사",
-      ENG: "Head Office",
-    },
-    addressSnippet: {
-      KOR: "대전광역시 대덕구 문평서로 17번길 105(문평동)",
-      ENG: "M105, Munpyeongseo-ro 17beon-gil, Daedeok-gu, Daejeon, Republic of Korea",
-    },
-  },
-  {
-    key: "천안지사",
-    title: {
-      KOR: "천안지사",
-      ENG: "Cheonan Place of Business",
-    },
-    addressSnippet: {
-      KOR: "충남 천안시 서북구 2공단4로 40-11(성성동) G1 비즈캠퍼스 4F 401호",
-      ENG: "40-11, 2gongdan 4-ro, Seobuk-gu, Cheonan-si, Chungcheongnam-do, Republic of Korea",
-    },
-  },
-  {
-    key: "시험센터",
-    title: {
-      KOR: "시험센터",
-      ENG: "Testing Center",
-    },
-    addressSnippet: {
-      KOR: "대전광역시 유성구 테크노 2로 309-26(탑립동 929-1)",
-      ENG: "309-26, Techno 2-ro, Yuseong-gu, Daejeon, Republic of Korea",
-    },
-  },
-];
-
-export default function LocationPage() {
-  const lang = useLangStore((state) => state.lang);
+export default function LocationPage({
+  content
+}: {
+  content: locationPageContent;
+}) {
   const [openMap, setOpenMap] = useState<string | null>(null);
   const mapRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const kakaoMaps = useRef<{ [key: string]: kakao.maps.Map | null }>({});
@@ -86,8 +40,8 @@ export default function LocationPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition,
-    },
+      transition: { duration: 0.8, ease: "easeOut" } as Transition
+    }
   };
 
   const mapTransition = useMemo(
@@ -96,69 +50,80 @@ export default function LocationPage() {
         type: "spring",
         stiffness: 200,
         damping: 20,
-        duration: 0.5,
+        duration: 0.5
       } as Transition),
     []
   );
-  
+
   const KAKAO_MAP_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
 
-  const initKakaoMap = useCallback((locationKey: string) => {
-    const config = kakaoMapConfigs[locationKey];
-    const container = mapRefs.current[locationKey];
+  const initKakaoMap = useCallback(
+    (location: {
+      name: string;
+      address: string;
+      latitude: number;
+      longitude: number;
+    }) => {
+      const container = mapRefs.current[location.name];
 
-    if (kakaoMaps.current[locationKey]) return;
+      if (kakaoMaps.current[location.name]) return;
 
-    if (config && container && window.kakao && window.kakao.maps) {
-      const options: kakao.maps.MapOptions = {
-        center: new window.kakao.maps.LatLng(config.latitude, config.longitude),
-        level: config.level,
-      };
-      const map = new window.kakao.maps.Map(container, options);
-      kakaoMaps.current[locationKey] = map;
+      if (location && container && window.kakao && window.kakao.maps) {
+        const options: kakao.maps.MapOptions = {
+          center: new window.kakao.maps.LatLng(
+            location.latitude,
+            location.longitude
+          ),
+          level: 3
+        };
+        const map = new window.kakao.maps.Map(container, options);
+        kakaoMaps.current[location.name] = map;
 
-      const zoomControl = new window.kakao.maps.ZoomControl();
-      map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+        const zoomControl = new window.kakao.maps.ZoomControl();
+        map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
 
-      const marker = new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(
-          config.latitude,
-          config.longitude
-        ),
-        map,
-      });
+        const marker = new window.kakao.maps.Marker({
+          position: new window.kakao.maps.LatLng(
+            location.latitude,
+            location.longitude
+          ),
+          map
+        });
 
-      const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:10px;font-size:14px;font-weight:bold;color:#333;">
-                    <div style="margin-bottom:5px;">${locationKey}</div>
-                    <div style="font-size:12px;color:#666;">${config.address}</div>
+        const infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="padding:10px;font-size:14px;font-weight:bold;color:#333;">
+                    <div style="margin-bottom:5px;">${location.name}</div>
+                    <div style="font-size:12px;color:#666;">${location.address}</div>
                   </div>`,
-        removable: true,
-      });
+          removable: true
+        });
 
-      infoWindows.current[locationKey] = infowindow;
+        infoWindows.current[location.name] = infowindow;
 
-      window.kakao.maps.event.addListener(marker, "click", () => {
-        if (currentOpenInfowindow.current) {
-          currentOpenInfowindow.current.close();
-        }
-        infowindow.open(map, marker);
-        currentOpenInfowindow.current = infowindow;
-      });
+        window.kakao.maps.event.addListener(marker, "click", () => {
+          if (currentOpenInfowindow.current) {
+            currentOpenInfowindow.current.close();
+          }
+          infowindow.open(map, marker);
+          currentOpenInfowindow.current = infowindow;
+        });
 
-      window.kakao.maps.event.addListener(map, "click", () => {
-        if (currentOpenInfowindow.current) {
-          currentOpenInfowindow.current.close();
-          currentOpenInfowindow.current = null;
-        }
-      });
-    }
-  }, []);
+        window.kakao.maps.event.addListener(map, "click", () => {
+          if (currentOpenInfowindow.current) {
+            currentOpenInfowindow.current.close();
+            currentOpenInfowindow.current = null;
+          }
+        });
+      }
+    },
+    []
+  );
 
   const handleToggleMap = useCallback(
-    (location: string) => {
+    (location: { name: string; latitude: number; longitude: number }) => {
       setOpenMap((prevOpenMap) => {
-        const nextOpenMap = prevOpenMap === location ? null : location;
+        const nextOpenMap =
+          prevOpenMap === location.name ? null : location.name;
 
         if (!nextOpenMap && currentOpenInfowindow.current) {
           currentOpenInfowindow.current.close();
@@ -168,9 +133,11 @@ export default function LocationPage() {
         if (nextOpenMap && kakaoMaps.current[nextOpenMap]) {
           setTimeout(() => {
             kakaoMaps.current[nextOpenMap]?.relayout();
-            const config = kakaoMapConfigs[nextOpenMap];
             kakaoMaps.current[nextOpenMap]?.setCenter(
-              new window.kakao.maps.LatLng(config.latitude, config.longitude)
+              new window.kakao.maps.LatLng(
+                location.latitude,
+                location.longitude
+              )
             );
           }, (mapTransition.duration ?? 0.5) * 1000 + 50);
         }
@@ -192,37 +159,32 @@ export default function LocationPage() {
       script.async = true;
       script.onload = () => {
         window.kakao.maps.load(() => {
-          Object.keys(kakaoMapConfigs).forEach(initKakaoMap);
+          content.section1?.locations?.forEach(initKakaoMap);
         });
       };
       document.head.appendChild(script);
     } else if (window.kakao?.maps) {
-      Object.keys(kakaoMapConfigs).forEach(initKakaoMap);
+      content.section1?.locations?.forEach(initKakaoMap);
     }
-  }, [KAKAO_MAP_APP_KEY, initKakaoMap]);
+  }, [KAKAO_MAP_APP_KEY, content.section1?.locations, initKakaoMap]);
 
   return (
-    <>
     <Layout>
       <Head>
-        <title>
-          {lang === "KOR" ? "오시는길" : "Directions"}
-        </title>
+        <title>{content.pageInfo?.title || "오시는길"}</title>
       </Head>
 
       <main className="min-h-screen bg-white pt-[90px] text-slate-900">
         <HeroSection
-          title={lang === "KOR" ? "오시는 길" : "Directions"}
-          backgroundImage="/images/sub_banner/company_banner.png"
+          title={content.pageInfo?.title || "오시는 길"}
+          backgroundImage={
+            content.pageInfo?.hero || "/images/sub_banner/company_banner.png"
+          }
         />
 
         <div className="relative z-30 -mt-8 sm:-mt-10">
           <BreadcrumbSection
-            path={
-              lang === "KOR"
-                ? "회사소개 > Directions"
-                : "Company > Directions"
-            }
+            path={content.pageInfo?.pageLocation || "회사소개 > Directions"}
           />
         </div>
 
@@ -235,40 +197,31 @@ export default function LocationPage() {
               variants={fadeInVariants}
             >
               <h2 className="text-3xl font-bold mb-8">
-                {lang === "KOR" ? (
-                  <span className="text-black font-bold">오시는 길</span>
-                ) : (
-                  <>
-                    <span className="text-black font-bold">Directions to </span>
-                    <span className="text-blue-600 font-bold">SUMAN</span>
-                  </>
-                )}
+                {content.section1?.title || "오시는 길"}
               </h2>
 
               <div className="space-y-0 border-t-2 border-gray-900">
-                {locationsData.map((location) => (
+                {content.section1?.locations?.map((location) => (
                   <div
-                    key={location.key}
+                    key={location.name}
                     className="p-6 border-b border-gray-300"
                   >
                     <div
                       className="flex justify-between items-center cursor-pointer"
-                      onClick={() => handleToggleMap(location.key)}
+                      onClick={() => handleToggleMap(location)}
                     >
                       <div>
                         <h3 className="text-xl font-semibold mb-2">
-                          {location.title[lang]}
+                          {location.name}
                         </h3>
-                        <p className="text-gray-700">
-                          {location.addressSnippet[lang]}
-                        </p>
+                        <p className="text-gray-700">{location.address}</p>
                       </div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         className={`w-8 h-8 text-blue-600 transition-transform duration-300 ${
-                          openMap === location.key ? "" : "rotate-180"
+                          openMap === location.name ? "" : "rotate-180"
                         }`}
                       >
                         <path
@@ -287,20 +240,20 @@ export default function LocationPage() {
                     <motion.div
                       initial={false}
                       animate={{
-                        height: openMap === location.key ? "250px" : "0px",
-                        opacity: openMap === location.key ? 1 : 0,
+                        height: openMap === location.name ? "250px" : "0px",
+                        opacity: openMap === location.name ? 1 : 0
                       }}
                       transition={mapTransition}
                       className="mt-4 overflow-hidden relative"
                     >
                       <div
                         ref={(el) => {
-                          mapRefs.current[location.key] = el;
+                          mapRefs.current[location.name] = el;
                         }}
                         className="w-full h-full absolute top-0 left-0"
                         style={{ backgroundColor: "lightgray" }}
                       >
-                        {openMap !== location.key && (
+                        {openMap !== location.name && (
                           <div
                             className="absolute inset-0 z-10"
                             style={{ pointerEvents: "auto" }}
@@ -315,8 +268,7 @@ export default function LocationPage() {
           </div>
         </div>
         <hr className="my-8 border-gray-200 w-full" />
-        </main>
-      </Layout>
-    </>
+      </main>
+    </Layout>
   );
 }

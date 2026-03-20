@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Script from "next/script";
 import Head from "next/head";
+import { useLangStore } from "@/stores/langStore";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const { setLang } = useLangStore();
 
   const handleRouteChange = (url: string) => {
     if (typeof window.gtag !== "undefined") {
@@ -23,6 +25,14 @@ export default function App({ Component, pageProps }: AppProps) {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, [router.events]);
+
+  useEffect(() => {
+    if (router.pathname.includes("/eng")) {
+      setLang("ENG");
+    } else {
+      setLang("KOR");
+    }
+  }, [router.pathname, setLang]);
 
   return (
     <>

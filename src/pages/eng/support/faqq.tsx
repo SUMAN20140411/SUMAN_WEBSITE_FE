@@ -1,2 +1,2 @@
-import FaqPage from "@/pages/support/contact"
-export default FaqPage;
+import FAQPage from "@/pages/support/faqq";
+export default FAQPage;

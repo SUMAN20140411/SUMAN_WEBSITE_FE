@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
-import { fetchFAQs } from '@/lib/api/faq';
+import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp, Plus } from "lucide-react";
 import Layout from "@/components/Layout";
-import HeroSection from "@/components/HeroSection"; 
-import BreadcrumbSection from "@/components/BreadcrumbSection"; 
-import { motion, type Transition } from "framer-motion"; 
+import HeroSection from "@/components/HeroSection";
+import BreadcrumbSection from "@/components/BreadcrumbSection";
+import { motion, type Transition } from "framer-motion";
 import Head from "next/head";
-import { useLangStore } from '@/stores/langStore';
+import { useLangStore } from "@/stores/langStore";
 
 // FAQ 인터페이스 정의
 interface FAQ {
@@ -24,31 +23,41 @@ const FAQPage = () => {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set());
   const [displayCount, setDisplayCount] = useState(5);
   const { lang } = useLangStore();
-  
+
   // 백엔드 서버 슬립 깨우기 요청
   useEffect(() => {
-  fetch("https://suman-project-31hc.onrender.com/api/")
-    .then(() => console.log("Render 서버 깨우기 완료"))
-    .catch(() => console.warn("Render 서버 깨우기 실패"));
+    fetch("https://suman-project-31hc.onrender.com/api/")
+      .then(() => console.log("Render 서버 깨우기 완료"))
+      .catch(() => console.warn("Render 서버 깨우기 실패"));
   }, []);
 
   // FAQ 가져오기
-  useEffect(() => {   
+  useEffect(() => {
     loadFAQs();
   }, []);
 
   const loadFAQs = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await fetchFAQs();
-        setFaqs(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'FAQ를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+      setError(null);
+      const data = [
+        {
+          id: 1,
+          question: "질문1",
+          answer: "답변1",
+          category: "카테고리1",
+          is_published: true
+        }
+      ];
+      setFaqs(data);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "FAQ를 불러오는데 실패했습니다."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleItem = (id: number) => {
     const newOpenItems = new Set(openItems);
@@ -61,7 +70,7 @@ const FAQPage = () => {
   };
 
   const showMore = () => {
-    setDisplayCount(prev => prev + 5); // 더보기를 누르면 5개씩 추가됨. (초기값 5개)
+    setDisplayCount((prev) => prev + 5); // 더보기를 누르면 5개씩 추가됨. (초기값 5개)
   };
 
   const displayedFaqs = faqs.slice(0, displayCount);
@@ -72,13 +81,15 @@ const FAQPage = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition,
-    },
+      transition: { duration: 0.8, ease: "easeOut" } as Transition
+    }
   };
 
   if (loading) {
     return (
-      <Layout> {/* Layout으로 감싸기 */}
+      <Layout>
+        {" "}
+        {/* Layout으로 감싸기 */}
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -91,7 +102,9 @@ const FAQPage = () => {
 
   if (error) {
     return (
-      <Layout> {/* Layout으로 감싸기 */}
+      <Layout>
+        {" "}
+        {/* Layout으로 감싸기 */}
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 mb-4">{error}</p>
@@ -122,7 +135,9 @@ const FAQPage = () => {
         <BreadcrumbSection path="고객지원 > FAQ" />
 
         <div className="content-wrapper py-20 px-4 md:px-8 bg-white flex justify-center items-center">
-          <div className="max-w-4xl mx-auto w-full"> {/* max-w-4xl 유지 */}
+          <div className="max-w-4xl mx-auto w-full">
+            {" "}
+            {/* max-w-4xl 유지 */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -135,17 +150,24 @@ const FAQPage = () => {
                   {lang === "KOR" ? "SUMAN에 관한" : "Check All About"}
                 </h1>
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  {lang === "KOR" ? " 궁금하신 사항을 확인하세요" : "Suman Here"}
+                  {lang === "KOR"
+                    ? " 궁금하신 사항을 확인하세요"
+                    : "Suman Here"}
                 </h2>
               </div>
 
               {/* FAQ 목록 */}
               <div className="space-y-4">
                 {displayedFaqs.map((faq) => (
-                  <div key={faq.id} className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div
+                    key={faq.id}
+                    className="bg-white rounded-lg shadow-sm border border-gray-200"
+                  >
                     {/* 카테고리 */}
                     <div className="px-6 py-2 bg-gray-50 border-b border-gray-200">
-                      <span className="text-sm font-medium text-gray-600">{faq.category}</span>
+                      <span className="text-sm font-medium text-gray-600">
+                        {faq.category}
+                      </span>
                     </div>
 
                     {/* 질문 */}
@@ -170,7 +192,9 @@ const FAQPage = () => {
                       <div className="px-6 py-4 border-t border-gray-200 bg-blue-50">
                         <div className="flex items-start">
                           <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4">
-                            <span className="text-white font-bold text-sm">A</span>
+                            <span className="text-white font-bold text-sm">
+                              A
+                            </span>
                           </div>
                           <div className="text-gray-700 leading-relaxed">
                             {faq.answer}
