@@ -10,52 +10,13 @@ export function DecisionNode({ data }: NodeProps) {
   const label = (data as DecisionNodeData).label;
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "110px",
-        height: "110px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      }}
-    >
+    <div className="decision-node">
       {/* Outer diamond border */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "transparent",
-          border: "2px solid #9CA3AF",
-          transform: "rotate(45deg)",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.4)"
-        }}
-      />
+      <div className="decision-node-outer" />
       {/* Inner filled diamond */}
-      <div
-        style={{
-          position: "absolute",
-          inset: "8px",
-          background: "linear-gradient(135deg, #374151, #1F2937)",
-          transform: "rotate(45deg)"
-        }}
-      />
+      <div className="decision-node-inner" />
       {/* Text (not rotated) */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          textAlign: "center",
-          fontSize: "12px",
-          fontWeight: 700,
-          color: "#FFFFFF",
-          lineHeight: 1.3,
-          whiteSpace: "pre-line",
-          padding: "4px"
-        }}
-      >
-        {label}
-      </div>
+      <div className="decision-node-label">{label}</div>
 
       <Handle
         type="source"
