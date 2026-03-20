@@ -2,6 +2,7 @@
 "use client";
 
 import { cubicBezier, motion, type Transition } from "framer-motion";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -10,6 +11,13 @@ import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
 import { serviceContent } from "@/data/service";
 import { useLangStore } from "@/stores/langStore";
+
+// flow components (named exports)
+
+const ReactFlowProcessDiagram = dynamic(
+  () => import("@/components/ReactFlowProcessDiagram"),
+  { ssr: false }
+);
 import { GetStaticProps } from "next";
 import {
   servicePage,
@@ -382,26 +390,9 @@ export default function ServicePage({
                     ease: [0.16, 1, 0.3, 1],
                     delay: 0.05
                   }}
-                  className="relative mx-auto max-w-5xl"
+                  className="relative mx-auto max-w-6xl"
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.01 }}
-                    transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                    className="relative aspect-[16/9] w-full"
-                  >
-                    <Image
-                      src={
-                        content.section3?.img ||
-                        "/images/business/process/processKor.png"
-                      }
-                      alt={
-                        content.section3?.title || "제품 제조 및 품질 프로세스"
-                      }
-                      fill
-                      priority
-                      className="object-contain rounded-xl"
-                    />
-                  </motion.div>
+                  <ReactFlowProcessDiagram language={langCode} />
                 </motion.div>
               </div>
             </div>
