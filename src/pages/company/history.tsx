@@ -9,8 +9,19 @@ import { useLangStore } from "@/stores/langStore";
 import { motion, type Transition } from "framer-motion";
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
+
+type GrowthPoint = {
+  t: number;
+  year: string;
+  value: string;
+};
+
+type DotPoint = GrowthPoint & {
+  x: number;
+  y: number;
+};
 
 const headerComponent: Components["h2"] = ({ children }) => (
   <motion.div
@@ -57,7 +68,10 @@ export default function HistoryPage({
 }: {
   content: historyPageContent;
 }) {
+  const pathRef = useRef<SVGPathElement | null>(null);
   const { lang } = useLangStore();
+
+  const [points, setPoints] = useState<DotPoint[]>([]);
 
   const fadeInRiseVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -79,12 +93,30 @@ export default function HistoryPage({
     }
   };
 
+  const growthPoints = [
+    { t: 0.22, year: "2021", value: "5.5억" },
+    { t: 0.45, year: "2022", value: "  7.1억" },
+    { t: 0.68, year: "2023", value: "10.3억" },
+    { t: 0.91, year: "2024", value: "14.5억" }
+  ];
+
   // Base shift (≈ previously 5cm) & lift up ≈ 3cm -> net ≈ 2cm down.
   // 3cm ≈ 114px (approx). Use clamp to stay responsive across screens.
   const arrowShiftStyle = {
     ["--arrow-shift-down" as any]: "clamp(80px, 10vw, 190px)", // base down shift (~up to 5cm)
     ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)" // lift up (~3cm)
   } as React.CSSProperties;
+
+  useEffect(() => {
+    const path = pathRef.current;
+    if (!path) return;
+    const total = path.getTotalLength();
+    const next = growthPoints.map((d) => {
+      const p = path.getPointAtLength(total * d.t);
+      return { ...d, x: p.x, y: p.y };
+    });
+    setPoints(next);
+  }, [growthPoints]);
 
   return (
     <Layout>
@@ -178,12 +210,55 @@ export default function HistoryPage({
                   x2="100%"
                   y2="0%"
                 >
-                  <stop offset="0%" stopColor="white" stopOpacity="0" />
-                  <stop offset="100%" stopColor="white" stopOpacity="1" />
+                  <stop offset="0%" stopColor="#9BD7FF" stopOpacity="0" />
+                  <stop offset="55%" stopColor="#5CC7FF" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#9BD7FF" stopOpacity="1" />
                 </linearGradient>
+                <filter
+                  id="line-blue-glow"
+                  x="-30%"
+                  y="-30%"
+                  width="160%"
+                  height="160%"
+                >
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feColorMatrix
+                    in="blur"
+                    type="matrix"
+                    values="
+                    0 0 0 0 0.25
+                    0 0 0 0 0.72
+                    0 0 0 0 1.00
+                    0 0 0 1 0"
+                    result="blueGlow"
+                  />
+                  <feMerge>
+                    <feMergeNode in="blueGlow" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <radialGradient id="dot-blue-glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#9BD7FF" stopOpacity="0.9" />
+                  <stop offset="60%" stopColor="#5CC7FF" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#2B8CFF" stopOpacity="0" />
+                </radialGradient>
               </defs>
+
+              <motion.path
+                d="M 150 233 Q 460 220, 555 48"
+                stroke="#59C8FF"
+                strokeWidth="14"
+                strokeLinecap="round"
+                fill="none"
+                opacity={0.45}
+                filter="url(#line-blue-glow)"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 2, ease: "easeInOut" }}
+              />
               {/* Line - extended a bit more towards the arrow tip */}
               <motion.path
+                ref={pathRef}
                 d="M 150 233 Q 460 220, 555 48"
                 stroke="url(#arrow-gradient)"
                 strokeWidth="6"
@@ -192,10 +267,75 @@ export default function HistoryPage({
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 2, ease: "easeInOut" }}
               />
+              {points.map((p, i) => (
+                <g key={p.year}>
+                  {/* outer blue aura */}
+                  <motion.circle
+                    cx={p.x}
+                    cy={p.y}
+                    r="20"
+                    fill="url(#dot-blue-glow)"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [1, 1.12, 1], opacity: [0.85, 1, 0.85] }}
+                    transition={{
+                      delay: 0.45 + i * 0.25,
+                      duration: 1.8,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    style={{ transformOrigin: `${p.x}px ${p.y}px` }}
+                  />
+                  {/* mid glow ring */}
+                  <motion.circle
+                    cx={p.x}
+                    cy={p.y}
+                    r="11"
+                    fill="#7FD3FF"
+                    opacity="0.55"
+                    filter="url(#line-blue-glow)"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 0.55 }}
+                    transition={{ delay: 0.5 + i * 0.25, duration: 0.35 }}
+                    style={{ transformOrigin: `${p.x}px ${p.y}px` }}
+                  />
+                  {/* bright core */}
+                  <motion.circle
+                    cx={p.x}
+                    cy={p.y}
+                    r="6"
+                    fill="#FFFFFF"
+                    stroke="#BFE8FF"
+                    strokeWidth="2.5"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.55 + i * 0.25, duration: 0.3 }}
+                    style={{ transformOrigin: `${p.x}px ${p.y}px` }}
+                  />
+                  {/* labels */}
+                  <text
+                    x={p.x - 12 - i * 10}
+                    y={p.y - 28 + i * 2}
+                    fill="white"
+                    fontSize="10"
+                    className="whitespace-break-spaces"
+                  >
+                    {p.year}
+                  </text>
+                  <text
+                    x={p.x - 16 - i * 10}
+                    y={p.y - 15 + i * 2}
+                    fill="white"
+                    fontSize="12"
+                    className="whitespace-break-spaces"
+                  >
+                    {p.value}
+                  </text>
+                </g>
+              ))}
               {/* Arrow tip - on top of the line */}
               <motion.path
                 d="M 566 30 L 561 53 L 549 45 Z"
-                fill="white"
+                fill="#9BD7FF"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.9, duration: 0.3 }}
