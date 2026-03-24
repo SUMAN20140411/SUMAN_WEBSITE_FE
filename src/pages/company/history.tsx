@@ -94,10 +94,10 @@ export default function HistoryPage({
   };
 
   const growthPoints = [
-    { t: 0.22, year: "2021", value: "5.5억" },
-    { t: 0.45, year: "2022", value: "  7.1억" },
-    { t: 0.68, year: "2023", value: "10.3억" },
-    { t: 0.91, year: "2024", value: "14.5억" }
+    { t: 0.22, year: "2021", value: "45억" },
+    { t: 0.45, year: "2022", value: "72억" },
+    { t: 0.68, year: "2023", value: "77억" },
+    { t: 0.91, year: "2024", value: "88억" }
   ];
 
   // Base shift (≈ previously 5cm) & lift up ≈ 3cm -> net ≈ 2cm down.
@@ -211,29 +211,49 @@ export default function HistoryPage({
                   y2="0%"
                 >
                   <stop offset="0%" stopColor="#9BD7FF" stopOpacity="0" />
-                  <stop offset="55%" stopColor="#5CC7FF" stopOpacity="0.7" />
-                  <stop offset="100%" stopColor="#9BD7FF" stopOpacity="1" />
+                  <stop offset="45%" stopColor="#5CC7FF" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#d7edfc" stopOpacity="1" />
                 </linearGradient>
                 <filter
-                  id="line-blue-glow"
-                  x="-30%"
-                  y="-30%"
-                  width="160%"
-                  height="160%"
+                  id="line-neon-blue"
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
                 >
-                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation="3"
+                    result="blurInner"
+                  />
                   <feColorMatrix
-                    in="blur"
+                    in="blurInner"
                     type="matrix"
                     values="
-                    0 0 0 0 0.25
-                    0 0 0 0 0.72
-                    0 0 0 0 1.00
-                    0 0 0 1 0"
-                    result="blueGlow"
+                      0 0 0 0 0.20
+                      0 0 0 0 0.50
+                      0 0 0 0 1.00
+                      0 0 0 2.2 0"
+                    result="glowInner"
+                  />
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation="10"
+                    result="blurOuter"
+                  />
+                  <feColorMatrix
+                    in="blurOuter"
+                    type="matrix"
+                    values="
+                      0 0 0 0 0.05
+                      0 0 0 0 0.35
+                      0 0 0 0 1.00
+                      0 0 0 1.4 0"
+                    result="glowOuter"
                   />
                   <feMerge>
-                    <feMergeNode in="blueGlow" />
+                    <feMergeNode in="glowOuter" />
+                    <feMergeNode in="glowInner" />
                     <feMergeNode in="SourceGraphic" />
                   </feMerge>
                 </filter>
@@ -244,7 +264,7 @@ export default function HistoryPage({
                 </radialGradient>
               </defs>
 
-              <motion.path
+              {/* <motion.path
                 d="M 150 233 Q 460 220, 555 48"
                 stroke="#59C8FF"
                 strokeWidth="14"
@@ -255,17 +275,21 @@ export default function HistoryPage({
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 2, ease: "easeInOut" }}
-              />
+              /> */}
               {/* Line - extended a bit more towards the arrow tip */}
               <motion.path
                 ref={pathRef}
                 d="M 150 233 Q 460 220, 555 48"
                 stroke="url(#arrow-gradient)"
-                strokeWidth="6"
+                strokeWidth="5"
                 fill="none"
+                filter="url(#line-neon-blue)"
                 initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 2, ease: "easeInOut" }}
+                animate={{ pathLength: 1, opacity: [0.85, 1, 0.85] }}
+                transition={{
+                  duration: 2,
+                  ease: "easeInOut"
+                }}
               />
               {points.map((p, i) => (
                 <g key={p.year}>
@@ -276,7 +300,7 @@ export default function HistoryPage({
                     r="20"
                     fill="url(#dot-blue-glow)"
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [1, 1.12, 1], opacity: [0.85, 1, 0.85] }}
+                    animate={{ scale: [1, 1.12, 1], opacity: [0, 1, 0] }}
                     transition={{
                       delay: 0.45 + i * 0.25,
                       duration: 1.8,
@@ -286,7 +310,7 @@ export default function HistoryPage({
                     style={{ transformOrigin: `${p.x}px ${p.y}px` }}
                   />
                   {/* mid glow ring */}
-                  <motion.circle
+                  {/* <motion.circle
                     cx={p.x}
                     cy={p.y}
                     r="11"
@@ -297,12 +321,12 @@ export default function HistoryPage({
                     animate={{ scale: 1, opacity: 0.55 }}
                     transition={{ delay: 0.5 + i * 0.25, duration: 0.35 }}
                     style={{ transformOrigin: `${p.x}px ${p.y}px` }}
-                  />
+                  /> */}
                   {/* bright core */}
                   <motion.circle
                     cx={p.x}
                     cy={p.y}
-                    r="6"
+                    r="5"
                     fill="#FFFFFF"
                     stroke="#BFE8FF"
                     strokeWidth="2.5"
@@ -312,30 +336,37 @@ export default function HistoryPage({
                     style={{ transformOrigin: `${p.x}px ${p.y}px` }}
                   />
                   {/* labels */}
-                  <text
+                  <motion.text
                     x={p.x - 12 - i * 10}
                     y={p.y - 28 + i * 2}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.55 + i * 0.25, duration: 0.3 }}
                     fill="white"
                     fontSize="10"
                     className="whitespace-break-spaces"
                   >
                     {p.year}
-                  </text>
-                  <text
+                  </motion.text>
+                  <motion.text
                     x={p.x - 16 - i * 10}
                     y={p.y - 15 + i * 2}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.55 + i * 0.25, duration: 0.3 }}
                     fill="white"
                     fontSize="12"
                     className="whitespace-break-spaces"
                   >
                     {p.value}
-                  </text>
+                  </motion.text>
                 </g>
               ))}
               {/* Arrow tip - on top of the line */}
               <motion.path
                 d="M 566 30 L 561 53 L 549 45 Z"
-                fill="#9BD7FF"
+                fill="#d7edfc"
+                filter="url(#line-neon-blue)"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.9, duration: 0.3 }}
