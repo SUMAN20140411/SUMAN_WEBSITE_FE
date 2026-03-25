@@ -9,7 +9,7 @@ import { useLangStore } from "@/stores/langStore";
 import { motion, type Transition } from "framer-motion";
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 
 type GrowthPoint = {
@@ -56,6 +56,7 @@ export const getStaticProps: GetStaticProps = async () => {
       "pageInfo",
       "section1",
       "section1.keywords",
+      "section1.salesRecords",
       "section2",
       "section2.historyList"
     ]
@@ -93,12 +94,24 @@ export default function HistoryPage({
     }
   };
 
-  const growthPoints = [
-    { t: 0.22, year: "2021", value: "45억" },
-    { t: 0.45, year: "2022", value: "72억" },
-    { t: 0.68, year: "2023", value: "77억" },
-    { t: 0.91, year: "2024", value: "88억" }
-  ];
+  console.log(content.section1.salesRecords);
+
+  const growthPoints = useMemo(
+    () =>
+      (
+        content.section1.salesRecords || [
+          { amount: 45, unit: "억", year: "2021" },
+          { amount: 72, unit: "억", year: "2022" },
+          { amount: 77, unit: "억", year: "2023" },
+          { amount: 88, unit: "억", year: "2024" }
+        ]
+      ).map((record, index) => ({
+        t: (0.92 / (content.section1.salesRecords?.length || 4)) * (index + 1),
+        year: record.year,
+        value: `${record.amount} ${record.unit}`
+      })),
+    [content.section1.salesRecords]
+  );
 
   // Base shift (≈ previously 5cm) & lift up ≈ 3cm -> net ≈ 2cm down.
   // 3cm ≈ 114px (approx). Use clamp to stay responsive across screens.

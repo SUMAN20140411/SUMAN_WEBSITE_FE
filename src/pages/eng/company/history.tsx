@@ -13,6 +13,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "pageInfo",
         "section1",
         "section1.keywords",
+        "section1.salesRecords",
         "section2",
         "section2.historyList"
       ]
@@ -30,6 +31,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "pageInfo",
         "section1",
         "section1.keywords",
+        "section1.salesRecords",
         "section2",
         "section2.historyList"
       ]

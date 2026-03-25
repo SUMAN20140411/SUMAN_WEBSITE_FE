@@ -17,6 +17,11 @@ export type historyPageContent = {
       title: string;
       body: string;
     }[];
+    salesRecords: {
+      amount: number;
+      unit: string;
+      year: string;
+    }[];
   };
   section2: {
     title: string;
