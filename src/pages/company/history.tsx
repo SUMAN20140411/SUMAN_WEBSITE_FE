@@ -94,8 +94,6 @@ export default function HistoryPage({
     }
   };
 
-  console.log(content.section1.salesRecords);
-
   const growthPoints = useMemo(
     () =>
       (
@@ -210,8 +208,11 @@ export default function HistoryPage({
               preserveAspectRatio="xMidYMid meet"
               xmlns="http://www.w3.org/2000/svg"
               style={{
-                transform:
-                  "translateY(calc(var(--arrow-shift-down) - var(--arrow-shift-up)))",
+                transform: `${
+                  lang === "ENG"
+                    ? "translateY(clamp(36px, 6vw, 108px)) translateX(clamp(28px, 4vw, 76px))"
+                    : "translateY(clamp(28px, 4vw, 76px))"
+                }`,
                 ...arrowShiftStyle
               }}
             >
