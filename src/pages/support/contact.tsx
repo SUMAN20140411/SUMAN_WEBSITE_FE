@@ -9,6 +9,9 @@ import {
   contactPage,
   contactPageContent
 } from "@/lib/strapi/contact/contactPage";
+import InquiryTable, {
+  InquiryListResponse
+} from "@/components/support/InquiryTable";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,25 +110,6 @@ export default function HistoryPage({
 
   const PER_PAGE = 5;
 
-  type InquiryItem = {
-    id: number;
-    name: string;
-    contactMasked: string;
-    emailMasked: string;
-    affiliationPreview?: string;
-    department?: string;
-    messagePreview: string;
-    createdAt: string;
-  };
-
-  type InquiryListResponse = {
-    page: number;
-    per_page: number;
-    total: number;
-    total_pages: number;
-    items: InquiryItem[];
-  };
-
   const [inquiries, setInquiries] = useState<InquiryListResponse | null>(null);
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [inquiriesError, setInquiriesError] = useState<string | null>(null);
@@ -134,7 +118,6 @@ export default function HistoryPage({
   const totalPages = inquiries?.total_pages ?? 1;
   const canGoPrev = inquiriesPage > 1;
   const canGoNext = inquiries ? inquiriesPage < inquiries.total_pages : false;
-  const hasInquiries = Boolean(inquiries?.items?.length);
 
   const t = useMemo(() => {
     if (lang === "ENG") {
@@ -156,9 +139,19 @@ export default function HistoryPage({
         requiredHint: "All fields marked as required must be provided.",
         fetchError: "Failed to load inquiries.",
         submitError: "Failed to submit inquiry. Please try again.",
+        created: "Created",
+        loading: "Loading...",
+        page: "Page",
         prev: "Previous",
         next: "Next",
-        noInquiries: "No recent inquiries yet."
+        noInquiries: "No recent inquiries yet.",
+        adminOnlyTitle: "Admin only",
+        adminOnlyDescription: "Enter the admin password to view inquiries.",
+        adminPasswordPlaceholder: "Admin password",
+        unlock: "Unlock",
+        lock: "Lock",
+        passwordRequired: "Password required.",
+        incorrectPassword: "Incorrect password."
       } as const;
     }
 
@@ -180,9 +173,19 @@ export default function HistoryPage({
       requiredHint: "필수 항목을 모두 입력해 주세요.",
       fetchError: "문의 내역을 불러오지 못했습니다.",
       submitError: "문의 접수에 실패했습니다. 다시 시도해 주세요.",
+      created: "등록일",
+      loading: "불러오는 중...",
+      page: "페이지",
       prev: "이전",
       next: "다음",
-      noInquiries: "최근 문의 내역이 없습니다."
+      noInquiries: "최근 문의 내역이 없습니다.",
+      adminOnlyTitle: "관리자 전용",
+      adminOnlyDescription: "관리자 비밀번호를 입력하면 문의 내역을 볼 수 있습니다.",
+      adminPasswordPlaceholder: "관리자 비밀번호",
+      unlock: "잠금 해제",
+      lock: "잠금",
+      passwordRequired: "비밀번호를 입력해 주세요.",
+      incorrectPassword: "비밀번호가 올바르지 않습니다."
     } as const;
   }, [lang]);
 
@@ -500,131 +503,42 @@ export default function HistoryPage({
                     {t.latestTitle}
                   </h3>
 
-                  {inquiriesError && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-100 text-red-900 rounded">
-                      {inquiriesError}
-                    </div>
-                  )}
-
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-left text-sm border border-gray-200 rounded-lg bg-white">
-                      <thead className="bg-gray-50 text-gray-700">
-                        <tr>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            #
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            {t.name}
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            {t.contact}
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            {t.email}
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            {t.affiliation}
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            {t.department}
-                          </th>
-                          <th className="px-4 py-3 font-semibold">
-                            {t.message}
-                          </th>
-                          <th className="px-4 py-3 font-semibold whitespace-nowrap">
-                            Created
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {inquiriesLoading && (
-                          <tr>
-                            <td colSpan={8} className="px-4 py-6 text-gray-500">
-                              Loading...
-                            </td>
-                          </tr>
-                        )}
-
-                        {!inquiriesLoading &&
-                          hasInquiries &&
-                          inquiries!.items.map((item, idx) => (
-                            <tr key={item.id} className="hover:bg-gray-50/50">
-                              <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                                {(inquiriesPage - 1) * PER_PAGE + idx + 1}
-                              </td>
-                              <td className="px-4 py-3 text-gray-900 whitespace-nowrap">
-                                {item.name}
-                              </td>
-                              <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                                {item.contactMasked}
-                              </td>
-                              <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                                {item.emailMasked}
-                              </td>
-                              <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                                {item.affiliationPreview?.trim()
-                                  ? item.affiliationPreview
-                                  : "-"}
-                              </td>
-                              <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                                {item.department?.trim()
-                                  ? item.department
-                                  : "-"}
-                              </td>
-                              <td className="px-4 py-3 text-gray-700 break-words max-w-[320px]">
-                                {item.messagePreview}
-                              </td>
-                              <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                                {item.createdAt}
-                              </td>
-                            </tr>
-                          ))}
-
-                        {!inquiriesLoading && !hasInquiries && (
-                          <tr>
-                            <td colSpan={8} className="px-4 py-6 text-gray-500">
-                              {t.noInquiries}
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 mt-4">
-                    <button
-                      type="button"
-                      disabled={inquiriesLoading || !canGoPrev}
-                      onClick={() =>
-                        setInquiriesPage((p) => Math.max(1, p - 1))
-                      }
-                      className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {t.prev}
-                    </button>
-
-                    <div className="text-sm text-gray-600 whitespace-nowrap">
-                      Page{" "}
-                      <span className="font-semibold text-gray-900">
-                        {inquiries?.page ?? inquiriesPage}
-                      </span>{" "}
-                      /{" "}
-                      <span className="font-semibold text-gray-900">
-                        {inquiries?.total_pages ?? 1}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      disabled={inquiriesLoading || !canGoNext}
-                      onClick={() =>
-                        setInquiriesPage((p) => Math.min(totalPages, p + 1))
-                      }
-                      className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {t.next}
-                    </button>
-                  </div>
+                  <InquiryTable
+                    labels={{
+                      name: t.name,
+                      contact: t.contact,
+                      email: t.email,
+                      affiliation: t.affiliation,
+                      department: t.department,
+                      message: t.message,
+                      created: t.created,
+                      loading: t.loading,
+                      page: t.page,
+                      prev: t.prev,
+                      next: t.next,
+                      noInquiries: t.noInquiries,
+                      fetchError: t.fetchError,
+                      adminOnlyTitle: t.adminOnlyTitle,
+                      adminOnlyDescription: t.adminOnlyDescription,
+                      adminPasswordPlaceholder: t.adminPasswordPlaceholder,
+                      unlock: t.unlock,
+                      lock: t.lock,
+                      passwordRequired: t.passwordRequired,
+                      incorrectPassword: t.incorrectPassword
+                    }}
+                    inquiries={inquiries}
+                    inquiriesLoading={inquiriesLoading}
+                    inquiriesError={inquiriesError}
+                    inquiriesPage={inquiriesPage}
+                    perPage={PER_PAGE}
+                    canGoPrev={canGoPrev}
+                    canGoNext={canGoNext}
+                    totalPages={totalPages}
+                    onPrev={() => setInquiriesPage((p) => Math.max(1, p - 1))}
+                    onNext={() =>
+                      setInquiriesPage((p) => Math.min(totalPages, p + 1))
+                    }
+                  />
                 </div>
               </section>
             </motion.div>
