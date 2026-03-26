@@ -626,39 +626,6 @@ export default function HistoryPage({
                     </button>
                   </div>
                 </div>
-
-                {/* === UPDATED: Bagian bawah disesuaikan seperti screenshot === */}
-                <div className="mt-1 space-y-1">
-                  {content?.section1?.contacts?.map((item, index) => (
-                    <div
-                      key={`contact-${index}-${item.department ?? ""}-${
-                        item.mail ?? ""
-                      }-${item.phone ?? ""}`}
-                      className="flex items-baseline text-sm md:text-base"
-                    >
-                      <span className="font-semibold text-blue-600 mr-2">
-                        {item.department || "영업 / 마케팅"}
-                      </span>
-                      {item.mail && (
-                        <a
-                          href={`mailto:${item.mail}`}
-                          className="text-gray-800 no-underline hover:text-blue-600"
-                        >
-                          {item.mail}
-                        </a>
-                      )}
-                      {item.phone && (
-                        <a
-                          href={`tel:${item.phone}`}
-                          className="text-gray-800 no-underline hover:text-blue-600"
-                        >
-                          {item.phone}
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {/* === END UPDATED === */}
               </section>
             </motion.div>
           </div>
