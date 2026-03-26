@@ -58,7 +58,7 @@ export type InquiryTableProps = {
 
 const ADMIN_UNLOCKED_KEY = "suman_inquiries_admin_unlocked";
 const ADMIN_PASSWORD =
-  process.env.NEXT_PUBLIC_INQUIRIES_ADMIN_PASSWORD ?? "SUMAN_ADMIN_2026";
+  process.env.NEXT_PUBLIC_INQUIRIES_ADMIN_PASSWORD ?? "SUMAN20140411@";
 
 export default function InquiryTable(props: InquiryTableProps) {
   const {
