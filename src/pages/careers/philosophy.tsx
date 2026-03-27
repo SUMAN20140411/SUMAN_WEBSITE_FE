@@ -190,7 +190,11 @@ export default function TalentPage({
                   </div>
                   <div className="mt-6 sm:mt-7 md:mt-8">
                     <Link
-                      href="/careers/notice"
+                      href={
+                        lang === "ENG"
+                          ? "/eng/careers/notice"
+                          : "/careers/notice"
+                      }
                       className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 md:py-2.5 bg-gray-900 text-white text-xs sm:text-sm md:text-base font-semibold rounded-full hover:bg-gray-800 transition-colors duration-200"
                     >
                       <span>

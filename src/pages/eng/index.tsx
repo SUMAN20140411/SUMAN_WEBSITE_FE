@@ -196,7 +196,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
               {content.section2.title}
             </p>
             <div className="flex-grow" />
-            <Link href="/company/vision2">
+            <Link href="/eng/company/vision2">
               <button className="text-sm sm:text-base bg-gray-600 text-gray-100 rounded-full px-4 py-2 hover:bg-gray-300 transition">
                 {content.section2.buttonLabel}
               </button>
@@ -270,7 +270,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
           >
             <p className={labelClass}>{content.section3.title}</p>
             <div className="flex-grow" />
-            <Link href="/business/service">
+            <Link href="/eng/business/service">
               <motion.button
                 className={buttonClass}
                 initial={{ opacity: 0, y: 40 }}
@@ -408,7 +408,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
             <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl font-semibold mb-2 sm:mb-4 lg:mb-7 tracking-wide">
               Contact us
             </h2>
-            <Link href="/support/contact">
+            <Link href="/eng/support/contact">
               <button className="cursor-pointer pointer-events-auto border border-gray-300 text-sm sm:text-base lg:text-lg text-white px-4 sm:px-8 lg:px-12 py-1 sm:py-2 flex items-center gap-2 hover:bg-gray-300 hover:text-black transition tracking-wide">
                 Contact Us{" "}
                 <span className="text-sm sm:text-base lg:text-xl">→</span>
