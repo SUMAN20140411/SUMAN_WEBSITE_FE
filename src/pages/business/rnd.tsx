@@ -16,7 +16,9 @@ import Markdown, { Components } from "react-markdown";
 const colors = ["text-blue-600", "text-green-600", "text-purple-600"];
 
 const h2Component: Components["h2"] = ({ children }) => (
-  <h4 className="text-xl font-bold text-gray-900 mb-4">{children}</h4>
+  <h4 className="text-xl 2xl:text-2xl font-bold text-pretty text-gray-900 mb-4">
+    {children}
+  </h4>
 );
 
 export const getStaticProps = async () => {
@@ -104,7 +106,7 @@ export default function App({ content }: { content: rndPageContent }) {
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 {content?.section1?.title || "핵심 연구 분야"}
               </h2>
-              <p className="text-lg text-gray-600 max-w-3xl">
+              <p className="text-lg 2xl:text-xl text-gray-600 max-w-3xl">
                 {content?.section1?.description ||
                   "최첨단 기술과 혁신적인 솔루션으로 다양한 산업 분야에서 고객의 성공을 지원합니다."}
               </p>
@@ -165,7 +167,7 @@ export default function App({ content }: { content: rndPageContent }) {
                                     colors[index % colors.length]
                                   } mt-0.5 flex-shrink-0`}
                                 />
-                                <span className="text-md 2xl:text-lg text-gray-700 leading-relaxed">
+                                <span className="text-md 2xl:text-lg text-gray-700 leading-relaxed text-pretty">
                                   {children}
                                 </span>
                               </div>

@@ -210,10 +210,10 @@ export default function LocationPage({
                       onClick={() => handleToggleMap(location)}
                     >
                       <div>
-                        <h3 className="text-xl 2xl:text-2xl font-semibold mb-2">
+                        <h3 className="text-2xl 2xl:text-3xl font-semibold mb-2">
                           {location.name}
                         </h3>
-                        <p className="text-gray-700 text-md 2xl:text-lg">
+                        <p className="text-gray-700 text-lg 2xl:text-xl">
                           {location.address}
                         </p>
                       </div>

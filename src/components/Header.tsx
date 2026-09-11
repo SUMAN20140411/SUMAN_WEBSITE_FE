@@ -17,8 +17,8 @@ const navItemsKor = [
       { label: "조직도", href: "/company/org" },
       { label: "CI", href: "/company/ci" },
       { label: "오시는 길", href: "/company/location" },
-      { label: "인증 현황", href: "/company/certifications" },
-    ],
+      { label: "인증 현황", href: "/company/certifications" }
+    ]
   },
   {
     label: "사업분야",
@@ -26,8 +26,8 @@ const navItemsKor = [
     submenu: [
       { label: "기술 소개", href: "/business/service" },
       { label: "제품 소개", href: "/business/product" },
-      { label: "연구 분야", href: "/business/rnd" },
-    ],
+      { label: "연구 분야", href: "/business/rnd" }
+    ]
   },
   {
     label: "인재채용",
@@ -35,14 +35,14 @@ const navItemsKor = [
     submenu: [
       { label: "인재상", href: "/careers/philosophy" },
       { label: "채용공고", href: "/careers/notice" },
-      { label: "복리후생", href: "/careers/wellnessMain" },
-    ],
+      { label: "복리후생", href: "/careers/wellnessMain" }
+    ]
   },
   {
     label: "고객지원",
     href: "/support/contact",
-    submenu: [{ label: "문의하기", href: "/support/contact" }],
-  },
+    submenu: [{ label: "문의하기", href: "/support/contact" }]
+  }
 ];
 
 const navItemsEng = [
@@ -56,8 +56,8 @@ const navItemsEng = [
       { label: "Organization", href: "/eng/company/org" },
       { label: "CI", href: "/eng/company/ci" },
       { label: "Directions", href: "/eng/company/location" },
-      { label: "Certifications", href: "/eng/company/certifications" },
-    ],
+      { label: "Certifications", href: "/eng/company/certifications" }
+    ]
   },
   {
     label: "Business",
@@ -65,8 +65,8 @@ const navItemsEng = [
     submenu: [
       { label: "Technology", href: "/eng/business/service" },
       { label: "Product", href: "/eng/business/product" },
-      { label: "Research field", href: "/eng/business/rnd" },
-    ],
+      { label: "Research field", href: "/eng/business/rnd" }
+    ]
   },
   {
     label: "Recruitment",
@@ -74,20 +74,22 @@ const navItemsEng = [
     submenu: [
       { label: "Ideal Candidate", href: "/eng/careers/philosophy" },
       { label: "Recruit Notice", href: "/eng/careers/notice" },
-      { label: "Employee Benefits", href: "/eng/careers/wellnessMain" },
-    ],
+      { label: "Employee Benefits", href: "/eng/careers/wellnessMain" }
+    ]
   },
   {
     label: "Support",
     href: "/eng/support/contact",
-    submenu: [{ label: "Contact Us", href: "/eng/support/contact" }],
-  },
+    submenu: [{ label: "Contact Us", href: "/eng/support/contact" }]
+  }
 ];
 
 export default function Header() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(null);
+  const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(
+    null
+  );
   const { lang } = useLangStore();
   const NAV_ITEMS = lang === "KOR" ? navItemsKor : navItemsEng;
 
@@ -129,7 +131,10 @@ export default function Header() {
           style={{ height: "90px" }}
         >
           {/* Logo (aligned to left edge) */}
-          <Link href={logoHref} className="flex items-center h-full mr-auto lg:mr-0">
+          <Link
+            href={logoHref}
+            className="flex items-center h-full mr-auto lg:mr-0"
+          >
             <Image
               src="/images/logo_suman.png"
               alt="SUMAN CO., Ltd company logo"
@@ -152,7 +157,7 @@ export default function Header() {
                 >
                   <Link
                     href={item.href}
-                    className="lg:text-lg font-bold hover:text-blue-600 transition-colors duration-200"
+                    className="lg:text-lg 2xl:text-xl font-bold hover:text-blue-600 transition-colors duration-200"
                   >
                     {item.label}
                   </Link>
@@ -226,7 +231,9 @@ export default function Header() {
                   <div
                     className="flex justify-between items-center py-2 text-lg font-medium cursor-pointer"
                     onClick={() =>
-                      setExpandedMobileIndex(expandedMobileIndex === index ? null : index)
+                      setExpandedMobileIndex(
+                        expandedMobileIndex === index ? null : index
+                      )
                     }
                   >
                     <Link href={item.href} onClick={closeMobileMenu}>
