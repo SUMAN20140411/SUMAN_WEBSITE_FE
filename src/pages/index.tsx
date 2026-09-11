@@ -90,7 +90,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
   return (
     <>
       <Head>
-        <title>(주) 수만 | 2차전지·반도체 신뢰성 장비 전문 기업</title>
+        <title>수만 | 2차전지·반도체 신뢰성 장비 전문 기업</title>
         <meta
           name="description"
           content="수만은 2차전지 생산 장비와 반도체 신뢰성 평가 장비를 개발하는 정밀 제조 기업입니다."
@@ -99,10 +99,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
           name="keywords"
           content="수만, 주식회사 수만, SUMAN, suman, 정밀기술, 2차전지 장비, 반도체 신뢰성"
         />
-        <meta
-          property="og:title"
-          content="(주) 수만 | 정밀 제조 기술의 선두주자"
-        />
+        <meta property="og:title" content="수만 | 정밀 제조 기술의 선두주자" />
         <meta
           property="og:description"
           content="2차전지 생산 장비와 반도체 신뢰성 평가 시스템을 제공하는 정밀 기술 기업, 수만."
