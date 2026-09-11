@@ -44,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <meta
           name="naver-site-verification"
-          content="b90c2478a5b6431a748fa0e68d931f04dc9e4fa9"
+          content="d018b441066a1325c1a133d5ead49e5992e6a7bb"
         />
         <link rel="icon" sizes="16x16" href="/images/logo.ico" />
       </Head>
