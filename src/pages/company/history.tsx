@@ -25,7 +25,7 @@ type DotPoint = GrowthPoint & {
 
 const headerComponent: Components["h2"] = ({ children }) => (
   <motion.div
-    className="timeline-item mb-3 relative ml-[20px] sm:ml-[90px] md:ml-[155px]"
+    className="timeline-item mb-2 sm:mb-3 relative ml-4 sm:ml-[90px] md:ml-[155px]"
     initial={{ opacity: 0, x: -30, y: -10 }}
     whileInView={{ opacity: 1, x: 0, y: 0 }}
     transition={{
@@ -36,11 +36,11 @@ const headerComponent: Components["h2"] = ({ children }) => (
     viewport={{ once: true }}
   >
     <p
-      className={`text-lg font-semibold tracking-wide ${
+      className={`text-sm sm:text-lg font-semibold tracking-wide break-keep ${
         children?.toString()?.includes("⦁")
           ? "text-black font-bold"
           : children?.toString()?.includes("➔")
-          ? "text-[#8C8C8C] text-base"
+          ? "text-[#8C8C8C] text-sm sm:text-base"
           : "text-[#4C4C4C]"
       }`}
     >
@@ -73,6 +73,7 @@ export default function HistoryPage({
   const { lang } = useLangStore();
 
   const [points, setPoints] = useState<DotPoint[]>([]);
+  const [isLg, setIsLg] = useState(false);
 
   const fadeInRiseVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -119,6 +120,14 @@ export default function HistoryPage({
   } as React.CSSProperties;
 
   useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsLg(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
     const path = pathRef.current;
     if (!path) return;
     const total = path.getTotalLength();
@@ -151,9 +160,9 @@ export default function HistoryPage({
         </div>
 
         {/* =================== HISTORY HERO BLOCK =================== */}
-        <section className="relative w-full min-h-[520px] md:min_h-[620px] md:min-h-[620px]">
+        <section className="relative w-full min-h-0 lg:min-h-[620px]">
           <div
-            className="absolute inset-0 bg-cover z-0"
+            className="absolute inset-0 bg-cover bg-no-repeat z-0"
             style={{
               backgroundImage: `url(${
                 content.section1.hero ||
@@ -163,27 +172,28 @@ export default function HistoryPage({
             }}
           >
             <div className="absolute inset-0 bg-[#020c23]/85 z-10" />
+          </div>
 
+          <div className="relative z-20 flex flex-col lg:block lg:min-h-[620px] text-white">
             {/* Content (title + bullets) */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="relative z-20 max-w-7xl mx-auto px-4 md:px-8 lg:px-8 xl:px-0 py-16 md:py-24 text-white"
+              className="relative z-20 max-w-7xl mx-auto w-full px-4 md:px-8 lg:px-8 xl:px-0 pt-12 pb-6 md:pt-16 md:pb-8 lg:py-24"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-                {/* Left: title + bullets */}
                 <div className="lg:col-span-8">
-                  <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-3 tracking-wide whitespace-pre-line">
+                  <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-bold mb-3 tracking-wide whitespace-pre-line">
                     {content.section1.title}
                   </h2>
 
-                  <ul className="text-base md:text-lg lg:text-xl flex flex-col items-start space-y-4 md:space-y-5 mt-6 tracking-wide">
+                  <ul className="text-sm sm:text-base md:text-lg lg:text-xl flex flex-col items-start space-y-3 md:space-y-5 mt-5 md:mt-6 tracking-wide">
                     {content.section1.keywords.map((keyword, index) => (
                       <motion.li
                         key={index}
-                        className="relative w-fit bg-white/15 text-white font-medium py-3 px-5 md:py-3.5 md:px-6 rounded-full z-10"
+                        className="relative max-w-full w-fit bg-white/15 text-white font-medium py-2.5 px-4 md:py-3.5 md:px-6 rounded-2xl lg:rounded-full z-10"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{
@@ -201,10 +211,10 @@ export default function HistoryPage({
               </div>
             </motion.div>
 
-            {/* Arrow overlay — moved UP by ~3cm responsively */}
+            {/* Chart: in-flow on small screens, overlay from lg up */}
             <svg
-              className="absolute inset-0 w-full h-full mx-auto my-auto z-20 opacity-80 pointer-events-none"
-              viewBox="0 0 700 300"
+              className="relative h-72 w-full shrink-0 z-20 opacity-80 pointer-events-none overflow-visible sm:h-80 lg:absolute lg:inset-0 lg:h-full lg:mx-auto lg:my-auto max-lg:!transform-none"
+              viewBox={isLg ? "0 0 700 300" : "115 5 480 265"}
               preserveAspectRatio="xMidYMid meet"
               xmlns="http://www.w3.org/2000/svg"
               style={{
@@ -387,9 +397,9 @@ export default function HistoryPage({
               />
             </svg>
 
-            {/* Metrics pinned to bottom-right corner */}
+            {/* Metrics: stacked chips on mobile, pinned corner from lg */}
             <motion.div
-              className="absolute z-20 bottom-4 right-4 md:bottom-8 md:right-8 lg:bottom-10 lg:right-12 text-right text-xs sm:text-sm md:text-base space-y-1"
+              className="relative z-20 mt-4 mb-8 flex flex-col lg:flex-row items-start gap-2 px-4 text-left text-xs sm:text-sm md:mt-6 md:px-8 md:text-base lg:absolute lg:bottom-10 lg:right-12 lg:mt-0 lg:mb-0 lg:items-end lg:px-0 lg:text-right"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
@@ -413,10 +423,10 @@ export default function HistoryPage({
         {/* =================== /HISTORY HERO BLOCK =================== */}
 
         <div className="content-wrapper">
-          <section className="main-history-timeline py-28 px-4 md:px-8 bg-white">
+          <section className="main-history-timeline py-12 md:py-20 px-4 md:px-8 bg-white">
             <div className="max-w-7xl mx-auto text-left">
               <motion.h2
-                className="text-base sm:text-lg lg:text-2xl font-semibold text-black mb-28"
+                className="text-base sm:text-lg lg:text-2xl font-semibold text-black mb-10 md:mb-28"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -426,6 +436,7 @@ export default function HistoryPage({
               </motion.h2>
 
               <div className="max-w-5xl mx-auto relative pl-6 sm:pl-26 md:pl-36">
+                <div className="absolute left-[7px] top-3 bottom-3 border-l border-dashed border-gray-300 sm:hidden" />
                 <motion.div
                   className="absolute left-[120px] md:left-[150px] top-12 h-full border-l-2 border-dashed border-gray-300 hidden sm:block"
                   initial={{ opacity: 0, height: 0 }}
@@ -443,14 +454,15 @@ export default function HistoryPage({
                 >
                   {content.section2.historyList.map((history, index) => (
                     <motion.div key={index} variants={fadeInRiseVariants}>
-                      <div className="timeline-entry mt-16 mb-10 relative">
-                        <div className="flex items-center sm:absolute sm:-left-2 sm:top-[18px] sm:ml-[-24px] mb-4 sm:mb-0">
-                          <h3 className="timeline-year text-xl sm:text-3xl md:text-3xl font-bold text-black bg-white pr-4 z-10 sm:-translate-x-full">
+                      <div className="timeline-entry mt-8 mb-6 md:mt-16 md:mb-10 relative">
+                        <span className="absolute -left-[19px] top-2.5 h-2.5 w-2.5 rounded-full bg-[#0f172a] border-2 border-white ring-1 ring-gray-200 sm:hidden" />
+                        <div className="flex items-center sm:absolute sm:-left-2 sm:top-[18px] sm:ml-[-24px] mb-3 sm:mb-0">
+                          <h3 className="timeline-year text-lg sm:text-3xl md:text-3xl font-bold text-black bg-white pr-4 z-10 sm:-translate-x-full">
                             {history.period}
                           </h3>
                         </div>
-                        <div className="bg-gray-100 p-6 rounded-[30px] w-full sm:ml-[60px] md:ml-[100px]">
-                          <p className="text-2xl font-bold text-black tracking-wide ml-4">
+                        <div className="bg-gray-100 p-4 md:p-6 rounded-[24px] md:rounded-[30px] w-full sm:ml-[60px] md:ml-[100px]">
+                          <p className="text-lg sm:text-2xl font-bold text-black tracking-wide ml-1 sm:ml-4">
                             {history.title}
                           </p>
                         </div>
