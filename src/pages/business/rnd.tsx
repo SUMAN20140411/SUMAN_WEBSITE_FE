@@ -148,7 +148,9 @@ export default function App({ content }: { content: rndPageContent }) {
                         ) : (
                           <Cpu className="w-8 h-8 mb-2" />
                         )}
-                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        <h3 className="text-lg 2xl:text-xl font-semibold">
+                          {item.title}
+                        </h3>
                       </div>
                     </div>
                     <div className="p-6">
@@ -163,7 +165,7 @@ export default function App({ content }: { content: rndPageContent }) {
                                     colors[index % colors.length]
                                   } mt-0.5 flex-shrink-0`}
                                 />
-                                <span className="text-sm text-gray-700 leading-relaxed">
+                                <span className="text-md 2xl:text-lg text-gray-700 leading-relaxed">
                                   {children}
                                 </span>
                               </div>

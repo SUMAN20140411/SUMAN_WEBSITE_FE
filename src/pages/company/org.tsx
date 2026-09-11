@@ -175,12 +175,12 @@ export default function OrgPage({
                 {/* Advisor positioned absolutely to the right - line behind CEO card */}
                 <div className="absolute left-[calc(50%+60px)] top-1/2 -translate-y-1/2 flex items-center z-0">
                   <div className="w-20 h-[2px] bg-gray-400"></div>
-                  <div className="border border-gray-400 bg-white px-4 py-2 rounded-lg font-medium text-gray-600 text-sm">
+                  <div className="border border-gray-400 bg-white px-4 py-2 rounded-lg font-medium text-gray-600 text-md 2xl:text-lg">
                     {orgContent.orgChart?.advisor || currentOrgData.advisor}
                   </div>
                 </div>
                 {/* CEO card on top */}
-                <div className="bg-[#1E3A5F] max-w-[200px] text-center text-white px-14 py-3 rounded-lg font-semibold text-lg z-10 relative">
+                <div className="bg-[#1E3A5F] max-w-[200px] text-center text-white px-14 py-3 rounded-lg font-semibold text-md 2xl:text-lg z-10 relative">
                   {orgContent.orgChart?.ceo || currentOrgData.ceo}
                 </div>
               </motion.div>
@@ -250,7 +250,7 @@ export default function OrgPage({
                 {currentOrgData.departments.map((dept, index) => (
                   <div key={index} className="flex flex-col">
                     {/* Department Header */}
-                    <div className="bg-[#1E3A5F] text-white px-2 py-3 rounded-t-lg font-semibold text-sm text-center flex items-center justify-center min-h-[50px]">
+                    <div className="bg-[#1E3A5F] text-white px-2 py-3 rounded-t-lg font-semibold text-md 2xl:text-lg text-center flex items-center justify-center min-h-[50px]">
                       {dept.name}
                     </div>
 
@@ -259,7 +259,7 @@ export default function OrgPage({
                       {dept.teams.map((team, teamIndex) => (
                         <div
                           key={teamIndex}
-                          className={`px-2 py-4 text-center text-sm text-gray-700 ${
+                          className={`px-2 py-4 text-center text-md 2xl:text-lg text-gray-700 ${
                             teamIndex !== dept.teams.length - 1
                               ? "border-b border-gray-200"
                               : ""

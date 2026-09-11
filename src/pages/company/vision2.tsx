@@ -385,7 +385,7 @@ export default function Vision2Page({
                               end={card.value}
                               suffix={card.suffix}
                             />
-                            <p className="text-sm font-medium text-[#2c5282]/70">
+                            <p className="text-sm 2xl:text-lg font-medium text-[#2c5282]/70">
                               {card.label}
                             </p>
                           </div>
@@ -439,7 +439,7 @@ export default function Vision2Page({
                           }}
                         >
                           <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
-                          <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs font-semibold text-[#2c5282]">
+                          <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-md 2xl:text-lg font-semibold text-[#2c5282]">
                             {item.title || ""}
                           </span>
                         </div>
@@ -469,14 +469,14 @@ export default function Vision2Page({
                                 content={item.description}
                                 blocks={{
                                   paragraph: ({ children }) => (
-                                    <p className="whitespace-pre-line text-sm text-black leading-relaxed">
+                                    <p className="whitespace-pre-line text-md 2xl:text-lg text-black leading-relaxed">
                                       {children}
                                     </p>
                                   )
                                 }}
                               />
                             ) : (
-                              <p className="whitespace-pre-line text-sm text-black leading-relaxed">
+                              <p className="whitespace-pre-line text-md 2xl:text-lg text-black leading-relaxed">
                                 {item.title || ""}
                               </p>
                             )}
@@ -521,7 +521,7 @@ export default function Vision2Page({
                           <Icon className="h-6 w-6" />
                         </div>
                         <div className="flex-1">
-                          <p className="whitespace-pre-line text-sm text-black leading-relaxed">
+                          <p className="whitespace-pre-line text-md 2xl:text-lg text-black leading-relaxed">
                             {cv.title}
                           </p>
                         </div>

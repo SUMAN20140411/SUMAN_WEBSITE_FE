@@ -11,7 +11,6 @@ import {
   locationPageContent
 } from "@/lib/strapi/company/locationPage";
 
-
 export const getStaticProps: GetStaticProps = async () => {
   const content = await locationPage.find({
     locale: "ko-KR",
@@ -211,10 +210,12 @@ export default function LocationPage({
                       onClick={() => handleToggleMap(location)}
                     >
                       <div>
-                        <h3 className="text-xl font-semibold mb-2">
+                        <h3 className="text-xl 2xl:text-2xl font-semibold mb-2">
                           {location.name}
                         </h3>
-                        <p className="text-gray-700">{location.address}</p>
+                        <p className="text-gray-700 text-md 2xl:text-lg">
+                          {location.address}
+                        </p>
                       </div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
