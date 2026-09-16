@@ -90,7 +90,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
   return (
     <>
       <Head>
-        <title>수만 | 2차전지·반도체 신뢰성 장비 전문 기업</title>
+        <title>주식회사 수만</title>
         <meta
           name="description"
           content="수만은 2차전지 생산 장비와 반도체 신뢰성 평가 장비를 개발하는 정밀 제조 기업입니다."
