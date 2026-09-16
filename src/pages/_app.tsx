@@ -63,6 +63,20 @@ export default function App({ Component, pageProps }: AppProps) {
           });
         `}
       </Script>
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-FE5VF18659"
+        strategy="afterInteractive"
+      />
+      <Script id="gtag-init-2" strategy="afterInteractive">
+        {`
+        window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-FE5VF18659');
+        `}
+      </Script>
 
       <Component {...pageProps} />
     </>
