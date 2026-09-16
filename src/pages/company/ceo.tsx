@@ -96,7 +96,17 @@ export default function CeoPage({ content }: { content: ceoPageContent }) {
 
                 {/* Paragraphs */}
                 <div className="space-y-4 text-gray-700 text-sm md:text-base leading-relaxed">
-                  <Markdown>{content.message}</Markdown>
+                  <Markdown
+                    components={{
+                      p: ({ children }) => (
+                        <p className="text-gray-700 text-sm md:text-base xl:text-lg leading-relaxed">
+                          {children}
+                        </p>
+                      )
+                    }}
+                  >
+                    {content.message}
+                  </Markdown>
                 </div>
 
                 {/* Signature */}
