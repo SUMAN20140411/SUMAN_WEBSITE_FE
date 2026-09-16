@@ -175,7 +175,7 @@ export default function Header() {
                           <Link
                             key={sub.label}
                             href={sub.href}
-                            className="font-normal text-gray-700 hover:text-blue-600 transition-colors duration-200 whitespace-nowrap"
+                            className="lg:text-lg 2xl:text-xl font-normal text-gray-700 hover:text-blue-600 transition-colors duration-200 whitespace-nowrap"
                           >
                             {sub.label}
                           </Link>
