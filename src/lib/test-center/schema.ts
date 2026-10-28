@@ -1,35 +1,32 @@
 import { z } from "zod";
 import type { TestCenterCopy } from "@/content/test-center/equipment";
 
-export const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
-export const MAX_ATTACHMENTS = 5;
-export const ALLOWED_ATTACHMENT_EXTENSIONS = new Set([
-  "pdf",
-  "png",
-  "jpg",
-  "jpeg",
-  "zip",
-]);
+export const MAX_CUSTOM_SPECS = 10;
 
-const SAMPLE_TYPES = ["cell", "module", "pack", "other"] as const;
-const SAMPLE_CONDITIONS = ["new", "used"] as const;
 const PURPOSES = ["quality", "certification", "customer", "other"] as const;
 const REPORT_LANGUAGES = ["ko", "en", "both"] as const;
 
 const emailSchema = z.email();
 
+export type CustomSpecValues = {
+  label: string;
+  value: string;
+};
+
+export type TestSpec = {
+  label: string;
+  value: string;
+};
+
 export type TestRequestValues = {
   equipmentIds: string[];
   sampleName: string;
-  sampleType: string;
-  modelName: string;
-  manufacturer: string;
-  ratedVoltage: string;
-  capacityAh: string;
   quantity: string;
-  sampleCondition: string;
-  handlingNotes: string;
-  attachments: File[];
+  sampleWeight: string;
+  sampleSizeW: string;
+  sampleSizeD: string;
+  sampleSizeH: string;
+  customSpecs: CustomSpecValues[];
   purpose: string;
   reportLanguage: string;
   standards: string;
@@ -51,15 +48,12 @@ export type TestRequestValues = {
 export const emptyTestRequest: TestRequestValues = {
   equipmentIds: [],
   sampleName: "",
-  sampleType: "",
-  modelName: "",
-  manufacturer: "",
-  ratedVoltage: "",
-  capacityAh: "",
   quantity: "",
-  sampleCondition: "",
-  handlingNotes: "",
-  attachments: [],
+  sampleWeight: "",
+  sampleSizeW: "",
+  sampleSizeD: "",
+  sampleSizeH: "",
+  customSpecs: [],
   purpose: "",
   reportLanguage: "",
   standards: "",
@@ -82,15 +76,12 @@ export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
   ["equipmentIds"],
   [
     "sampleName",
-    "sampleType",
-    "modelName",
-    "manufacturer",
-    "ratedVoltage",
-    "capacityAh",
     "quantity",
-    "sampleCondition",
-    "handlingNotes",
-    "attachments",
+    "sampleWeight",
+    "sampleSizeW",
+    "sampleSizeD",
+    "sampleSizeH",
+    "customSpecs",
   ],
   [
     "purpose",
@@ -111,11 +102,6 @@ export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
   ],
   ["privacyConsent", "damageConsent"],
 ];
-
-export function fileExtension(name: string) {
-  const index = name.lastIndexOf(".");
-  return index >= 0 ? name.slice(index + 1).toLowerCase() : "";
-}
 
 export function isBusinessRegistrationNumber(value: string) {
   if (!/^[\d-]+$/.test(value)) return false;
@@ -145,6 +131,49 @@ export function todayInputValue() {
   return `${today.getFullYear()}-${month}-${day}`;
 }
 
+export function isVibrationCategoryLabel(label: string) {
+  const normalized = label.toLowerCase();
+  return normalized.includes("진동") || normalized.includes("vibration");
+}
+
+export function buildSampleSpecs(
+  values: Pick<
+    TestRequestValues,
+    | "sampleWeight"
+    | "sampleSizeW"
+    | "sampleSizeD"
+    | "sampleSizeH"
+    | "customSpecs"
+  >,
+  labels: { weight: string; size: string }
+): TestSpec[] {
+  const specs: TestSpec[] = [];
+  const weight = values.sampleWeight.trim();
+  if (weight) {
+    specs.push({ label: labels.weight, value: `${weight} kg` });
+  }
+
+  const width = values.sampleSizeW.trim();
+  const depth = values.sampleSizeD.trim();
+  const height = values.sampleSizeH.trim();
+  if (width || depth || height) {
+    specs.push({
+      label: labels.size,
+      value: `W ${width} mm D ${depth} mm H ${height} mm`,
+    });
+  }
+
+  values.customSpecs.forEach((row) => {
+    const label = row.label.trim();
+    const value = row.value.trim();
+    if (label && value) {
+      specs.push({ label, value });
+    }
+  });
+
+  return specs;
+}
+
 function requiredText(required: string, tooLong: string, max = 200) {
   return z.string().trim().min(1, required).max(max, tooLong);
 }
@@ -166,18 +195,6 @@ function emailField(required: string, invalid: string, tooLong: string) {
     .refine((value) => emailSchema.safeParse(value).success, invalid);
 }
 
-function capacityField(required: string, invalid: string) {
-  return z
-    .string()
-    .trim()
-    .min(1, required)
-    .refine((value) => {
-      if (!/^\d+(\.\d+)?$/.test(value)) return false;
-      const parsed = Number(value);
-      return Number.isFinite(parsed) && parsed > 0;
-    }, invalid);
-}
-
 function quantityField(required: string, invalid: string) {
   return z
     .string()
@@ -190,77 +207,125 @@ function quantityField(required: string, invalid: string) {
     }, invalid);
 }
 
-function attachmentField(messages: TestCenterCopy["errors"]) {
-  return z
-    .custom<File[]>(
-      (value) => Array.isArray(value),
-      messages.fileInvalid
-    )
-    .superRefine((files, ctx) => {
-      const problems: string[] = [];
-      if (files.length > MAX_ATTACHMENTS) {
-        problems.push(messages.filesMax);
-      }
-      files.forEach((file) => {
-        if (typeof File === "undefined" || !(file instanceof File)) {
-          problems.push(messages.fileInvalid);
-          return;
-        }
-        if (!ALLOWED_ATTACHMENT_EXTENSIONS.has(fileExtension(file.name))) {
-          problems.push(messages.fileType(file.name));
-        }
-        if (file.size > MAX_ATTACHMENT_BYTES) {
-          problems.push(messages.fileSize(file.name));
-        }
-      });
-      if (problems.length > 0) {
-        ctx.addIssue(problems.join(" "));
-      }
-    });
+function isPositiveNumber(value: string) {
+  if (!/^\d+(\.\d+)?$/.test(value)) return false;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0;
 }
 
-export function buildTestRequestSchema(copy: TestCenterCopy) {
+function issue(
+  ctx: z.RefinementCtx,
+  path: (string | number)[],
+  message: string
+) {
+  ctx.addIssue({ code: "custom", path, message });
+}
+
+export function buildTestRequestSchema(
+  copy: TestCenterCopy,
+  options?: { vibrationRequired?: () => boolean }
+) {
   const messages = copy.errors;
-  return z.object({
-    equipmentIds: z.array(z.string().trim().min(1)).min(1, messages.equipmentRequired),
-    sampleName: requiredText(messages.sampleName, messages.tooLong),
-    sampleType: choiceField(SAMPLE_TYPES, messages.sampleType),
-    modelName: requiredText(messages.modelName, messages.tooLong),
-    manufacturer: requiredText(messages.manufacturer, messages.tooLong),
-    ratedVoltage: requiredText(messages.ratedVoltage, messages.tooLong, 40),
-    capacityAh: capacityField(messages.capacityRequired, messages.capacityInvalid),
-    quantity: quantityField(messages.quantityRequired, messages.quantityInvalid),
-    sampleCondition: choiceField(SAMPLE_CONDITIONS, messages.sampleCondition),
-    handlingNotes: optionalText(messages.tooLong),
-    attachments: attachmentField(messages),
-    purpose: choiceField(PURPOSES, messages.purpose),
-    reportLanguage: choiceField(REPORT_LANGUAGES, messages.reportLanguage),
-    standards: optionalText(messages.tooLong, 500),
-    desiredCompletionDate: z
-      .string()
-      .trim()
-      .min(1, messages.dateRequired)
-      .refine(isOnOrAfterToday, messages.dateInvalid),
-    reportEmail: emailField(
-      messages.emailRequired,
-      messages.emailInvalid,
-      messages.tooLong
-    ),
-    additionalRequest: optionalText(messages.tooLong),
-    companyName: requiredText(messages.companyName, messages.tooLong),
-    businessRegistrationNumber: z
-      .string()
-      .trim()
-      .min(1, messages.businessNumberRequired)
-      .max(20, messages.tooLong)
-      .refine(isBusinessRegistrationNumber, messages.businessNumberInvalid),
-    contactName: requiredText(messages.contactName, messages.tooLong),
-    department: requiredText(messages.department, messages.tooLong),
-    phone: requiredText(messages.phone, messages.tooLong, 40),
-    email: emailField(messages.emailRequired, messages.emailInvalid, messages.tooLong),
-    address: requiredText(messages.address, messages.tooLong, 300),
-    privacyConsent: z.boolean().refine((value) => value, messages.consentRequired),
-    damageConsent: z.boolean().refine((value) => value, messages.consentRequired),
-    website: z.string(),
-  });
+  return z
+    .object({
+      equipmentIds: z
+        .array(z.string().trim().min(1))
+        .min(1, messages.equipmentRequired),
+      sampleName: requiredText(messages.sampleName, messages.tooLong),
+      quantity: quantityField(
+        messages.quantityRequired,
+        messages.quantityInvalid
+      ),
+      sampleWeight: z.string().trim().max(40, messages.tooLong),
+      sampleSizeW: z.string().trim().max(40, messages.tooLong),
+      sampleSizeD: z.string().trim().max(40, messages.tooLong),
+      sampleSizeH: z.string().trim().max(40, messages.tooLong),
+      customSpecs: z
+        .array(
+          z.object({
+            label: z.string().max(200, messages.tooLong),
+            value: z.string().max(2000, messages.tooLong),
+          })
+        )
+        .max(MAX_CUSTOM_SPECS),
+      purpose: choiceField(PURPOSES, messages.purpose),
+      reportLanguage: choiceField(REPORT_LANGUAGES, messages.reportLanguage),
+      standards: optionalText(messages.tooLong, 500),
+      desiredCompletionDate: z
+        .string()
+        .trim()
+        .min(1, messages.dateRequired)
+        .refine(isOnOrAfterToday, messages.dateInvalid),
+      reportEmail: emailField(
+        messages.emailRequired,
+        messages.emailInvalid,
+        messages.tooLong
+      ),
+      additionalRequest: optionalText(messages.tooLong),
+      companyName: requiredText(messages.companyName, messages.tooLong),
+      businessRegistrationNumber: z
+        .string()
+        .trim()
+        .min(1, messages.businessNumberRequired)
+        .max(20, messages.tooLong)
+        .refine(isBusinessRegistrationNumber, messages.businessNumberInvalid),
+      contactName: requiredText(messages.contactName, messages.tooLong),
+      department: requiredText(messages.department, messages.tooLong),
+      phone: requiredText(messages.phone, messages.tooLong, 40),
+      email: emailField(
+        messages.emailRequired,
+        messages.emailInvalid,
+        messages.tooLong
+      ),
+      address: requiredText(messages.address, messages.tooLong, 300),
+      privacyConsent: z
+        .boolean()
+        .refine((value) => value, messages.consentRequired),
+      damageConsent: z
+        .boolean()
+        .refine((value) => value, messages.consentRequired),
+      website: z.string(),
+    })
+    .superRefine((values, ctx) => {
+      const vibrationRequired = options?.vibrationRequired?.() ?? false;
+      const weight = values.sampleWeight.trim();
+      const width = values.sampleSizeW.trim();
+      const depth = values.sampleSizeD.trim();
+      const height = values.sampleSizeH.trim();
+      const sizeFilled = [width, depth, height].filter(Boolean).length;
+
+      if (vibrationRequired && !weight) {
+        issue(ctx, ["sampleWeight"], messages.weightRequired);
+      } else if (weight && !isPositiveNumber(weight)) {
+        issue(ctx, ["sampleWeight"], messages.weightInvalid);
+      }
+
+      if (vibrationRequired && sizeFilled === 0) {
+        issue(ctx, ["sampleSizeW"], messages.sizeRequired);
+        issue(ctx, ["sampleSizeD"], messages.sizeRequired);
+        issue(ctx, ["sampleSizeH"], messages.sizeRequired);
+      } else if (sizeFilled > 0 && sizeFilled < 3) {
+        if (!width) issue(ctx, ["sampleSizeW"], messages.sizeIncomplete);
+        if (!depth) issue(ctx, ["sampleSizeD"], messages.sizeIncomplete);
+        if (!height) issue(ctx, ["sampleSizeH"], messages.sizeIncomplete);
+      }
+
+      if (width && !isPositiveNumber(width)) {
+        issue(ctx, ["sampleSizeW"], messages.sizeInvalid);
+      }
+      if (depth && !isPositiveNumber(depth)) {
+        issue(ctx, ["sampleSizeD"], messages.sizeInvalid);
+      }
+      if (height && !isPositiveNumber(height)) {
+        issue(ctx, ["sampleSizeH"], messages.sizeInvalid);
+      }
+
+      values.customSpecs.forEach((row, index) => {
+        const label = row.label.trim();
+        const value = row.value.trim();
+        if ((label && !value) || (!label && value)) {
+          issue(ctx, ["customSpecs", index], messages.customSpecIncomplete);
+        }
+      });
+    });
 }

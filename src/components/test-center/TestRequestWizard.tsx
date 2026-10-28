@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
+  useFieldArray,
   useForm,
+  type Control,
   type FieldErrors,
   type UseFormRegister
 } from "react-hook-form";
@@ -21,9 +23,12 @@ import type {
 } from "@/lib/strapi/collections/testEquipment";
 import { buildTestRequestFormData } from "@/lib/test-center/payload";
 import {
+  MAX_CUSTOM_SPECS,
   TEST_REQUEST_STEP_FIELDS,
+  buildSampleSpecs,
   buildTestRequestSchema,
   emptyTestRequest,
+  isVibrationCategoryLabel,
   todayInputValue,
   type TestRequestValues
 } from "@/lib/test-center/schema";
@@ -207,10 +212,20 @@ function displayValue(value: string, empty: string) {
   return trimmed ? trimmed : empty;
 }
 
-function formatBytes(size: number) {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+function classificationLines(
+  items: TestEquipmentItem[],
+  categories: TestEquipmentCategory[],
+  equipmentIds: string[]
+) {
+  const categoryById = new Map(
+    categories.map((category) => [category.id, category.label])
+  );
+  return items
+    .filter((item) => equipmentIds.includes(item.id))
+    .map((item) => {
+      const category = categoryById.get(item.categoryId) ?? "";
+      return category ? `${category} > ${item.name}` : item.name;
+    });
 }
 
 function isReceipt(value: unknown): value is { receiptNo: string } {
@@ -250,13 +265,17 @@ async function readJson(response: Response) {
   }
 }
 
-function SummaryRows({ rows }: { rows: { label: string; value: string }[] }) {
+function SummaryRows({
+  rows
+}: {
+  rows: { label: string; value: string; key?: string }[];
+}) {
   return (
     <dl className="grid grid-cols-1 gap-y-3 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-x-4">
-      {rows.map((row) => (
-        <div key={row.label} className="contents">
+      {rows.map((row, index) => (
+        <div key={row.key ?? `${row.label}-${index}`} className="contents">
           <dt className="text-sm text-gray-500">{row.label}</dt>
-          <dd className="text-sm font-medium break-words text-gray-900">
+          <dd className="whitespace-pre-line text-sm font-medium break-words text-gray-900">
             {row.value}
           </dd>
         </div>
@@ -272,13 +291,21 @@ export default function TestRequestWizard({
 }) {
   const { lang } = useLangStore();
   const copy = lang === "ENG" ? testCenterCopy.en : testCenterCopy.ko;
-  const schema = useMemo(() => buildTestRequestSchema(copy), [copy]);
+  const vibrationRequiredRef = useRef(false);
+  const schema = useMemo(
+    () =>
+      buildTestRequestSchema(copy, {
+        vibrationRequired: () => vibrationRequiredRef.current
+      }),
+    [copy]
+  );
   const resolver = useMemo(
     () => zodResolver(schema, undefined, { raw: true }),
     [schema]
   );
   const {
     register,
+    control,
     trigger,
     handleSubmit,
     watch,
@@ -298,7 +325,19 @@ export default function TestRequestWizard({
   const topRef = useRef<HTMLDivElement>(null);
   const selectedIds = watch("equipmentIds");
   const standards = watch("standards");
-  const attachments = watch("attachments");
+  const classifications = useMemo(
+    () => classificationLines(catalog.items, catalog.categories, selectedIds),
+    [catalog.items, catalog.categories, selectedIds]
+  );
+
+  vibrationRequiredRef.current = selectedIds.some((id) => {
+    const item = catalog.items.find((entry) => entry.id === id);
+    if (!item) return false;
+    const category = catalog.categories.find(
+      (entry) => entry.id === item.categoryId
+    );
+    return category ? isVibrationCategoryLabel(category.label) : false;
+  });
 
   const goToStep = (nextStep: number) => {
     setStep(nextStep);
@@ -331,22 +370,6 @@ export default function TestRequestWizard({
     setValue("standards", next, { shouldDirty: true, shouldValidate: true });
   };
 
-  const addFiles = (list: FileList | null) => {
-    const picked = Array.from(list ?? []);
-    setValue("attachments", [...getValues("attachments"), ...picked], {
-      shouldDirty: true,
-      shouldValidate: true
-    });
-  };
-
-  const removeFile = (index: number) => {
-    setValue(
-      "attachments",
-      getValues("attachments").filter((_, fileIndex) => fileIndex !== index),
-      { shouldDirty: true, shouldValidate: true }
-    );
-  };
-
   const onSubmit = async (values: TestRequestValues) => {
     setSubmitError(null);
     if (values.website.trim()) {
@@ -363,7 +386,7 @@ export default function TestRequestWizard({
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { Accept: "application/json" },
-        body: buildTestRequestFormData(values)
+        body: buildTestRequestFormData(values, copy)
       });
       const payload = await readJson(response);
       if (response.status === 201 && isReceipt(payload)) {
@@ -464,11 +487,10 @@ export default function TestRequestWizard({
           {step === 1 ? (
             <SampleStep
               copy={copy}
+              control={control}
               register={register}
               errors={errors}
-              attachments={attachments}
-              onAddFiles={addFiles}
-              onRemoveFile={removeFile}
+              classifications={classifications}
             />
           ) : null}
 
@@ -846,154 +868,297 @@ function EquipmentStep({
   );
 }
 
+function RequiredAsterisk() {
+  return (
+    <span className="ml-0.5 font-semibold text-red-600" aria-hidden="true">
+      *
+    </span>
+  );
+}
+
+function SampleFieldLabel({
+  htmlFor,
+  label,
+  required
+}: {
+  htmlFor: string;
+  label: string;
+  required?: boolean;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="shrink-0 text-sm font-semibold text-gray-800 md:w-28"
+    >
+      {label}
+      {required ? <RequiredAsterisk /> : null}
+    </label>
+  );
+}
+
 function SampleStep({
   copy,
+  control,
   register,
   errors,
-  attachments,
-  onAddFiles,
-  onRemoveFile
+  classifications
 }: {
   copy: TestCenterCopy;
+  control: Control<TestRequestValues>;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
-  attachments: File[];
-  onAddFiles: (list: FileList | null) => void;
-  onRemoveFile: (index: number) => void;
+  classifications: string[];
 }) {
-  const fileId = useId();
-  const fileError = messageOf(errors.attachments);
-  const fileErrorId = `${fileId}-error`;
+  const nameId = useId();
+  const quantityId = useId();
+  const weightId = useId();
+  const widthId = useId();
+  const depthId = useId();
+  const heightId = useId();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "customSpecs"
+  });
+
+  const nameError = messageOf(errors.sampleName);
+  const quantityError = messageOf(errors.quantity);
+  const weightError = messageOf(errors.sampleWeight);
+  const widthError = messageOf(errors.sampleSizeW);
+  const depthError = messageOf(errors.sampleSizeD);
+  const heightError = messageOf(errors.sampleSizeH);
+  const sizeError = widthError || depthError || heightError;
+  const customSpecsError = messageOf(errors.customSpecs);
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <TextInput
-        label={copy.sampleName}
-        error={messageOf(errors.sampleName)}
-        registration={register("sampleName")}
-        autoComplete="off"
-      />
-      <SelectInput
-        label={copy.sampleType}
-        error={messageOf(errors.sampleType)}
-        registration={register("sampleType")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.sampleTypes}
-      />
-      <TextInput
-        label={copy.modelName}
-        error={messageOf(errors.modelName)}
-        registration={register("modelName")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.manufacturer}
-        error={messageOf(errors.manufacturer)}
-        registration={register("manufacturer")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.ratedVoltage}
-        error={messageOf(errors.ratedVoltage)}
-        registration={register("ratedVoltage")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.capacityAh}
-        error={messageOf(errors.capacityAh)}
-        registration={register("capacityAh")}
-        type="number"
-        inputMode="decimal"
-        min="0"
-        step="any"
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.quantity}
-        error={messageOf(errors.quantity)}
-        registration={register("quantity")}
-        type="number"
-        inputMode="numeric"
-        min="1"
-        step="1"
-        autoComplete="off"
-      />
-      <SelectInput
-        label={copy.sampleCondition}
-        error={messageOf(errors.sampleCondition)}
-        registration={register("sampleCondition")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.sampleConditions}
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.handlingNotes}
-          optional={copy.optional}
-          error={messageOf(errors.handlingNotes)}
-          registration={register("handlingNotes")}
-        />
-      </div>
-      <div className="md:col-span-2">
-        <label
-          htmlFor={fileId}
-          className="mb-2 block text-sm font-semibold text-gray-800"
-        >
-          {copy.attachments}
-          <OptionalMark label={copy.optional} />
-        </label>
-        <label
-          htmlFor={fileId}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded border border-dashed px-4 py-6 text-center ${
-            fileError
-              ? "border-red-500 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          }`}
-        >
-          <span className="font-semibold text-blue-700">
-            {copy.chooseFiles}
-          </span>
-          <span className="mt-1 text-sm text-gray-600">{copy.fileHint}</span>
-          <span className="mt-2 text-xs text-gray-500">
-            {copy.fileCount(attachments.length)}
-          </span>
-        </label>
-        <input
-          id={fileId}
-          type="file"
-          multiple
-          accept=".pdf,.png,.jpg,.jpeg,.zip,application/pdf,image/png,image/jpeg,application/zip,application/x-zip-compressed"
-          className="sr-only"
-          aria-invalid={Boolean(fileError)}
-          aria-describedby={fileError ? fileErrorId : undefined}
-          onChange={(event) => {
-            onAddFiles(event.target.files);
-            event.target.value = "";
-          }}
-        />
-        {attachments.length > 0 ? (
-          <ul className="mt-3 space-y-2">
-            {attachments.map((file, index) => (
-              <li
-                key={`${file.name}-${file.size}-${index}`}
-                className="flex items-center justify-between gap-3 rounded border border-gray-200 px-3 py-2 text-sm"
-              >
-                <span className="min-w-0 break-all text-gray-800">
-                  {file.name}{" "}
-                  <span className="text-gray-500">
-                    ({formatBytes(file.size)})
-                  </span>
+    <div className="mt-6 space-y-4">
+      <p className="text-right text-xs font-medium text-red-600">
+        {copy.requiredNote}
+      </p>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-2">
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel
+                htmlFor={nameId}
+                label={copy.sampleName}
+                required
+              />
+              <input
+                id={nameId}
+                type="text"
+                autoComplete="off"
+                aria-invalid={Boolean(nameError)}
+                className={fieldClass(Boolean(nameError))}
+                {...register("sampleName")}
+              />
+            </div>
+            <FieldErrorText id={`${nameId}-error`} message={nameError} />
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel
+                htmlFor={quantityId}
+                label={copy.quantity}
+                required
+              />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <input
+                  id={quantityId}
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  step="1"
+                  autoComplete="off"
+                  aria-invalid={Boolean(quantityError)}
+                  className={fieldClass(Boolean(quantityError))}
+                  {...register("quantity")}
+                />
+                <span className="shrink-0 text-sm text-gray-700">
+                  {copy.quantityUnit}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => onRemoveFile(index)}
-                  className="shrink-0 font-semibold text-blue-700 hover:text-blue-800"
-                >
-                  {copy.removeFile}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        <FieldErrorText id={fileErrorId} message={fileError} />
+              </div>
+            </div>
+            <FieldErrorText
+              id={`${quantityId}-error`}
+              message={quantityError}
+            />
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+              <span className="shrink-0 pt-2 text-sm font-semibold text-gray-800 md:w-28">
+                {copy.classification}
+              </span>
+              <div className="min-w-0 flex-1 rounded border border-gray-200 bg-slate-50 px-3 py-2 text-sm text-gray-800">
+                {classifications.length > 0 ? (
+                  <ul className="space-y-1">
+                    {classifications.map((line) => (
+                      <li key={line} className="break-words">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="text-gray-400">{copy.empty}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel htmlFor={weightId} label={copy.sampleWeight} />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <input
+                  id={weightId}
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="any"
+                  autoComplete="off"
+                  aria-invalid={Boolean(weightError)}
+                  className={fieldClass(Boolean(weightError))}
+                  {...register("sampleWeight")}
+                />
+                <span className="shrink-0 text-sm text-gray-700">
+                  {copy.weightUnit}
+                </span>
+              </div>
+            </div>
+            <FieldErrorText id={`${weightId}-error`} message={weightError} />
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <span className="shrink-0 text-sm font-semibold text-gray-800 md:w-28">
+                {copy.sampleSize}
+              </span>
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeWidth}</span>
+                  <input
+                    id={widthId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeWidth}`}
+                    aria-invalid={Boolean(widthError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      widthError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sampleSizeW")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeDepth}</span>
+                  <input
+                    id={depthId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeDepth}`}
+                    aria-invalid={Boolean(depthError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      depthError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sampleSizeD")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeHeight}</span>
+                  <input
+                    id={heightId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeHeight}`}
+                    aria-invalid={Boolean(heightError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      heightError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sampleSizeH")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+              </div>
+            </div>
+            <FieldErrorText id={`${widthId}-error`} message={sizeError} />
+          </div>
+        </div>
+
+        <p className="mt-5 text-sm text-blue-700">
+          <span aria-hidden="true">● </span>
+          {copy.sampleSpecsNote}
+        </p>
+
+        <div className="mt-5 border-t border-gray-100 pt-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-gray-800">
+              {copy.addSpec}
+            </p>
+            <button
+              type="button"
+              disabled={fields.length >= MAX_CUSTOM_SPECS}
+              onClick={() => append({ label: "", value: "" })}
+              className="rounded border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {copy.addItem}
+            </button>
+          </div>
+          {fields.length > 0 ? (
+            <ul className="space-y-3">
+              {fields.map((field, index) => {
+                const rowError = messageOf(errors.customSpecs?.[index]);
+                return (
+                  <li
+                    key={field.id}
+                    className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)_auto]"
+                  >
+                    <input
+                      type="text"
+                      placeholder={copy.specLabel}
+                      aria-label={copy.specLabel}
+                      aria-invalid={Boolean(rowError)}
+                      className={fieldClass(Boolean(rowError))}
+                      {...register(`customSpecs.${index}.label`)}
+                    />
+                    <input
+                      type="text"
+                      placeholder={copy.specValue}
+                      aria-label={copy.specValue}
+                      aria-invalid={Boolean(rowError)}
+                      className={fieldClass(Boolean(rowError))}
+                      {...register(`customSpecs.${index}.value`)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                      {copy.removeSpec}
+                    </button>
+                    {rowError ? (
+                      <p className="text-xs text-red-600 sm:col-span-3">
+                        {rowError}
+                      </p>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
+          <FieldErrorText id="custom-specs-error" message={customSpecsError} />
+        </div>
       </div>
     </div>
   );
@@ -1216,52 +1381,28 @@ function ReviewStep({
               value: displayValue(values.sampleName, copy.empty)
             },
             {
-              label: copy.sampleType,
-              value: optionLabel(
-                copy.sampleTypes,
-                values.sampleType,
-                copy.empty
-              )
-            },
-            {
-              label: copy.modelName,
-              value: displayValue(values.modelName, copy.empty)
-            },
-            {
-              label: copy.manufacturer,
-              value: displayValue(values.manufacturer, copy.empty)
-            },
-            {
-              label: copy.ratedVoltage,
-              value: displayValue(values.ratedVoltage, copy.empty)
-            },
-            {
-              label: copy.capacityAh,
-              value: displayValue(values.capacityAh, copy.empty)
-            },
-            {
               label: copy.quantity,
-              value: displayValue(values.quantity, copy.empty)
+              value: values.quantity.trim()
+                ? `${values.quantity.trim()} ${copy.quantityUnit}`
+                : copy.empty
             },
             {
-              label: copy.sampleCondition,
-              value: optionLabel(
-                copy.sampleConditions,
-                values.sampleCondition,
-                copy.empty
-              )
-            },
-            {
-              label: copy.handlingNotes,
-              value: displayValue(values.handlingNotes, copy.empty)
-            },
-            {
-              label: copy.attachments,
+              label: copy.classification,
               value:
-                values.attachments.length > 0
-                  ? values.attachments.map((file) => file.name).join(", ")
-                  : copy.noFiles
-            }
+                classificationLines(
+                  items,
+                  categories,
+                  values.equipmentIds
+                ).join("\n") || copy.empty
+            },
+            ...buildSampleSpecs(values, {
+              weight: copy.sampleWeight,
+              size: copy.sampleSize
+            }).map((spec, index) => ({
+              key: `spec-${index}-${spec.label}`,
+              label: spec.label,
+              value: spec.value
+            }))
           ]}
         />
       </ReviewSection>
