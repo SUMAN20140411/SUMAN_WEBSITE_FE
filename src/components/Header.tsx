@@ -30,6 +30,11 @@ const navItemsKor = [
     ]
   },
   {
+    label: "시험센터",
+    href: "/test-center/apply",
+    submenu: []
+  },
+  {
     label: "인재채용",
     href: "/careers/philosophy",
     submenu: [
@@ -67,6 +72,11 @@ const navItemsEng = [
       { label: "Product", href: "/eng/business/product" },
       { label: "Research field", href: "/eng/business/rnd" }
     ]
+  },
+  {
+    label: "Test Center",
+    href: "/eng/test-center/apply",
+    submenu: []
   },
   {
     label: "Recruitment",
@@ -146,8 +156,8 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation — centered (same gaps) */}
-          <div className="hidden lg:flex flex-grow justify-center items-center h-full">
-            <nav className="flex items-center gap-12 xl:gap-20 h-full">
+          <div className="hidden lg:flex min-w-0 flex-grow justify-center items-center h-full">
+            <nav className="flex items-center gap-4 xl:gap-8 2xl:gap-14 h-full">
               {NAV_ITEMS.map((item, index) => (
                 <div
                   key={item.label}
@@ -157,7 +167,7 @@ export default function Header() {
                 >
                   <Link
                     href={item.href}
-                    className="lg:text-lg 2xl:text-xl font-bold hover:text-blue-600 transition-colors duration-200"
+                    className="whitespace-nowrap lg:text-lg 2xl:text-xl font-bold hover:text-blue-600 transition-colors duration-200"
                   >
                     {item.label}
                   </Link>
