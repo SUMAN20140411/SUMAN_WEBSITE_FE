@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   // Image optimization disabled (required for static sites)
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
   
   // Add trailing slash (optional)
