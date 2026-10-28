@@ -1,6 +1,7 @@
 import type { TestCenterCopy } from "@/content/test-center/equipment";
 import {
   buildSampleSpecs,
+  todayInputValue,
   type TestRequestValues,
 } from "@/lib/test-center/schema";
 
@@ -17,17 +18,30 @@ type SpecSourceField =
   | "sampleSizeD"
   | "sampleSizeH";
 
-type PayloadTextField = Exclude<TextField, "website" | SpecSourceField>;
+/** Cleared when receive method is not mail; still typed on the form. */
+type MailOnlyField =
+  | "shippingName"
+  | "recipientName"
+  | "recipientPhone"
+  | "postalCode"
+  | "deliveryAddress"
+  | "addressDetail";
+
+type PayloadTextField = Exclude<
+  TextField,
+  "website" | SpecSourceField | MailOnlyField
+>;
 
 const TEXT_FIELDS = [
   "sampleName",
   "quantity",
+  "receptionType",
   "purpose",
-  "reportLanguage",
-  "standards",
-  "desiredCompletionDate",
-  "reportEmail",
-  "additionalRequest",
+  "purposeDetail",
+  "copyCount",
+  "receiveMethod",
+  "samplePhoto",
+  "sampleHandling",
   "companyName",
   "businessRegistrationNumber",
   "contactName",
@@ -36,6 +50,15 @@ const TEXT_FIELDS = [
   "email",
   "address",
 ] as const satisfies readonly PayloadTextField[];
+
+const MAIL_FIELDS = [
+  "shippingName",
+  "recipientName",
+  "recipientPhone",
+  "postalCode",
+  "deliveryAddress",
+  "addressDetail",
+] as const satisfies readonly MailOnlyField[];
 
 type MissingTextField = Exclude<PayloadTextField, (typeof TEXT_FIELDS)[number]>;
 type AssertAllTextFields<T extends never> = T;
@@ -49,9 +72,15 @@ export function buildTestRequestFormData(
   [...new Set(values.equipmentIds)].forEach((id) => {
     body.append("equipmentIds", id);
   });
+  body.append("receivedDate", todayInputValue());
   TEXT_FIELDS.forEach((key) => {
     body.append(key, values[key].trim());
   });
+  if (values.receiveMethod === "mail") {
+    MAIL_FIELDS.forEach((key) => {
+      body.append(key, values[key].trim());
+    });
+  }
   body.append(
     "specs",
     JSON.stringify(

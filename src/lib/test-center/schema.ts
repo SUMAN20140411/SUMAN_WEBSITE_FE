@@ -3,8 +3,11 @@ import type { TestCenterCopy } from "@/content/test-center/equipment";
 
 export const MAX_CUSTOM_SPECS = 10;
 
-const PURPOSES = ["quality", "certification", "customer", "other"] as const;
-const REPORT_LANGUAGES = ["ko", "en", "both"] as const;
+export const PURPOSES = ["reference", "quality", "customer", "other"] as const;
+export const RECEPTION_TYPES = ["general"] as const;
+export const RECEIVE_METHODS = ["visit", "mail", "electronic"] as const;
+export const SAMPLE_PHOTOS = ["attach", "skip"] as const;
+export const SAMPLE_HANDLINGS = ["dispose", "return"] as const;
 
 const emailSchema = z.email();
 
@@ -27,12 +30,19 @@ export type TestRequestValues = {
   sampleSizeD: string;
   sampleSizeH: string;
   customSpecs: CustomSpecValues[];
+  receptionType: string;
   purpose: string;
-  reportLanguage: string;
-  standards: string;
-  desiredCompletionDate: string;
-  reportEmail: string;
-  additionalRequest: string;
+  purposeDetail: string;
+  copyCount: string;
+  receiveMethod: string;
+  shippingName: string;
+  recipientName: string;
+  recipientPhone: string;
+  postalCode: string;
+  deliveryAddress: string;
+  addressDetail: string;
+  samplePhoto: string;
+  sampleHandling: string;
   companyName: string;
   businessRegistrationNumber: string;
   contactName: string;
@@ -54,12 +64,19 @@ export const emptyTestRequest: TestRequestValues = {
   sampleSizeD: "",
   sampleSizeH: "",
   customSpecs: [],
+  receptionType: "general",
   purpose: "",
-  reportLanguage: "",
-  standards: "",
-  desiredCompletionDate: "",
-  reportEmail: "",
-  additionalRequest: "",
+  purposeDetail: "",
+  copyCount: "1",
+  receiveMethod: "",
+  shippingName: "",
+  recipientName: "",
+  recipientPhone: "",
+  postalCode: "",
+  deliveryAddress: "",
+  addressDetail: "",
+  samplePhoto: "",
+  sampleHandling: "",
   companyName: "",
   businessRegistrationNumber: "",
   contactName: "",
@@ -84,12 +101,19 @@ export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
     "customSpecs",
   ],
   [
+    "receptionType",
     "purpose",
-    "reportLanguage",
-    "standards",
-    "desiredCompletionDate",
-    "reportEmail",
-    "additionalRequest",
+    "purposeDetail",
+    "copyCount",
+    "receiveMethod",
+    "shippingName",
+    "recipientName",
+    "recipientPhone",
+    "postalCode",
+    "deliveryAddress",
+    "addressDetail",
+    "samplePhoto",
+    "sampleHandling",
   ],
   [
     "companyName",
@@ -178,10 +202,6 @@ function requiredText(required: string, tooLong: string, max = 200) {
   return z.string().trim().min(1, required).max(max, tooLong);
 }
 
-function optionalText(tooLong: string, max = 2000) {
-  return z.string().trim().max(max, tooLong);
-}
-
 function choiceField(values: readonly string[], message: string) {
   return z.string().trim().refine((value) => values.includes(value), message);
 }
@@ -248,20 +268,22 @@ export function buildTestRequestSchema(
           })
         )
         .max(MAX_CUSTOM_SPECS),
+      receptionType: choiceField(RECEPTION_TYPES, messages.receptionType),
       purpose: choiceField(PURPOSES, messages.purpose),
-      reportLanguage: choiceField(REPORT_LANGUAGES, messages.reportLanguage),
-      standards: optionalText(messages.tooLong, 500),
-      desiredCompletionDate: z
-        .string()
-        .trim()
-        .min(1, messages.dateRequired)
-        .refine(isOnOrAfterToday, messages.dateInvalid),
-      reportEmail: emailField(
-        messages.emailRequired,
-        messages.emailInvalid,
-        messages.tooLong
+      purposeDetail: z.string().trim().max(200, messages.tooLong),
+      copyCount: quantityField(
+        messages.copyCountRequired,
+        messages.copyCountInvalid
       ),
-      additionalRequest: optionalText(messages.tooLong),
+      receiveMethod: choiceField(RECEIVE_METHODS, messages.receiveMethod),
+      shippingName: z.string().trim().max(200, messages.tooLong),
+      recipientName: z.string().trim().max(200, messages.tooLong),
+      recipientPhone: z.string().trim().max(40, messages.tooLong),
+      postalCode: z.string().trim().max(10, messages.tooLong),
+      deliveryAddress: z.string().trim().max(300, messages.tooLong),
+      addressDetail: z.string().trim().max(200, messages.tooLong),
+      samplePhoto: choiceField(SAMPLE_PHOTOS, messages.samplePhoto),
+      sampleHandling: choiceField(SAMPLE_HANDLINGS, messages.sampleHandling),
       companyName: requiredText(messages.companyName, messages.tooLong),
       businessRegistrationNumber: z
         .string()
@@ -327,5 +349,30 @@ export function buildTestRequestSchema(
           issue(ctx, ["customSpecs", index], messages.customSpecIncomplete);
         }
       });
+
+      if (values.purpose === "customer" && !values.purposeDetail.trim()) {
+        issue(ctx, ["purposeDetail"], messages.purposeDetail);
+      }
+
+      if (values.receiveMethod === "mail") {
+        if (!values.shippingName.trim()) {
+          issue(ctx, ["shippingName"], messages.shippingName);
+        }
+        if (!values.recipientName.trim()) {
+          issue(ctx, ["recipientName"], messages.recipientName);
+        }
+        if (!values.recipientPhone.trim()) {
+          issue(ctx, ["recipientPhone"], messages.recipientPhone);
+        }
+        if (!values.postalCode.trim()) {
+          issue(ctx, ["postalCode"], messages.postalCode);
+        }
+        if (!values.deliveryAddress.trim()) {
+          issue(ctx, ["deliveryAddress"], messages.deliveryAddress);
+        }
+        if (!values.addressDetail.trim()) {
+          issue(ctx, ["addressDetail"], messages.addressDetail);
+        }
+      }
     });
 }

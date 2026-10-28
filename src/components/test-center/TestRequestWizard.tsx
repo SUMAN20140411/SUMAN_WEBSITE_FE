@@ -7,13 +7,13 @@ import {
   useForm,
   type Control,
   type FieldErrors,
-  type UseFormRegister
+  type UseFormRegister,
+  type UseFormSetValue
 } from "react-hook-form";
 import {
-  STANDARD_CHIPS,
+  formatReceivedDate,
   optionLabel,
   testCenterCopy,
-  type ChoiceOption,
   type TestCenterCopy
 } from "@/content/test-center/equipment";
 import type {
@@ -23,13 +23,16 @@ import type {
 } from "@/lib/strapi/collections/testEquipment";
 import { buildTestRequestFormData } from "@/lib/test-center/payload";
 import {
+  searchEpostAddresses,
+  type PostalCodeResult
+} from "@/lib/test-center/postalCode";
+import {
   MAX_CUSTOM_SPECS,
   TEST_REQUEST_STEP_FIELDS,
   buildSampleSpecs,
   buildTestRequestSchema,
   emptyTestRequest,
   isVibrationCategoryLabel,
-  todayInputValue,
   type TestRequestValues
 } from "@/lib/test-center/schema";
 import { useLangStore } from "@/stores/langStore";
@@ -126,82 +129,6 @@ function TextInput({
           {hint}
         </p>
       ) : null}
-      <FieldErrorText id={errorId} message={error} />
-    </div>
-  );
-}
-
-function SelectInput({
-  label,
-  error,
-  registration,
-  placeholder,
-  options
-}: {
-  label: string;
-  error?: string;
-  registration: ReturnType<UseFormRegister<TestRequestValues>>;
-  placeholder: string;
-  options: ChoiceOption[];
-}) {
-  const id = useId();
-  const errorId = `${id}-error`;
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="mb-2 block text-sm font-semibold text-gray-800"
-      >
-        {label}
-      </label>
-      <select
-        id={id}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
-        className={fieldClass(Boolean(error))}
-        {...registration}
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <FieldErrorText id={errorId} message={error} />
-    </div>
-  );
-}
-
-function TextAreaInput({
-  label,
-  error,
-  optional,
-  registration
-}: {
-  label: string;
-  error?: string;
-  optional?: string;
-  registration: ReturnType<UseFormRegister<TestRequestValues>>;
-}) {
-  const id = useId();
-  const errorId = `${id}-error`;
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="mb-2 block text-sm font-semibold text-gray-800"
-      >
-        {label}
-        {optional ? <OptionalMark label={optional} /> : null}
-      </label>
-      <textarea
-        id={id}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
-        className={`${fieldClass(Boolean(error))} min-h-[120px]`}
-        {...registration}
-      />
       <FieldErrorText id={errorId} message={error} />
     </div>
   );
@@ -324,7 +251,7 @@ export default function TestRequestWizard({
   const [receipt, setReceipt] = useState<ReceiptResult | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const selectedIds = watch("equipmentIds");
-  const standards = watch("standards");
+  const receiveMethod = watch("receiveMethod");
   const classifications = useMemo(
     () => classificationLines(catalog.items, catalog.categories, selectedIds),
     [catalog.items, catalog.categories, selectedIds]
@@ -363,13 +290,6 @@ export default function TestRequestWizard({
     });
   };
 
-  const appendStandard = (chip: string) => {
-    const current = getValues("standards");
-    if (current.toLowerCase().includes(chip.toLowerCase())) return;
-    const next = current.trim() ? `${current.trim()}, ${chip}` : chip;
-    setValue("standards", next, { shouldDirty: true, shouldValidate: true });
-  };
-
   const onSubmit = async (values: TestRequestValues) => {
     setSubmitError(null);
     if (values.website.trim()) {
@@ -392,7 +312,7 @@ export default function TestRequestWizard({
       if (response.status === 201 && isReceipt(payload)) {
         setReceipt({
           receiptNo: payload.receiptNo.trim(),
-          email: values.reportEmail.trim()
+          email: values.email.trim()
         });
         return;
       }
@@ -499,8 +419,9 @@ export default function TestRequestWizard({
               copy={copy}
               register={register}
               errors={errors}
-              standards={standards}
-              onAppendStandard={appendStandard}
+              setValue={setValue}
+              receiveMethod={receiveMethod}
+              lang={lang === "ENG" ? "en" : "ko"}
             />
           ) : null}
 
@@ -1164,88 +1085,546 @@ function SampleStep({
   );
 }
 
+function ReportFieldLabel({
+  htmlFor,
+  label,
+  required
+}: {
+  htmlFor?: string;
+  label: string;
+  required?: boolean;
+}) {
+  const className =
+    "shrink-0 text-sm font-semibold text-gray-800 md:w-44 lg:w-52";
+  if (!htmlFor) {
+    return (
+      <span className={className}>
+        {label}
+        {required ? <RequiredAsterisk /> : null}
+      </span>
+    );
+  }
+  return (
+    <label htmlFor={htmlFor} className={className}>
+      {label}
+      {required ? <RequiredAsterisk /> : null}
+    </label>
+  );
+}
+
 function ReportStep({
   copy,
   register,
   errors,
-  standards,
-  onAppendStandard
+  setValue,
+  receiveMethod,
+  lang
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
-  standards: string;
-  onAppendStandard: (chip: string) => void;
+  setValue: UseFormSetValue<TestRequestValues>;
+  receiveMethod: string;
+  lang: "ko" | "en";
 }) {
+  const purposeId = useId();
+  const purposeDetailId = useId();
+  const copyCountId = useId();
+  const receiveMethodId = useId();
+  const shippingNameId = useId();
+  const recipientNameId = useId();
+  const recipientPhoneId = useId();
+  const postalCodeId = useId();
+  const deliveryAddressId = useId();
+  const addressDetailId = useId();
+  const [addressOpen, setAddressOpen] = useState(false);
+
+  const showMail = receiveMethod === "mail";
+  const receivedDateLabel = formatReceivedDate(new Date(), lang);
+
+  const purposeError = messageOf(errors.purpose);
+  const purposeDetailError = messageOf(errors.purposeDetail);
+  const copyCountError = messageOf(errors.copyCount);
+  const receiveMethodError = messageOf(errors.receiveMethod);
+  const shippingNameError = messageOf(errors.shippingName);
+  const recipientNameError = messageOf(errors.recipientName);
+  const recipientPhoneError = messageOf(errors.recipientPhone);
+  const postalCodeError = messageOf(errors.postalCode);
+  const deliveryAddressError = messageOf(errors.deliveryAddress);
+  const addressDetailError = messageOf(errors.addressDetail);
+  const samplePhotoError = messageOf(errors.samplePhoto);
+  const sampleHandlingError = messageOf(errors.sampleHandling);
+  const receptionTypeError = messageOf(errors.receptionType);
+  const addressError =
+    postalCodeError || deliveryAddressError || addressDetailError;
+
+  const onSelectAddress = (result: PostalCodeResult) => {
+    setValue("postalCode", result.zipCode, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setValue("deliveryAddress", result.roadAddress, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setAddressOpen(false);
+  };
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <SelectInput
-        label={copy.purpose}
-        error={messageOf(errors.purpose)}
-        registration={register("purpose")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.purposes}
-      />
-      <SelectInput
-        label={copy.reportLanguage}
-        error={messageOf(errors.reportLanguage)}
-        registration={register("reportLanguage")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.reportLanguages}
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.standards}
-          optional={copy.optional}
-          error={messageOf(errors.standards)}
-          registration={register("standards")}
-        />
-        <p className="mt-2 text-xs text-gray-500">{copy.standardsHint}</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {STANDARD_CHIPS.map((chip) => {
-            const included = standards
-              .toLowerCase()
-              .includes(chip.toLowerCase());
-            return (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => onAppendStandard(chip)}
-                className={`rounded-full border px-3 py-1 text-sm ${
-                  included
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
-                }`}
-              >
-                {chip}
-              </button>
-            );
-          })}
+    <div className="mt-6 space-y-4">
+      <p className="text-right text-xs font-medium text-red-600">
+        {copy.requiredNote}
+      </p>
+
+      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <ReportFieldLabel label={copy.receivedDate} />
+          <p className="text-sm text-gray-900">{receivedDateLabel}</p>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.receptionType} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="general"
+                  className="accent-blue-600"
+                  {...register("receptionType")}
+                />
+                {copy.receptionTypeGeneral}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-400">
+                <input
+                  type="radio"
+                  disabled
+                  className="accent-blue-600"
+                  tabIndex={-1}
+                />
+                {copy.receptionTypeKolasNote}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText
+            id="reception-type-error"
+            message={receptionTypeError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={purposeId}
+              label={copy.purpose}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <select
+                  id={purposeId}
+                  aria-invalid={Boolean(purposeError)}
+                  className={`${fieldClass(Boolean(purposeError))} sm:max-w-xs`}
+                  {...register("purpose")}
+                >
+                  <option value="">{copy.selectPlaceholder}</option>
+                  {copy.purposes.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  id={purposeDetailId}
+                  type="text"
+                  placeholder={copy.purposeDetailPlaceholder}
+                  aria-invalid={Boolean(purposeDetailError)}
+                  className={fieldClass(Boolean(purposeDetailError))}
+                  {...register("purposeDetail")}
+                />
+              </div>
+              <p className="text-xs text-gray-500">{copy.purposeHint}</p>
+              <FieldErrorText
+                id={`${purposeId}-error`}
+                message={purposeError || purposeDetailError}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={copyCountId}
+              label={copy.copyCount}
+              required
+            />
+            <div className="flex items-center gap-2">
+              <input
+                id={copyCountId}
+                type="text"
+                inputMode="numeric"
+                aria-invalid={Boolean(copyCountError)}
+                className={`${fieldClass(Boolean(copyCountError))} w-24`}
+                {...register("copyCount")}
+              />
+              <span className="text-sm text-gray-700">{copy.copyCountUnit}</span>
+            </div>
+          </div>
+          <FieldErrorText id={`${copyCountId}-error`} message={copyCountError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={receiveMethodId}
+              label={copy.receiveMethod}
+              required
+            />
+            <select
+              id={receiveMethodId}
+              aria-invalid={Boolean(receiveMethodError)}
+              className={`${fieldClass(Boolean(receiveMethodError))} sm:max-w-xs`}
+              {...register("receiveMethod")}
+            >
+              <option value="">{copy.selectPlaceholder}</option>
+              {copy.receiveMethods.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <FieldErrorText
+            id={`${receiveMethodId}-error`}
+            message={receiveMethodError}
+          />
+        </div>
+
+        {showMail ? (
+          <>
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={shippingNameId}
+                  label={copy.shippingName}
+                  required
+                />
+                <input
+                  id={shippingNameId}
+                  type="text"
+                  aria-invalid={Boolean(shippingNameError)}
+                  className={fieldClass(Boolean(shippingNameError))}
+                  {...register("shippingName")}
+                />
+              </div>
+              <FieldErrorText
+                id={`${shippingNameId}-error`}
+                message={shippingNameError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <ReportFieldLabel
+                      htmlFor={recipientNameId}
+                      label={copy.recipientName}
+                      required
+                    />
+                    <input
+                      id={recipientNameId}
+                      type="text"
+                      aria-invalid={Boolean(recipientNameError)}
+                      className={fieldClass(Boolean(recipientNameError))}
+                      {...register("recipientName")}
+                    />
+                  </div>
+                  <FieldErrorText
+                    id={`${recipientNameId}-error`}
+                    message={recipientNameError}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <ReportFieldLabel
+                      htmlFor={recipientPhoneId}
+                      label={copy.recipientPhone}
+                      required
+                    />
+                    <input
+                      id={recipientPhoneId}
+                      type="tel"
+                      inputMode="tel"
+                      placeholder={copy.recipientPhoneHint}
+                      aria-invalid={Boolean(recipientPhoneError)}
+                      className={fieldClass(Boolean(recipientPhoneError))}
+                      {...register("recipientPhone")}
+                    />
+                  </div>
+                  <FieldErrorText
+                    id={`${recipientPhoneId}-error`}
+                    message={recipientPhoneError}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                <ReportFieldLabel
+                  htmlFor={deliveryAddressId}
+                  label={copy.deliveryAddress}
+                  required
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <input
+                      id={postalCodeId}
+                      type="text"
+                      readOnly
+                      aria-invalid={Boolean(postalCodeError)}
+                      className={`${fieldClass(Boolean(postalCodeError))} sm:w-28`}
+                      {...register("postalCode")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAddressOpen(true)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-blue-700 text-white hover:bg-blue-800"
+                      aria-label={copy.addressSearch}
+                    >
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      id={deliveryAddressId}
+                      type="text"
+                      readOnly
+                      aria-invalid={Boolean(deliveryAddressError)}
+                      className={fieldClass(Boolean(deliveryAddressError))}
+                      {...register("deliveryAddress")}
+                    />
+                  </div>
+                  <input
+                    id={addressDetailId}
+                    type="text"
+                    placeholder={copy.addressDetail}
+                    aria-invalid={Boolean(addressDetailError)}
+                    className={fieldClass(Boolean(addressDetailError))}
+                    {...register("addressDetail")}
+                  />
+                  <FieldErrorText
+                    id={`${deliveryAddressId}-error`}
+                    message={addressError}
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.samplePhoto} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="attach"
+                  className="accent-blue-600"
+                  {...register("samplePhoto")}
+                />
+                {copy.samplePhotoAttach}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="skip"
+                  className="accent-blue-600"
+                  {...register("samplePhoto")}
+                />
+                {copy.samplePhotoSkip}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText id="sample-photo-error" message={samplePhotoError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.sampleHandling} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="dispose"
+                  className="accent-blue-600"
+                  {...register("sampleHandling")}
+                />
+                {copy.sampleHandlingDispose}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="return"
+                  className="accent-blue-600"
+                  {...register("sampleHandling")}
+                />
+                {copy.sampleHandlingReturn}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText
+            id="sample-handling-error"
+            message={sampleHandlingError}
+          />
         </div>
       </div>
-      <TextInput
-        label={copy.desiredCompletionDate}
-        error={messageOf(errors.desiredCompletionDate)}
-        registration={register("desiredCompletionDate")}
-        type="date"
-        min={todayInputValue()}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.reportEmail}
-        error={messageOf(errors.reportEmail)}
-        registration={register("reportEmail")}
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.additionalRequest}
-          optional={copy.optional}
-          error={messageOf(errors.additionalRequest)}
-          registration={register("additionalRequest")}
+
+      {addressOpen ? (
+        <PostalAddressDialog
+          copy={copy}
+          onClose={() => setAddressOpen(false)}
+          onSelect={onSelectAddress}
         />
+      ) : null}
+    </div>
+  );
+}
+
+function PostalAddressDialog({
+  copy,
+  onClose,
+  onSelect
+}: {
+  copy: TestCenterCopy;
+  onClose: () => void;
+  onSelect: (result: PostalCodeResult) => void;
+}) {
+  const inputId = useId();
+  const [keyword, setKeyword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<PostalCodeResult[] | null>(null);
+
+  const search = async () => {
+    const trimmed = keyword.trim();
+    if (!trimmed) {
+      setError(copy.addressSearchEmpty);
+      setResults([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const next = await searchEpostAddresses(trimmed);
+      setResults(next);
+      if (next.length === 0) setError(copy.addressSearchEmpty);
+    } catch {
+      setError(copy.addressSearchError);
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`${inputId}-title`}
+    >
+      <div className="flex max-h-[90vh] w-full max-w-xl flex-col rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+          <h3
+            id={`${inputId}-title`}
+            className="text-base font-bold text-gray-900"
+          >
+            {copy.addressSearchTitle}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          >
+            {copy.addressSearchClose}
+          </button>
+        </div>
+        <div className="space-y-3 border-b border-gray-100 p-4">
+          <label htmlFor={inputId} className="sr-only">
+            {copy.addressSearchPlaceholder}
+          </label>
+          <div className="flex gap-2">
+            <input
+              id={inputId}
+              type="text"
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  void search();
+                }
+              }}
+              placeholder={copy.addressSearchPlaceholder}
+              className={fieldClass(false)}
+            />
+            <button
+              type="button"
+              onClick={() => void search()}
+              disabled={loading}
+              className="shrink-0 rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60"
+            >
+              {copy.addressSearchButton}
+            </button>
+          </div>
+          {error ? (
+            <p className="text-xs text-red-600" role="alert">
+              {error}
+            </p>
+          ) : null}
+        </div>
+        <div className="overflow-y-auto p-2">
+          {loading ? (
+            <p className="p-3 text-sm text-gray-500">
+              {copy.addressSearchLoading}
+            </p>
+          ) : null}
+          {!loading && results && results.length > 0 ? (
+            <ul className="divide-y divide-gray-100">
+              {results.map((result) => (
+                <li key={`${result.zipCode}-${result.roadAddress}`}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(result)}
+                    className="flex w-full flex-col gap-1 px-3 py-3 text-left hover:bg-blue-50"
+                  >
+                    <span className="text-sm font-semibold text-blue-800">
+                      [{result.zipCode}] {result.roadAddress}
+                    </span>
+                    {result.jibunAddress ? (
+                      <span className="text-xs text-gray-500">
+                        {result.jibunAddress}
+                      </span>
+                    ) : null}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -1415,32 +1794,78 @@ function ReviewStep({
         <SummaryRows
           rows={[
             {
-              label: copy.purpose,
-              value: optionLabel(copy.purposes, values.purpose, copy.empty)
+              label: copy.receptionType,
+              value:
+                values.receptionType === "general"
+                  ? copy.receptionTypeGeneral
+                  : copy.empty
             },
             {
-              label: copy.reportLanguage,
+              label: copy.purpose,
+              value: [
+                optionLabel(copy.purposes, values.purpose, copy.empty),
+                values.purposeDetail.trim()
+              ]
+                .filter(Boolean)
+                .join(" / ")
+            },
+            {
+              label: copy.copyCount,
+              value: values.copyCount.trim()
+                ? `${values.copyCount.trim()} ${copy.copyCountUnit}`
+                : copy.empty
+            },
+            {
+              label: copy.receiveMethod,
               value: optionLabel(
-                copy.reportLanguages,
-                values.reportLanguage,
+                copy.receiveMethods,
+                values.receiveMethod,
                 copy.empty
               )
             },
+            ...(values.receiveMethod === "mail"
+              ? [
+                  {
+                    label: copy.shippingName,
+                    value: displayValue(values.shippingName, copy.empty)
+                  },
+                  {
+                    label: copy.recipientName,
+                    value: displayValue(values.recipientName, copy.empty)
+                  },
+                  {
+                    label: copy.recipientPhone,
+                    value: displayValue(values.recipientPhone, copy.empty)
+                  },
+                  {
+                    label: copy.deliveryAddress,
+                    value: [
+                      values.postalCode.trim(),
+                      values.deliveryAddress.trim(),
+                      values.addressDetail.trim()
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || copy.empty
+                  }
+                ]
+              : []),
             {
-              label: copy.standards,
-              value: displayValue(values.standards, copy.empty)
+              label: copy.samplePhoto,
+              value:
+                values.samplePhoto === "attach"
+                  ? copy.samplePhotoAttach
+                  : values.samplePhoto === "skip"
+                    ? copy.samplePhotoSkip
+                    : copy.empty
             },
             {
-              label: copy.desiredCompletionDate,
-              value: displayValue(values.desiredCompletionDate, copy.empty)
-            },
-            {
-              label: copy.reportEmail,
-              value: displayValue(values.reportEmail, copy.empty)
-            },
-            {
-              label: copy.additionalRequest,
-              value: displayValue(values.additionalRequest, copy.empty)
+              label: copy.sampleHandling,
+              value:
+                values.sampleHandling === "dispose"
+                  ? copy.sampleHandlingDispose
+                  : values.sampleHandling === "return"
+                    ? copy.sampleHandlingReturn
+                    : copy.empty
             }
           ]}
         />

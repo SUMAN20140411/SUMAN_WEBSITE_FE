@@ -22,7 +22,6 @@ export type TestCenterCopy = {
   edit: string;
   optional: string;
   selectPlaceholder: string;
-  standardsHint: string;
   businessNumberHint: string;
   consentPrivacy: string;
   consentDamage: string;
@@ -49,12 +48,37 @@ export type TestCenterCopy = {
   removeSpec: string;
   specLabel: string;
   specValue: string;
+  receivedDate: string;
+  receptionType: string;
+  receptionTypeGeneral: string;
+  receptionTypeKolasNote: string;
   purpose: string;
-  reportLanguage: string;
-  standards: string;
-  desiredCompletionDate: string;
-  reportEmail: string;
-  additionalRequest: string;
+  purposeDetailPlaceholder: string;
+  purposeHint: string;
+  copyCount: string;
+  copyCountUnit: string;
+  receiveMethod: string;
+  shippingName: string;
+  recipientName: string;
+  recipientPhone: string;
+  recipientPhoneHint: string;
+  deliveryAddress: string;
+  addressSearch: string;
+  addressDetail: string;
+  addressSearchTitle: string;
+  addressSearchPlaceholder: string;
+  addressSearchButton: string;
+  addressSearchLoading: string;
+  addressSearchEmpty: string;
+  addressSearchError: string;
+  addressSearchClose: string;
+  addressSelect: string;
+  samplePhoto: string;
+  samplePhotoAttach: string;
+  samplePhotoSkip: string;
+  sampleHandling: string;
+  sampleHandlingDispose: string;
+  sampleHandlingReturn: string;
   companyName: string;
   businessRegistrationNumber: string;
   contactName: string;
@@ -63,7 +87,7 @@ export type TestCenterCopy = {
   email: string;
   address: string;
   purposes: ChoiceOption[];
-  reportLanguages: ChoiceOption[];
+  receiveMethods: ChoiceOption[];
   errors: {
     equipmentRequired: string;
     sampleName: string;
@@ -75,10 +99,20 @@ export type TestCenterCopy = {
     sizeInvalid: string;
     sizeIncomplete: string;
     customSpecIncomplete: string;
+    receptionType: string;
     purpose: string;
-    reportLanguage: string;
-    dateRequired: string;
-    dateInvalid: string;
+    purposeDetail: string;
+    copyCountRequired: string;
+    copyCountInvalid: string;
+    receiveMethod: string;
+    shippingName: string;
+    recipientName: string;
+    recipientPhone: string;
+    postalCode: string;
+    deliveryAddress: string;
+    addressDetail: string;
+    samplePhoto: string;
+    sampleHandling: string;
     emailRequired: string;
     emailInvalid: string;
     companyName: string;
@@ -92,8 +126,6 @@ export type TestCenterCopy = {
     tooLong: string;
   };
 };
-
-export const STANDARD_CHIPS = ["UN 38.3", "IEC 62133", "IEC 62660"] as const;
 
 const ko = {
   pageTitle: "시험 접수 | 수만",
@@ -120,7 +152,6 @@ const ko = {
   edit: "수정",
   optional: "선택",
   selectPlaceholder: "선택해 주세요",
-  standardsHint: "규격을 누르면 아래 입력란에 추가됩니다.",
   businessNumberHint: "숫자 10자리, 하이픈 입력 가능",
   consentPrivacy:
     "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 회사명, 사업자등록번호, 담당자 연락처(성명, 부서, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
@@ -132,7 +163,7 @@ const ko = {
   successTitle: "접수가 완료되었습니다",
   receiptLabel: "접수번호",
   successEmail: (email: string) =>
-    `확인 메일이 성적서 수령 이메일(${email})로 발송됩니다.`,
+    `확인 메일이 이메일(${email})로 발송됩니다.`,
   empty: "없음",
   requiredNote: "* 은 필수입력 항목입니다. 반드시 입력해 주시기 바랍니다.",
   sampleName: "시료명",
@@ -152,12 +183,37 @@ const ko = {
   removeSpec: "삭제",
   specLabel: "항목",
   specValue: "내용",
-  purpose: "용도",
-  reportLanguage: "성적서 언어",
-  standards: "적용 규격",
-  desiredCompletionDate: "희망 완료일",
-  reportEmail: "성적서 수령 이메일",
-  additionalRequest: "추가 요청",
+  receivedDate: "접수일자",
+  receptionType: "접수 구분",
+  receptionTypeGeneral: "일반성적서",
+  receptionTypeKolasNote: "추후에 KOLAS 인증받으면 기재 예정",
+  purpose: "성적서 용도",
+  purposeDetailPlaceholder: "거래처 제출용일 경우 제출처를 작성해 주세요.",
+  purposeHint: "성적서 용도가 해당 없을 경우 기타를 선택하세요.",
+  copyCount: "성적서 발급매수",
+  copyCountUnit: "매",
+  receiveMethod: "성적서 수령방법",
+  shippingName: "우송처명",
+  recipientName: "수령자",
+  recipientPhone: "수령자 전화번호",
+  recipientPhoneHint: "010-0000-0000",
+  deliveryAddress: "성적서 수령지",
+  addressSearch: "주소 검색",
+  addressDetail: "상세주소",
+  addressSearchTitle: "우편번호 검색",
+  addressSearchPlaceholder: "도로명, 건물명 또는 지번을 입력하세요",
+  addressSearchButton: "검색",
+  addressSearchLoading: "검색 중...",
+  addressSearchEmpty: "검색 결과가 없습니다. 검색어를 바꿔 보세요.",
+  addressSearchError: "주소 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+  addressSearchClose: "닫기",
+  addressSelect: "선택",
+  samplePhoto: "성적서 시료 사진 첨부 여부",
+  samplePhotoAttach: "시료 사진 첨부",
+  samplePhotoSkip: "미첨부",
+  sampleHandling: "시험 후 시료 처리방법",
+  sampleHandlingDispose: "폐기",
+  sampleHandlingReturn: "반환",
   companyName: "회사명",
   businessRegistrationNumber: "사업자등록번호",
   contactName: "담당자",
@@ -166,15 +222,15 @@ const ko = {
   email: "이메일",
   address: "주소",
   purposes: [
-    { value: "quality", label: "품질" },
-    { value: "certification", label: "인증제출" },
-    { value: "customer", label: "고객제출" },
+    { value: "reference", label: "참고용" },
+    { value: "quality", label: "품질관리" },
+    { value: "customer", label: "거래처제출" },
     { value: "other", label: "기타" },
   ],
-  reportLanguages: [
-    { value: "ko", label: "국문" },
-    { value: "en", label: "영문" },
-    { value: "both", label: "국문+영문" },
+  receiveMethods: [
+    { value: "visit", label: "방문" },
+    { value: "mail", label: "우송" },
+    { value: "electronic", label: "전자성적서" },
   ],
   errors: {
     equipmentRequired: "시험 항목을 1개 이상 선택해 주세요.",
@@ -187,10 +243,20 @@ const ko = {
     sizeInvalid: "시료 크기는 0보다 큰 숫자로 입력해 주세요.",
     sizeIncomplete: "시료 크기(W, D, H)를 모두 입력해 주세요.",
     customSpecIncomplete: "사양의 항목과 내용을 모두 입력해 주세요.",
-    purpose: "용도를 선택해 주세요.",
-    reportLanguage: "성적서 언어를 선택해 주세요.",
-    dateRequired: "희망 완료일을 선택해 주세요.",
-    dateInvalid: "희망 완료일은 오늘 또는 이후 날짜여야 합니다.",
+    receptionType: "접수 구분을 선택해 주세요.",
+    purpose: "성적서 용도를 선택해 주세요.",
+    purposeDetail: "제출처를 입력해 주세요.",
+    copyCountRequired: "발급매수를 입력해 주세요.",
+    copyCountInvalid: "발급매수는 1 이상의 정수로 입력해 주세요.",
+    receiveMethod: "수령방법을 선택해 주세요.",
+    shippingName: "우송처명을 입력해 주세요.",
+    recipientName: "수령자를 입력해 주세요.",
+    recipientPhone: "수령자 전화번호를 입력해 주세요.",
+    postalCode: "주소 검색으로 우편번호를 선택해 주세요.",
+    deliveryAddress: "수령지 주소를 선택해 주세요.",
+    addressDetail: "상세주소를 입력해 주세요.",
+    samplePhoto: "시료 사진 첨부 여부를 선택해 주세요.",
+    sampleHandling: "시료 처리방법을 선택해 주세요.",
     emailRequired: "이메일을 입력해 주세요.",
     emailInvalid: "이메일 형식을 확인해 주세요.",
     companyName: "회사명을 입력해 주세요.",
@@ -231,7 +297,6 @@ const en = {
   edit: "Edit",
   optional: "Optional",
   selectPlaceholder: "Select",
-  standardsHint: "Choosing a standard appends it to the text.",
   businessNumberHint: "10 digits, hyphens allowed",
   consentPrivacy:
     "(Required) I agree to the collection and use of personal information. Items collected: company name, business registration number, contact details (name, department, phone, email), address, and sample information. Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
@@ -243,7 +308,7 @@ const en = {
   successTitle: "Your request has been received",
   receiptLabel: "Request number",
   successEmail: (email: string) =>
-    `A confirmation email will be sent to the report receipt address (${email}).`,
+    `A confirmation email will be sent to (${email}).`,
   empty: "None",
   requiredNote: "* Required fields. Please fill them in.",
   sampleName: "Sample name",
@@ -263,12 +328,38 @@ const en = {
   removeSpec: "Remove",
   specLabel: "Label",
   specValue: "Value",
-  purpose: "Purpose",
-  reportLanguage: "Report language",
-  standards: "Applied standards",
-  desiredCompletionDate: "Requested completion date",
-  reportEmail: "Report receipt email",
-  additionalRequest: "Additional request",
+  receivedDate: "Reception date",
+  receptionType: "Reception type",
+  receptionTypeGeneral: "General report",
+  receptionTypeKolasNote: "To be filled after KOLAS certification",
+  purpose: "Report purpose",
+  purposeDetailPlaceholder:
+    "If submitting to a customer, enter the recipient.",
+  purposeHint: "If none apply, select Other.",
+  copyCount: "Number of copies",
+  copyCountUnit: "copies",
+  receiveMethod: "Receiving method",
+  shippingName: "Mail recipient name",
+  recipientName: "Recipient",
+  recipientPhone: "Recipient phone",
+  recipientPhoneHint: "010-0000-0000",
+  deliveryAddress: "Report delivery address",
+  addressSearch: "Search address",
+  addressDetail: "Detail address",
+  addressSearchTitle: "Postal code search",
+  addressSearchPlaceholder: "Enter a road name, building, or lot number",
+  addressSearchButton: "Search",
+  addressSearchLoading: "Searching...",
+  addressSearchEmpty: "No results. Try a different keyword.",
+  addressSearchError: "Address search failed. Please try again shortly.",
+  addressSearchClose: "Close",
+  addressSelect: "Select",
+  samplePhoto: "Attach sample photos to report",
+  samplePhotoAttach: "Attach sample photos",
+  samplePhotoSkip: "Do not attach",
+  sampleHandling: "Sample handling after testing",
+  sampleHandlingDispose: "Dispose",
+  sampleHandlingReturn: "Return",
   companyName: "Company name",
   businessRegistrationNumber: "Business registration number",
   contactName: "Contact person",
@@ -277,15 +368,15 @@ const en = {
   email: "Email",
   address: "Address",
   purposes: [
-    { value: "quality", label: "Quality" },
-    { value: "certification", label: "Certification submission" },
+    { value: "reference", label: "Reference" },
+    { value: "quality", label: "Quality control" },
     { value: "customer", label: "Customer submission" },
     { value: "other", label: "Other" },
   ],
-  reportLanguages: [
-    { value: "ko", label: "Korean" },
-    { value: "en", label: "English" },
-    { value: "both", label: "Korean + English" },
+  receiveMethods: [
+    { value: "visit", label: "Visit" },
+    { value: "mail", label: "Mail" },
+    { value: "electronic", label: "Electronic report" },
   ],
   errors: {
     equipmentRequired: "Select at least one test.",
@@ -298,10 +389,20 @@ const en = {
     sizeInvalid: "Enter the sample size as a number greater than 0.",
     sizeIncomplete: "Enter all sample size values (W, D, H).",
     customSpecIncomplete: "Enter both the label and value for each specification.",
-    purpose: "Select a purpose.",
-    reportLanguage: "Select a report language.",
-    dateRequired: "Choose a requested completion date.",
-    dateInvalid: "The requested completion date cannot be in the past.",
+    receptionType: "Select a reception type.",
+    purpose: "Select a report purpose.",
+    purposeDetail: "Enter the submission recipient.",
+    copyCountRequired: "Enter the number of copies.",
+    copyCountInvalid: "Enter the number of copies as a whole number of 1 or more.",
+    receiveMethod: "Select a receiving method.",
+    shippingName: "Enter the mail recipient name.",
+    recipientName: "Enter the recipient name.",
+    recipientPhone: "Enter the recipient phone number.",
+    postalCode: "Select a postal code via address search.",
+    deliveryAddress: "Select a delivery address.",
+    addressDetail: "Enter the detail address.",
+    samplePhoto: "Select whether to attach sample photos.",
+    sampleHandling: "Select sample handling after testing.",
     emailRequired: "Enter an email address.",
     emailInvalid: "Check the email format.",
     companyName: "Enter the company name.",
@@ -324,4 +425,16 @@ export function optionLabel(
   empty: string
 ) {
   return options.find((option) => option.value === value)?.label ?? empty;
+}
+
+export function formatReceivedDate(date: Date, lang: "ko" | "en") {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  if (lang === "en") {
+    const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+    return `${year}-${month}-${day} (${weekday})`;
+  }
+  const weekdays = ["일", "월", "화", "수", "목", "금", "토"] as const;
+  return `${year}-${month}-${day} (${weekdays[date.getDay()]})`;
 }
