@@ -21,18 +21,13 @@ const navItemsKor = [
     ]
   },
   {
-    label: "사업분야",
+    label: "기술 및 연구분야",
     href: "/business/service",
     submenu: [
       { label: "기술 소개", href: "/business/service" },
       { label: "제품 소개", href: "/business/product" },
       { label: "연구 분야", href: "/business/rnd" }
     ]
-  },
-  {
-    label: "시험센터",
-    href: "/test-center/apply",
-    submenu: []
   },
   {
     label: "인재채용",
@@ -47,6 +42,11 @@ const navItemsKor = [
     label: "고객지원",
     href: "/support/contact",
     submenu: [{ label: "문의하기", href: "/support/contact" }]
+  },
+  {
+    label: "시험 접수",
+    href: "/test-center/apply",
+    submenu: []
   }
 ];
 
