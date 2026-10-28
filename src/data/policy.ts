@@ -9,6 +9,7 @@ export const PRIVACY_POLICY_TEXT = {
 
 1. 수집하는 개인정보 항목
 - 이름, 연락처(전화번호, 이메일), 소속, 문의내용 등
+- 시험 접수 시 회사명, 사업자등록번호, 연락처, 시료 정보 (동일한 수집·이용 목적 및 보유기간 3년)
 
 2. 개인정보 수집 및 이용 목적
 - 고객문의에 대한 응답 및 서비스 제공
@@ -40,6 +41,8 @@ SUMAN Co., Ltd. (hereinafter referred to as the "Company") places great importan
 Items of Personal Information Collected
 
 Name, contact information (phone number, email), affiliation, inquiry details, etc.
+
+- Test requests also collect company name, business registration number, contact details, and sample information for the same purposes and a retention period of 3 years.
 
 Purpose of Collection and Use of Personal Information
 
