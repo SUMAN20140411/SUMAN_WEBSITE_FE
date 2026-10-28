@@ -1,28 +1,3 @@
-export type EquipmentCategoryId =
-  | "vibration-shock"
-  | "environment"
-  | "physical-mechanical"
-  | "electrical-safety";
-
-export type LocalizedText = {
-  ko: string;
-  en: string;
-};
-
-export type EquipmentSpec = {
-  label: LocalizedText;
-  value: LocalizedText;
-};
-
-export type EquipmentItem = {
-  id: string;
-  category: EquipmentCategoryId;
-  name: LocalizedText;
-  summary: LocalizedText;
-  specs: EquipmentSpec[];
-  image: string;
-};
-
 export type ChoiceOption = {
   value: string;
   label: string;
@@ -34,6 +9,11 @@ export type TestCenterCopy = {
   heroSubtitle: string;
   breadcrumb: string;
   steps: { short: string; title: string }[];
+  columnGroup: string;
+  columnTests: string;
+  columnPreview: string;
+  addItem: string;
+  removeItem: string;
   selectedCount: (count: number) => string;
   next: string;
   back: string;
@@ -118,195 +98,7 @@ export type TestCenterCopy = {
   };
 };
 
-export const EQUIPMENT_CATEGORIES: {
-  id: EquipmentCategoryId;
-  label: LocalizedText;
-}[] = [
-  {
-    id: "vibration-shock",
-    label: { ko: "진동 | 충격 시험", en: "Vibration & Shock" },
-  },
-  {
-    id: "environment",
-    label: { ko: "환경 시험", en: "Environmental" },
-  },
-  {
-    id: "physical-mechanical",
-    label: { ko: "물리 | 기계 시험", en: "Physical & Mechanical" },
-  },
-  {
-    id: "electrical-safety",
-    label: { ko: "전기 | 안전 시험", en: "Electrical & Safety" },
-  },
-];
-
-const example = (ko: string, en: string): LocalizedText => ({
-  ko: `${ko} (예시)`,
-  en: `${en} (example)`,
-});
-
-export const testEquipment: EquipmentItem[] = [
-  {
-    id: "electrodynamic-vibrator",
-    category: "vibration-shock",
-    name: {
-      ko: "전동식 진동 시험기 (예시)",
-      en: "Electrodynamic Vibration Tester (example)",
-    },
-    summary: {
-      ko: "진동 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for vibration testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-      {
-        label: { ko: "주파수 범위", en: "Frequency range" },
-        value: example("00–00 Hz", "00–00 Hz"),
-      },
-    ],
-    image: "/images/test-center/electrodynamic-vibrator.png",
-  },
-  {
-    id: "shock-tester",
-    category: "vibration-shock",
-    name: { ko: "충격 시험기 (예시)", en: "Shock Tester (example)" },
-    summary: {
-      ko: "충격 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for shock testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-      {
-        label: { ko: "주파수 범위", en: "Frequency range" },
-        value: example("00–00 Hz", "00–00 Hz"),
-      },
-    ],
-    image: "/images/test-center/shock-tester.png",
-  },
-  {
-    id: "temperature-humidity-chamber",
-    category: "environment",
-    name: {
-      ko: "항온항습 챔버 (예시)",
-      en: "Temperature & Humidity Chamber (example)",
-    },
-    summary: {
-      ko: "온습도 환경 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for temperature and humidity testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "온도 범위", en: "Temperature range" },
-        value: example("00–00 °C", "00–00 °C"),
-      },
-      {
-        label: { ko: "습도 범위", en: "Humidity range" },
-        value: example("00–00 %RH", "00–00 %RH"),
-      },
-    ],
-    image: "/images/test-center/temperature-humidity-chamber.png",
-  },
-  {
-    id: "thermal-shock-chamber",
-    category: "environment",
-    name: { ko: "열충격 챔버 (예시)", en: "Thermal Shock Chamber (example)" },
-    summary: {
-      ko: "열충격 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for thermal shock testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "온도 범위", en: "Temperature range" },
-        value: example("00–00 °C", "00–00 °C"),
-      },
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-    ],
-    image: "/images/test-center/thermal-shock-chamber.png",
-  },
-  {
-    id: "tensile-tester",
-    category: "physical-mechanical",
-    name: { ko: "인장 시험기 (예시)", en: "Tensile Tester (example)" },
-    summary: {
-      ko: "인장 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for tensile testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kN", "00 kN") },
-      {
-        label: { ko: "시험 속도", en: "Test speed" },
-        value: example("00–00 mm/min", "00–00 mm/min"),
-      },
-    ],
-    image: "/images/test-center/tensile-tester.png",
-  },
-  {
-    id: "drop-tester",
-    category: "physical-mechanical",
-    name: { ko: "낙하 시험기 (예시)", en: "Drop Tester (example)" },
-    summary: {
-      ko: "낙하 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for drop testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "낙하 높이", en: "Drop height" },
-        value: example("00–00 mm", "00–00 mm"),
-      },
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-    ],
-    image: "/images/test-center/drop-tester.png",
-  },
-  {
-    id: "insulation-resistance-tester",
-    category: "electrical-safety",
-    name: {
-      ko: "절연저항 시험기 (예시)",
-      en: "Insulation Resistance Tester (example)",
-    },
-    summary: {
-      ko: "절연저항 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for insulation-resistance testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "시험 전압", en: "Test voltage" },
-        value: example("00 V", "00 V"),
-      },
-      {
-        label: { ko: "측정 범위", en: "Measurement range" },
-        value: example("00–00", "00–00"),
-      },
-    ],
-    image: "/images/test-center/insulation-resistance-tester.png",
-  },
-  {
-    id: "hipot-tester",
-    category: "electrical-safety",
-    name: { ko: "내전압 시험기 (예시)", en: "Withstand Voltage Tester (example)" },
-    summary: {
-      ko: "내전압 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for withstand-voltage testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "출력 전압", en: "Output voltage" },
-        value: example("00 V", "00 V"),
-      },
-      {
-        label: { ko: "차단 전류", en: "Cutoff current" },
-        value: example("00 mA", "00 mA"),
-      },
-    ],
-    image: "/images/test-center/hipot-tester.png",
-  },
-];
-
 export const STANDARD_CHIPS = ["UN 38.3", "IEC 62133", "IEC 62660"] as const;
-
-export function textFor(lang: "KOR" | "ENG", value: LocalizedText) {
-  return lang === "ENG" ? value.en : value.ko;
-}
 
 const ko = {
   pageTitle: "시험 접수 | 수만",
@@ -320,6 +112,11 @@ const ko = {
     { short: "업체", title: "의뢰업체 정보 입력" },
     { short: "확인", title: "접수 내용 확인 및 동의" },
   ],
+  columnGroup: "항목군",
+  columnTests: "시험 항목",
+  columnPreview: "장비 미리보기",
+  addItem: "추가",
+  removeItem: "제거",
   selectedCount: (count: number) => `${count}건 선택`,
   next: "다음",
   back: "이전",
@@ -438,6 +235,11 @@ const en = {
     { short: "Client", title: "Client information" },
     { short: "Review", title: "Review and consent" },
   ],
+  columnGroup: "Item group",
+  columnTests: "Test items",
+  columnPreview: "Equipment preview",
+  addItem: "Add",
+  removeItem: "Remove",
   selectedCount: (count: number) => `${count} selected`,
   next: "Next",
   back: "Back",
