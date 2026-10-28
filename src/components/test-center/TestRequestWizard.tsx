@@ -1,29 +1,31 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FormEvent, useId, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   useForm,
   type FieldErrors,
-  type UseFormRegister,
+  type UseFormRegister
 } from "react-hook-form";
 import {
-  EQUIPMENT_CATEGORIES,
   STANDARD_CHIPS,
   optionLabel,
   testCenterCopy,
-  testEquipment,
-  textFor,
   type ChoiceOption,
-  type TestCenterCopy,
+  type TestCenterCopy
 } from "@/content/test-center/equipment";
+import type {
+  TestEquipmentCatalog,
+  TestEquipmentCategory,
+  TestEquipmentItem
+} from "@/lib/strapi/collections/testEquipment";
 import { buildTestRequestFormData } from "@/lib/test-center/payload";
 import {
   TEST_REQUEST_STEP_FIELDS,
   buildTestRequestSchema,
   emptyTestRequest,
   todayInputValue,
-  type TestRequestValues,
+  type TestRequestValues
 } from "@/lib/test-center/schema";
 import { useLangStore } from "@/stores/langStore";
 
@@ -38,10 +40,13 @@ function fieldClass(invalid: boolean) {
   }`;
 }
 
-function messageOf(error: { message?: unknown; root?: { message?: unknown } } | undefined) {
+function messageOf(
+  error: { message?: unknown; root?: { message?: unknown } } | undefined
+) {
   if (!error) return undefined;
   if (typeof error.message === "string" && error.message) return error.message;
-  if (typeof error.root?.message === "string" && error.root.message) return error.root.message;
+  if (typeof error.root?.message === "string" && error.root.message)
+    return error.root.message;
   return undefined;
 }
 
@@ -55,7 +60,9 @@ function FieldErrorText({ id, message }: { id: string; message?: string }) {
 }
 
 function OptionalMark({ label }: { label: string }) {
-  return <span className="ml-2 text-xs font-normal text-gray-500">{label}</span>;
+  return (
+    <span className="ml-2 text-xs font-normal text-gray-500">{label}</span>
+  );
 }
 
 function TextInput({
@@ -68,7 +75,7 @@ function TextInput({
   autoComplete,
   hint,
   min,
-  step,
+  step
 }: {
   label: string;
   error?: string;
@@ -86,7 +93,10 @@ function TextInput({
   const hintId = `${id}-hint`;
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
+      <label
+        htmlFor={id}
+        className="mb-2 block text-sm font-semibold text-gray-800"
+      >
         {label}
         {optional ? <OptionalMark label={optional} /> : null}
       </label>
@@ -97,8 +107,9 @@ function TextInput({
         autoComplete={autoComplete}
         aria-invalid={Boolean(error)}
         aria-describedby={
-          [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") ||
-          undefined
+          [hint ? hintId : null, error ? errorId : null]
+            .filter(Boolean)
+            .join(" ") || undefined
         }
         className={fieldClass(Boolean(error))}
         {...registration}
@@ -120,7 +131,7 @@ function SelectInput({
   error,
   registration,
   placeholder,
-  options,
+  options
 }: {
   label: string;
   error?: string;
@@ -132,7 +143,10 @@ function SelectInput({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
+      <label
+        htmlFor={id}
+        className="mb-2 block text-sm font-semibold text-gray-800"
+      >
         {label}
       </label>
       <select
@@ -158,7 +172,7 @@ function TextAreaInput({
   label,
   error,
   optional,
-  registration,
+  registration
 }: {
   label: string;
   error?: string;
@@ -169,7 +183,10 @@ function TextAreaInput({
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
+      <label
+        htmlFor={id}
+        className="mb-2 block text-sm font-semibold text-gray-800"
+      >
         {label}
         {optional ? <OptionalMark label={optional} /> : null}
       </label>
@@ -206,10 +223,18 @@ function isReceipt(value: unknown): value is { receiptNo: string } {
 
 function serverMessage(value: unknown) {
   if (typeof value !== "object" || value === null) return null;
-  if ("message" in value && typeof value.message === "string" && value.message.trim()) {
+  if (
+    "message" in value &&
+    typeof value.message === "string" &&
+    value.message.trim()
+  ) {
     return value.message.trim();
   }
-  if ("error" in value && typeof value.error === "string" && value.error.trim()) {
+  if (
+    "error" in value &&
+    typeof value.error === "string" &&
+    value.error.trim()
+  ) {
     return value.error.trim();
   }
   return null;
@@ -225,24 +250,26 @@ async function readJson(response: Response) {
   }
 }
 
-function SummaryRows({
-  rows,
-}: {
-  rows: { label: string; value: string }[];
-}) {
+function SummaryRows({ rows }: { rows: { label: string; value: string }[] }) {
   return (
     <dl className="grid grid-cols-1 gap-y-3 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-x-4">
       {rows.map((row) => (
         <div key={row.label} className="contents">
           <dt className="text-sm text-gray-500">{row.label}</dt>
-          <dd className="text-sm font-medium break-words text-gray-900">{row.value}</dd>
+          <dd className="text-sm font-medium break-words text-gray-900">
+            {row.value}
+          </dd>
         </div>
       ))}
     </dl>
   );
 }
 
-export default function TestRequestWizard() {
+export default function TestRequestWizard({
+  catalog
+}: {
+  catalog: TestEquipmentCatalog;
+}) {
   const { lang } = useLangStore();
   const copy = lang === "ENG" ? testCenterCopy.en : testCenterCopy.ko;
   const schema = useMemo(() => buildTestRequestSchema(copy), [copy]);
@@ -257,11 +284,11 @@ export default function TestRequestWizard() {
     watch,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm<TestRequestValues>({
     defaultValues: emptyTestRequest,
     resolver,
-    mode: "onSubmit",
+    mode: "onSubmit"
   });
   const [step, setStep] = useState(0);
   const stepRef = useRef(step);
@@ -293,7 +320,7 @@ export default function TestRequestWizard() {
       : [...current, id];
     setValue("equipmentIds", next, {
       shouldDirty: true,
-      shouldValidate: Boolean(errors.equipmentIds),
+      shouldValidate: Boolean(errors.equipmentIds)
     });
   };
 
@@ -308,7 +335,7 @@ export default function TestRequestWizard() {
     const picked = Array.from(list ?? []);
     setValue("attachments", [...getValues("attachments"), ...picked], {
       shouldDirty: true,
-      shouldValidate: true,
+      shouldValidate: true
     });
   };
 
@@ -336,13 +363,13 @@ export default function TestRequestWizard() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { Accept: "application/json" },
-        body: buildTestRequestFormData(values),
+        body: buildTestRequestFormData(values)
       });
       const payload = await readJson(response);
       if (response.status === 201 && isReceipt(payload)) {
         setReceipt({
           receiptNo: payload.receiptNo.trim(),
-          email: values.reportEmail.trim(),
+          email: values.reportEmail.trim()
         });
         return;
       }
@@ -373,7 +400,9 @@ export default function TestRequestWizard() {
         <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
           {copy.successTitle}
         </h2>
-        <p className="mt-6 text-sm font-semibold text-gray-500">{copy.receiptLabel}</p>
+        <p className="mt-6 text-sm font-semibold text-gray-500">
+          {copy.receiptLabel}
+        </p>
         <p className="mt-1 text-3xl font-bold tracking-wide break-all text-blue-700">
           {receipt.receiptNo}
         </p>
@@ -411,62 +440,64 @@ export default function TestRequestWizard() {
           autoComplete="off"
         />
 
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-          >
-            <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
-              {step + 1}. {copy.steps[step].title}
-            </h2>
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
+          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+            {step + 1}. {copy.steps[step].title}
+          </h2>
 
-            {step === 0 ? (
-              <EquipmentStep
-                lang={lang}
-                copy={copy}
-                selectedIds={selectedIds}
-                error={messageOf(errors.equipmentIds)}
-                onToggle={toggleEquipment}
-              />
-            ) : null}
+          {step === 0 ? (
+            <EquipmentStep
+              copy={copy}
+              items={catalog.items}
+              categories={catalog.categories}
+              selectedIds={selectedIds}
+              error={messageOf(errors.equipmentIds)}
+              onToggle={toggleEquipment}
+            />
+          ) : null}
 
-            {step === 1 ? (
-              <SampleStep
-                copy={copy}
-                register={register}
-                errors={errors}
-                attachments={attachments}
-                onAddFiles={addFiles}
-                onRemoveFile={removeFile}
-              />
-            ) : null}
+          {step === 1 ? (
+            <SampleStep
+              copy={copy}
+              register={register}
+              errors={errors}
+              attachments={attachments}
+              onAddFiles={addFiles}
+              onRemoveFile={removeFile}
+            />
+          ) : null}
 
-            {step === 2 ? (
-              <ReportStep
-                copy={copy}
-                register={register}
-                errors={errors}
-                standards={standards}
-                onAppendStandard={appendStandard}
-              />
-            ) : null}
+          {step === 2 ? (
+            <ReportStep
+              copy={copy}
+              register={register}
+              errors={errors}
+              standards={standards}
+              onAppendStandard={appendStandard}
+            />
+          ) : null}
 
-            {step === 3 ? (
-              <ClientStep copy={copy} register={register} errors={errors} />
-            ) : null}
+          {step === 3 ? (
+            <ClientStep copy={copy} register={register} errors={errors} />
+          ) : null}
 
-            {step === 4 ? (
-              <ReviewStep
-                lang={lang}
-                copy={copy}
-                values={watch()}
-                register={register}
-                errors={errors}
-                onEdit={goToStep}
-              />
-            ) : null}
-          </motion.div>
+          {step === 4 ? (
+            <ReviewStep
+              copy={copy}
+              items={catalog.items}
+              categories={catalog.categories}
+              values={watch()}
+              register={register}
+              errors={errors}
+              onEdit={goToStep}
+            />
+          ) : null}
+        </motion.div>
 
         {submitError ? (
           <div
@@ -516,7 +547,7 @@ function Stepper({
   copy,
   step,
   disabled,
-  onStep,
+  onStep
 }: {
   copy: TestCenterCopy;
   step: number;
@@ -542,8 +573,8 @@ function Stepper({
                   current
                     ? "bg-blue-600 text-white"
                     : done
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-gray-100 text-gray-500"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {index + 1}
@@ -563,22 +594,41 @@ function Stepper({
   );
 }
 
+const EQUIPMENT_NAVY = "#3E5870";
+
 function EquipmentStep({
-  lang,
   copy,
+  items,
+  categories,
   selectedIds,
   error,
-  onToggle,
+  onToggle
 }: {
-  lang: "KOR" | "ENG";
   copy: TestCenterCopy;
+  items: TestEquipmentItem[];
+  categories: TestEquipmentCategory[];
   selectedIds: string[];
   error?: string;
   onToggle: (id: string) => void;
 }) {
   const errorId = useId();
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id ?? "");
+  const [previewId, setPreviewId] = useState(items[0]?.id ?? "");
+  const categoryItems = useMemo(
+    () => items.filter((item) => item.categoryId === activeCategory),
+    [items, activeCategory]
+  );
+  const previewItem =
+    categoryItems.find((item) => item.id === previewId) ?? categoryItems[0];
+
+  useEffect(() => {
+    if (!categoryItems.some((item) => item.id === previewId)) {
+      setPreviewId(categoryItems[0]?.id ?? "");
+    }
+  }, [categoryItems, previewId]);
+
   return (
-    <div className="mt-6 space-y-8">
+    <div className="mt-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-blue-700">
           {copy.selectedCount(selectedIds.length)}
@@ -589,80 +639,209 @@ function EquipmentStep({
           {error}
         </p>
       ) : null}
-      {EQUIPMENT_CATEGORIES.map((category) => {
-        const items = testEquipment.filter((item) => item.category === category.id);
-        return (
-          <section key={category.id} aria-labelledby={`category-${category.id}`}>
-            <h3
-              id={`category-${category.id}`}
-              className="mb-4 text-lg font-bold text-gray-900"
-            >
-              {textFor(lang, category.label)}
-            </h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {items.map((item) => {
-                const selected = selectedIds.includes(item.id);
-                const name = textFor(lang, item.name);
-                return (
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,1.6fr)]">
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnGroup}
+          </h3>
+          <ul className="divide-y divide-gray-100">
+            {categories.map((category) => {
+              const active = category.id === activeCategory;
+              const selectedInCategory = items.filter(
+                (item) =>
+                  item.categoryId === category.id &&
+                  selectedIds.includes(item.id)
+              ).length;
+              return (
+                <li key={category.id}>
                   <button
-                    key={item.id}
                     type="button"
-                    aria-pressed={selected}
-                    aria-describedby={error ? errorId : undefined}
-                    onClick={() => onToggle(item.id)}
-                    className={`flex h-full flex-col overflow-hidden rounded-lg border text-left transition-colors ${
-                      selected
-                        ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600"
-                        : "border-gray-200 bg-white hover:border-blue-300"
+                    aria-pressed={active}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`flex w-full items-center gap-2 px-4 py-3 text-left text-sm transition-colors ${
+                      active
+                        ? "font-semibold text-white"
+                        : "text-gray-800 hover:bg-slate-50"
                     }`}
+                    style={
+                      active ? { backgroundColor: EQUIPMENT_NAVY } : undefined
+                    }
                   >
-                    <div className="relative h-44 w-full bg-slate-100">
-                      <Image
-                        src={item.image}
-                        alt={name}
-                        fill
-                        sizes="(min-width: 768px) 36rem, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex flex-1 flex-col p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <h4 className="text-base font-bold text-gray-900">{name}</h4>
-                        <span
-                          className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-sm ${
-                            selected
-                              ? "border-blue-600 bg-blue-600 text-white"
-                              : "border-gray-300 bg-white text-transparent"
-                          }`}
-                          aria-hidden="true"
-                        >
-                          ✓
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                        {textFor(lang, item.summary)}
-                      </p>
-                      <dl className="mt-4 space-y-1">
-                        {item.specs.map((spec) => (
-                          <div
-                            key={`${item.id}-${spec.label.en}`}
-                            className="flex items-start justify-between gap-3 text-sm"
-                          >
-                            <dt className="text-gray-500">{textFor(lang, spec.label)}</dt>
-                            <dd className="text-right text-gray-800">
-                              {textFor(lang, spec.value)}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
+                    <span
+                      className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                        active ? "bg-white" : "bg-gray-400"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0 flex-1 break-words">
+                      {category.label}
+                    </span>
+                    {selectedInCategory > 0 ? (
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                          active
+                            ? "bg-white/20 text-white"
+                            : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {selectedInCategory}
+                      </span>
+                    ) : null}
                   </button>
-                );
-              })}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnTests}
+          </h3>
+          <ul className="divide-y divide-gray-100">
+            {categoryItems.map((item) => {
+              const selected = selectedIds.includes(item.id);
+              const previewing = previewItem?.id === item.id;
+              const name = item.name;
+              return (
+                <li key={item.id}>
+                  <div
+                    className={`flex items-center gap-2 px-3 py-2 transition-colors ${
+                      selected
+                        ? "text-white"
+                        : previewing
+                        ? "bg-slate-100 text-gray-900"
+                        : "text-gray-800 hover:bg-slate-50"
+                    }`}
+                    style={
+                      selected ? { backgroundColor: EQUIPMENT_NAVY } : undefined
+                    }
+                  >
+                    <button
+                      type="button"
+                      onMouseEnter={() => setPreviewId(item.id)}
+                      onFocus={() => setPreviewId(item.id)}
+                      onClick={() => setPreviewId(item.id)}
+                      className={`flex min-w-0 flex-1 items-center gap-2 py-1 text-left text-sm ${
+                        selected || previewing ? "font-semibold" : ""
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                          selected ? "bg-white" : "bg-gray-400"
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0 flex-1 break-words">{name}</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={selected}
+                      aria-describedby={error ? errorId : undefined}
+                      onClick={() => {
+                        setPreviewId(item.id);
+                        onToggle(item.id);
+                      }}
+                      className={`shrink-0 rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        selected
+                          ? "bg-white/20 text-white hover:bg-white/30"
+                          : "border border-gray-300 bg-white text-gray-800 hover:border-slate-400 hover:bg-slate-50"
+                      }`}
+                    >
+                      {selected ? copy.removeItem : copy.addItem}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnPreview}
+          </h3>
+          {previewItem ? (
+            <div className="space-y-3 p-4">
+              <div
+                className={`overflow-hidden rounded-md border bg-white ${
+                  selectedIds.includes(previewItem.id)
+                    ? "border-transparent ring-2 ring-[#3E5870] ring-offset-1"
+                    : "border-gray-200"
+                }`}
+              >
+                <div className="relative aspect-[4/3] w-full bg-slate-100">
+                  {previewItem.image ? (
+                    <Image
+                      src={previewItem.image}
+                      alt={previewItem.name}
+                      fill
+                      objectFit="contain"
+                      sizes="(min-width: 1024px) 28rem, 100vw"
+                      className="object-cover"
+                      priority
+                    />
+                  ) : null}
+                </div>
+                <span
+                  className="block px-3 py-2.5 text-center text-sm font-semibold text-white"
+                  style={{ backgroundColor: EQUIPMENT_NAVY }}
+                >
+                  {previewItem.name}
+                </span>
+              </div>
+              {previewItem.summary ? (
+                <p className="text-sm text-gray-700">{previewItem.summary}</p>
+              ) : null}
+              {previewItem.specs.length > 0 ? (
+                <dl className="space-y-1 text-sm">
+                  {previewItem.specs.map((spec, index) => (
+                    <div
+                      key={`${spec.label}-${index}`}
+                      className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-3"
+                    >
+                      <dt className="text-gray-500">{spec.label}</dt>
+                      <dd className="font-medium break-words text-gray-900">
+                        {spec.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
+              <button
+                type="button"
+                aria-pressed={selectedIds.includes(previewItem.id)}
+                aria-describedby={error ? errorId : undefined}
+                onClick={() => onToggle(previewItem.id)}
+                className={`w-full rounded-md px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  selectedIds.includes(previewItem.id)
+                    ? "border border-gray-300 bg-white text-gray-800 hover:bg-slate-50"
+                    : "text-white hover:opacity-90"
+                }`}
+                style={
+                  selectedIds.includes(previewItem.id)
+                    ? undefined
+                    : { backgroundColor: EQUIPMENT_NAVY }
+                }
+              >
+                {selectedIds.includes(previewItem.id)
+                  ? copy.removeItem
+                  : copy.addItem}
+              </button>
             </div>
-          </section>
-        );
-      })}
+          ) : null}
+        </section>
+      </div>
     </div>
   );
 }
@@ -673,7 +852,7 @@ function SampleStep({
   errors,
   attachments,
   onAddFiles,
-  onRemoveFile,
+  onRemoveFile
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
@@ -754,19 +933,28 @@ function SampleStep({
         />
       </div>
       <div className="md:col-span-2">
-        <label htmlFor={fileId} className="mb-2 block text-sm font-semibold text-gray-800">
+        <label
+          htmlFor={fileId}
+          className="mb-2 block text-sm font-semibold text-gray-800"
+        >
           {copy.attachments}
           <OptionalMark label={copy.optional} />
         </label>
         <label
           htmlFor={fileId}
           className={`flex cursor-pointer flex-col items-center justify-center rounded border border-dashed px-4 py-6 text-center ${
-            fileError ? "border-red-500 bg-red-50" : "border-gray-300 bg-gray-50"
+            fileError
+              ? "border-red-500 bg-red-50"
+              : "border-gray-300 bg-gray-50"
           }`}
         >
-          <span className="font-semibold text-blue-700">{copy.chooseFiles}</span>
+          <span className="font-semibold text-blue-700">
+            {copy.chooseFiles}
+          </span>
           <span className="mt-1 text-sm text-gray-600">{copy.fileHint}</span>
-          <span className="mt-2 text-xs text-gray-500">{copy.fileCount(attachments.length)}</span>
+          <span className="mt-2 text-xs text-gray-500">
+            {copy.fileCount(attachments.length)}
+          </span>
         </label>
         <input
           id={fileId}
@@ -790,7 +978,9 @@ function SampleStep({
               >
                 <span className="min-w-0 break-all text-gray-800">
                   {file.name}{" "}
-                  <span className="text-gray-500">({formatBytes(file.size)})</span>
+                  <span className="text-gray-500">
+                    ({formatBytes(file.size)})
+                  </span>
                 </span>
                 <button
                   type="button"
@@ -814,7 +1004,7 @@ function ReportStep({
   register,
   errors,
   standards,
-  onAppendStandard,
+  onAppendStandard
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
@@ -848,7 +1038,9 @@ function ReportStep({
         <p className="mt-2 text-xs text-gray-500">{copy.standardsHint}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {STANDARD_CHIPS.map((chip) => {
-            const included = standards.toLowerCase().includes(chip.toLowerCase());
+            const included = standards
+              .toLowerCase()
+              .includes(chip.toLowerCase());
             return (
               <button
                 key={chip}
@@ -897,7 +1089,7 @@ function ReportStep({
 function ClientStep({
   copy,
   register,
-  errors,
+  errors
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
@@ -959,40 +1151,50 @@ function ClientStep({
 }
 
 function ReviewStep({
-  lang,
   copy,
+  items,
+  categories,
   values,
   register,
   errors,
-  onEdit,
+  onEdit
 }: {
-  lang: "KOR" | "ENG";
   copy: TestCenterCopy;
+  items: TestEquipmentItem[];
+  categories: TestEquipmentCategory[];
   values: TestRequestValues;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
   onEdit: (step: number) => void;
 }) {
-  const selected = testEquipment.filter((item) => values.equipmentIds.includes(item.id));
+  const selected = items.filter((item) =>
+    values.equipmentIds.includes(item.id)
+  );
   return (
     <div className="mt-6 space-y-4">
-      <ReviewSection title={copy.steps[0].title} editLabel={copy.edit} onEdit={() => onEdit(0)}>
+      <ReviewSection
+        title={copy.steps[0].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(0)}
+      >
         <p className="mb-3 text-sm font-semibold text-blue-700">
           {copy.selectedCount(values.equipmentIds.length)}
         </p>
         <div className="space-y-4">
-          {EQUIPMENT_CATEGORIES.map((category) => {
-            const items = selected.filter((item) => item.category === category.id);
-            if (items.length === 0) return null;
+          {categories.map((category) => {
+            const categoryItems = selected.filter(
+              (item) => item.categoryId === category.id
+            );
+            if (categoryItems.length === 0) return null;
             return (
               <div key={category.id}>
                 <h4 className="text-sm font-bold text-gray-800">
-                  {textFor(lang, category.label)}
+                  {category.label}
                 </h4>
                 <ul className="mt-1 list-disc pl-5 text-sm text-gray-900">
-                  {items.map((item) => (
+                  {categoryItems.map((item) => (
                     <li key={item.id} className="break-words">
-                      {textFor(lang, item.name)}
+                      {item.name}
                     </li>
                   ))}
                 </ul>
@@ -1002,82 +1204,142 @@ function ReviewStep({
         </div>
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[1].title} editLabel={copy.edit} onEdit={() => onEdit(1)}>
+      <ReviewSection
+        title={copy.steps[1].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(1)}
+      >
         <SummaryRows
           rows={[
-            { label: copy.sampleName, value: displayValue(values.sampleName, copy.empty) },
+            {
+              label: copy.sampleName,
+              value: displayValue(values.sampleName, copy.empty)
+            },
             {
               label: copy.sampleType,
-              value: optionLabel(copy.sampleTypes, values.sampleType, copy.empty),
+              value: optionLabel(
+                copy.sampleTypes,
+                values.sampleType,
+                copy.empty
+              )
             },
-            { label: copy.modelName, value: displayValue(values.modelName, copy.empty) },
+            {
+              label: copy.modelName,
+              value: displayValue(values.modelName, copy.empty)
+            },
             {
               label: copy.manufacturer,
-              value: displayValue(values.manufacturer, copy.empty),
+              value: displayValue(values.manufacturer, copy.empty)
             },
             {
               label: copy.ratedVoltage,
-              value: displayValue(values.ratedVoltage, copy.empty),
+              value: displayValue(values.ratedVoltage, copy.empty)
             },
-            { label: copy.capacityAh, value: displayValue(values.capacityAh, copy.empty) },
-            { label: copy.quantity, value: displayValue(values.quantity, copy.empty) },
+            {
+              label: copy.capacityAh,
+              value: displayValue(values.capacityAh, copy.empty)
+            },
+            {
+              label: copy.quantity,
+              value: displayValue(values.quantity, copy.empty)
+            },
             {
               label: copy.sampleCondition,
-              value: optionLabel(copy.sampleConditions, values.sampleCondition, copy.empty),
+              value: optionLabel(
+                copy.sampleConditions,
+                values.sampleCondition,
+                copy.empty
+              )
             },
             {
               label: copy.handlingNotes,
-              value: displayValue(values.handlingNotes, copy.empty),
+              value: displayValue(values.handlingNotes, copy.empty)
             },
             {
               label: copy.attachments,
               value:
                 values.attachments.length > 0
                   ? values.attachments.map((file) => file.name).join(", ")
-                  : copy.noFiles,
-            },
+                  : copy.noFiles
+            }
           ]}
         />
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[2].title} editLabel={copy.edit} onEdit={() => onEdit(2)}>
+      <ReviewSection
+        title={copy.steps[2].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(2)}
+      >
         <SummaryRows
           rows={[
             {
               label: copy.purpose,
-              value: optionLabel(copy.purposes, values.purpose, copy.empty),
+              value: optionLabel(copy.purposes, values.purpose, copy.empty)
             },
             {
               label: copy.reportLanguage,
-              value: optionLabel(copy.reportLanguages, values.reportLanguage, copy.empty),
+              value: optionLabel(
+                copy.reportLanguages,
+                values.reportLanguage,
+                copy.empty
+              )
             },
-            { label: copy.standards, value: displayValue(values.standards, copy.empty) },
+            {
+              label: copy.standards,
+              value: displayValue(values.standards, copy.empty)
+            },
             {
               label: copy.desiredCompletionDate,
-              value: displayValue(values.desiredCompletionDate, copy.empty),
+              value: displayValue(values.desiredCompletionDate, copy.empty)
             },
-            { label: copy.reportEmail, value: displayValue(values.reportEmail, copy.empty) },
+            {
+              label: copy.reportEmail,
+              value: displayValue(values.reportEmail, copy.empty)
+            },
             {
               label: copy.additionalRequest,
-              value: displayValue(values.additionalRequest, copy.empty),
-            },
+              value: displayValue(values.additionalRequest, copy.empty)
+            }
           ]}
         />
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[3].title} editLabel={copy.edit} onEdit={() => onEdit(3)}>
+      <ReviewSection
+        title={copy.steps[3].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(3)}
+      >
         <SummaryRows
           rows={[
-            { label: copy.companyName, value: displayValue(values.companyName, copy.empty) },
+            {
+              label: copy.companyName,
+              value: displayValue(values.companyName, copy.empty)
+            },
             {
               label: copy.businessRegistrationNumber,
-              value: displayValue(values.businessRegistrationNumber, copy.empty),
+              value: displayValue(values.businessRegistrationNumber, copy.empty)
             },
-            { label: copy.contactName, value: displayValue(values.contactName, copy.empty) },
-            { label: copy.department, value: displayValue(values.department, copy.empty) },
-            { label: copy.phone, value: displayValue(values.phone, copy.empty) },
-            { label: copy.email, value: displayValue(values.email, copy.empty) },
-            { label: copy.address, value: displayValue(values.address, copy.empty) },
+            {
+              label: copy.contactName,
+              value: displayValue(values.contactName, copy.empty)
+            },
+            {
+              label: copy.department,
+              value: displayValue(values.department, copy.empty)
+            },
+            {
+              label: copy.phone,
+              value: displayValue(values.phone, copy.empty)
+            },
+            {
+              label: copy.email,
+              value: displayValue(values.email, copy.empty)
+            },
+            {
+              label: copy.address,
+              value: displayValue(values.address, copy.empty)
+            }
           ]}
         />
       </ReviewSection>
@@ -1100,7 +1362,7 @@ function ReviewSection({
   title,
   editLabel,
   onEdit,
-  children,
+  children
 }: {
   title: string;
   editLabel: string;
@@ -1127,7 +1389,7 @@ function ReviewSection({
 function ConsentBox({
   label,
   error,
-  registration,
+  registration
 }: {
   label: string;
   error?: string;
@@ -1137,7 +1399,10 @@ function ConsentBox({
   const errorId = `${id}-error`;
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <label htmlFor={id} className="flex items-start gap-3 text-sm leading-relaxed text-gray-800">
+      <label
+        htmlFor={id}
+        className="flex items-start gap-3 text-sm leading-relaxed text-gray-800"
+      >
         <input
           id={id}
           type="checkbox"
