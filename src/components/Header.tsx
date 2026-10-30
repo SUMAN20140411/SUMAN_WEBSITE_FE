@@ -46,7 +46,10 @@ const navItemsKor = [
   {
     label: "시험 접수",
     href: "/test-center/apply",
-    submenu: []
+    submenu: [
+      { label: "시험 접수", href: "/test-center/apply" },
+      { label: "진행 조회", href: "/test-center/status" }
+    ]
   }
 ];
 
@@ -74,11 +77,6 @@ const navItemsEng = [
     ]
   },
   {
-    label: "Test Center",
-    href: "/eng/test-center/apply",
-    submenu: []
-  },
-  {
     label: "Recruitment",
     href: "/eng/careers/philosophy",
     submenu: [
@@ -91,6 +89,14 @@ const navItemsEng = [
     label: "Support",
     href: "/eng/support/contact",
     submenu: [{ label: "Contact Us", href: "/eng/support/contact" }]
+  },
+  {
+    label: "Test Center",
+    href: "/eng/test-center/apply",
+    submenu: [
+      { label: "Test Request", href: "/eng/test-center/apply" },
+      { label: "Check Progress", href: "/eng/test-center/status" }
+    ]
   }
 ];
 

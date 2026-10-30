@@ -442,6 +442,86 @@ const en = {
 
 export const testCenterCopy = { ko, en };
 
+export type TestRequestStatusCopy = {
+  pageTitle: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  breadcrumb: string;
+  title: string;
+  intro: string;
+  receiptLabel: string;
+  passwordLabel: string;
+  submit: string;
+  submitting: string;
+  missingApi: string;
+  retry: string;
+  statusLabel: string;
+  receivedDate: string;
+  sampleName: string;
+  companyName: string;
+  empty: string;
+  statuses: Record<
+    "received" | "in_progress" | "completed" | "cancelled",
+    string
+  >;
+};
+
+const statusKo = {
+  pageTitle: "진행 조회 | SUMAN",
+  heroTitle: "시험센터",
+  heroSubtitle: "진행 조회",
+  breadcrumb: "시험센터 > 진행 조회",
+  title: "진행 상황 조회",
+  intro: "접수 번호와 비밀번호를 입력하면 진행 상황을 확인할 수 있습니다.",
+  receiptLabel: "접수번호",
+  passwordLabel: "비밀번호",
+  submit: "조회",
+  submitting: "조회 중...",
+  missingApi:
+    "진행 조회 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
+  retry: "조회에 실패했습니다. 다시 시도해 주세요.",
+  statusLabel: "진행 상태",
+  receivedDate: "접수일자",
+  sampleName: "시료명",
+  companyName: "업체명",
+  empty: "없음",
+  statuses: {
+    received: "접수",
+    in_progress: "진행 중",
+    completed: "완료",
+    cancelled: "취소",
+  },
+} satisfies TestRequestStatusCopy;
+
+const statusEn = {
+  pageTitle: "Check Progress | SUMAN",
+  heroTitle: "Test Center",
+  heroSubtitle: "Check Progress",
+  breadcrumb: "Test Center > Check Progress",
+  title: "Check request progress",
+  intro: "Enter the receipt number and password to check progress.",
+  receiptLabel: "Request number",
+  passwordLabel: "Password",
+  submit: "Look up",
+  submitting: "Looking up...",
+  missingApi:
+    "The progress lookup address is not configured. Please contact the administrator.",
+  retry: "The lookup failed. Please try again.",
+  statusLabel: "Status",
+  receivedDate: "Reception date",
+  sampleName: "Sample name",
+  companyName: "Company name",
+  empty: "None",
+  statuses: {
+    received: "Received",
+    in_progress: "In progress",
+    completed: "Completed",
+    cancelled: "Cancelled",
+  },
+} satisfies TestRequestStatusCopy;
+
+export const testRequestStatusCopy = { ko: statusKo, en: statusEn };
+
 export function optionLabel(
   options: ChoiceOption[],
   value: string,
