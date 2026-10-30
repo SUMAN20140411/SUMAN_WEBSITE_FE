@@ -3,10 +3,24 @@ import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
 import TestRequestWizard from "@/components/test-center/TestRequestWizard";
 import { testCenterCopy } from "@/content/test-center/equipment";
+import {
+  loadTestEquipment,
+  type TestEquipmentCatalog,
+} from "@/lib/strapi/collections/testEquipment";
 import { useLangStore } from "@/stores/langStore";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 
-export default function TestCenterApplyPage() {
+export const getStaticProps: GetStaticProps = async () => {
+  const catalog = await loadTestEquipment("ko-KR");
+  return { props: { catalog } };
+};
+
+export default function TestCenterApplyPage({
+  catalog,
+}: {
+  catalog: TestEquipmentCatalog;
+}) {
   const { lang } = useLangStore();
   const copy = lang === "ENG" ? testCenterCopy.en : testCenterCopy.ko;
 
@@ -26,7 +40,7 @@ export default function TestCenterApplyPage() {
         </div>
         <div className="bg-white py-12 md:py-20">
           <div className="mx-auto max-w-7xl px-6 md:px-[60px] lg:px-[0px]">
-            <TestRequestWizard />
+            <TestRequestWizard catalog={catalog} />
           </div>
         </div>
       </main>

@@ -1,29 +1,40 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FormEvent, useId, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
+  useFieldArray,
   useForm,
+  useWatch,
+  type Control,
   type FieldErrors,
   type UseFormRegister,
+  type UseFormSetValue
 } from "react-hook-form";
 import {
-  EQUIPMENT_CATEGORIES,
-  STANDARD_CHIPS,
+  formatReceivedDate,
   optionLabel,
   testCenterCopy,
-  testEquipment,
-  textFor,
-  type ChoiceOption,
-  type TestCenterCopy,
+  type TestCenterCopy
 } from "@/content/test-center/equipment";
-import { buildTestRequestFormData } from "@/lib/test-center/payload";
+import type {
+  TestEquipmentCatalog,
+  TestEquipmentCategory,
+  TestEquipmentItem
+} from "@/lib/strapi/collections/testEquipment";
+import { buildTestRequestPayload } from "@/lib/test-center/payload";
 import {
+  searchEpostAddresses,
+  type PostalCodeResult
+} from "@/lib/test-center/postalCode";
+import {
+  MAX_CUSTOM_SPECS,
   TEST_REQUEST_STEP_FIELDS,
+  buildSampleSpecs,
   buildTestRequestSchema,
   emptyTestRequest,
-  todayInputValue,
-  type TestRequestValues,
+  isVibrationCategoryLabel,
+  type TestRequestValues
 } from "@/lib/test-center/schema";
 import { useLangStore } from "@/stores/langStore";
 
@@ -38,10 +49,13 @@ function fieldClass(invalid: boolean) {
   }`;
 }
 
-function messageOf(error: { message?: unknown; root?: { message?: unknown } } | undefined) {
+function messageOf(
+  error: { message?: unknown; root?: { message?: unknown } } | undefined
+) {
   if (!error) return undefined;
   if (typeof error.message === "string" && error.message) return error.message;
-  if (typeof error.root?.message === "string" && error.root.message) return error.root.message;
+  if (typeof error.root?.message === "string" && error.root.message)
+    return error.root.message;
   return undefined;
 }
 
@@ -55,7 +69,9 @@ function FieldErrorText({ id, message }: { id: string; message?: string }) {
 }
 
 function OptionalMark({ label }: { label: string }) {
-  return <span className="ml-2 text-xs font-normal text-gray-500">{label}</span>;
+  return (
+    <span className="ml-2 text-xs font-normal text-gray-500">{label}</span>
+  );
 }
 
 function TextInput({
@@ -68,7 +84,7 @@ function TextInput({
   autoComplete,
   hint,
   min,
-  step,
+  step
 }: {
   label: string;
   error?: string;
@@ -86,7 +102,10 @@ function TextInput({
   const hintId = `${id}-hint`;
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
+      <label
+        htmlFor={id}
+        className="mb-2 block text-sm font-semibold text-gray-800"
+      >
         {label}
         {optional ? <OptionalMark label={optional} /> : null}
       </label>
@@ -97,8 +116,9 @@ function TextInput({
         autoComplete={autoComplete}
         aria-invalid={Boolean(error)}
         aria-describedby={
-          [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") ||
-          undefined
+          [hint ? hintId : null, error ? errorId : null]
+            .filter(Boolean)
+            .join(" ") || undefined
         }
         className={fieldClass(Boolean(error))}
         {...registration}
@@ -115,85 +135,25 @@ function TextInput({
   );
 }
 
-function SelectInput({
-  label,
-  error,
-  registration,
-  placeholder,
-  options,
-}: {
-  label: string;
-  error?: string;
-  registration: ReturnType<UseFormRegister<TestRequestValues>>;
-  placeholder: string;
-  options: ChoiceOption[];
-}) {
-  const id = useId();
-  const errorId = `${id}-error`;
-  return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
-        {label}
-      </label>
-      <select
-        id={id}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
-        className={fieldClass(Boolean(error))}
-        {...registration}
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <FieldErrorText id={errorId} message={error} />
-    </div>
-  );
-}
-
-function TextAreaInput({
-  label,
-  error,
-  optional,
-  registration,
-}: {
-  label: string;
-  error?: string;
-  optional?: string;
-  registration: ReturnType<UseFormRegister<TestRequestValues>>;
-}) {
-  const id = useId();
-  const errorId = `${id}-error`;
-  return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-gray-800">
-        {label}
-        {optional ? <OptionalMark label={optional} /> : null}
-      </label>
-      <textarea
-        id={id}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? errorId : undefined}
-        className={`${fieldClass(Boolean(error))} min-h-[120px]`}
-        {...registration}
-      />
-      <FieldErrorText id={errorId} message={error} />
-    </div>
-  );
-}
-
 function displayValue(value: string, empty: string) {
   const trimmed = value.trim();
   return trimmed ? trimmed : empty;
 }
 
-function formatBytes(size: number) {
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+function classificationLines(
+  items: TestEquipmentItem[],
+  categories: TestEquipmentCategory[],
+  equipmentIds: string[]
+) {
+  const categoryById = new Map(
+    categories.map((category) => [category.id, category.label])
+  );
+  return items
+    .filter((item) => equipmentIds.includes(item.id))
+    .map((item) => {
+      const category = categoryById.get(item.categoryId) ?? "";
+      return category ? `${category} > ${item.name}` : item.name;
+    });
 }
 
 function isReceipt(value: unknown): value is { receiptNo: string } {
@@ -206,10 +166,18 @@ function isReceipt(value: unknown): value is { receiptNo: string } {
 
 function serverMessage(value: unknown) {
   if (typeof value !== "object" || value === null) return null;
-  if ("message" in value && typeof value.message === "string" && value.message.trim()) {
+  if (
+    "message" in value &&
+    typeof value.message === "string" &&
+    value.message.trim()
+  ) {
     return value.message.trim();
   }
-  if ("error" in value && typeof value.error === "string" && value.error.trim()) {
+  if (
+    "error" in value &&
+    typeof value.error === "string" &&
+    value.error.trim()
+  ) {
     return value.error.trim();
   }
   return null;
@@ -226,42 +194,56 @@ async function readJson(response: Response) {
 }
 
 function SummaryRows({
-  rows,
+  rows
 }: {
-  rows: { label: string; value: string }[];
+  rows: { label: string; value: string; key?: string }[];
 }) {
   return (
     <dl className="grid grid-cols-1 gap-y-3 sm:grid-cols-[minmax(9rem,14rem)_1fr] sm:gap-x-4">
-      {rows.map((row) => (
-        <div key={row.label} className="contents">
+      {rows.map((row, index) => (
+        <div key={row.key ?? `${row.label}-${index}`} className="contents">
           <dt className="text-sm text-gray-500">{row.label}</dt>
-          <dd className="text-sm font-medium break-words text-gray-900">{row.value}</dd>
+          <dd className="whitespace-pre-line text-sm font-medium break-words text-gray-900">
+            {row.value}
+          </dd>
         </div>
       ))}
     </dl>
   );
 }
 
-export default function TestRequestWizard() {
+export default function TestRequestWizard({
+  catalog
+}: {
+  catalog: TestEquipmentCatalog;
+}) {
   const { lang } = useLangStore();
   const copy = lang === "ENG" ? testCenterCopy.en : testCenterCopy.ko;
-  const schema = useMemo(() => buildTestRequestSchema(copy), [copy]);
+  const vibrationRequiredRef = useRef(false);
+  const schema = useMemo(
+    () =>
+      buildTestRequestSchema(copy, {
+        vibrationRequired: () => vibrationRequiredRef.current
+      }),
+    [copy]
+  );
   const resolver = useMemo(
     () => zodResolver(schema, undefined, { raw: true }),
     [schema]
   );
   const {
     register,
+    control,
     trigger,
     handleSubmit,
     watch,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting }
   } = useForm<TestRequestValues>({
     defaultValues: emptyTestRequest,
     resolver,
-    mode: "onSubmit",
+    mode: "onSubmit"
   });
   const [step, setStep] = useState(0);
   const stepRef = useRef(step);
@@ -270,8 +252,20 @@ export default function TestRequestWizard() {
   const [receipt, setReceipt] = useState<ReceiptResult | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const selectedIds = watch("equipmentIds");
-  const standards = watch("standards");
-  const attachments = watch("attachments");
+  const receiveMethod = watch("report.receiveMethod");
+  const classifications = useMemo(
+    () => classificationLines(catalog.items, catalog.categories, selectedIds),
+    [catalog.items, catalog.categories, selectedIds]
+  );
+
+  vibrationRequiredRef.current = selectedIds.some((id) => {
+    const item = catalog.items.find((entry) => entry.id === id);
+    if (!item) return false;
+    const category = catalog.categories.find(
+      (entry) => entry.id === item.categoryId
+    );
+    return category ? isVibrationCategoryLabel(category.label) : false;
+  });
 
   const goToStep = (nextStep: number) => {
     setStep(nextStep);
@@ -293,31 +287,8 @@ export default function TestRequestWizard() {
       : [...current, id];
     setValue("equipmentIds", next, {
       shouldDirty: true,
-      shouldValidate: Boolean(errors.equipmentIds),
+      shouldValidate: Boolean(errors.equipmentIds)
     });
-  };
-
-  const appendStandard = (chip: string) => {
-    const current = getValues("standards");
-    if (current.toLowerCase().includes(chip.toLowerCase())) return;
-    const next = current.trim() ? `${current.trim()}, ${chip}` : chip;
-    setValue("standards", next, { shouldDirty: true, shouldValidate: true });
-  };
-
-  const addFiles = (list: FileList | null) => {
-    const picked = Array.from(list ?? []);
-    setValue("attachments", [...getValues("attachments"), ...picked], {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  };
-
-  const removeFile = (index: number) => {
-    setValue(
-      "attachments",
-      getValues("attachments").filter((_, fileIndex) => fileIndex !== index),
-      { shouldDirty: true, shouldValidate: true }
-    );
   };
 
   const onSubmit = async (values: TestRequestValues) => {
@@ -335,14 +306,19 @@ export default function TestRequestWizard() {
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: buildTestRequestFormData(values),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(
+          buildTestRequestPayload(values, copy, lang === "ENG" ? "en" : "ko")
+        )
       });
       const payload = await readJson(response);
       if (response.status === 201 && isReceipt(payload)) {
         setReceipt({
           receiptNo: payload.receiptNo.trim(),
-          email: values.reportEmail.trim(),
+          email: values.client.email.trim()
         });
         return;
       }
@@ -373,7 +349,9 @@ export default function TestRequestWizard() {
         <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
           {copy.successTitle}
         </h2>
-        <p className="mt-6 text-sm font-semibold text-gray-500">{copy.receiptLabel}</p>
+        <p className="mt-6 text-sm font-semibold text-gray-500">
+          {copy.receiptLabel}
+        </p>
         <p className="mt-1 text-3xl font-bold tracking-wide break-all text-blue-700">
           {receipt.receiptNo}
         </p>
@@ -411,62 +389,70 @@ export default function TestRequestWizard() {
           autoComplete="off"
         />
 
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-          >
-            <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
-              {step + 1}. {copy.steps[step].title}
-            </h2>
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
+          <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+            {step + 1}. {copy.steps[step].title}
+          </h2>
 
-            {step === 0 ? (
-              <EquipmentStep
-                lang={lang}
-                copy={copy}
-                selectedIds={selectedIds}
-                error={messageOf(errors.equipmentIds)}
-                onToggle={toggleEquipment}
-              />
-            ) : null}
+          {step === 0 ? (
+            <EquipmentStep
+              copy={copy}
+              items={catalog.items}
+              categories={catalog.categories}
+              selectedIds={selectedIds}
+              error={messageOf(errors.equipmentIds)}
+              onToggle={toggleEquipment}
+            />
+          ) : null}
 
-            {step === 1 ? (
-              <SampleStep
-                copy={copy}
-                register={register}
-                errors={errors}
-                attachments={attachments}
-                onAddFiles={addFiles}
-                onRemoveFile={removeFile}
-              />
-            ) : null}
+          {step === 1 ? (
+            <SampleStep
+              copy={copy}
+              control={control}
+              register={register}
+              errors={errors}
+              classifications={classifications}
+            />
+          ) : null}
 
-            {step === 2 ? (
-              <ReportStep
-                copy={copy}
-                register={register}
-                errors={errors}
-                standards={standards}
-                onAppendStandard={appendStandard}
-              />
-            ) : null}
+          {step === 2 ? (
+            <ReportStep
+              copy={copy}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              receiveMethod={receiveMethod}
+              lang={lang === "ENG" ? "en" : "ko"}
+            />
+          ) : null}
 
-            {step === 3 ? (
-              <ClientStep copy={copy} register={register} errors={errors} />
-            ) : null}
+          {step === 3 ? (
+            <ClientStep
+              copy={copy}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              control={control}
+            />
+          ) : null}
 
-            {step === 4 ? (
-              <ReviewStep
-                lang={lang}
-                copy={copy}
-                values={watch()}
-                register={register}
-                errors={errors}
-                onEdit={goToStep}
-              />
-            ) : null}
-          </motion.div>
+          {step === 4 ? (
+            <ReviewStep
+              copy={copy}
+              items={catalog.items}
+              categories={catalog.categories}
+              values={watch()}
+              register={register}
+              errors={errors}
+              onEdit={goToStep}
+            />
+          ) : null}
+        </motion.div>
 
         {submitError ? (
           <div
@@ -516,7 +502,7 @@ function Stepper({
   copy,
   step,
   disabled,
-  onStep,
+  onStep
 }: {
   copy: TestCenterCopy;
   step: number;
@@ -542,8 +528,8 @@ function Stepper({
                   current
                     ? "bg-blue-600 text-white"
                     : done
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-gray-100 text-gray-500"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {index + 1}
@@ -563,22 +549,41 @@ function Stepper({
   );
 }
 
+const EQUIPMENT_NAVY = "#3E5870";
+
 function EquipmentStep({
-  lang,
   copy,
+  items,
+  categories,
   selectedIds,
   error,
-  onToggle,
+  onToggle
 }: {
-  lang: "KOR" | "ENG";
   copy: TestCenterCopy;
+  items: TestEquipmentItem[];
+  categories: TestEquipmentCategory[];
   selectedIds: string[];
   error?: string;
   onToggle: (id: string) => void;
 }) {
   const errorId = useId();
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id ?? "");
+  const [previewId, setPreviewId] = useState(items[0]?.id ?? "");
+  const categoryItems = useMemo(
+    () => items.filter((item) => item.categoryId === activeCategory),
+    [items, activeCategory]
+  );
+  const previewItem =
+    categoryItems.find((item) => item.id === previewId) ?? categoryItems[0];
+
+  useEffect(() => {
+    if (!categoryItems.some((item) => item.id === previewId)) {
+      setPreviewId(categoryItems[0]?.id ?? "");
+    }
+  }, [categoryItems, previewId]);
+
   return (
-    <div className="mt-6 space-y-8">
+    <div className="mt-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-semibold text-blue-700">
           {copy.selectedCount(selectedIds.length)}
@@ -589,223 +594,533 @@ function EquipmentStep({
           {error}
         </p>
       ) : null}
-      {EQUIPMENT_CATEGORIES.map((category) => {
-        const items = testEquipment.filter((item) => item.category === category.id);
-        return (
-          <section key={category.id} aria-labelledby={`category-${category.id}`}>
-            <h3
-              id={`category-${category.id}`}
-              className="mb-4 text-lg font-bold text-gray-900"
-            >
-              {textFor(lang, category.label)}
-            </h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {items.map((item) => {
-                const selected = selectedIds.includes(item.id);
-                const name = textFor(lang, item.name);
-                return (
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,1.6fr)]">
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnGroup}
+          </h3>
+          <ul className="divide-y divide-gray-100">
+            {categories.map((category) => {
+              const active = category.id === activeCategory;
+              const selectedInCategory = items.filter(
+                (item) =>
+                  item.categoryId === category.id &&
+                  selectedIds.includes(item.id)
+              ).length;
+              return (
+                <li key={category.id}>
                   <button
-                    key={item.id}
                     type="button"
-                    aria-pressed={selected}
-                    aria-describedby={error ? errorId : undefined}
-                    onClick={() => onToggle(item.id)}
-                    className={`flex h-full flex-col overflow-hidden rounded-lg border text-left transition-colors ${
-                      selected
-                        ? "border-blue-600 bg-blue-50/50 ring-2 ring-blue-600"
-                        : "border-gray-200 bg-white hover:border-blue-300"
+                    aria-pressed={active}
+                    onClick={() => setActiveCategory(category.id)}
+                    className={`flex w-full items-center gap-2 px-4 py-3 text-left text-sm transition-colors ${
+                      active
+                        ? "font-semibold text-white"
+                        : "text-gray-800 hover:bg-slate-50"
                     }`}
+                    style={
+                      active ? { backgroundColor: EQUIPMENT_NAVY } : undefined
+                    }
                   >
-                    <div className="relative h-44 w-full bg-slate-100">
-                      <Image
-                        src={item.image}
-                        alt={name}
-                        fill
-                        sizes="(min-width: 768px) 36rem, 100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex flex-1 flex-col p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <h4 className="text-base font-bold text-gray-900">{name}</h4>
-                        <span
-                          className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-sm ${
-                            selected
-                              ? "border-blue-600 bg-blue-600 text-white"
-                              : "border-gray-300 bg-white text-transparent"
-                          }`}
-                          aria-hidden="true"
-                        >
-                          ✓
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                        {textFor(lang, item.summary)}
-                      </p>
-                      <dl className="mt-4 space-y-1">
-                        {item.specs.map((spec) => (
-                          <div
-                            key={`${item.id}-${spec.label.en}`}
-                            className="flex items-start justify-between gap-3 text-sm"
-                          >
-                            <dt className="text-gray-500">{textFor(lang, spec.label)}</dt>
-                            <dd className="text-right text-gray-800">
-                              {textFor(lang, spec.value)}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </div>
+                    <span
+                      className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                        active ? "bg-white" : "bg-gray-400"
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0 flex-1 break-words">
+                      {category.label}
+                    </span>
+                    {selectedInCategory > 0 ? (
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                          active
+                            ? "bg-white/20 text-white"
+                            : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {selectedInCategory}
+                      </span>
+                    ) : null}
                   </button>
-                );
-              })}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnTests}
+          </h3>
+          <ul className="divide-y divide-gray-100">
+            {categoryItems.map((item) => {
+              const selected = selectedIds.includes(item.id);
+              const previewing = previewItem?.id === item.id;
+              const name = item.name;
+              return (
+                <li key={item.id}>
+                  <div
+                    className={`flex items-center gap-2 px-3 py-2 transition-colors ${
+                      selected
+                        ? "text-white"
+                        : previewing
+                        ? "bg-slate-100 text-gray-900"
+                        : "text-gray-800 hover:bg-slate-50"
+                    }`}
+                    style={
+                      selected ? { backgroundColor: EQUIPMENT_NAVY } : undefined
+                    }
+                  >
+                    <button
+                      type="button"
+                      onMouseEnter={() => setPreviewId(item.id)}
+                      onFocus={() => setPreviewId(item.id)}
+                      onClick={() => setPreviewId(item.id)}
+                      className={`flex min-w-0 flex-1 items-center gap-2 py-1 text-left text-sm ${
+                        selected || previewing ? "font-semibold" : ""
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                          selected ? "bg-white" : "bg-gray-400"
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0 flex-1 break-words">{name}</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={selected}
+                      aria-describedby={error ? errorId : undefined}
+                      onClick={() => {
+                        setPreviewId(item.id);
+                        onToggle(item.id);
+                      }}
+                      className={`shrink-0 rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        selected
+                          ? "bg-white/20 text-white hover:bg-white/30"
+                          : "border border-gray-300 bg-white text-gray-800 hover:border-slate-400 hover:bg-slate-50"
+                      }`}
+                    >
+                      {selected ? copy.removeItem : copy.addItem}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+          <h3
+            className="px-4 py-3 text-center text-sm font-bold text-white"
+            style={{ backgroundColor: EQUIPMENT_NAVY }}
+          >
+            {copy.columnPreview}
+          </h3>
+          {previewItem ? (
+            <div className="space-y-3 p-4">
+              <div
+                className={`overflow-hidden rounded-md border bg-white ${
+                  selectedIds.includes(previewItem.id)
+                    ? "border-transparent ring-2 ring-[#3E5870] ring-offset-1"
+                    : "border-gray-200"
+                }`}
+              >
+                <div className="relative aspect-[4/3] w-full bg-slate-100">
+                  {previewItem.image ? (
+                    <Image
+                      src={previewItem.image}
+                      alt={previewItem.name}
+                      fill
+                      objectFit="contain"
+                      sizes="(min-width: 1024px) 28rem, 100vw"
+                      className="object-cover"
+                      priority
+                    />
+                  ) : null}
+                </div>
+                <span
+                  className="block px-3 py-2.5 text-center text-sm font-semibold text-white"
+                  style={{ backgroundColor: EQUIPMENT_NAVY }}
+                >
+                  {previewItem.name}
+                </span>
+              </div>
+              {previewItem.summary ? (
+                <p className="text-sm text-gray-700">{previewItem.summary}</p>
+              ) : null}
+              {previewItem.specs.length > 0 ? (
+                <dl className="space-y-1 text-sm">
+                  {previewItem.specs.map((spec, index) => (
+                    <div
+                      key={`${spec.label}-${index}`}
+                      className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-3"
+                    >
+                      <dt className="text-gray-500">{spec.label}</dt>
+                      <dd className="font-medium break-words text-gray-900">
+                        {spec.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
+              <button
+                type="button"
+                aria-pressed={selectedIds.includes(previewItem.id)}
+                aria-describedby={error ? errorId : undefined}
+                onClick={() => onToggle(previewItem.id)}
+                className={`w-full rounded-md px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  selectedIds.includes(previewItem.id)
+                    ? "border border-gray-300 bg-white text-gray-800 hover:bg-slate-50"
+                    : "text-white hover:opacity-90"
+                }`}
+                style={
+                  selectedIds.includes(previewItem.id)
+                    ? undefined
+                    : { backgroundColor: EQUIPMENT_NAVY }
+                }
+              >
+                {selectedIds.includes(previewItem.id)
+                  ? copy.removeItem
+                  : copy.addItem}
+              </button>
             </div>
-          </section>
-        );
-      })}
+          ) : null}
+        </section>
+      </div>
     </div>
+  );
+}
+
+function RequiredAsterisk() {
+  return (
+    <span className="ml-0.5 font-semibold text-red-600" aria-hidden="true">
+      *
+    </span>
+  );
+}
+
+function SampleFieldLabel({
+  htmlFor,
+  label,
+  required
+}: {
+  htmlFor: string;
+  label: string;
+  required?: boolean;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="shrink-0 text-sm font-semibold text-gray-800 md:w-28"
+    >
+      {label}
+      {required ? <RequiredAsterisk /> : null}
+    </label>
   );
 }
 
 function SampleStep({
   copy,
+  control,
   register,
   errors,
-  attachments,
-  onAddFiles,
-  onRemoveFile,
+  classifications
 }: {
   copy: TestCenterCopy;
+  control: Control<TestRequestValues>;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
-  attachments: File[];
-  onAddFiles: (list: FileList | null) => void;
-  onRemoveFile: (index: number) => void;
+  classifications: string[];
 }) {
-  const fileId = useId();
-  const fileError = messageOf(errors.attachments);
-  const fileErrorId = `${fileId}-error`;
+  const nameId = useId();
+  const quantityId = useId();
+  const weightId = useId();
+  const widthId = useId();
+  const depthId = useId();
+  const heightId = useId();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "sample.customSpecs"
+  });
+
+  const nameError = messageOf(errors.sample?.sampleName);
+  const quantityError = messageOf(errors.sample?.quantity);
+  const weightError = messageOf(errors.sample?.sampleWeight);
+  const widthError = messageOf(errors.sample?.sampleSizeW);
+  const depthError = messageOf(errors.sample?.sampleSizeD);
+  const heightError = messageOf(errors.sample?.sampleSizeH);
+  const sizeError = widthError || depthError || heightError;
+  const customSpecsError = messageOf(errors.sample?.customSpecs);
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <TextInput
-        label={copy.sampleName}
-        error={messageOf(errors.sampleName)}
-        registration={register("sampleName")}
-        autoComplete="off"
-      />
-      <SelectInput
-        label={copy.sampleType}
-        error={messageOf(errors.sampleType)}
-        registration={register("sampleType")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.sampleTypes}
-      />
-      <TextInput
-        label={copy.modelName}
-        error={messageOf(errors.modelName)}
-        registration={register("modelName")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.manufacturer}
-        error={messageOf(errors.manufacturer)}
-        registration={register("manufacturer")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.ratedVoltage}
-        error={messageOf(errors.ratedVoltage)}
-        registration={register("ratedVoltage")}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.capacityAh}
-        error={messageOf(errors.capacityAh)}
-        registration={register("capacityAh")}
-        type="number"
-        inputMode="decimal"
-        min="0"
-        step="any"
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.quantity}
-        error={messageOf(errors.quantity)}
-        registration={register("quantity")}
-        type="number"
-        inputMode="numeric"
-        min="1"
-        step="1"
-        autoComplete="off"
-      />
-      <SelectInput
-        label={copy.sampleCondition}
-        error={messageOf(errors.sampleCondition)}
-        registration={register("sampleCondition")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.sampleConditions}
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.handlingNotes}
-          optional={copy.optional}
-          error={messageOf(errors.handlingNotes)}
-          registration={register("handlingNotes")}
-        />
-      </div>
-      <div className="md:col-span-2">
-        <label htmlFor={fileId} className="mb-2 block text-sm font-semibold text-gray-800">
-          {copy.attachments}
-          <OptionalMark label={copy.optional} />
-        </label>
-        <label
-          htmlFor={fileId}
-          className={`flex cursor-pointer flex-col items-center justify-center rounded border border-dashed px-4 py-6 text-center ${
-            fileError ? "border-red-500 bg-red-50" : "border-gray-300 bg-gray-50"
-          }`}
-        >
-          <span className="font-semibold text-blue-700">{copy.chooseFiles}</span>
-          <span className="mt-1 text-sm text-gray-600">{copy.fileHint}</span>
-          <span className="mt-2 text-xs text-gray-500">{copy.fileCount(attachments.length)}</span>
-        </label>
-        <input
-          id={fileId}
-          type="file"
-          multiple
-          accept=".pdf,.png,.jpg,.jpeg,.zip,application/pdf,image/png,image/jpeg,application/zip,application/x-zip-compressed"
-          className="sr-only"
-          aria-invalid={Boolean(fileError)}
-          aria-describedby={fileError ? fileErrorId : undefined}
-          onChange={(event) => {
-            onAddFiles(event.target.files);
-            event.target.value = "";
-          }}
-        />
-        {attachments.length > 0 ? (
-          <ul className="mt-3 space-y-2">
-            {attachments.map((file, index) => (
-              <li
-                key={`${file.name}-${file.size}-${index}`}
-                className="flex items-center justify-between gap-3 rounded border border-gray-200 px-3 py-2 text-sm"
-              >
-                <span className="min-w-0 break-all text-gray-800">
-                  {file.name}{" "}
-                  <span className="text-gray-500">({formatBytes(file.size)})</span>
+    <div className="mt-6 space-y-4">
+      <p className="text-right text-xs font-medium text-red-600">
+        {copy.requiredNote}
+      </p>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-5 md:grid-cols-2">
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel
+                htmlFor={nameId}
+                label={copy.sampleName}
+                required
+              />
+              <input
+                id={nameId}
+                type="text"
+                autoComplete="off"
+                aria-invalid={Boolean(nameError)}
+                className={fieldClass(Boolean(nameError))}
+                {...register("sample.sampleName")}
+              />
+            </div>
+            <FieldErrorText id={`${nameId}-error`} message={nameError} />
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel
+                htmlFor={quantityId}
+                label={copy.quantity}
+                required
+              />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <input
+                  id={quantityId}
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  step="1"
+                  autoComplete="off"
+                  aria-invalid={Boolean(quantityError)}
+                  className={fieldClass(Boolean(quantityError))}
+                  {...register("sample.quantity")}
+                />
+                <span className="shrink-0 text-sm text-gray-700">
+                  {copy.quantityUnit}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => onRemoveFile(index)}
-                  className="shrink-0 font-semibold text-blue-700 hover:text-blue-800"
-                >
-                  {copy.removeFile}
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        <FieldErrorText id={fileErrorId} message={fileError} />
+              </div>
+            </div>
+            <FieldErrorText
+              id={`${quantityId}-error`}
+              message={quantityError}
+            />
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+              <span className="shrink-0 pt-2 text-sm font-semibold text-gray-800 md:w-28">
+                {copy.classification}
+              </span>
+              <div className="min-w-0 flex-1 rounded border border-gray-200 bg-slate-50 px-3 py-2 text-sm text-gray-800">
+                {classifications.length > 0 ? (
+                  <ul className="space-y-1">
+                    {classifications.map((line) => (
+                      <li key={line} className="break-words">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="text-gray-400">{copy.empty}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <SampleFieldLabel htmlFor={weightId} label={copy.sampleWeight} />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <input
+                  id={weightId}
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="any"
+                  autoComplete="off"
+                  aria-invalid={Boolean(weightError)}
+                  className={fieldClass(Boolean(weightError))}
+                  {...register("sample.sampleWeight")}
+                />
+                <span className="shrink-0 text-sm text-gray-700">
+                  {copy.weightUnit}
+                </span>
+              </div>
+            </div>
+            <FieldErrorText id={`${weightId}-error`} message={weightError} />
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <span className="shrink-0 text-sm font-semibold text-gray-800 md:w-28">
+                {copy.sampleSize}
+              </span>
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeWidth}</span>
+                  <input
+                    id={widthId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeWidth}`}
+                    aria-invalid={Boolean(widthError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      widthError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sample.sampleSizeW")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeDepth}</span>
+                  <input
+                    id={depthId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeDepth}`}
+                    aria-invalid={Boolean(depthError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      depthError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sample.sampleSizeD")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+                <label className="flex items-center gap-1.5 text-sm text-gray-700">
+                  <span>{copy.sizeHeight}</span>
+                  <input
+                    id={heightId}
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="any"
+                    autoComplete="off"
+                    aria-label={`${copy.sampleSize} ${copy.sizeHeight}`}
+                    aria-invalid={Boolean(heightError)}
+                    className={`w-20 rounded px-2 py-2 text-gray-900 border ${
+                      heightError ? "border-red-500" : "border-gray-200"
+                    }`}
+                    {...register("sample.sampleSizeH")}
+                  />
+                  <span>{copy.sizeUnit}</span>
+                </label>
+              </div>
+            </div>
+            <FieldErrorText id={`${widthId}-error`} message={sizeError} />
+          </div>
+        </div>
+
+        <p className="mt-5 text-sm text-blue-700">
+          <span aria-hidden="true">● </span>
+          {copy.sampleSpecsNote}
+        </p>
+
+        <div className="mt-5 border-t border-gray-100 pt-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-gray-800">
+              {copy.addSpec}
+            </p>
+            <button
+              type="button"
+              disabled={fields.length >= MAX_CUSTOM_SPECS}
+              onClick={() => append({ label: "", value: "" })}
+              className="rounded border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {copy.addItem}
+            </button>
+          </div>
+          {fields.length > 0 ? (
+            <ul className="space-y-3">
+              {fields.map((field, index) => {
+                const rowError = messageOf(errors.sample?.customSpecs?.[index]);
+                return (
+                  <li
+                    key={field.id}
+                    className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)_auto]"
+                  >
+                    <input
+                      type="text"
+                      placeholder={copy.specLabel}
+                      aria-label={copy.specLabel}
+                      aria-invalid={Boolean(rowError)}
+                      className={fieldClass(Boolean(rowError))}
+                      {...register(`sample.customSpecs.${index}.label`)}
+                    />
+                    <input
+                      type="text"
+                      placeholder={copy.specValue}
+                      aria-label={copy.specValue}
+                      aria-invalid={Boolean(rowError)}
+                      className={fieldClass(Boolean(rowError))}
+                      {...register(`sample.customSpecs.${index}.value`)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                      {copy.removeSpec}
+                    </button>
+                    {rowError ? (
+                      <p className="text-xs text-red-600 sm:col-span-3">
+                        {rowError}
+                      </p>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
+          <FieldErrorText id="custom-specs-error" message={customSpecsError} />
+        </div>
       </div>
     </div>
+  );
+}
+
+function ReportFieldLabel({
+  htmlFor,
+  label,
+  required
+}: {
+  htmlFor?: string;
+  label: string;
+  required?: boolean;
+}) {
+  const className =
+    "shrink-0 text-sm font-semibold text-gray-800 md:w-44 lg:w-52";
+  if (!htmlFor) {
+    return (
+      <span className={className}>
+        {label}
+        {required ? <RequiredAsterisk /> : null}
+      </span>
+    );
+  }
+  return (
+    <label htmlFor={htmlFor} className={className}>
+      {label}
+      {required ? <RequiredAsterisk /> : null}
+    </label>
   );
 }
 
@@ -813,83 +1128,614 @@ function ReportStep({
   copy,
   register,
   errors,
-  standards,
-  onAppendStandard,
+  setValue,
+  receiveMethod,
+  lang
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
-  standards: string;
-  onAppendStandard: (chip: string) => void;
+  setValue: UseFormSetValue<TestRequestValues>;
+  receiveMethod: string;
+  lang: "ko" | "en";
 }) {
+  const purposeId = useId();
+  const purposeDetailId = useId();
+  const copyCountId = useId();
+  const receiveMethodId = useId();
+  const shippingNameId = useId();
+  const recipientNameId = useId();
+  const recipientPhoneId = useId();
+  const postalCodeId = useId();
+  const deliveryAddressId = useId();
+  const addressDetailId = useId();
+  const [addressOpen, setAddressOpen] = useState(false);
+
+  const showMail = receiveMethod === "mail";
+  const receivedDateLabel = formatReceivedDate(new Date(), lang);
+
+  const purposeError = messageOf(errors.report?.purpose);
+  const purposeDetailError = messageOf(errors.report?.purposeDetail);
+  const copyCountError = messageOf(errors.report?.copyCount);
+  const receiveMethodError = messageOf(errors.report?.receiveMethod);
+  const shippingNameError = messageOf(errors.report?.shippingName);
+  const recipientNameError = messageOf(errors.report?.recipientName);
+  const recipientPhoneError = messageOf(errors.report?.recipientPhone);
+  const postalCodeError = messageOf(errors.report?.postalCode);
+  const deliveryAddressError = messageOf(errors.report?.deliveryAddress);
+  const addressDetailError = messageOf(errors.report?.addressDetail);
+  const samplePhotoError = messageOf(errors.report?.samplePhoto);
+  const sampleHandlingError = messageOf(errors.report?.sampleHandling);
+  const receptionTypeError = messageOf(errors.report?.receptionType);
+  const addressError =
+    postalCodeError || deliveryAddressError || addressDetailError;
+
+  const onSelectAddress = (result: PostalCodeResult) => {
+    setValue("report.postalCode", result.zipCode, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setValue("report.deliveryAddress", result.roadAddress, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setAddressOpen(false);
+  };
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <SelectInput
-        label={copy.purpose}
-        error={messageOf(errors.purpose)}
-        registration={register("purpose")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.purposes}
-      />
-      <SelectInput
-        label={copy.reportLanguage}
-        error={messageOf(errors.reportLanguage)}
-        registration={register("reportLanguage")}
-        placeholder={copy.selectPlaceholder}
-        options={copy.reportLanguages}
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.standards}
-          optional={copy.optional}
-          error={messageOf(errors.standards)}
-          registration={register("standards")}
-        />
-        <p className="mt-2 text-xs text-gray-500">{copy.standardsHint}</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {STANDARD_CHIPS.map((chip) => {
-            const included = standards.toLowerCase().includes(chip.toLowerCase());
-            return (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => onAppendStandard(chip)}
-                className={`rounded-full border px-3 py-1 text-sm ${
-                  included
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
-                }`}
-              >
-                {chip}
-              </button>
-            );
-          })}
+    <div className="mt-6 space-y-4">
+      <p className="text-right text-xs font-medium text-red-600">
+        {copy.requiredNote}
+      </p>
+
+      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <ReportFieldLabel label={copy.receivedDate} />
+          <p className="text-sm text-gray-900">{receivedDateLabel}</p>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.receptionType} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="general"
+                  className="accent-blue-600"
+                  {...register("report.receptionType")}
+                />
+                {copy.receptionTypeGeneral}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-400">
+                <input
+                  type="radio"
+                  disabled
+                  className="accent-blue-600"
+                  tabIndex={-1}
+                />
+                {copy.receptionTypeKolasNote}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText
+            id="reception-type-error"
+            message={receptionTypeError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={purposeId}
+              label={copy.purpose}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <select
+                  id={purposeId}
+                  aria-invalid={Boolean(purposeError)}
+                  className={`${fieldClass(Boolean(purposeError))} sm:max-w-xs`}
+                  {...register("report.purpose")}
+                >
+                  <option value="">{copy.selectPlaceholder}</option>
+                  {copy.purposes.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  id={purposeDetailId}
+                  type="text"
+                  placeholder={copy.purposeDetailPlaceholder}
+                  aria-invalid={Boolean(purposeDetailError)}
+                  className={fieldClass(Boolean(purposeDetailError))}
+                  {...register("report.purposeDetail")}
+                />
+              </div>
+              <p className="text-xs text-gray-500">{copy.purposeHint}</p>
+              <FieldErrorText
+                id={`${purposeId}-error`}
+                message={purposeError || purposeDetailError}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={copyCountId}
+              label={copy.copyCount}
+              required
+            />
+            <div className="flex items-center gap-2">
+              <input
+                id={copyCountId}
+                type="text"
+                inputMode="numeric"
+                aria-invalid={Boolean(copyCountError)}
+                className={`${fieldClass(Boolean(copyCountError))} w-24`}
+                {...register("report.copyCount")}
+              />
+              <span className="text-sm text-gray-700">{copy.copyCountUnit}</span>
+            </div>
+          </div>
+          <FieldErrorText id={`${copyCountId}-error`} message={copyCountError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={receiveMethodId}
+              label={copy.receiveMethod}
+              required
+            />
+            <select
+              id={receiveMethodId}
+              aria-invalid={Boolean(receiveMethodError)}
+              className={`${fieldClass(Boolean(receiveMethodError))} sm:max-w-xs`}
+              {...register("report.receiveMethod")}
+            >
+              <option value="">{copy.selectPlaceholder}</option>
+              {copy.receiveMethods.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <FieldErrorText
+            id={`${receiveMethodId}-error`}
+            message={receiveMethodError}
+          />
+        </div>
+
+        {showMail ? (
+          <>
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={shippingNameId}
+                  label={copy.shippingName}
+                  required
+                />
+                <input
+                  id={shippingNameId}
+                  type="text"
+                  aria-invalid={Boolean(shippingNameError)}
+                  className={fieldClass(Boolean(shippingNameError))}
+                  {...register("report.shippingName")}
+                />
+              </div>
+              <FieldErrorText
+                id={`${shippingNameId}-error`}
+                message={shippingNameError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <ReportFieldLabel
+                      htmlFor={recipientNameId}
+                      label={copy.recipientName}
+                      required
+                    />
+                    <input
+                      id={recipientNameId}
+                      type="text"
+                      aria-invalid={Boolean(recipientNameError)}
+                      className={fieldClass(Boolean(recipientNameError))}
+                      {...register("report.recipientName")}
+                    />
+                  </div>
+                  <FieldErrorText
+                    id={`${recipientNameId}-error`}
+                    message={recipientNameError}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <ReportFieldLabel
+                      htmlFor={recipientPhoneId}
+                      label={copy.recipientPhone}
+                      required
+                    />
+                    <input
+                      id={recipientPhoneId}
+                      type="tel"
+                      inputMode="tel"
+                      placeholder={copy.recipientPhoneHint}
+                      aria-invalid={Boolean(recipientPhoneError)}
+                      className={fieldClass(Boolean(recipientPhoneError))}
+                      {...register("report.recipientPhone")}
+                    />
+                  </div>
+                  <FieldErrorText
+                    id={`${recipientPhoneId}-error`}
+                    message={recipientPhoneError}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                <ReportFieldLabel
+                  htmlFor={deliveryAddressId}
+                  label={copy.deliveryAddress}
+                  required
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <input
+                      id={postalCodeId}
+                      type="text"
+                      readOnly
+                      aria-invalid={Boolean(postalCodeError)}
+                      className={`${fieldClass(Boolean(postalCodeError))} sm:w-28`}
+                      {...register("report.postalCode")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAddressOpen(true)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-blue-700 text-white hover:bg-blue-800"
+                      aria-label={copy.addressSearch}
+                    >
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      id={deliveryAddressId}
+                      type="text"
+                      readOnly
+                      aria-invalid={Boolean(deliveryAddressError)}
+                      className={fieldClass(Boolean(deliveryAddressError))}
+                      {...register("report.deliveryAddress")}
+                    />
+                  </div>
+                  <input
+                    id={addressDetailId}
+                    type="text"
+                    placeholder={copy.addressDetail}
+                    aria-invalid={Boolean(addressDetailError)}
+                    className={fieldClass(Boolean(addressDetailError))}
+                    {...register("report.addressDetail")}
+                  />
+                  <FieldErrorText
+                    id={`${deliveryAddressId}-error`}
+                    message={addressError}
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.samplePhoto} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="attach"
+                  className="accent-blue-600"
+                  {...register("report.samplePhoto")}
+                />
+                {copy.samplePhotoAttach}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="skip"
+                  className="accent-blue-600"
+                  {...register("report.samplePhoto")}
+                />
+                {copy.samplePhotoSkip}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText id="sample-photo-error" message={samplePhotoError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel label={copy.sampleHandling} required />
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="dispose"
+                  className="accent-blue-600"
+                  {...register("report.sampleHandling")}
+                />
+                {copy.sampleHandlingDispose}
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="radio"
+                  value="return"
+                  className="accent-blue-600"
+                  {...register("report.sampleHandling")}
+                />
+                {copy.sampleHandlingReturn}
+              </label>
+            </div>
+          </div>
+          <FieldErrorText
+            id="sample-handling-error"
+            message={sampleHandlingError}
+          />
         </div>
       </div>
-      <TextInput
-        label={copy.desiredCompletionDate}
-        error={messageOf(errors.desiredCompletionDate)}
-        registration={register("desiredCompletionDate")}
-        type="date"
-        min={todayInputValue()}
-        autoComplete="off"
-      />
-      <TextInput
-        label={copy.reportEmail}
-        error={messageOf(errors.reportEmail)}
-        registration={register("reportEmail")}
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-      />
-      <div className="md:col-span-2">
-        <TextAreaInput
-          label={copy.additionalRequest}
-          optional={copy.optional}
-          error={messageOf(errors.additionalRequest)}
-          registration={register("additionalRequest")}
+
+      {addressOpen ? (
+        <PostalAddressDialog
+          copy={copy}
+          onClose={() => setAddressOpen(false)}
+          onSelect={onSelectAddress}
         />
+      ) : null}
+    </div>
+  );
+}
+
+function PostalAddressDialog({
+  copy,
+  onClose,
+  onSelect
+}: {
+  copy: TestCenterCopy;
+  onClose: () => void;
+  onSelect: (result: PostalCodeResult) => void;
+}) {
+  const inputId = useId();
+  const [keyword, setKeyword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<PostalCodeResult[] | null>(null);
+
+  const search = async () => {
+    const trimmed = keyword.trim();
+    if (!trimmed) {
+      setError(copy.addressSearchEmpty);
+      setResults([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const next = await searchEpostAddresses(trimmed);
+      setResults(next);
+      if (next.length === 0) setError(copy.addressSearchEmpty);
+    } catch {
+      setError(copy.addressSearchError);
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`${inputId}-title`}
+    >
+      <div className="flex max-h-[90vh] w-full max-w-xl flex-col rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+          <h3
+            id={`${inputId}-title`}
+            className="text-base font-bold text-gray-900"
+          >
+            {copy.addressSearchTitle}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          >
+            {copy.addressSearchClose}
+          </button>
+        </div>
+        <div className="space-y-3 border-b border-gray-100 p-4">
+          <label htmlFor={inputId} className="sr-only">
+            {copy.addressSearchPlaceholder}
+          </label>
+          <div className="flex gap-2">
+            <input
+              id={inputId}
+              type="text"
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  void search();
+                }
+              }}
+              placeholder={copy.addressSearchPlaceholder}
+              className={fieldClass(false)}
+            />
+            <button
+              type="button"
+              onClick={() => void search()}
+              disabled={loading}
+              className="shrink-0 rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60"
+            >
+              {copy.addressSearchButton}
+            </button>
+          </div>
+          {error ? (
+            <p className="text-xs text-red-600" role="alert">
+              {error}
+            </p>
+          ) : null}
+        </div>
+        <div className="overflow-y-auto p-2">
+          {loading ? (
+            <p className="p-3 text-sm text-gray-500">
+              {copy.addressSearchLoading}
+            </p>
+          ) : null}
+          {!loading && results && results.length > 0 ? (
+            <ul className="divide-y divide-gray-100">
+              {results.map((result) => (
+                <li key={`${result.zipCode}-${result.roadAddress}`}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(result)}
+                    className="flex w-full flex-col gap-1 px-3 py-3 text-left hover:bg-blue-50"
+                  >
+                    <span className="text-sm font-semibold text-blue-800">
+                      [{result.zipCode}] {result.roadAddress}
+                    </span>
+                    {result.jibunAddress ? (
+                      <span className="text-xs text-gray-500">
+                        {result.jibunAddress}
+                      </span>
+                    ) : null}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </div>
+    </div>
+  );
+}
+
+const BUSINESS_PART_LENGTHS = [3, 2, 5] as const;
+const PHONE_PART_LENGTHS = [4, 4, 4] as const;
+const DIRECT_EMAIL_DOMAIN = "direct";
+
+function digitsOnly(value: string, max: number) {
+  return value.replace(/\D/g, "").slice(0, max);
+}
+
+function splitParts(value: string, lengths: readonly number[]) {
+  const pieces = value.split("-");
+  if (pieces.length === lengths.length) {
+    return lengths.map((length, index) =>
+      digitsOnly(pieces[index] ?? "", length)
+    );
+  }
+  const digits = value.replace(/\D/g, "");
+  const parts: string[] = [];
+  let offset = 0;
+  lengths.forEach((length) => {
+    parts.push(digits.slice(offset, offset + length));
+    offset += length;
+  });
+  return parts;
+}
+
+function joinParts(parts: string[]) {
+  if (parts.every((part) => part === "")) return "";
+  return parts.join("-");
+}
+
+function splitEmail(value: string) {
+  const at = value.indexOf("@");
+  if (at < 0) return { local: value, domain: "" };
+  return { local: value.slice(0, at), domain: value.slice(at + 1) };
+}
+
+function joinEmail(local: string, domain: string) {
+  if (!local && !domain) return "";
+  return `${local}@${domain}`;
+}
+
+function emailPart(value: string) {
+  return value.replace(/[@\s]/g, "");
+}
+
+function segmentClass(invalid: boolean, width: string) {
+  return `${width} rounded px-2 py-2 text-center bg-white text-gray-900 border ${
+    invalid ? "border-red-500" : "border-gray-200"
+  }`;
+}
+
+function DigitParts({
+  id,
+  label,
+  parts,
+  lengths,
+  widths,
+  invalid,
+  describedBy,
+  onPart
+}: {
+  id: string;
+  label: string;
+  parts: string[];
+  lengths: readonly number[];
+  widths: string[];
+  invalid: boolean;
+  describedBy?: string;
+  onPart: (index: number, value: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {parts.map((part, index) => (
+        <span key={`${id}-${index}`} className="contents">
+          {index > 0 ? (
+            <span className="text-sm text-gray-500" aria-hidden="true">
+              -
+            </span>
+          ) : null}
+          <input
+            id={index === 0 ? id : undefined}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={lengths[index]}
+            aria-label={index === 0 ? undefined : `${label} ${index + 1}`}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
+            value={part}
+            onChange={(event) => onPart(index, event.target.value)}
+            className={segmentClass(invalid, widths[index] ?? "w-16")}
+          />
+        </span>
+      ))}
     </div>
   );
 }
@@ -898,101 +1744,429 @@ function ClientStep({
   copy,
   register,
   errors,
+  setValue,
+  control
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
+  setValue: UseFormSetValue<TestRequestValues>;
+  control: Control<TestRequestValues>;
 }) {
+  const companyNameId = useId();
+  const representativeId = useId();
+  const businessNumberId = useId();
+  const addressId = useId();
+  const addressDetailId = useId();
+  const contactNameId = useId();
+  const phoneId = useId();
+  const emailLocalId = useId();
+  const emailDomainId = useId();
+  const emailDomainChoiceId = useId();
+  const remarksId = useId();
+  const [addressOpen, setAddressOpen] = useState(false);
+
+  const businessNumber = useWatch({
+    control,
+    name: "client.businessRegistrationNumber"
+  });
+  const phoneValue = useWatch({ control, name: "client.phone" });
+  const emailValue = useWatch({ control, name: "client.email" });
+  const businessParts = splitParts(businessNumber, BUSINESS_PART_LENGTHS);
+  const phoneParts = splitParts(phoneValue, PHONE_PART_LENGTHS);
+  const emailParts = splitEmail(emailValue);
+  const domainIsPreset = copy.emailDomains.includes(emailParts.domain);
+
+  const companyNameError = messageOf(errors.client?.companyName);
+  const representativeError = messageOf(errors.client?.representativeName);
+  const businessNumberError = messageOf(
+    errors.client?.businessRegistrationNumber
+  );
+  const contactNameError = messageOf(errors.client?.contactName);
+  const phoneError = messageOf(errors.client?.phone);
+  const emailError = messageOf(errors.client?.email);
+  const remarksError = messageOf(errors.client?.remarks);
+  const addressError =
+    messageOf(errors.client?.address) ||
+    messageOf(errors.client?.companyPostalCode) ||
+    messageOf(errors.client?.companyAddressDetail);
+
+  const writeText = (
+    name:
+      | "client.businessRegistrationNumber"
+      | "client.phone"
+      | "client.email",
+    value: string,
+    invalid: boolean
+  ) => {
+    setValue(name, value, { shouldDirty: true, shouldValidate: invalid });
+  };
+
+  const onBusinessPart = (index: number, raw: string) => {
+    const next = [...businessParts];
+    next[index] = digitsOnly(raw, BUSINESS_PART_LENGTHS[index] ?? 0);
+    writeText(
+      "client.businessRegistrationNumber",
+      joinParts(next),
+      Boolean(businessNumberError)
+    );
+  };
+
+  const onPhonePart = (index: number, raw: string) => {
+    const next = [...phoneParts];
+    next[index] = digitsOnly(raw, PHONE_PART_LENGTHS[index] ?? 0);
+    writeText("client.phone", joinParts(next), Boolean(phoneError));
+  };
+
+  const writeEmail = (local: string, domain: string) => {
+    writeText("client.email", joinEmail(local, domain), Boolean(emailError));
+  };
+
+  const onSelectAddress = (result: PostalCodeResult) => {
+    setValue("client.companyPostalCode", result.zipCode, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setValue("client.address", result.roadAddress, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setAddressOpen(false);
+  };
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <TextInput
-        label={copy.companyName}
-        error={messageOf(errors.companyName)}
-        registration={register("companyName")}
-        autoComplete="organization"
-      />
-      <TextInput
-        label={copy.businessRegistrationNumber}
-        error={messageOf(errors.businessRegistrationNumber)}
-        registration={register("businessRegistrationNumber")}
-        autoComplete="off"
-        hint={copy.businessNumberHint}
-      />
-      <TextInput
-        label={copy.contactName}
-        error={messageOf(errors.contactName)}
-        registration={register("contactName")}
-        autoComplete="name"
-      />
-      <TextInput
-        label={copy.department}
-        error={messageOf(errors.department)}
-        registration={register("department")}
-        autoComplete="organization-title"
-      />
-      <TextInput
-        label={copy.phone}
-        error={messageOf(errors.phone)}
-        registration={register("phone")}
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-      />
-      <TextInput
-        label={copy.email}
-        error={messageOf(errors.email)}
-        registration={register("email")}
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-      />
-      <div className="md:col-span-2">
-        <TextInput
-          label={copy.address}
-          error={messageOf(errors.address)}
-          registration={register("address")}
-          autoComplete="street-address"
-        />
+    <div className="mt-6 space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <h3 className="text-base font-bold text-gray-900">
+          {copy.clientSectionTitle}
+        </h3>
+        <p className="text-right text-xs font-medium text-red-600">
+          {copy.requiredNote}
+        </p>
       </div>
+
+      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <ReportFieldLabel
+                htmlFor={companyNameId}
+                label={copy.companyName}
+                required
+              />
+              <input
+                id={companyNameId}
+                type="text"
+                autoComplete="organization"
+                aria-invalid={Boolean(companyNameError)}
+                aria-describedby={
+                  companyNameError ? `${companyNameId}-error` : undefined
+                }
+                className={fieldClass(Boolean(companyNameError))}
+                {...register("client.companyName")}
+              />
+            </div>
+            <FieldErrorText
+              id={`${companyNameId}-error`}
+              message={companyNameError}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <ReportFieldLabel
+                htmlFor={representativeId}
+                label={copy.representativeName}
+                required
+              />
+              <input
+                id={representativeId}
+                type="text"
+                autoComplete="name"
+                aria-invalid={Boolean(representativeError)}
+                aria-describedby={
+                  representativeError ? `${representativeId}-error` : undefined
+                }
+                className={fieldClass(Boolean(representativeError))}
+                {...register("client.representativeName")}
+              />
+            </div>
+            <FieldErrorText
+              id={`${representativeId}-error`}
+              message={representativeError}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={businessNumberId}
+              label={copy.businessRegistrationNumber}
+            />
+            <DigitParts
+              id={businessNumberId}
+              label={copy.businessRegistrationNumber}
+              parts={businessParts}
+              lengths={BUSINESS_PART_LENGTHS}
+              widths={["w-16", "w-12", "w-24"]}
+              invalid={Boolean(businessNumberError)}
+              describedBy={
+                businessNumberError ? `${businessNumberId}-error` : undefined
+              }
+              onPart={onBusinessPart}
+            />
+          </div>
+          <FieldErrorText
+            id={`${businessNumberId}-error`}
+            message={businessNumberError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={addressId}
+              label={copy.address}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => setAddressOpen(true)}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-violet-700 text-white hover:bg-violet-800"
+                  aria-label={copy.addressSearch}
+                >
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <input
+                  id={addressId}
+                  type="text"
+                  readOnly
+                  placeholder={copy.addressPlaceholder}
+                  aria-invalid={Boolean(addressError)}
+                  aria-describedby={
+                    addressError ? `${addressId}-error` : undefined
+                  }
+                  className={fieldClass(Boolean(addressError))}
+                  {...register("client.address")}
+                />
+                <input
+                  id={addressDetailId}
+                  type="text"
+                  placeholder={copy.addressDetail}
+                  autoComplete="address-line2"
+                  aria-invalid={Boolean(
+                    messageOf(errors.client?.companyAddressDetail)
+                  )}
+                  className={fieldClass(
+                    Boolean(messageOf(errors.client?.companyAddressDetail))
+                  )}
+                  {...register("client.companyAddressDetail")}
+                />
+              </div>
+              <FieldErrorText id={`${addressId}-error`} message={addressError} />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={contactNameId}
+              label={copy.contactName}
+              required
+            />
+            <input
+              id={contactNameId}
+              type="text"
+              autoComplete="name"
+              aria-invalid={Boolean(contactNameError)}
+              aria-describedby={
+                contactNameError ? `${contactNameId}-error` : undefined
+              }
+              className={fieldClass(Boolean(contactNameError))}
+              {...register("client.contactName")}
+            />
+          </div>
+          <FieldErrorText
+            id={`${contactNameId}-error`}
+            message={contactNameError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel htmlFor={phoneId} label={copy.phone} required />
+            <DigitParts
+              id={phoneId}
+              label={copy.phone}
+              parts={phoneParts}
+              lengths={PHONE_PART_LENGTHS}
+              widths={["w-16", "w-20", "w-20"]}
+              invalid={Boolean(phoneError)}
+              describedBy={phoneError ? `${phoneId}-error` : undefined}
+              onPart={onPhonePart}
+            />
+          </div>
+          <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={emailLocalId}
+              label={copy.email}
+              required
+            />
+            <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                id={emailLocalId}
+                type="text"
+                inputMode="email"
+                autoComplete="off"
+                aria-invalid={Boolean(emailError)}
+                aria-describedby={
+                  emailError ? `${emailLocalId}-error` : undefined
+                }
+                value={emailParts.local}
+                onChange={(event) =>
+                  writeEmail(emailPart(event.target.value), emailParts.domain)
+                }
+                className={fieldClass(Boolean(emailError))}
+              />
+              <span className="shrink-0 text-sm text-gray-700">@</span>
+              <input
+                id={emailDomainId}
+                type="text"
+                inputMode="email"
+                autoComplete="off"
+                readOnly={domainIsPreset}
+                placeholder={copy.emailDomains[0]}
+                aria-invalid={Boolean(emailError)}
+                value={emailParts.domain}
+                onChange={(event) =>
+                  writeEmail(emailParts.local, emailPart(event.target.value))
+                }
+                className={fieldClass(Boolean(emailError))}
+              />
+              <select
+                id={emailDomainChoiceId}
+                aria-label={copy.emailDomainDirect}
+                value={domainIsPreset ? emailParts.domain : DIRECT_EMAIL_DOMAIN}
+                onChange={(event) => {
+                  const choice = event.target.value;
+                  if (choice === DIRECT_EMAIL_DOMAIN) {
+                    writeEmail(
+                      emailParts.local,
+                      domainIsPreset ? "" : emailParts.domain
+                    );
+                    return;
+                  }
+                  writeEmail(emailParts.local, choice);
+                }}
+                className={`${fieldClass(false)} sm:w-40 sm:shrink-0`}
+              >
+                {copy.emailDomains.map((domain) => (
+                  <option key={domain} value={domain}>
+                    {domain}
+                  </option>
+                ))}
+                <option value={DIRECT_EMAIL_DOMAIN}>
+                  {copy.emailDomainDirect}
+                </option>
+              </select>
+            </div>
+          </div>
+          <FieldErrorText id={`${emailLocalId}-error`} message={emailError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel htmlFor={remarksId} label={copy.remarks} />
+            <textarea
+              id={remarksId}
+              rows={6}
+              placeholder={copy.remarksPlaceholder}
+              aria-invalid={Boolean(remarksError)}
+              aria-describedby={
+                remarksError ? `${remarksId}-error` : undefined
+              }
+              className={fieldClass(Boolean(remarksError))}
+              {...register("client.remarks")}
+            />
+          </div>
+          <FieldErrorText id={`${remarksId}-error`} message={remarksError} />
+        </div>
+      </div>
+
+      {addressOpen ? (
+        <PostalAddressDialog
+          copy={copy}
+          onClose={() => setAddressOpen(false)}
+          onSelect={onSelectAddress}
+        />
+      ) : null}
     </div>
   );
 }
 
 function ReviewStep({
-  lang,
   copy,
+  items,
+  categories,
   values,
   register,
   errors,
-  onEdit,
+  onEdit
 }: {
-  lang: "KOR" | "ENG";
   copy: TestCenterCopy;
+  items: TestEquipmentItem[];
+  categories: TestEquipmentCategory[];
   values: TestRequestValues;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
   onEdit: (step: number) => void;
 }) {
-  const selected = testEquipment.filter((item) => values.equipmentIds.includes(item.id));
+  const selected = items.filter((item) =>
+    values.equipmentIds.includes(item.id)
+  );
   return (
     <div className="mt-6 space-y-4">
-      <ReviewSection title={copy.steps[0].title} editLabel={copy.edit} onEdit={() => onEdit(0)}>
+      <ReviewSection
+        title={copy.steps[0].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(0)}
+      >
         <p className="mb-3 text-sm font-semibold text-blue-700">
           {copy.selectedCount(values.equipmentIds.length)}
         </p>
         <div className="space-y-4">
-          {EQUIPMENT_CATEGORIES.map((category) => {
-            const items = selected.filter((item) => item.category === category.id);
-            if (items.length === 0) return null;
+          {categories.map((category) => {
+            const categoryItems = selected.filter(
+              (item) => item.categoryId === category.id
+            );
+            if (categoryItems.length === 0) return null;
             return (
               <div key={category.id}>
                 <h4 className="text-sm font-bold text-gray-800">
-                  {textFor(lang, category.label)}
+                  {category.label}
                 </h4>
                 <ul className="mt-1 list-disc pl-5 text-sm text-gray-900">
-                  {items.map((item) => (
+                  {categoryItems.map((item) => (
                     <li key={item.id} className="break-words">
-                      {textFor(lang, item.name)}
+                      {item.name}
                     </li>
                   ))}
                 </ul>
@@ -1002,82 +2176,178 @@ function ReviewStep({
         </div>
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[1].title} editLabel={copy.edit} onEdit={() => onEdit(1)}>
+      <ReviewSection
+        title={copy.steps[1].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(1)}
+      >
         <SummaryRows
           rows={[
-            { label: copy.sampleName, value: displayValue(values.sampleName, copy.empty) },
             {
-              label: copy.sampleType,
-              value: optionLabel(copy.sampleTypes, values.sampleType, copy.empty),
-            },
-            { label: copy.modelName, value: displayValue(values.modelName, copy.empty) },
-            {
-              label: copy.manufacturer,
-              value: displayValue(values.manufacturer, copy.empty),
+              label: copy.sampleName,
+              value: displayValue(values.sample.sampleName, copy.empty)
             },
             {
-              label: copy.ratedVoltage,
-              value: displayValue(values.ratedVoltage, copy.empty),
-            },
-            { label: copy.capacityAh, value: displayValue(values.capacityAh, copy.empty) },
-            { label: copy.quantity, value: displayValue(values.quantity, copy.empty) },
-            {
-              label: copy.sampleCondition,
-              value: optionLabel(copy.sampleConditions, values.sampleCondition, copy.empty),
+              label: copy.quantity,
+              value: values.sample.quantity.trim()
+                ? `${values.sample.quantity.trim()} ${copy.quantityUnit}`
+                : copy.empty
             },
             {
-              label: copy.handlingNotes,
-              value: displayValue(values.handlingNotes, copy.empty),
-            },
-            {
-              label: copy.attachments,
+              label: copy.classification,
               value:
-                values.attachments.length > 0
-                  ? values.attachments.map((file) => file.name).join(", ")
-                  : copy.noFiles,
+                classificationLines(
+                  items,
+                  categories,
+                  values.equipmentIds
+                ).join("\n") || copy.empty
             },
+            ...buildSampleSpecs(values.sample, {
+              weight: copy.sampleWeight,
+              size: copy.sampleSize
+            }).map((spec, index) => ({
+              key: `spec-${index}-${spec.label}`,
+              label: spec.label,
+              value: spec.value
+            }))
           ]}
         />
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[2].title} editLabel={copy.edit} onEdit={() => onEdit(2)}>
+      <ReviewSection
+        title={copy.steps[2].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(2)}
+      >
         <SummaryRows
           rows={[
+            {
+              label: copy.receptionType,
+              value:
+                values.report.receptionType === "general"
+                  ? copy.receptionTypeGeneral
+                  : copy.empty
+            },
             {
               label: copy.purpose,
-              value: optionLabel(copy.purposes, values.purpose, copy.empty),
+              value: [
+                optionLabel(copy.purposes, values.report.purpose, copy.empty),
+                values.report.purposeDetail.trim()
+              ]
+                .filter(Boolean)
+                .join(" / ")
             },
             {
-              label: copy.reportLanguage,
-              value: optionLabel(copy.reportLanguages, values.reportLanguage, copy.empty),
+              label: copy.copyCount,
+              value: values.report.copyCount.trim()
+                ? `${values.report.copyCount.trim()} ${copy.copyCountUnit}`
+                : copy.empty
             },
-            { label: copy.standards, value: displayValue(values.standards, copy.empty) },
             {
-              label: copy.desiredCompletionDate,
-              value: displayValue(values.desiredCompletionDate, copy.empty),
+              label: copy.receiveMethod,
+              value: optionLabel(
+                copy.receiveMethods,
+                values.report.receiveMethod,
+                copy.empty
+              )
             },
-            { label: copy.reportEmail, value: displayValue(values.reportEmail, copy.empty) },
+            ...(values.report.receiveMethod === "mail"
+              ? [
+                  {
+                    label: copy.shippingName,
+                    value: displayValue(values.report.shippingName, copy.empty)
+                  },
+                  {
+                    label: copy.recipientName,
+                    value: displayValue(values.report.recipientName, copy.empty)
+                  },
+                  {
+                    label: copy.recipientPhone,
+                    value: displayValue(values.report.recipientPhone, copy.empty)
+                  },
+                  {
+                    label: copy.deliveryAddress,
+                    value: [
+                      values.report.postalCode.trim(),
+                      values.report.deliveryAddress.trim(),
+                      values.report.addressDetail.trim()
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || copy.empty
+                  }
+                ]
+              : []),
             {
-              label: copy.additionalRequest,
-              value: displayValue(values.additionalRequest, copy.empty),
+              label: copy.samplePhoto,
+              value:
+                values.report.samplePhoto === "attach"
+                  ? copy.samplePhotoAttach
+                  : values.report.samplePhoto === "skip"
+                    ? copy.samplePhotoSkip
+                    : copy.empty
             },
+            {
+              label: copy.sampleHandling,
+              value:
+                values.report.sampleHandling === "dispose"
+                  ? copy.sampleHandlingDispose
+                  : values.report.sampleHandling === "return"
+                    ? copy.sampleHandlingReturn
+                    : copy.empty
+            }
           ]}
         />
       </ReviewSection>
 
-      <ReviewSection title={copy.steps[3].title} editLabel={copy.edit} onEdit={() => onEdit(3)}>
+      <ReviewSection
+        title={copy.steps[3].title}
+        editLabel={copy.edit}
+        onEdit={() => onEdit(3)}
+      >
         <SummaryRows
           rows={[
-            { label: copy.companyName, value: displayValue(values.companyName, copy.empty) },
+            {
+              label: copy.companyName,
+              value: displayValue(values.client.companyName, copy.empty)
+            },
+            {
+              label: copy.representativeName,
+              value: displayValue(values.client.representativeName, copy.empty)
+            },
             {
               label: copy.businessRegistrationNumber,
-              value: displayValue(values.businessRegistrationNumber, copy.empty),
+              value: displayValue(
+                values.client.businessRegistrationNumber,
+                copy.empty
+              )
             },
-            { label: copy.contactName, value: displayValue(values.contactName, copy.empty) },
-            { label: copy.department, value: displayValue(values.department, copy.empty) },
-            { label: copy.phone, value: displayValue(values.phone, copy.empty) },
-            { label: copy.email, value: displayValue(values.email, copy.empty) },
-            { label: copy.address, value: displayValue(values.address, copy.empty) },
+            {
+              label: copy.contactName,
+              value: displayValue(values.client.contactName, copy.empty)
+            },
+            {
+              label: copy.phone,
+              value: displayValue(values.client.phone, copy.empty)
+            },
+            {
+              label: copy.email,
+              value: displayValue(values.client.email, copy.empty)
+            },
+            {
+              label: copy.address,
+              value:
+                [
+                  values.client.companyPostalCode.trim(),
+                  values.client.address.trim(),
+                  values.client.companyAddressDetail.trim()
+                ]
+                  .filter(Boolean)
+                  .join(" ") || copy.empty
+            },
+            {
+              label: copy.remarks,
+              value: displayValue(values.client.remarks, copy.empty)
+            }
           ]}
         />
       </ReviewSection>
@@ -1100,7 +2370,7 @@ function ReviewSection({
   title,
   editLabel,
   onEdit,
-  children,
+  children
 }: {
   title: string;
   editLabel: string;
@@ -1127,7 +2397,7 @@ function ReviewSection({
 function ConsentBox({
   label,
   error,
-  registration,
+  registration
 }: {
   label: string;
   error?: string;
@@ -1137,7 +2407,10 @@ function ConsentBox({
   const errorId = `${id}-error`;
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <label htmlFor={id} className="flex items-start gap-3 text-sm leading-relaxed text-gray-800">
+      <label
+        htmlFor={id}
+        className="flex items-start gap-3 text-sm leading-relaxed text-gray-800"
+      >
         <input
           id={id}
           type="checkbox"

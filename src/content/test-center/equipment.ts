@@ -1,28 +1,3 @@
-export type EquipmentCategoryId =
-  | "vibration-shock"
-  | "environment"
-  | "physical-mechanical"
-  | "electrical-safety";
-
-export type LocalizedText = {
-  ko: string;
-  en: string;
-};
-
-export type EquipmentSpec = {
-  label: LocalizedText;
-  value: LocalizedText;
-};
-
-export type EquipmentItem = {
-  id: string;
-  category: EquipmentCategoryId;
-  name: LocalizedText;
-  summary: LocalizedText;
-  specs: EquipmentSpec[];
-  image: string;
-};
-
 export type ChoiceOption = {
   value: string;
   label: string;
@@ -34,6 +9,11 @@ export type TestCenterCopy = {
   heroSubtitle: string;
   breadcrumb: string;
   steps: { short: string; title: string }[];
+  columnGroup: string;
+  columnTests: string;
+  columnPreview: string;
+  addItem: string;
+  removeItem: string;
   selectedCount: (count: number) => string;
   next: string;
   back: string;
@@ -42,10 +22,6 @@ export type TestCenterCopy = {
   edit: string;
   optional: string;
   selectPlaceholder: string;
-  chooseFiles: string;
-  fileHint: string;
-  removeFile: string;
-  standardsHint: string;
   businessNumberHint: string;
   consentPrivacy: string;
   consentDamage: string;
@@ -55,258 +31,108 @@ export type TestCenterCopy = {
   receiptLabel: string;
   successEmail: (email: string) => string;
   empty: string;
-  noFiles: string;
-  fileCount: (count: number) => string;
+  requiredNote: string;
   sampleName: string;
-  sampleType: string;
-  modelName: string;
-  manufacturer: string;
-  ratedVoltage: string;
-  capacityAh: string;
   quantity: string;
-  sampleCondition: string;
-  handlingNotes: string;
-  attachments: string;
+  quantityUnit: string;
+  classification: string;
+  sampleWeight: string;
+  weightUnit: string;
+  sampleSize: string;
+  sizeUnit: string;
+  sizeWidth: string;
+  sizeDepth: string;
+  sizeHeight: string;
+  sampleSpecsNote: string;
+  addSpec: string;
+  removeSpec: string;
+  specLabel: string;
+  specValue: string;
+  receivedDate: string;
+  receptionType: string;
+  receptionTypeGeneral: string;
+  receptionTypeKolasNote: string;
   purpose: string;
-  reportLanguage: string;
-  standards: string;
-  desiredCompletionDate: string;
-  reportEmail: string;
-  additionalRequest: string;
+  purposeDetailPlaceholder: string;
+  purposeHint: string;
+  copyCount: string;
+  copyCountUnit: string;
+  receiveMethod: string;
+  shippingName: string;
+  recipientName: string;
+  recipientPhone: string;
+  recipientPhoneHint: string;
+  deliveryAddress: string;
+  addressSearch: string;
+  addressDetail: string;
+  addressSearchTitle: string;
+  addressSearchPlaceholder: string;
+  addressSearchButton: string;
+  addressSearchLoading: string;
+  addressSearchEmpty: string;
+  addressSearchError: string;
+  addressSearchClose: string;
+  addressSelect: string;
+  samplePhoto: string;
+  samplePhotoAttach: string;
+  samplePhotoSkip: string;
+  sampleHandling: string;
+  sampleHandlingDispose: string;
+  sampleHandlingReturn: string;
+  clientSectionTitle: string;
   companyName: string;
+  representativeName: string;
   businessRegistrationNumber: string;
   contactName: string;
-  department: string;
   phone: string;
   email: string;
+  emailDomains: string[];
+  emailDomainDirect: string;
   address: string;
-  sampleTypes: ChoiceOption[];
-  sampleConditions: ChoiceOption[];
+  addressPlaceholder: string;
+  remarks: string;
+  remarksPlaceholder: string;
   purposes: ChoiceOption[];
-  reportLanguages: ChoiceOption[];
+  receiveMethods: ChoiceOption[];
   errors: {
     equipmentRequired: string;
     sampleName: string;
-    sampleType: string;
-    modelName: string;
-    manufacturer: string;
-    ratedVoltage: string;
-    capacityRequired: string;
-    capacityInvalid: string;
     quantityRequired: string;
     quantityInvalid: string;
-    sampleCondition: string;
+    weightRequired: string;
+    weightInvalid: string;
+    sizeRequired: string;
+    sizeInvalid: string;
+    sizeIncomplete: string;
+    customSpecIncomplete: string;
+    receptionType: string;
     purpose: string;
-    reportLanguage: string;
-    dateRequired: string;
-    dateInvalid: string;
+    purposeDetail: string;
+    copyCountRequired: string;
+    copyCountInvalid: string;
+    receiveMethod: string;
+    shippingName: string;
+    recipientName: string;
+    recipientPhone: string;
+    postalCode: string;
+    deliveryAddress: string;
+    addressDetail: string;
+    samplePhoto: string;
+    sampleHandling: string;
     emailRequired: string;
     emailInvalid: string;
     companyName: string;
-    businessNumberRequired: string;
+    representativeName: string;
     businessNumberInvalid: string;
     contactName: string;
-    department: string;
     phone: string;
+    phoneInvalid: string;
+    companyPostalCode: string;
     address: string;
     consentRequired: string;
     tooLong: string;
-    filesMax: string;
-    fileType: (name: string) => string;
-    fileSize: (name: string) => string;
-    fileInvalid: string;
   };
 };
-
-export const EQUIPMENT_CATEGORIES: {
-  id: EquipmentCategoryId;
-  label: LocalizedText;
-}[] = [
-  {
-    id: "vibration-shock",
-    label: { ko: "진동 | 충격 시험", en: "Vibration & Shock" },
-  },
-  {
-    id: "environment",
-    label: { ko: "환경 시험", en: "Environmental" },
-  },
-  {
-    id: "physical-mechanical",
-    label: { ko: "물리 | 기계 시험", en: "Physical & Mechanical" },
-  },
-  {
-    id: "electrical-safety",
-    label: { ko: "전기 | 안전 시험", en: "Electrical & Safety" },
-  },
-];
-
-const example = (ko: string, en: string): LocalizedText => ({
-  ko: `${ko} (예시)`,
-  en: `${en} (example)`,
-});
-
-export const testEquipment: EquipmentItem[] = [
-  {
-    id: "electrodynamic-vibrator",
-    category: "vibration-shock",
-    name: {
-      ko: "전동식 진동 시험기 (예시)",
-      en: "Electrodynamic Vibration Tester (example)",
-    },
-    summary: {
-      ko: "진동 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for vibration testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-      {
-        label: { ko: "주파수 범위", en: "Frequency range" },
-        value: example("00–00 Hz", "00–00 Hz"),
-      },
-    ],
-    image: "/images/test-center/electrodynamic-vibrator.png",
-  },
-  {
-    id: "shock-tester",
-    category: "vibration-shock",
-    name: { ko: "충격 시험기 (예시)", en: "Shock Tester (example)" },
-    summary: {
-      ko: "충격 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for shock testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-      {
-        label: { ko: "주파수 범위", en: "Frequency range" },
-        value: example("00–00 Hz", "00–00 Hz"),
-      },
-    ],
-    image: "/images/test-center/shock-tester.png",
-  },
-  {
-    id: "temperature-humidity-chamber",
-    category: "environment",
-    name: {
-      ko: "항온항습 챔버 (예시)",
-      en: "Temperature & Humidity Chamber (example)",
-    },
-    summary: {
-      ko: "온습도 환경 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for temperature and humidity testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "온도 범위", en: "Temperature range" },
-        value: example("00–00 °C", "00–00 °C"),
-      },
-      {
-        label: { ko: "습도 범위", en: "Humidity range" },
-        value: example("00–00 %RH", "00–00 %RH"),
-      },
-    ],
-    image: "/images/test-center/temperature-humidity-chamber.png",
-  },
-  {
-    id: "thermal-shock-chamber",
-    category: "environment",
-    name: { ko: "열충격 챔버 (예시)", en: "Thermal Shock Chamber (example)" },
-    summary: {
-      ko: "열충격 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for thermal shock testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "온도 범위", en: "Temperature range" },
-        value: example("00–00 °C", "00–00 °C"),
-      },
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-    ],
-    image: "/images/test-center/thermal-shock-chamber.png",
-  },
-  {
-    id: "tensile-tester",
-    category: "physical-mechanical",
-    name: { ko: "인장 시험기 (예시)", en: "Tensile Tester (example)" },
-    summary: {
-      ko: "인장 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for tensile testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kN", "00 kN") },
-      {
-        label: { ko: "시험 속도", en: "Test speed" },
-        value: example("00–00 mm/min", "00–00 mm/min"),
-      },
-    ],
-    image: "/images/test-center/tensile-tester.png",
-  },
-  {
-    id: "drop-tester",
-    category: "physical-mechanical",
-    name: { ko: "낙하 시험기 (예시)", en: "Drop Tester (example)" },
-    summary: {
-      ko: "낙하 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for drop testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "낙하 높이", en: "Drop height" },
-        value: example("00–00 mm", "00–00 mm"),
-      },
-      { label: { ko: "최대 하중", en: "Max load" }, value: example("00 kg", "00 kg") },
-    ],
-    image: "/images/test-center/drop-tester.png",
-  },
-  {
-    id: "insulation-resistance-tester",
-    category: "electrical-safety",
-    name: {
-      ko: "절연저항 시험기 (예시)",
-      en: "Insulation Resistance Tester (example)",
-    },
-    summary: {
-      ko: "절연저항 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for insulation-resistance testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "시험 전압", en: "Test voltage" },
-        value: example("00 V", "00 V"),
-      },
-      {
-        label: { ko: "측정 범위", en: "Measurement range" },
-        value: example("00–00", "00–00"),
-      },
-    ],
-    image: "/images/test-center/insulation-resistance-tester.png",
-  },
-  {
-    id: "hipot-tester",
-    category: "electrical-safety",
-    name: { ko: "내전압 시험기 (예시)", en: "Withstand Voltage Tester (example)" },
-    summary: {
-      ko: "내전압 시험용 예시 장비입니다. 실제 사양은 접수 후 안내됩니다.",
-      en: "Example equipment for withstand-voltage testing. Actual specifications are confirmed after the request.",
-    },
-    specs: [
-      {
-        label: { ko: "출력 전압", en: "Output voltage" },
-        value: example("00 V", "00 V"),
-      },
-      {
-        label: { ko: "차단 전류", en: "Cutoff current" },
-        value: example("00 mA", "00 mA"),
-      },
-    ],
-    image: "/images/test-center/hipot-tester.png",
-  },
-];
-
-export const STANDARD_CHIPS = ["UN 38.3", "IEC 62133", "IEC 62660"] as const;
-
-export function textFor(lang: "KOR" | "ENG", value: LocalizedText) {
-  return lang === "ENG" ? value.en : value.ko;
-}
 
 const ko = {
   pageTitle: "시험 접수 | 수만",
@@ -320,6 +146,11 @@ const ko = {
     { short: "업체", title: "의뢰업체 정보 입력" },
     { short: "확인", title: "접수 내용 확인 및 동의" },
   ],
+  columnGroup: "항목군",
+  columnTests: "시험 항목",
+  columnPreview: "장비 미리보기",
+  addItem: "추가",
+  removeItem: "제거",
   selectedCount: (count: number) => `${count}건 선택`,
   next: "다음",
   back: "이전",
@@ -328,13 +159,9 @@ const ko = {
   edit: "수정",
   optional: "선택",
   selectPlaceholder: "선택해 주세요",
-  chooseFiles: "파일 선택",
-  fileHint: "pdf, png, jpg, jpeg, zip · 파일당 10MB · 최대 5개",
-  removeFile: "삭제",
-  standardsHint: "규격을 누르면 아래 입력란에 추가됩니다.",
   businessNumberHint: "숫자 10자리, 하이픈 입력 가능",
   consentPrivacy:
-    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 회사명, 사업자등록번호, 담당자 연락처(성명, 부서, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
+    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
   consentDamage:
     "(필수) 시험 과정에서 시료가 손상되거나 파손될 수 있음을 이해합니다.",
   missingApi:
@@ -343,86 +170,120 @@ const ko = {
   successTitle: "접수가 완료되었습니다",
   receiptLabel: "접수번호",
   successEmail: (email: string) =>
-    `확인 메일이 성적서 수령 이메일(${email})로 발송됩니다.`,
+    `확인 메일이 이메일(${email})로 발송됩니다.`,
   empty: "없음",
-  noFiles: "첨부파일 없음",
-  fileCount: (count: number) => `${count} / 5`,
+  requiredNote: "* 은 필수입력 항목입니다. 반드시 입력해 주시기 바랍니다.",
   sampleName: "시료명",
-  sampleType: "구분",
-  modelName: "모델명",
-  manufacturer: "제조사",
-  ratedVoltage: "정격 전압",
-  capacityAh: "용량(Ah)",
-  quantity: "수량",
-  sampleCondition: "시료 상태",
-  handlingNotes: "취급 주의",
-  attachments: "첨부파일",
-  purpose: "용도",
-  reportLanguage: "성적서 언어",
-  standards: "적용 규격",
-  desiredCompletionDate: "희망 완료일",
-  reportEmail: "성적서 수령 이메일",
-  additionalRequest: "추가 요청",
-  companyName: "회사명",
-  businessRegistrationNumber: "사업자등록번호",
-  contactName: "담당자",
-  department: "부서",
-  phone: "연락처",
-  email: "이메일",
+  quantity: "시료수",
+  quantityUnit: "개",
+  classification: "분류",
+  sampleWeight: "시료 중량",
+  weightUnit: "kg",
+  sampleSize: "시료 크기",
+  sizeUnit: "mm",
+  sizeWidth: "W",
+  sizeDepth: "D",
+  sizeHeight: "H",
+  sampleSpecsNote:
+    "「시료 크기, 시료 중량」은 진동시험 접수 시 필수사항입니다.",
+  addSpec: "사양 추가",
+  removeSpec: "삭제",
+  specLabel: "항목",
+  specValue: "내용",
+  receivedDate: "접수일자",
+  receptionType: "접수 구분",
+  receptionTypeGeneral: "일반성적서",
+  receptionTypeKolasNote: "추후에 KOLAS 인증받으면 기재 예정",
+  purpose: "성적서 용도",
+  purposeDetailPlaceholder: "거래처 제출용일 경우 제출처를 작성해 주세요.",
+  purposeHint: "성적서 용도가 해당 없을 경우 기타를 선택하세요.",
+  copyCount: "성적서 발급매수",
+  copyCountUnit: "매",
+  receiveMethod: "성적서 수령방법",
+  shippingName: "우송처명",
+  recipientName: "수령자",
+  recipientPhone: "수령자 전화번호",
+  recipientPhoneHint: "010-0000-0000",
+  deliveryAddress: "성적서 수령지",
+  addressSearch: "주소 검색",
+  addressDetail: "상세주소",
+  addressSearchTitle: "우편번호 검색",
+  addressSearchPlaceholder: "도로명, 건물명 또는 지번을 입력하세요",
+  addressSearchButton: "검색",
+  addressSearchLoading: "검색 중...",
+  addressSearchEmpty: "검색 결과가 없습니다. 검색어를 바꿔 보세요.",
+  addressSearchError: "주소 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+  addressSearchClose: "닫기",
+  addressSelect: "선택",
+  samplePhoto: "성적서 시료 사진 첨부 여부",
+  samplePhotoAttach: "시료 사진 첨부",
+  samplePhotoSkip: "미첨부",
+  sampleHandling: "시험 후 시료 처리방법",
+  sampleHandlingDispose: "폐기",
+  sampleHandlingReturn: "반환",
+  clientSectionTitle: "의뢰업체 정보(성적서 기입)",
+  companyName: "업체명",
+  representativeName: "대표자명",
+  businessRegistrationNumber: "사업자 등록번호",
+  contactName: "담당자명",
+  phone: "담당자 연락처",
+  email: "담당자 이메일",
+  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomainDirect: "직접입력",
   address: "주소",
-  sampleTypes: [
-    { value: "cell", label: "셀" },
-    { value: "module", label: "모듈" },
-    { value: "pack", label: "팩" },
-    { value: "other", label: "기타" },
-  ],
-  sampleConditions: [
-    { value: "new", label: "신규" },
-    { value: "used", label: "사용" },
-  ],
+  addressPlaceholder: "주소",
+  remarks: "비고",
+  remarksPlaceholder:
+    "신청서 작성란에 없는 내용 중, 전달해야 할 사항이나 요청 사항이 있을 경우 작성해주시기 바랍니다.(300자 내외)",
   purposes: [
-    { value: "quality", label: "품질" },
-    { value: "certification", label: "인증제출" },
-    { value: "customer", label: "고객제출" },
+    { value: "reference", label: "참고용" },
+    { value: "quality", label: "품질관리" },
+    { value: "customer", label: "거래처제출" },
     { value: "other", label: "기타" },
   ],
-  reportLanguages: [
-    { value: "ko", label: "국문" },
-    { value: "en", label: "영문" },
-    { value: "both", label: "국문+영문" },
+  receiveMethods: [
+    { value: "visit", label: "방문" },
+    { value: "mail", label: "우송" },
+    { value: "electronic", label: "전자성적서" },
   ],
   errors: {
     equipmentRequired: "시험 항목을 1개 이상 선택해 주세요.",
     sampleName: "시료명을 입력해 주세요.",
-    sampleType: "구분을 선택해 주세요.",
-    modelName: "모델명을 입력해 주세요.",
-    manufacturer: "제조사를 입력해 주세요.",
-    ratedVoltage: "정격 전압을 입력해 주세요.",
-    capacityRequired: "용량(Ah)을 입력해 주세요.",
-    capacityInvalid: "용량(Ah)은 0보다 큰 숫자로 입력해 주세요.",
-    quantityRequired: "수량을 입력해 주세요.",
-    quantityInvalid: "수량은 1 이상의 정수로 입력해 주세요.",
-    sampleCondition: "시료 상태를 선택해 주세요.",
-    purpose: "용도를 선택해 주세요.",
-    reportLanguage: "성적서 언어를 선택해 주세요.",
-    dateRequired: "희망 완료일을 선택해 주세요.",
-    dateInvalid: "희망 완료일은 오늘 또는 이후 날짜여야 합니다.",
-    emailRequired: "이메일을 입력해 주세요.",
+    quantityRequired: "시료수를 입력해 주세요.",
+    quantityInvalid: "시료수는 1 이상의 정수로 입력해 주세요.",
+    weightRequired: "시료 중량을 입력해 주세요.",
+    weightInvalid: "시료 중량은 0보다 큰 숫자로 입력해 주세요.",
+    sizeRequired: "시료 크기를 입력해 주세요.",
+    sizeInvalid: "시료 크기는 0보다 큰 숫자로 입력해 주세요.",
+    sizeIncomplete: "시료 크기(W, D, H)를 모두 입력해 주세요.",
+    customSpecIncomplete: "사양의 항목과 내용을 모두 입력해 주세요.",
+    receptionType: "접수 구분을 선택해 주세요.",
+    purpose: "성적서 용도를 선택해 주세요.",
+    purposeDetail: "제출처를 입력해 주세요.",
+    copyCountRequired: "발급매수를 입력해 주세요.",
+    copyCountInvalid: "발급매수는 1 이상의 정수로 입력해 주세요.",
+    receiveMethod: "수령방법을 선택해 주세요.",
+    shippingName: "우송처명을 입력해 주세요.",
+    recipientName: "수령자를 입력해 주세요.",
+    recipientPhone: "수령자 전화번호를 입력해 주세요.",
+    postalCode: "주소 검색으로 우편번호를 선택해 주세요.",
+    deliveryAddress: "수령지 주소를 선택해 주세요.",
+    addressDetail: "상세주소를 입력해 주세요.",
+    samplePhoto: "시료 사진 첨부 여부를 선택해 주세요.",
+    sampleHandling: "시료 처리방법을 선택해 주세요.",
+    emailRequired: "담당자 이메일을 입력해 주세요.",
     emailInvalid: "이메일 형식을 확인해 주세요.",
-    companyName: "회사명을 입력해 주세요.",
-    businessNumberRequired: "사업자등록번호를 입력해 주세요.",
-    businessNumberInvalid: "사업자등록번호는 숫자 10자리입니다. 하이픈은 사용할 수 있습니다.",
-    contactName: "담당자를 입력해 주세요.",
-    department: "부서를 입력해 주세요.",
-    phone: "연락처를 입력해 주세요.",
-    address: "주소를 입력해 주세요.",
+    companyName: "업체명을 입력해 주세요.",
+    representativeName: "대표자명을 입력해 주세요.",
+    businessNumberInvalid:
+      "사업자등록번호는 숫자 10자리입니다. 하이픈은 사용할 수 있습니다.",
+    contactName: "담당자명을 입력해 주세요.",
+    phone: "담당자 연락처를 입력해 주세요.",
+    phoneInvalid: "담당자 연락처 형식을 확인해 주세요.",
+    companyPostalCode: "주소 검색으로 우편번호를 선택해 주세요.",
+    address: "주소 검색으로 주소를 선택해 주세요.",
     consentRequired: "동의가 필요합니다.",
     tooLong: "입력 가능한 길이를 초과했습니다.",
-    filesMax: "첨부파일은 최대 5개까지 가능합니다.",
-    fileType: (name: string) =>
-      `${name} 파일은 pdf, png, jpg, jpeg, zip만 첨부할 수 있습니다.`,
-    fileSize: (name: string) => `${name} 파일이 10MB를 초과합니다.`,
-    fileInvalid: "첨부파일을 확인해 주세요.",
   },
 } satisfies TestCenterCopy;
 
@@ -438,6 +299,11 @@ const en = {
     { short: "Client", title: "Client information" },
     { short: "Review", title: "Review and consent" },
   ],
+  columnGroup: "Item group",
+  columnTests: "Test items",
+  columnPreview: "Equipment preview",
+  addItem: "Add",
+  removeItem: "Remove",
   selectedCount: (count: number) => `${count} selected`,
   next: "Next",
   back: "Back",
@@ -446,13 +312,9 @@ const en = {
   edit: "Edit",
   optional: "Optional",
   selectPlaceholder: "Select",
-  chooseFiles: "Choose files",
-  fileHint: "pdf, png, jpg, jpeg, zip · 10MB each · 5 files max",
-  removeFile: "Remove",
-  standardsHint: "Choosing a standard appends it to the text.",
   businessNumberHint: "10 digits, hyphens allowed",
   consentPrivacy:
-    "(Required) I agree to the collection and use of personal information. Items collected: company name, business registration number, contact details (name, department, phone, email), address, and sample information. Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
+    "(Required) I agree to the collection and use of personal information. Items collected: company name, representative name, business registration number, contact details (name, phone, email), address, and sample information. Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
   consentDamage:
     "(Required) I understand that a test may damage or destroy the sample.",
   missingApi:
@@ -461,91 +323,204 @@ const en = {
   successTitle: "Your request has been received",
   receiptLabel: "Request number",
   successEmail: (email: string) =>
-    `A confirmation email will be sent to the report receipt address (${email}).`,
+    `A confirmation email will be sent to (${email}).`,
   empty: "None",
-  noFiles: "No files attached",
-  fileCount: (count: number) => `${count} / 5`,
+  requiredNote: "* Required fields. Please fill them in.",
   sampleName: "Sample name",
-  sampleType: "Type",
-  modelName: "Model",
-  manufacturer: "Manufacturer",
-  ratedVoltage: "Rated voltage",
-  capacityAh: "Capacity (Ah)",
-  quantity: "Quantity",
-  sampleCondition: "Sample condition",
-  handlingNotes: "Handling notes",
-  attachments: "Attachments",
-  purpose: "Purpose",
-  reportLanguage: "Report language",
-  standards: "Applied standards",
-  desiredCompletionDate: "Requested completion date",
-  reportEmail: "Report receipt email",
-  additionalRequest: "Additional request",
+  quantity: "Sample count",
+  quantityUnit: "pcs",
+  classification: "Classification",
+  sampleWeight: "Sample weight",
+  weightUnit: "kg",
+  sampleSize: "Sample size",
+  sizeUnit: "mm",
+  sizeWidth: "W",
+  sizeDepth: "D",
+  sizeHeight: "H",
+  sampleSpecsNote:
+    "Sample size and sample weight are required when requesting a vibration test.",
+  addSpec: "Add specification",
+  removeSpec: "Remove",
+  specLabel: "Label",
+  specValue: "Value",
+  receivedDate: "Reception date",
+  receptionType: "Reception type",
+  receptionTypeGeneral: "General report",
+  receptionTypeKolasNote: "To be filled after KOLAS certification",
+  purpose: "Report purpose",
+  purposeDetailPlaceholder:
+    "If submitting to a customer, enter the recipient.",
+  purposeHint: "If none apply, select Other.",
+  copyCount: "Number of copies",
+  copyCountUnit: "copies",
+  receiveMethod: "Receiving method",
+  shippingName: "Mail recipient name",
+  recipientName: "Recipient",
+  recipientPhone: "Recipient phone",
+  recipientPhoneHint: "010-0000-0000",
+  deliveryAddress: "Report delivery address",
+  addressSearch: "Search address",
+  addressDetail: "Detail address",
+  addressSearchTitle: "Postal code search",
+  addressSearchPlaceholder: "Enter a road name, building, or lot number",
+  addressSearchButton: "Search",
+  addressSearchLoading: "Searching...",
+  addressSearchEmpty: "No results. Try a different keyword.",
+  addressSearchError: "Address search failed. Please try again shortly.",
+  addressSearchClose: "Close",
+  addressSelect: "Select",
+  samplePhoto: "Attach sample photos to report",
+  samplePhotoAttach: "Attach sample photos",
+  samplePhotoSkip: "Do not attach",
+  sampleHandling: "Sample handling after testing",
+  sampleHandlingDispose: "Dispose",
+  sampleHandlingReturn: "Return",
+  clientSectionTitle: "Requesting company (printed on the report)",
   companyName: "Company name",
+  representativeName: "Representative",
   businessRegistrationNumber: "Business registration number",
-  contactName: "Contact person",
-  department: "Department",
-  phone: "Phone",
-  email: "Email",
+  contactName: "Contact name",
+  phone: "Contact phone",
+  email: "Contact email",
+  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomainDirect: "Enter directly",
   address: "Address",
-  sampleTypes: [
-    { value: "cell", label: "Cell" },
-    { value: "module", label: "Module" },
-    { value: "pack", label: "Pack" },
-    { value: "other", label: "Other" },
-  ],
-  sampleConditions: [
-    { value: "new", label: "New" },
-    { value: "used", label: "Used" },
-  ],
+  addressPlaceholder: "Address",
+  remarks: "Remarks",
+  remarksPlaceholder:
+    "If you need to pass along or request something that is not covered by this form, please write it here. (About 300 characters)",
   purposes: [
-    { value: "quality", label: "Quality" },
-    { value: "certification", label: "Certification submission" },
+    { value: "reference", label: "Reference" },
+    { value: "quality", label: "Quality control" },
     { value: "customer", label: "Customer submission" },
     { value: "other", label: "Other" },
   ],
-  reportLanguages: [
-    { value: "ko", label: "Korean" },
-    { value: "en", label: "English" },
-    { value: "both", label: "Korean + English" },
+  receiveMethods: [
+    { value: "visit", label: "Visit" },
+    { value: "mail", label: "Mail" },
+    { value: "electronic", label: "Electronic report" },
   ],
   errors: {
     equipmentRequired: "Select at least one test.",
     sampleName: "Enter the sample name.",
-    sampleType: "Select a sample type.",
-    modelName: "Enter the model name.",
-    manufacturer: "Enter the manufacturer.",
-    ratedVoltage: "Enter the rated voltage.",
-    capacityRequired: "Enter the capacity (Ah).",
-    capacityInvalid: "Enter the capacity (Ah) as a number greater than 0.",
-    quantityRequired: "Enter the quantity.",
-    quantityInvalid: "Enter the quantity as a whole number of 1 or more.",
-    sampleCondition: "Select the sample condition.",
-    purpose: "Select a purpose.",
-    reportLanguage: "Select a report language.",
-    dateRequired: "Choose a requested completion date.",
-    dateInvalid: "The requested completion date cannot be in the past.",
-    emailRequired: "Enter an email address.",
+    quantityRequired: "Enter the sample count.",
+    quantityInvalid: "Enter the sample count as a whole number of 1 or more.",
+    weightRequired: "Enter the sample weight.",
+    weightInvalid: "Enter the sample weight as a number greater than 0.",
+    sizeRequired: "Enter the sample size.",
+    sizeInvalid: "Enter the sample size as a number greater than 0.",
+    sizeIncomplete: "Enter all sample size values (W, D, H).",
+    customSpecIncomplete: "Enter both the label and value for each specification.",
+    receptionType: "Select a reception type.",
+    purpose: "Select a report purpose.",
+    purposeDetail: "Enter the submission recipient.",
+    copyCountRequired: "Enter the number of copies.",
+    copyCountInvalid: "Enter the number of copies as a whole number of 1 or more.",
+    receiveMethod: "Select a receiving method.",
+    shippingName: "Enter the mail recipient name.",
+    recipientName: "Enter the recipient name.",
+    recipientPhone: "Enter the recipient phone number.",
+    postalCode: "Select a postal code via address search.",
+    deliveryAddress: "Select a delivery address.",
+    addressDetail: "Enter the detail address.",
+    samplePhoto: "Select whether to attach sample photos.",
+    sampleHandling: "Select sample handling after testing.",
+    emailRequired: "Enter the contact email.",
     emailInvalid: "Check the email format.",
     companyName: "Enter the company name.",
-    businessNumberRequired: "Enter the business registration number.",
-    businessNumberInvalid:
-      "Enter 10 digits. Hyphens are allowed.",
-    contactName: "Enter the contact person.",
-    department: "Enter the department.",
-    phone: "Enter a phone number.",
-    address: "Enter the address.",
+    representativeName: "Enter the representative name.",
+    businessNumberInvalid: "Enter 10 digits. Hyphens are allowed.",
+    contactName: "Enter the contact name.",
+    phone: "Enter the contact phone number.",
+    phoneInvalid: "Check the contact phone number.",
+    companyPostalCode: "Select a postal code via address search.",
+    address: "Select an address via address search.",
     consentRequired: "Consent is required.",
     tooLong: "This entry is too long.",
-    filesMax: "You can attach up to 5 files.",
-    fileType: (name: string) =>
-      `${name} must be a pdf, png, jpg, jpeg, or zip file.`,
-    fileSize: (name: string) => `${name} is larger than 10MB.`,
-    fileInvalid: "Check the attached files.",
   },
 } satisfies TestCenterCopy;
 
 export const testCenterCopy = { ko, en };
+
+export type TestRequestStatusCopy = {
+  pageTitle: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  breadcrumb: string;
+  title: string;
+  intro: string;
+  receiptLabel: string;
+  passwordLabel: string;
+  submit: string;
+  submitting: string;
+  missingApi: string;
+  retry: string;
+  statusLabel: string;
+  receivedDate: string;
+  sampleName: string;
+  companyName: string;
+  empty: string;
+  statuses: Record<
+    "received" | "in_progress" | "completed" | "cancelled",
+    string
+  >;
+};
+
+const statusKo = {
+  pageTitle: "진행 조회 | SUMAN",
+  heroTitle: "시험센터",
+  heroSubtitle: "진행 조회",
+  breadcrumb: "시험센터 > 진행 조회",
+  title: "진행 상황 조회",
+  intro: "접수 번호와 비밀번호를 입력하면 진행 상황을 확인할 수 있습니다.",
+  receiptLabel: "접수번호",
+  passwordLabel: "비밀번호",
+  submit: "조회",
+  submitting: "조회 중...",
+  missingApi:
+    "진행 조회 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
+  retry: "조회에 실패했습니다. 다시 시도해 주세요.",
+  statusLabel: "진행 상태",
+  receivedDate: "접수일자",
+  sampleName: "시료명",
+  companyName: "업체명",
+  empty: "없음",
+  statuses: {
+    received: "접수",
+    in_progress: "진행 중",
+    completed: "완료",
+    cancelled: "취소",
+  },
+} satisfies TestRequestStatusCopy;
+
+const statusEn = {
+  pageTitle: "Check Progress | SUMAN",
+  heroTitle: "Test Center",
+  heroSubtitle: "Check Progress",
+  breadcrumb: "Test Center > Check Progress",
+  title: "Check request progress",
+  intro: "Enter the receipt number and password to check progress.",
+  receiptLabel: "Request number",
+  passwordLabel: "Password",
+  submit: "Look up",
+  submitting: "Looking up...",
+  missingApi:
+    "The progress lookup address is not configured. Please contact the administrator.",
+  retry: "The lookup failed. Please try again.",
+  statusLabel: "Status",
+  receivedDate: "Reception date",
+  sampleName: "Sample name",
+  companyName: "Company name",
+  empty: "None",
+  statuses: {
+    received: "Received",
+    in_progress: "In progress",
+    completed: "Completed",
+    cancelled: "Cancelled",
+  },
+} satisfies TestRequestStatusCopy;
+
+export const testRequestStatusCopy = { ko: statusKo, en: statusEn };
 
 export function optionLabel(
   options: ChoiceOption[],
@@ -553,4 +528,16 @@ export function optionLabel(
   empty: string
 ) {
   return options.find((option) => option.value === value)?.label ?? empty;
+}
+
+export function formatReceivedDate(date: Date, lang: "ko" | "en") {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  if (lang === "en") {
+    const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+    return `${year}-${month}-${day} (${weekday})`;
+  }
+  const weekdays = ["일", "월", "화", "수", "목", "금", "토"] as const;
+  return `${year}-${month}-${day} (${weekdays[date.getDay()]})`;
 }
