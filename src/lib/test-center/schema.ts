@@ -21,8 +21,7 @@ export type TestSpec = {
   value: string;
 };
 
-export type TestRequestValues = {
-  equipmentIds: string[];
+export type SampleValues = {
   sampleName: string;
   quantity: string;
   sampleWeight: string;
@@ -30,6 +29,9 @@ export type TestRequestValues = {
   sampleSizeD: string;
   sampleSizeH: string;
   customSpecs: CustomSpecValues[];
+};
+
+export type ReportValues = {
   receptionType: string;
   purpose: string;
   purposeDetail: string;
@@ -43,13 +45,26 @@ export type TestRequestValues = {
   addressDetail: string;
   samplePhoto: string;
   sampleHandling: string;
+};
+
+export type ClientValues = {
   companyName: string;
+  representativeName: string;
   businessRegistrationNumber: string;
   contactName: string;
-  department: string;
   phone: string;
   email: string;
+  companyPostalCode: string;
   address: string;
+  companyAddressDetail: string;
+  remarks: string;
+};
+
+export type TestRequestValues = {
+  equipmentIds: string[];
+  sample: SampleValues;
+  report: ReportValues;
+  client: ClientValues;
   privacyConsent: boolean;
   damageConsent: boolean;
   website: string;
@@ -57,33 +72,42 @@ export type TestRequestValues = {
 
 export const emptyTestRequest: TestRequestValues = {
   equipmentIds: [],
-  sampleName: "",
-  quantity: "",
-  sampleWeight: "",
-  sampleSizeW: "",
-  sampleSizeD: "",
-  sampleSizeH: "",
-  customSpecs: [],
-  receptionType: "general",
-  purpose: "",
-  purposeDetail: "",
-  copyCount: "1",
-  receiveMethod: "",
-  shippingName: "",
-  recipientName: "",
-  recipientPhone: "",
-  postalCode: "",
-  deliveryAddress: "",
-  addressDetail: "",
-  samplePhoto: "",
-  sampleHandling: "",
-  companyName: "",
-  businessRegistrationNumber: "",
-  contactName: "",
-  department: "",
-  phone: "",
-  email: "",
-  address: "",
+  sample: {
+    sampleName: "",
+    quantity: "",
+    sampleWeight: "",
+    sampleSizeW: "",
+    sampleSizeD: "",
+    sampleSizeH: "",
+    customSpecs: [],
+  },
+  report: {
+    receptionType: "general",
+    purpose: "",
+    purposeDetail: "",
+    copyCount: "1",
+    receiveMethod: "",
+    shippingName: "",
+    recipientName: "",
+    recipientPhone: "",
+    postalCode: "",
+    deliveryAddress: "",
+    addressDetail: "",
+    samplePhoto: "",
+    sampleHandling: "",
+  },
+  client: {
+    companyName: "",
+    representativeName: "",
+    businessRegistrationNumber: "",
+    contactName: "",
+    phone: "",
+    email: "",
+    companyPostalCode: "",
+    address: "",
+    companyAddressDetail: "",
+    remarks: "",
+  },
   privacyConsent: false,
   damageConsent: false,
   website: "",
@@ -91,39 +115,9 @@ export const emptyTestRequest: TestRequestValues = {
 
 export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
   ["equipmentIds"],
-  [
-    "sampleName",
-    "quantity",
-    "sampleWeight",
-    "sampleSizeW",
-    "sampleSizeD",
-    "sampleSizeH",
-    "customSpecs",
-  ],
-  [
-    "receptionType",
-    "purpose",
-    "purposeDetail",
-    "copyCount",
-    "receiveMethod",
-    "shippingName",
-    "recipientName",
-    "recipientPhone",
-    "postalCode",
-    "deliveryAddress",
-    "addressDetail",
-    "samplePhoto",
-    "sampleHandling",
-  ],
-  [
-    "companyName",
-    "businessRegistrationNumber",
-    "contactName",
-    "department",
-    "phone",
-    "email",
-    "address",
-  ],
+  ["sample"],
+  ["report"],
+  ["client"],
   ["privacyConsent", "damageConsent"],
 ];
 
@@ -162,7 +156,7 @@ export function isVibrationCategoryLabel(label: string) {
 
 export function buildSampleSpecs(
   values: Pick<
-    TestRequestValues,
+    SampleValues,
     | "sampleWeight"
     | "sampleSizeW"
     | "sampleSizeD"
@@ -241,16 +235,13 @@ function issue(
   ctx.addIssue({ code: "custom", path, message });
 }
 
-export function buildTestRequestSchema(
+export function buildSampleSchema(
   copy: TestCenterCopy,
   options?: { vibrationRequired?: () => boolean }
 ) {
   const messages = copy.errors;
   return z
     .object({
-      equipmentIds: z
-        .array(z.string().trim().min(1))
-        .min(1, messages.equipmentRequired),
       sampleName: requiredText(messages.sampleName, messages.tooLong),
       quantity: quantityField(
         messages.quantityRequired,
@@ -268,45 +259,6 @@ export function buildTestRequestSchema(
           })
         )
         .max(MAX_CUSTOM_SPECS),
-      receptionType: choiceField(RECEPTION_TYPES, messages.receptionType),
-      purpose: choiceField(PURPOSES, messages.purpose),
-      purposeDetail: z.string().trim().max(200, messages.tooLong),
-      copyCount: quantityField(
-        messages.copyCountRequired,
-        messages.copyCountInvalid
-      ),
-      receiveMethod: choiceField(RECEIVE_METHODS, messages.receiveMethod),
-      shippingName: z.string().trim().max(200, messages.tooLong),
-      recipientName: z.string().trim().max(200, messages.tooLong),
-      recipientPhone: z.string().trim().max(40, messages.tooLong),
-      postalCode: z.string().trim().max(10, messages.tooLong),
-      deliveryAddress: z.string().trim().max(300, messages.tooLong),
-      addressDetail: z.string().trim().max(200, messages.tooLong),
-      samplePhoto: choiceField(SAMPLE_PHOTOS, messages.samplePhoto),
-      sampleHandling: choiceField(SAMPLE_HANDLINGS, messages.sampleHandling),
-      companyName: requiredText(messages.companyName, messages.tooLong),
-      businessRegistrationNumber: z
-        .string()
-        .trim()
-        .min(1, messages.businessNumberRequired)
-        .max(20, messages.tooLong)
-        .refine(isBusinessRegistrationNumber, messages.businessNumberInvalid),
-      contactName: requiredText(messages.contactName, messages.tooLong),
-      department: requiredText(messages.department, messages.tooLong),
-      phone: requiredText(messages.phone, messages.tooLong, 40),
-      email: emailField(
-        messages.emailRequired,
-        messages.emailInvalid,
-        messages.tooLong
-      ),
-      address: requiredText(messages.address, messages.tooLong, 300),
-      privacyConsent: z
-        .boolean()
-        .refine((value) => value, messages.consentRequired),
-      damageConsent: z
-        .boolean()
-        .refine((value) => value, messages.consentRequired),
-      website: z.string(),
     })
     .superRefine((values, ctx) => {
       const vibrationRequired = options?.vibrationRequired?.() ?? false;
@@ -349,7 +301,31 @@ export function buildTestRequestSchema(
           issue(ctx, ["customSpecs", index], messages.customSpecIncomplete);
         }
       });
+    });
+}
 
+export function buildReportSchema(copy: TestCenterCopy) {
+  const messages = copy.errors;
+  return z
+    .object({
+      receptionType: choiceField(RECEPTION_TYPES, messages.receptionType),
+      purpose: choiceField(PURPOSES, messages.purpose),
+      purposeDetail: z.string().trim().max(200, messages.tooLong),
+      copyCount: quantityField(
+        messages.copyCountRequired,
+        messages.copyCountInvalid
+      ),
+      receiveMethod: choiceField(RECEIVE_METHODS, messages.receiveMethod),
+      shippingName: z.string().trim().max(200, messages.tooLong),
+      recipientName: z.string().trim().max(200, messages.tooLong),
+      recipientPhone: z.string().trim().max(40, messages.tooLong),
+      postalCode: z.string().trim().max(10, messages.tooLong),
+      deliveryAddress: z.string().trim().max(300, messages.tooLong),
+      addressDetail: z.string().trim().max(200, messages.tooLong),
+      samplePhoto: choiceField(SAMPLE_PHOTOS, messages.samplePhoto),
+      sampleHandling: choiceField(SAMPLE_HANDLINGS, messages.sampleHandling),
+    })
+    .superRefine((values, ctx) => {
       if (values.purpose === "customer" && !values.purposeDetail.trim()) {
         issue(ctx, ["purposeDetail"], messages.purposeDetail);
       }
@@ -375,4 +351,68 @@ export function buildTestRequestSchema(
         }
       }
     });
+}
+
+export function buildClientSchema(copy: TestCenterCopy) {
+  const messages = copy.errors;
+  return z.object({
+    companyName: requiredText(messages.companyName, messages.tooLong),
+    representativeName: requiredText(
+      messages.representativeName,
+      messages.tooLong
+    ),
+    businessRegistrationNumber: z
+      .string()
+      .trim()
+      .max(20, messages.tooLong)
+      .refine(
+        (value) => value === "" || isBusinessRegistrationNumber(value),
+        messages.businessNumberInvalid
+      ),
+    contactName: requiredText(messages.contactName, messages.tooLong),
+    phone: z
+      .string()
+      .trim()
+      .min(1, messages.phone)
+      .max(40, messages.tooLong)
+      .refine(
+        (value) => /^\d{2,4}-\d{3,4}-\d{4}$/.test(value),
+        messages.phoneInvalid
+      ),
+    email: emailField(
+      messages.emailRequired,
+      messages.emailInvalid,
+      messages.tooLong
+    ),
+    companyPostalCode: requiredText(
+      messages.companyPostalCode,
+      messages.tooLong,
+      10
+    ),
+    address: requiredText(messages.address, messages.tooLong, 300),
+    companyAddressDetail: z.string().trim().max(200, messages.tooLong),
+    remarks: z.string().trim().max(300, messages.tooLong),
+  });
+}
+
+export function buildTestRequestSchema(
+  copy: TestCenterCopy,
+  options?: { vibrationRequired?: () => boolean }
+) {
+  const messages = copy.errors;
+  return z.object({
+    equipmentIds: z
+      .array(z.string().trim().min(1))
+      .min(1, messages.equipmentRequired),
+    sample: buildSampleSchema(copy, options),
+    report: buildReportSchema(copy),
+    client: buildClientSchema(copy),
+    privacyConsent: z
+      .boolean()
+      .refine((value) => value, messages.consentRequired),
+    damageConsent: z
+      .boolean()
+      .refine((value) => value, messages.consentRequired),
+    website: z.string(),
+  });
 }

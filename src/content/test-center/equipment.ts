@@ -79,13 +79,19 @@ export type TestCenterCopy = {
   sampleHandling: string;
   sampleHandlingDispose: string;
   sampleHandlingReturn: string;
+  clientSectionTitle: string;
   companyName: string;
+  representativeName: string;
   businessRegistrationNumber: string;
   contactName: string;
-  department: string;
   phone: string;
   email: string;
+  emailDomains: string[];
+  emailDomainDirect: string;
   address: string;
+  addressPlaceholder: string;
+  remarks: string;
+  remarksPlaceholder: string;
   purposes: ChoiceOption[];
   receiveMethods: ChoiceOption[];
   errors: {
@@ -116,11 +122,12 @@ export type TestCenterCopy = {
     emailRequired: string;
     emailInvalid: string;
     companyName: string;
-    businessNumberRequired: string;
+    representativeName: string;
     businessNumberInvalid: string;
     contactName: string;
-    department: string;
     phone: string;
+    phoneInvalid: string;
+    companyPostalCode: string;
     address: string;
     consentRequired: string;
     tooLong: string;
@@ -154,7 +161,7 @@ const ko = {
   selectPlaceholder: "선택해 주세요",
   businessNumberHint: "숫자 10자리, 하이픈 입력 가능",
   consentPrivacy:
-    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 회사명, 사업자등록번호, 담당자 연락처(성명, 부서, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
+    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
   consentDamage:
     "(필수) 시험 과정에서 시료가 손상되거나 파손될 수 있음을 이해합니다.",
   missingApi:
@@ -214,13 +221,20 @@ const ko = {
   sampleHandling: "시험 후 시료 처리방법",
   sampleHandlingDispose: "폐기",
   sampleHandlingReturn: "반환",
-  companyName: "회사명",
-  businessRegistrationNumber: "사업자등록번호",
-  contactName: "담당자",
-  department: "부서",
-  phone: "연락처",
-  email: "이메일",
+  clientSectionTitle: "의뢰업체 정보(성적서 기입)",
+  companyName: "업체명",
+  representativeName: "대표자명",
+  businessRegistrationNumber: "사업자 등록번호",
+  contactName: "담당자명",
+  phone: "담당자 연락처",
+  email: "담당자 이메일",
+  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomainDirect: "직접입력",
   address: "주소",
+  addressPlaceholder: "주소",
+  remarks: "비고",
+  remarksPlaceholder:
+    "신청서 작성란에 없는 내용 중, 전달해야 할 사항이나 요청 사항이 있을 경우 작성해주시기 바랍니다.(300자 내외)",
   purposes: [
     { value: "reference", label: "참고용" },
     { value: "quality", label: "품질관리" },
@@ -257,16 +271,17 @@ const ko = {
     addressDetail: "상세주소를 입력해 주세요.",
     samplePhoto: "시료 사진 첨부 여부를 선택해 주세요.",
     sampleHandling: "시료 처리방법을 선택해 주세요.",
-    emailRequired: "이메일을 입력해 주세요.",
+    emailRequired: "담당자 이메일을 입력해 주세요.",
     emailInvalid: "이메일 형식을 확인해 주세요.",
-    companyName: "회사명을 입력해 주세요.",
-    businessNumberRequired: "사업자등록번호를 입력해 주세요.",
+    companyName: "업체명을 입력해 주세요.",
+    representativeName: "대표자명을 입력해 주세요.",
     businessNumberInvalid:
       "사업자등록번호는 숫자 10자리입니다. 하이픈은 사용할 수 있습니다.",
-    contactName: "담당자를 입력해 주세요.",
-    department: "부서를 입력해 주세요.",
-    phone: "연락처를 입력해 주세요.",
-    address: "주소를 입력해 주세요.",
+    contactName: "담당자명을 입력해 주세요.",
+    phone: "담당자 연락처를 입력해 주세요.",
+    phoneInvalid: "담당자 연락처 형식을 확인해 주세요.",
+    companyPostalCode: "주소 검색으로 우편번호를 선택해 주세요.",
+    address: "주소 검색으로 주소를 선택해 주세요.",
     consentRequired: "동의가 필요합니다.",
     tooLong: "입력 가능한 길이를 초과했습니다.",
   },
@@ -299,7 +314,7 @@ const en = {
   selectPlaceholder: "Select",
   businessNumberHint: "10 digits, hyphens allowed",
   consentPrivacy:
-    "(Required) I agree to the collection and use of personal information. Items collected: company name, business registration number, contact details (name, department, phone, email), address, and sample information. Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
+    "(Required) I agree to the collection and use of personal information. Items collected: company name, representative name, business registration number, contact details (name, phone, email), address, and sample information. Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
   consentDamage:
     "(Required) I understand that a test may damage or destroy the sample.",
   missingApi:
@@ -360,13 +375,20 @@ const en = {
   sampleHandling: "Sample handling after testing",
   sampleHandlingDispose: "Dispose",
   sampleHandlingReturn: "Return",
+  clientSectionTitle: "Requesting company (printed on the report)",
   companyName: "Company name",
+  representativeName: "Representative",
   businessRegistrationNumber: "Business registration number",
-  contactName: "Contact person",
-  department: "Department",
-  phone: "Phone",
-  email: "Email",
+  contactName: "Contact name",
+  phone: "Contact phone",
+  email: "Contact email",
+  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomainDirect: "Enter directly",
   address: "Address",
+  addressPlaceholder: "Address",
+  remarks: "Remarks",
+  remarksPlaceholder:
+    "If you need to pass along or request something that is not covered by this form, please write it here. (About 300 characters)",
   purposes: [
     { value: "reference", label: "Reference" },
     { value: "quality", label: "Quality control" },
@@ -403,15 +425,16 @@ const en = {
     addressDetail: "Enter the detail address.",
     samplePhoto: "Select whether to attach sample photos.",
     sampleHandling: "Select sample handling after testing.",
-    emailRequired: "Enter an email address.",
+    emailRequired: "Enter the contact email.",
     emailInvalid: "Check the email format.",
     companyName: "Enter the company name.",
-    businessNumberRequired: "Enter the business registration number.",
+    representativeName: "Enter the representative name.",
     businessNumberInvalid: "Enter 10 digits. Hyphens are allowed.",
-    contactName: "Enter the contact person.",
-    department: "Enter the department.",
-    phone: "Enter a phone number.",
-    address: "Enter the address.",
+    contactName: "Enter the contact name.",
+    phone: "Enter the contact phone number.",
+    phoneInvalid: "Check the contact phone number.",
+    companyPostalCode: "Select a postal code via address search.",
+    address: "Select an address via address search.",
     consentRequired: "Consent is required.",
     tooLong: "This entry is too long.",
   },

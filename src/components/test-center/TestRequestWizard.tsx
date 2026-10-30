@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   useFieldArray,
   useForm,
+  useWatch,
   type Control,
   type FieldErrors,
   type UseFormRegister,
@@ -21,7 +22,7 @@ import type {
   TestEquipmentCategory,
   TestEquipmentItem
 } from "@/lib/strapi/collections/testEquipment";
-import { buildTestRequestFormData } from "@/lib/test-center/payload";
+import { buildTestRequestPayload } from "@/lib/test-center/payload";
 import {
   searchEpostAddresses,
   type PostalCodeResult
@@ -251,7 +252,7 @@ export default function TestRequestWizard({
   const [receipt, setReceipt] = useState<ReceiptResult | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const selectedIds = watch("equipmentIds");
-  const receiveMethod = watch("receiveMethod");
+  const receiveMethod = watch("report.receiveMethod");
   const classifications = useMemo(
     () => classificationLines(catalog.items, catalog.categories, selectedIds),
     [catalog.items, catalog.categories, selectedIds]
@@ -305,14 +306,19 @@ export default function TestRequestWizard({
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: { Accept: "application/json" },
-        body: buildTestRequestFormData(values, copy)
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(
+          buildTestRequestPayload(values, copy, lang === "ENG" ? "en" : "ko")
+        )
       });
       const payload = await readJson(response);
       if (response.status === 201 && isReceipt(payload)) {
         setReceipt({
           receiptNo: payload.receiptNo.trim(),
-          email: values.email.trim()
+          email: values.client.email.trim()
         });
         return;
       }
@@ -426,7 +432,13 @@ export default function TestRequestWizard({
           ) : null}
 
           {step === 3 ? (
-            <ClientStep copy={copy} register={register} errors={errors} />
+            <ClientStep
+              copy={copy}
+              register={register}
+              errors={errors}
+              setValue={setValue}
+              control={control}
+            />
           ) : null}
 
           {step === 4 ? (
@@ -838,17 +850,17 @@ function SampleStep({
   const heightId = useId();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "customSpecs"
+    name: "sample.customSpecs"
   });
 
-  const nameError = messageOf(errors.sampleName);
-  const quantityError = messageOf(errors.quantity);
-  const weightError = messageOf(errors.sampleWeight);
-  const widthError = messageOf(errors.sampleSizeW);
-  const depthError = messageOf(errors.sampleSizeD);
-  const heightError = messageOf(errors.sampleSizeH);
+  const nameError = messageOf(errors.sample?.sampleName);
+  const quantityError = messageOf(errors.sample?.quantity);
+  const weightError = messageOf(errors.sample?.sampleWeight);
+  const widthError = messageOf(errors.sample?.sampleSizeW);
+  const depthError = messageOf(errors.sample?.sampleSizeD);
+  const heightError = messageOf(errors.sample?.sampleSizeH);
   const sizeError = widthError || depthError || heightError;
-  const customSpecsError = messageOf(errors.customSpecs);
+  const customSpecsError = messageOf(errors.sample?.customSpecs);
 
   return (
     <div className="mt-6 space-y-4">
@@ -871,7 +883,7 @@ function SampleStep({
                 autoComplete="off"
                 aria-invalid={Boolean(nameError)}
                 className={fieldClass(Boolean(nameError))}
-                {...register("sampleName")}
+                {...register("sample.sampleName")}
               />
             </div>
             <FieldErrorText id={`${nameId}-error`} message={nameError} />
@@ -894,7 +906,7 @@ function SampleStep({
                   autoComplete="off"
                   aria-invalid={Boolean(quantityError)}
                   className={fieldClass(Boolean(quantityError))}
-                  {...register("quantity")}
+                  {...register("sample.quantity")}
                 />
                 <span className="shrink-0 text-sm text-gray-700">
                   {copy.quantityUnit}
@@ -941,7 +953,7 @@ function SampleStep({
                   autoComplete="off"
                   aria-invalid={Boolean(weightError)}
                   className={fieldClass(Boolean(weightError))}
-                  {...register("sampleWeight")}
+                  {...register("sample.sampleWeight")}
                 />
                 <span className="shrink-0 text-sm text-gray-700">
                   {copy.weightUnit}
@@ -971,7 +983,7 @@ function SampleStep({
                     className={`w-20 rounded px-2 py-2 text-gray-900 border ${
                       widthError ? "border-red-500" : "border-gray-200"
                     }`}
-                    {...register("sampleSizeW")}
+                    {...register("sample.sampleSizeW")}
                   />
                   <span>{copy.sizeUnit}</span>
                 </label>
@@ -989,7 +1001,7 @@ function SampleStep({
                     className={`w-20 rounded px-2 py-2 text-gray-900 border ${
                       depthError ? "border-red-500" : "border-gray-200"
                     }`}
-                    {...register("sampleSizeD")}
+                    {...register("sample.sampleSizeD")}
                   />
                   <span>{copy.sizeUnit}</span>
                 </label>
@@ -1007,7 +1019,7 @@ function SampleStep({
                     className={`w-20 rounded px-2 py-2 text-gray-900 border ${
                       heightError ? "border-red-500" : "border-gray-200"
                     }`}
-                    {...register("sampleSizeH")}
+                    {...register("sample.sampleSizeH")}
                   />
                   <span>{copy.sizeUnit}</span>
                 </label>
@@ -1039,7 +1051,7 @@ function SampleStep({
           {fields.length > 0 ? (
             <ul className="space-y-3">
               {fields.map((field, index) => {
-                const rowError = messageOf(errors.customSpecs?.[index]);
+                const rowError = messageOf(errors.sample?.customSpecs?.[index]);
                 return (
                   <li
                     key={field.id}
@@ -1051,7 +1063,7 @@ function SampleStep({
                       aria-label={copy.specLabel}
                       aria-invalid={Boolean(rowError)}
                       className={fieldClass(Boolean(rowError))}
-                      {...register(`customSpecs.${index}.label`)}
+                      {...register(`sample.customSpecs.${index}.label`)}
                     />
                     <input
                       type="text"
@@ -1059,7 +1071,7 @@ function SampleStep({
                       aria-label={copy.specValue}
                       aria-invalid={Boolean(rowError)}
                       className={fieldClass(Boolean(rowError))}
-                      {...register(`customSpecs.${index}.value`)}
+                      {...register(`sample.customSpecs.${index}.value`)}
                     />
                     <button
                       type="button"
@@ -1142,28 +1154,28 @@ function ReportStep({
   const showMail = receiveMethod === "mail";
   const receivedDateLabel = formatReceivedDate(new Date(), lang);
 
-  const purposeError = messageOf(errors.purpose);
-  const purposeDetailError = messageOf(errors.purposeDetail);
-  const copyCountError = messageOf(errors.copyCount);
-  const receiveMethodError = messageOf(errors.receiveMethod);
-  const shippingNameError = messageOf(errors.shippingName);
-  const recipientNameError = messageOf(errors.recipientName);
-  const recipientPhoneError = messageOf(errors.recipientPhone);
-  const postalCodeError = messageOf(errors.postalCode);
-  const deliveryAddressError = messageOf(errors.deliveryAddress);
-  const addressDetailError = messageOf(errors.addressDetail);
-  const samplePhotoError = messageOf(errors.samplePhoto);
-  const sampleHandlingError = messageOf(errors.sampleHandling);
-  const receptionTypeError = messageOf(errors.receptionType);
+  const purposeError = messageOf(errors.report?.purpose);
+  const purposeDetailError = messageOf(errors.report?.purposeDetail);
+  const copyCountError = messageOf(errors.report?.copyCount);
+  const receiveMethodError = messageOf(errors.report?.receiveMethod);
+  const shippingNameError = messageOf(errors.report?.shippingName);
+  const recipientNameError = messageOf(errors.report?.recipientName);
+  const recipientPhoneError = messageOf(errors.report?.recipientPhone);
+  const postalCodeError = messageOf(errors.report?.postalCode);
+  const deliveryAddressError = messageOf(errors.report?.deliveryAddress);
+  const addressDetailError = messageOf(errors.report?.addressDetail);
+  const samplePhotoError = messageOf(errors.report?.samplePhoto);
+  const sampleHandlingError = messageOf(errors.report?.sampleHandling);
+  const receptionTypeError = messageOf(errors.report?.receptionType);
   const addressError =
     postalCodeError || deliveryAddressError || addressDetailError;
 
   const onSelectAddress = (result: PostalCodeResult) => {
-    setValue("postalCode", result.zipCode, {
+    setValue("report.postalCode", result.zipCode, {
       shouldDirty: true,
       shouldValidate: true
     });
-    setValue("deliveryAddress", result.roadAddress, {
+    setValue("report.deliveryAddress", result.roadAddress, {
       shouldDirty: true,
       shouldValidate: true
     });
@@ -1191,7 +1203,7 @@ function ReportStep({
                   type="radio"
                   value="general"
                   className="accent-blue-600"
-                  {...register("receptionType")}
+                  {...register("report.receptionType")}
                 />
                 {copy.receptionTypeGeneral}
               </label>
@@ -1225,7 +1237,7 @@ function ReportStep({
                   id={purposeId}
                   aria-invalid={Boolean(purposeError)}
                   className={`${fieldClass(Boolean(purposeError))} sm:max-w-xs`}
-                  {...register("purpose")}
+                  {...register("report.purpose")}
                 >
                   <option value="">{copy.selectPlaceholder}</option>
                   {copy.purposes.map((option) => (
@@ -1240,7 +1252,7 @@ function ReportStep({
                   placeholder={copy.purposeDetailPlaceholder}
                   aria-invalid={Boolean(purposeDetailError)}
                   className={fieldClass(Boolean(purposeDetailError))}
-                  {...register("purposeDetail")}
+                  {...register("report.purposeDetail")}
                 />
               </div>
               <p className="text-xs text-gray-500">{copy.purposeHint}</p>
@@ -1266,7 +1278,7 @@ function ReportStep({
                 inputMode="numeric"
                 aria-invalid={Boolean(copyCountError)}
                 className={`${fieldClass(Boolean(copyCountError))} w-24`}
-                {...register("copyCount")}
+                {...register("report.copyCount")}
               />
               <span className="text-sm text-gray-700">{copy.copyCountUnit}</span>
             </div>
@@ -1285,7 +1297,7 @@ function ReportStep({
               id={receiveMethodId}
               aria-invalid={Boolean(receiveMethodError)}
               className={`${fieldClass(Boolean(receiveMethodError))} sm:max-w-xs`}
-              {...register("receiveMethod")}
+              {...register("report.receiveMethod")}
             >
               <option value="">{copy.selectPlaceholder}</option>
               {copy.receiveMethods.map((option) => (
@@ -1315,7 +1327,7 @@ function ReportStep({
                   type="text"
                   aria-invalid={Boolean(shippingNameError)}
                   className={fieldClass(Boolean(shippingNameError))}
-                  {...register("shippingName")}
+                  {...register("report.shippingName")}
                 />
               </div>
               <FieldErrorText
@@ -1338,7 +1350,7 @@ function ReportStep({
                       type="text"
                       aria-invalid={Boolean(recipientNameError)}
                       className={fieldClass(Boolean(recipientNameError))}
-                      {...register("recipientName")}
+                      {...register("report.recipientName")}
                     />
                   </div>
                   <FieldErrorText
@@ -1360,7 +1372,7 @@ function ReportStep({
                       placeholder={copy.recipientPhoneHint}
                       aria-invalid={Boolean(recipientPhoneError)}
                       className={fieldClass(Boolean(recipientPhoneError))}
-                      {...register("recipientPhone")}
+                      {...register("report.recipientPhone")}
                     />
                   </div>
                   <FieldErrorText
@@ -1386,7 +1398,7 @@ function ReportStep({
                       readOnly
                       aria-invalid={Boolean(postalCodeError)}
                       className={`${fieldClass(Boolean(postalCodeError))} sm:w-28`}
-                      {...register("postalCode")}
+                      {...register("report.postalCode")}
                     />
                     <button
                       type="button"
@@ -1413,7 +1425,7 @@ function ReportStep({
                       readOnly
                       aria-invalid={Boolean(deliveryAddressError)}
                       className={fieldClass(Boolean(deliveryAddressError))}
-                      {...register("deliveryAddress")}
+                      {...register("report.deliveryAddress")}
                     />
                   </div>
                   <input
@@ -1422,7 +1434,7 @@ function ReportStep({
                     placeholder={copy.addressDetail}
                     aria-invalid={Boolean(addressDetailError)}
                     className={fieldClass(Boolean(addressDetailError))}
-                    {...register("addressDetail")}
+                    {...register("report.addressDetail")}
                   />
                   <FieldErrorText
                     id={`${deliveryAddressId}-error`}
@@ -1443,7 +1455,7 @@ function ReportStep({
                   type="radio"
                   value="attach"
                   className="accent-blue-600"
-                  {...register("samplePhoto")}
+                  {...register("report.samplePhoto")}
                 />
                 {copy.samplePhotoAttach}
               </label>
@@ -1452,7 +1464,7 @@ function ReportStep({
                   type="radio"
                   value="skip"
                   className="accent-blue-600"
-                  {...register("samplePhoto")}
+                  {...register("report.samplePhoto")}
                 />
                 {copy.samplePhotoSkip}
               </label>
@@ -1470,7 +1482,7 @@ function ReportStep({
                   type="radio"
                   value="dispose"
                   className="accent-blue-600"
-                  {...register("sampleHandling")}
+                  {...register("report.sampleHandling")}
                 />
                 {copy.sampleHandlingDispose}
               </label>
@@ -1479,7 +1491,7 @@ function ReportStep({
                   type="radio"
                   value="return"
                   className="accent-blue-600"
-                  {...register("sampleHandling")}
+                  {...register("report.sampleHandling")}
                 />
                 {copy.sampleHandlingReturn}
               </label>
@@ -1630,66 +1642,482 @@ function PostalAddressDialog({
   );
 }
 
+const BUSINESS_PART_LENGTHS = [3, 2, 5] as const;
+const PHONE_PART_LENGTHS = [4, 4, 4] as const;
+const DIRECT_EMAIL_DOMAIN = "direct";
+
+function digitsOnly(value: string, max: number) {
+  return value.replace(/\D/g, "").slice(0, max);
+}
+
+function splitParts(value: string, lengths: readonly number[]) {
+  const pieces = value.split("-");
+  if (pieces.length === lengths.length) {
+    return lengths.map((length, index) =>
+      digitsOnly(pieces[index] ?? "", length)
+    );
+  }
+  const digits = value.replace(/\D/g, "");
+  const parts: string[] = [];
+  let offset = 0;
+  lengths.forEach((length) => {
+    parts.push(digits.slice(offset, offset + length));
+    offset += length;
+  });
+  return parts;
+}
+
+function joinParts(parts: string[]) {
+  if (parts.every((part) => part === "")) return "";
+  return parts.join("-");
+}
+
+function splitEmail(value: string) {
+  const at = value.indexOf("@");
+  if (at < 0) return { local: value, domain: "" };
+  return { local: value.slice(0, at), domain: value.slice(at + 1) };
+}
+
+function joinEmail(local: string, domain: string) {
+  if (!local && !domain) return "";
+  return `${local}@${domain}`;
+}
+
+function emailPart(value: string) {
+  return value.replace(/[@\s]/g, "");
+}
+
+function segmentClass(invalid: boolean, width: string) {
+  return `${width} rounded px-2 py-2 text-center bg-white text-gray-900 border ${
+    invalid ? "border-red-500" : "border-gray-200"
+  }`;
+}
+
+function DigitParts({
+  id,
+  label,
+  parts,
+  lengths,
+  widths,
+  invalid,
+  describedBy,
+  onPart
+}: {
+  id: string;
+  label: string;
+  parts: string[];
+  lengths: readonly number[];
+  widths: string[];
+  invalid: boolean;
+  describedBy?: string;
+  onPart: (index: number, value: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {parts.map((part, index) => (
+        <span key={`${id}-${index}`} className="contents">
+          {index > 0 ? (
+            <span className="text-sm text-gray-500" aria-hidden="true">
+              -
+            </span>
+          ) : null}
+          <input
+            id={index === 0 ? id : undefined}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={lengths[index]}
+            aria-label={index === 0 ? undefined : `${label} ${index + 1}`}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
+            value={part}
+            onChange={(event) => onPart(index, event.target.value)}
+            className={segmentClass(invalid, widths[index] ?? "w-16")}
+          />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function ClientStep({
   copy,
   register,
-  errors
+  errors,
+  setValue,
+  control
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
+  setValue: UseFormSetValue<TestRequestValues>;
+  control: Control<TestRequestValues>;
 }) {
+  const companyNameId = useId();
+  const representativeId = useId();
+  const businessNumberId = useId();
+  const addressId = useId();
+  const addressDetailId = useId();
+  const contactNameId = useId();
+  const phoneId = useId();
+  const emailLocalId = useId();
+  const emailDomainId = useId();
+  const emailDomainChoiceId = useId();
+  const remarksId = useId();
+  const [addressOpen, setAddressOpen] = useState(false);
+
+  const businessNumber = useWatch({
+    control,
+    name: "client.businessRegistrationNumber"
+  });
+  const phoneValue = useWatch({ control, name: "client.phone" });
+  const emailValue = useWatch({ control, name: "client.email" });
+  const businessParts = splitParts(businessNumber, BUSINESS_PART_LENGTHS);
+  const phoneParts = splitParts(phoneValue, PHONE_PART_LENGTHS);
+  const emailParts = splitEmail(emailValue);
+  const domainIsPreset = copy.emailDomains.includes(emailParts.domain);
+
+  const companyNameError = messageOf(errors.client?.companyName);
+  const representativeError = messageOf(errors.client?.representativeName);
+  const businessNumberError = messageOf(
+    errors.client?.businessRegistrationNumber
+  );
+  const contactNameError = messageOf(errors.client?.contactName);
+  const phoneError = messageOf(errors.client?.phone);
+  const emailError = messageOf(errors.client?.email);
+  const remarksError = messageOf(errors.client?.remarks);
+  const addressError =
+    messageOf(errors.client?.address) ||
+    messageOf(errors.client?.companyPostalCode) ||
+    messageOf(errors.client?.companyAddressDetail);
+
+  const writeText = (
+    name:
+      | "client.businessRegistrationNumber"
+      | "client.phone"
+      | "client.email",
+    value: string,
+    invalid: boolean
+  ) => {
+    setValue(name, value, { shouldDirty: true, shouldValidate: invalid });
+  };
+
+  const onBusinessPart = (index: number, raw: string) => {
+    const next = [...businessParts];
+    next[index] = digitsOnly(raw, BUSINESS_PART_LENGTHS[index] ?? 0);
+    writeText(
+      "client.businessRegistrationNumber",
+      joinParts(next),
+      Boolean(businessNumberError)
+    );
+  };
+
+  const onPhonePart = (index: number, raw: string) => {
+    const next = [...phoneParts];
+    next[index] = digitsOnly(raw, PHONE_PART_LENGTHS[index] ?? 0);
+    writeText("client.phone", joinParts(next), Boolean(phoneError));
+  };
+
+  const writeEmail = (local: string, domain: string) => {
+    writeText("client.email", joinEmail(local, domain), Boolean(emailError));
+  };
+
+  const onSelectAddress = (result: PostalCodeResult) => {
+    setValue("client.companyPostalCode", result.zipCode, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setValue("client.address", result.roadAddress, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+    setAddressOpen(false);
+  };
+
   return (
-    <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <TextInput
-        label={copy.companyName}
-        error={messageOf(errors.companyName)}
-        registration={register("companyName")}
-        autoComplete="organization"
-      />
-      <TextInput
-        label={copy.businessRegistrationNumber}
-        error={messageOf(errors.businessRegistrationNumber)}
-        registration={register("businessRegistrationNumber")}
-        autoComplete="off"
-        hint={copy.businessNumberHint}
-      />
-      <TextInput
-        label={copy.contactName}
-        error={messageOf(errors.contactName)}
-        registration={register("contactName")}
-        autoComplete="name"
-      />
-      <TextInput
-        label={copy.department}
-        error={messageOf(errors.department)}
-        registration={register("department")}
-        autoComplete="organization-title"
-      />
-      <TextInput
-        label={copy.phone}
-        error={messageOf(errors.phone)}
-        registration={register("phone")}
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-      />
-      <TextInput
-        label={copy.email}
-        error={messageOf(errors.email)}
-        registration={register("email")}
-        type="email"
-        inputMode="email"
-        autoComplete="email"
-      />
-      <div className="md:col-span-2">
-        <TextInput
-          label={copy.address}
-          error={messageOf(errors.address)}
-          registration={register("address")}
-          autoComplete="street-address"
-        />
+    <div className="mt-6 space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <h3 className="text-base font-bold text-gray-900">
+          {copy.clientSectionTitle}
+        </h3>
+        <p className="text-right text-xs font-medium text-red-600">
+          {copy.requiredNote}
+        </p>
       </div>
+
+      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <ReportFieldLabel
+                htmlFor={companyNameId}
+                label={copy.companyName}
+                required
+              />
+              <input
+                id={companyNameId}
+                type="text"
+                autoComplete="organization"
+                aria-invalid={Boolean(companyNameError)}
+                aria-describedby={
+                  companyNameError ? `${companyNameId}-error` : undefined
+                }
+                className={fieldClass(Boolean(companyNameError))}
+                {...register("client.companyName")}
+              />
+            </div>
+            <FieldErrorText
+              id={`${companyNameId}-error`}
+              message={companyNameError}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <ReportFieldLabel
+                htmlFor={representativeId}
+                label={copy.representativeName}
+                required
+              />
+              <input
+                id={representativeId}
+                type="text"
+                autoComplete="name"
+                aria-invalid={Boolean(representativeError)}
+                aria-describedby={
+                  representativeError ? `${representativeId}-error` : undefined
+                }
+                className={fieldClass(Boolean(representativeError))}
+                {...register("client.representativeName")}
+              />
+            </div>
+            <FieldErrorText
+              id={`${representativeId}-error`}
+              message={representativeError}
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={businessNumberId}
+              label={copy.businessRegistrationNumber}
+            />
+            <DigitParts
+              id={businessNumberId}
+              label={copy.businessRegistrationNumber}
+              parts={businessParts}
+              lengths={BUSINESS_PART_LENGTHS}
+              widths={["w-16", "w-12", "w-24"]}
+              invalid={Boolean(businessNumberError)}
+              describedBy={
+                businessNumberError ? `${businessNumberId}-error` : undefined
+              }
+              onPart={onBusinessPart}
+            />
+          </div>
+          <FieldErrorText
+            id={`${businessNumberId}-error`}
+            message={businessNumberError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={addressId}
+              label={copy.address}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => setAddressOpen(true)}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-violet-700 text-white hover:bg-violet-800"
+                  aria-label={copy.addressSearch}
+                >
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <input
+                  id={addressId}
+                  type="text"
+                  readOnly
+                  placeholder={copy.addressPlaceholder}
+                  aria-invalid={Boolean(addressError)}
+                  aria-describedby={
+                    addressError ? `${addressId}-error` : undefined
+                  }
+                  className={fieldClass(Boolean(addressError))}
+                  {...register("client.address")}
+                />
+                <input
+                  id={addressDetailId}
+                  type="text"
+                  placeholder={copy.addressDetail}
+                  autoComplete="address-line2"
+                  aria-invalid={Boolean(
+                    messageOf(errors.client?.companyAddressDetail)
+                  )}
+                  className={fieldClass(
+                    Boolean(messageOf(errors.client?.companyAddressDetail))
+                  )}
+                  {...register("client.companyAddressDetail")}
+                />
+              </div>
+              <FieldErrorText id={`${addressId}-error`} message={addressError} />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={contactNameId}
+              label={copy.contactName}
+              required
+            />
+            <input
+              id={contactNameId}
+              type="text"
+              autoComplete="name"
+              aria-invalid={Boolean(contactNameError)}
+              aria-describedby={
+                contactNameError ? `${contactNameId}-error` : undefined
+              }
+              className={fieldClass(Boolean(contactNameError))}
+              {...register("client.contactName")}
+            />
+          </div>
+          <FieldErrorText
+            id={`${contactNameId}-error`}
+            message={contactNameError}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel htmlFor={phoneId} label={copy.phone} required />
+            <DigitParts
+              id={phoneId}
+              label={copy.phone}
+              parts={phoneParts}
+              lengths={PHONE_PART_LENGTHS}
+              widths={["w-16", "w-20", "w-20"]}
+              invalid={Boolean(phoneError)}
+              describedBy={phoneError ? `${phoneId}-error` : undefined}
+              onPart={onPhonePart}
+            />
+          </div>
+          <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={emailLocalId}
+              label={copy.email}
+              required
+            />
+            <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                id={emailLocalId}
+                type="text"
+                inputMode="email"
+                autoComplete="off"
+                aria-invalid={Boolean(emailError)}
+                aria-describedby={
+                  emailError ? `${emailLocalId}-error` : undefined
+                }
+                value={emailParts.local}
+                onChange={(event) =>
+                  writeEmail(emailPart(event.target.value), emailParts.domain)
+                }
+                className={fieldClass(Boolean(emailError))}
+              />
+              <span className="shrink-0 text-sm text-gray-700">@</span>
+              <input
+                id={emailDomainId}
+                type="text"
+                inputMode="email"
+                autoComplete="off"
+                readOnly={domainIsPreset}
+                placeholder={copy.emailDomains[0]}
+                aria-invalid={Boolean(emailError)}
+                value={emailParts.domain}
+                onChange={(event) =>
+                  writeEmail(emailParts.local, emailPart(event.target.value))
+                }
+                className={fieldClass(Boolean(emailError))}
+              />
+              <select
+                id={emailDomainChoiceId}
+                aria-label={copy.emailDomainDirect}
+                value={domainIsPreset ? emailParts.domain : DIRECT_EMAIL_DOMAIN}
+                onChange={(event) => {
+                  const choice = event.target.value;
+                  if (choice === DIRECT_EMAIL_DOMAIN) {
+                    writeEmail(
+                      emailParts.local,
+                      domainIsPreset ? "" : emailParts.domain
+                    );
+                    return;
+                  }
+                  writeEmail(emailParts.local, choice);
+                }}
+                className={`${fieldClass(false)} sm:w-40 sm:shrink-0`}
+              >
+                {copy.emailDomains.map((domain) => (
+                  <option key={domain} value={domain}>
+                    {domain}
+                  </option>
+                ))}
+                <option value={DIRECT_EMAIL_DOMAIN}>
+                  {copy.emailDomainDirect}
+                </option>
+              </select>
+            </div>
+          </div>
+          <FieldErrorText id={`${emailLocalId}-error`} message={emailError} />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel htmlFor={remarksId} label={copy.remarks} />
+            <textarea
+              id={remarksId}
+              rows={6}
+              placeholder={copy.remarksPlaceholder}
+              aria-invalid={Boolean(remarksError)}
+              aria-describedby={
+                remarksError ? `${remarksId}-error` : undefined
+              }
+              className={fieldClass(Boolean(remarksError))}
+              {...register("client.remarks")}
+            />
+          </div>
+          <FieldErrorText id={`${remarksId}-error`} message={remarksError} />
+        </div>
+      </div>
+
+      {addressOpen ? (
+        <PostalAddressDialog
+          copy={copy}
+          onClose={() => setAddressOpen(false)}
+          onSelect={onSelectAddress}
+        />
+      ) : null}
     </div>
   );
 }
@@ -1757,12 +2185,12 @@ function ReviewStep({
           rows={[
             {
               label: copy.sampleName,
-              value: displayValue(values.sampleName, copy.empty)
+              value: displayValue(values.sample.sampleName, copy.empty)
             },
             {
               label: copy.quantity,
-              value: values.quantity.trim()
-                ? `${values.quantity.trim()} ${copy.quantityUnit}`
+              value: values.sample.quantity.trim()
+                ? `${values.sample.quantity.trim()} ${copy.quantityUnit}`
                 : copy.empty
             },
             {
@@ -1774,7 +2202,7 @@ function ReviewStep({
                   values.equipmentIds
                 ).join("\n") || copy.empty
             },
-            ...buildSampleSpecs(values, {
+            ...buildSampleSpecs(values.sample, {
               weight: copy.sampleWeight,
               size: copy.sampleSize
             }).map((spec, index) => ({
@@ -1796,53 +2224,53 @@ function ReviewStep({
             {
               label: copy.receptionType,
               value:
-                values.receptionType === "general"
+                values.report.receptionType === "general"
                   ? copy.receptionTypeGeneral
                   : copy.empty
             },
             {
               label: copy.purpose,
               value: [
-                optionLabel(copy.purposes, values.purpose, copy.empty),
-                values.purposeDetail.trim()
+                optionLabel(copy.purposes, values.report.purpose, copy.empty),
+                values.report.purposeDetail.trim()
               ]
                 .filter(Boolean)
                 .join(" / ")
             },
             {
               label: copy.copyCount,
-              value: values.copyCount.trim()
-                ? `${values.copyCount.trim()} ${copy.copyCountUnit}`
+              value: values.report.copyCount.trim()
+                ? `${values.report.copyCount.trim()} ${copy.copyCountUnit}`
                 : copy.empty
             },
             {
               label: copy.receiveMethod,
               value: optionLabel(
                 copy.receiveMethods,
-                values.receiveMethod,
+                values.report.receiveMethod,
                 copy.empty
               )
             },
-            ...(values.receiveMethod === "mail"
+            ...(values.report.receiveMethod === "mail"
               ? [
                   {
                     label: copy.shippingName,
-                    value: displayValue(values.shippingName, copy.empty)
+                    value: displayValue(values.report.shippingName, copy.empty)
                   },
                   {
                     label: copy.recipientName,
-                    value: displayValue(values.recipientName, copy.empty)
+                    value: displayValue(values.report.recipientName, copy.empty)
                   },
                   {
                     label: copy.recipientPhone,
-                    value: displayValue(values.recipientPhone, copy.empty)
+                    value: displayValue(values.report.recipientPhone, copy.empty)
                   },
                   {
                     label: copy.deliveryAddress,
                     value: [
-                      values.postalCode.trim(),
-                      values.deliveryAddress.trim(),
-                      values.addressDetail.trim()
+                      values.report.postalCode.trim(),
+                      values.report.deliveryAddress.trim(),
+                      values.report.addressDetail.trim()
                     ]
                       .filter(Boolean)
                       .join(" ") || copy.empty
@@ -1852,18 +2280,18 @@ function ReviewStep({
             {
               label: copy.samplePhoto,
               value:
-                values.samplePhoto === "attach"
+                values.report.samplePhoto === "attach"
                   ? copy.samplePhotoAttach
-                  : values.samplePhoto === "skip"
+                  : values.report.samplePhoto === "skip"
                     ? copy.samplePhotoSkip
                     : copy.empty
             },
             {
               label: copy.sampleHandling,
               value:
-                values.sampleHandling === "dispose"
+                values.report.sampleHandling === "dispose"
                   ? copy.sampleHandlingDispose
-                  : values.sampleHandling === "return"
+                  : values.report.sampleHandling === "return"
                     ? copy.sampleHandlingReturn
                     : copy.empty
             }
@@ -1880,31 +2308,45 @@ function ReviewStep({
           rows={[
             {
               label: copy.companyName,
-              value: displayValue(values.companyName, copy.empty)
+              value: displayValue(values.client.companyName, copy.empty)
+            },
+            {
+              label: copy.representativeName,
+              value: displayValue(values.client.representativeName, copy.empty)
             },
             {
               label: copy.businessRegistrationNumber,
-              value: displayValue(values.businessRegistrationNumber, copy.empty)
+              value: displayValue(
+                values.client.businessRegistrationNumber,
+                copy.empty
+              )
             },
             {
               label: copy.contactName,
-              value: displayValue(values.contactName, copy.empty)
-            },
-            {
-              label: copy.department,
-              value: displayValue(values.department, copy.empty)
+              value: displayValue(values.client.contactName, copy.empty)
             },
             {
               label: copy.phone,
-              value: displayValue(values.phone, copy.empty)
+              value: displayValue(values.client.phone, copy.empty)
             },
             {
               label: copy.email,
-              value: displayValue(values.email, copy.empty)
+              value: displayValue(values.client.email, copy.empty)
             },
             {
               label: copy.address,
-              value: displayValue(values.address, copy.empty)
+              value:
+                [
+                  values.client.companyPostalCode.trim(),
+                  values.client.address.trim(),
+                  values.client.companyAddressDetail.trim()
+                ]
+                  .filter(Boolean)
+                  .join(" ") || copy.empty
+            },
+            {
+              label: copy.remarks,
+              value: displayValue(values.client.remarks, copy.empty)
             }
           ]}
         />
