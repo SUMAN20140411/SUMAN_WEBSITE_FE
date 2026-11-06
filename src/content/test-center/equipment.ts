@@ -248,7 +248,6 @@ const ko = {
   receiveMethods: [
     { value: "visit", label: "방문" },
     { value: "mail", label: "우송" },
-    { value: "electronic", label: "전자성적서" },
   ],
   errors: {
     equipmentRequired: "시험 항목을 1개 이상 선택해 주세요.",
@@ -409,7 +408,6 @@ const en = {
   receiveMethods: [
     { value: "visit", label: "Visit" },
     { value: "mail", label: "Mail" },
-    { value: "electronic", label: "Electronic report" },
   ],
   errors: {
     equipmentRequired: "Select at least one test.",
