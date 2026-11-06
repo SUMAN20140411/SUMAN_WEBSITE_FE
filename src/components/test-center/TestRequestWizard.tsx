@@ -1207,7 +1207,7 @@ function ReportStep({
                 />
                 {copy.receptionTypeGeneral}
               </label>
-              <label className="inline-flex items-center gap-2 text-sm text-gray-400">
+              {/* <label className="inline-flex items-center gap-2 text-sm text-gray-400">
                 <input
                   type="radio"
                   disabled
@@ -1215,7 +1215,7 @@ function ReportStep({
                   tabIndex={-1}
                 />
                 {copy.receptionTypeKolasNote}
-              </label>
+              </label> */}
             </div>
           </div>
           <FieldErrorText
@@ -1280,10 +1280,15 @@ function ReportStep({
                 className={`${fieldClass(Boolean(copyCountError))} w-24`}
                 {...register("report.copyCount")}
               />
-              <span className="text-sm text-gray-700">{copy.copyCountUnit}</span>
+              <span className="text-sm text-gray-700">
+                {copy.copyCountUnit}
+              </span>
             </div>
           </div>
-          <FieldErrorText id={`${copyCountId}-error`} message={copyCountError} />
+          <FieldErrorText
+            id={`${copyCountId}-error`}
+            message={copyCountError}
+          />
         </div>
 
         <div>
@@ -1296,7 +1301,9 @@ function ReportStep({
             <select
               id={receiveMethodId}
               aria-invalid={Boolean(receiveMethodError)}
-              className={`${fieldClass(Boolean(receiveMethodError))} sm:max-w-xs`}
+              className={`${fieldClass(
+                Boolean(receiveMethodError)
+              )} sm:max-w-xs`}
               {...register("report.receiveMethod")}
             >
               <option value="">{copy.selectPlaceholder}</option>
@@ -1397,7 +1404,9 @@ function ReportStep({
                       type="text"
                       readOnly
                       aria-invalid={Boolean(postalCodeError)}
-                      className={`${fieldClass(Boolean(postalCodeError))} sm:w-28`}
+                      className={`${fieldClass(
+                        Boolean(postalCodeError)
+                      )} sm:w-28`}
                       {...register("report.postalCode")}
                     />
                     <button
@@ -1792,10 +1801,7 @@ function ClientStep({
     messageOf(errors.client?.companyAddressDetail);
 
   const writeText = (
-    name:
-      | "client.businessRegistrationNumber"
-      | "client.phone"
-      | "client.email",
+    name: "client.businessRegistrationNumber" | "client.phone" | "client.email",
     value: string,
     invalid: boolean
   ) => {
@@ -1976,7 +1982,10 @@ function ClientStep({
                   {...register("client.companyAddressDetail")}
                 />
               </div>
-              <FieldErrorText id={`${addressId}-error`} message={addressError} />
+              <FieldErrorText
+                id={`${addressId}-error`}
+                message={addressError}
+              />
             </div>
           </div>
         </div>
@@ -2100,9 +2109,7 @@ function ClientStep({
               rows={6}
               placeholder={copy.remarksPlaceholder}
               aria-invalid={Boolean(remarksError)}
-              aria-describedby={
-                remarksError ? `${remarksId}-error` : undefined
-              }
+              aria-describedby={remarksError ? `${remarksId}-error` : undefined}
               className={fieldClass(Boolean(remarksError))}
               {...register("client.remarks")}
             />
@@ -2263,17 +2270,21 @@ function ReviewStep({
                   },
                   {
                     label: copy.recipientPhone,
-                    value: displayValue(values.report.recipientPhone, copy.empty)
+                    value: displayValue(
+                      values.report.recipientPhone,
+                      copy.empty
+                    )
                   },
                   {
                     label: copy.deliveryAddress,
-                    value: [
-                      values.report.postalCode.trim(),
-                      values.report.deliveryAddress.trim(),
-                      values.report.addressDetail.trim()
-                    ]
-                      .filter(Boolean)
-                      .join(" ") || copy.empty
+                    value:
+                      [
+                        values.report.postalCode.trim(),
+                        values.report.deliveryAddress.trim(),
+                        values.report.addressDetail.trim()
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || copy.empty
                   }
                 ]
               : []),
@@ -2283,8 +2294,8 @@ function ReviewStep({
                 values.report.samplePhoto === "attach"
                   ? copy.samplePhotoAttach
                   : values.report.samplePhoto === "skip"
-                    ? copy.samplePhotoSkip
-                    : copy.empty
+                  ? copy.samplePhotoSkip
+                  : copy.empty
             },
             {
               label: copy.sampleHandling,
@@ -2292,8 +2303,8 @@ function ReviewStep({
                 values.report.sampleHandling === "dispose"
                   ? copy.sampleHandlingDispose
                   : values.report.sampleHandling === "return"
-                    ? copy.sampleHandlingReturn
-                    : copy.empty
+                  ? copy.sampleHandlingReturn
+                  : copy.empty
             }
           ]}
         />
