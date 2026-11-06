@@ -1,9 +1,6 @@
 import { GetStaticProps } from "next";
 import Vision2Page from "@/pages/company/vision2";
-import {
-  visionPage,
-  visionPageContent,
-} from "@/lib/strapi/company/visionPage";
+import { visionPage, visionPageContent } from "@/lib/strapi/company/visionPage";
 
 export const getStaticProps: GetStaticProps = async () => {
   try {

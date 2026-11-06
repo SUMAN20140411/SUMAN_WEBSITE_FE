@@ -17,16 +17,16 @@ export const getStaticProps = async () => {
       "section1",
       "section1.jobSites",
       "section2",
-      "section2.forms"
-    ]
+      "section2.forms",
+    ],
   });
   return {
-    props: { content: content?.data }
+    props: { content: content?.data },
   };
 };
 
 const RecruitmentBoard: React.FC<{ content: noticePageContent }> = ({
-  content
+  content,
 }) => {
   const lang = useLangStore((state) => state.lang) || "KOR";
 

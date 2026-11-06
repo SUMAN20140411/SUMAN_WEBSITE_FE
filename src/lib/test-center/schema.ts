@@ -163,7 +163,7 @@ export function buildSampleSpecs(
     | "sampleSizeH"
     | "customSpecs"
   >,
-  labels: { weight: string; size: string }
+  labels: { weight: string; size: string },
 ): TestSpec[] {
   const specs: TestSpec[] = [];
   const weight = values.sampleWeight.trim();
@@ -197,7 +197,10 @@ function requiredText(required: string, tooLong: string, max = 200) {
 }
 
 function choiceField(values: readonly string[], message: string) {
-  return z.string().trim().refine((value) => values.includes(value), message);
+  return z
+    .string()
+    .trim()
+    .refine((value) => values.includes(value), message);
 }
 
 function emailField(required: string, invalid: string, tooLong: string) {
@@ -230,14 +233,14 @@ function isPositiveNumber(value: string) {
 function issue(
   ctx: z.RefinementCtx,
   path: (string | number)[],
-  message: string
+  message: string,
 ) {
   ctx.addIssue({ code: "custom", path, message });
 }
 
 export function buildSampleSchema(
   copy: TestCenterCopy,
-  options?: { vibrationRequired?: () => boolean }
+  options?: { vibrationRequired?: () => boolean },
 ) {
   const messages = copy.errors;
   return z
@@ -245,7 +248,7 @@ export function buildSampleSchema(
       sampleName: requiredText(messages.sampleName, messages.tooLong),
       quantity: quantityField(
         messages.quantityRequired,
-        messages.quantityInvalid
+        messages.quantityInvalid,
       ),
       sampleWeight: z.string().trim().max(40, messages.tooLong),
       sampleSizeW: z.string().trim().max(40, messages.tooLong),
@@ -256,7 +259,7 @@ export function buildSampleSchema(
           z.object({
             label: z.string().max(200, messages.tooLong),
             value: z.string().max(2000, messages.tooLong),
-          })
+          }),
         )
         .max(MAX_CUSTOM_SPECS),
     })
@@ -313,7 +316,7 @@ export function buildReportSchema(copy: TestCenterCopy) {
       purposeDetail: z.string().trim().max(200, messages.tooLong),
       copyCount: quantityField(
         messages.copyCountRequired,
-        messages.copyCountInvalid
+        messages.copyCountInvalid,
       ),
       receiveMethod: choiceField(RECEIVE_METHODS, messages.receiveMethod),
       shippingName: z.string().trim().max(200, messages.tooLong),
@@ -359,7 +362,7 @@ export function buildClientSchema(copy: TestCenterCopy) {
     companyName: requiredText(messages.companyName, messages.tooLong),
     representativeName: requiredText(
       messages.representativeName,
-      messages.tooLong
+      messages.tooLong,
     ),
     businessRegistrationNumber: z
       .string()
@@ -367,7 +370,7 @@ export function buildClientSchema(copy: TestCenterCopy) {
       .max(20, messages.tooLong)
       .refine(
         (value) => value === "" || isBusinessRegistrationNumber(value),
-        messages.businessNumberInvalid
+        messages.businessNumberInvalid,
       ),
     contactName: requiredText(messages.contactName, messages.tooLong),
     phone: z
@@ -377,17 +380,17 @@ export function buildClientSchema(copy: TestCenterCopy) {
       .max(40, messages.tooLong)
       .refine(
         (value) => /^\d{2,4}-\d{3,4}-\d{4}$/.test(value),
-        messages.phoneInvalid
+        messages.phoneInvalid,
       ),
     email: emailField(
       messages.emailRequired,
       messages.emailInvalid,
-      messages.tooLong
+      messages.tooLong,
     ),
     companyPostalCode: requiredText(
       messages.companyPostalCode,
       messages.tooLong,
-      10
+      10,
     ),
     address: requiredText(messages.address, messages.tooLong, 300),
     companyAddressDetail: z.string().trim().max(200, messages.tooLong),
@@ -397,7 +400,7 @@ export function buildClientSchema(copy: TestCenterCopy) {
 
 export function buildTestRequestSchema(
   copy: TestCenterCopy,
-  options?: { vibrationRequired?: () => boolean }
+  options?: { vibrationRequired?: () => boolean },
 ) {
   const messages = copy.errors;
   return z.object({

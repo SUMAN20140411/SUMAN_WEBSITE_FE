@@ -7,10 +7,10 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLangStore } from "@/stores/langStore";
 import {
   contactPage,
-  contactPageContent
+  contactPageContent,
 } from "@/lib/strapi/contact/contactPage";
 import InquiryTable, {
-  InquiryListResponse
+  InquiryListResponse,
 } from "@/components/support/InquiryTable";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ const inquirySchema = z.object({
     .max(254),
   department: z.string().trim().min(1, "문의부서를 선택해 주세요.").max(120),
   message: z.string().trim().min(1, "문의내용을 입력해 주세요.").max(2000),
-  website: z.string().optional()
+  website: z.string().optional(),
 });
 
 type InquiryFormValues = z.infer<typeof inquirySchema>;
@@ -35,17 +35,17 @@ type InquiryFormValues = z.infer<typeof inquirySchema>;
 export const getStaticProps = async () => {
   const content = await contactPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section1.contacts"]
+    populate: ["pageInfo", "section1", "section1.contacts"],
   });
   return {
     props: {
-      content: content?.data
-    }
+      content: content?.data,
+    },
   };
 };
 
 export default function HistoryPage({
-  content
+  content,
 }: Readonly<{ content: contactPageContent }>) {
   const { lang } = useLangStore();
   const defaultDepartment =
@@ -82,7 +82,7 @@ export default function HistoryPage({
     reset,
     setValue,
     getValues,
-    formState: { errors }
+    formState: { errors },
   } = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
@@ -92,8 +92,8 @@ export default function HistoryPage({
       email: "",
       department: initialDepartment,
       message: "",
-      website: ""
-    }
+      website: "",
+    },
   });
 
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -151,7 +151,7 @@ export default function HistoryPage({
         unlock: "Unlock",
         lock: "Lock",
         passwordRequired: "Password required.",
-        incorrectPassword: "Incorrect password."
+        incorrectPassword: "Incorrect password.",
       } as const;
     }
 
@@ -180,12 +180,13 @@ export default function HistoryPage({
       next: "다음",
       noInquiries: "최근 문의 내역이 없습니다.",
       adminOnlyTitle: "관리자 전용",
-      adminOnlyDescription: "관리자 비밀번호를 입력하면 문의 내역을 볼 수 있습니다.",
+      adminOnlyDescription:
+        "관리자 비밀번호를 입력하면 문의 내역을 볼 수 있습니다.",
       adminPasswordPlaceholder: "관리자 비밀번호",
       unlock: "잠금 해제",
       lock: "잠금",
       passwordRequired: "비밀번호를 입력해 주세요.",
-      incorrectPassword: "비밀번호가 올바르지 않습니다."
+      incorrectPassword: "비밀번호가 올바르지 않습니다.",
     } as const;
   }, [lang]);
 
@@ -199,8 +200,8 @@ export default function HistoryPage({
         const res = await fetch(url, {
           method: "GET",
           headers: {
-            Accept: "application/json"
-          }
+            Accept: "application/json",
+          },
         });
 
         const data = (await res.json()) as InquiryListResponse;
@@ -216,7 +217,7 @@ export default function HistoryPage({
         setInquiriesLoading(false);
       }
     },
-    [inquiriesEndpoint, PER_PAGE, t.fetchError]
+    [inquiriesEndpoint, PER_PAGE, t.fetchError],
   );
 
   useEffect(() => {
@@ -238,16 +239,16 @@ export default function HistoryPage({
           department: values.department,
           message: values.message,
           language: lang,
-          website: values.website ?? "" // Honeypot (anti-spam)
+          website: values.website ?? "", // Honeypot (anti-spam)
         };
 
         const res = await fetch(inquiriesEndpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json"
+            Accept: "application/json",
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
 
         const data = await res.json().catch(() => null);
@@ -263,7 +264,7 @@ export default function HistoryPage({
           email: "",
           department: initialDepartment,
           message: "",
-          website: ""
+          website: "",
         });
         setInquiriesPage(1);
       } catch (err) {
@@ -279,8 +280,8 @@ export default function HistoryPage({
       reset,
       setInquiriesPage,
       t.success,
-      t.submitError
-    ]
+      t.submitError,
+    ],
   );
 
   const fadeInVariants = {
@@ -290,9 +291,9 @@ export default function HistoryPage({
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut" as const
-      }
-    }
+        ease: "easeOut" as const,
+      },
+    },
   };
 
   return (
@@ -524,7 +525,7 @@ export default function HistoryPage({
                       unlock: t.unlock,
                       lock: t.lock,
                       passwordRequired: t.passwordRequired,
-                      incorrectPassword: t.incorrectPassword
+                      incorrectPassword: t.incorrectPassword,
                     }}
                     inquiries={inquiries}
                     inquiriesLoading={inquiriesLoading}

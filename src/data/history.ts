@@ -3,7 +3,8 @@ export const historyText = {
     title: "연 혁",
     //subtitle: "History",
     breadcrumb: "회사소개 > 연혁",
-    summaryTitle: "SUMAN은\n끊임없는 혁신과 신시장 개척을 통해\n신뢰성 있는 기업으로 성장하였습니다.",
+    summaryTitle:
+      "SUMAN은\n끊임없는 혁신과 신시장 개척을 통해\n신뢰성 있는 기업으로 성장하였습니다.",
     bulletList: [
       "신산업분야 가공 / 장비 및 모듈화 사업 진출",
       "자동차 / 전기전자 정밀가공 / 장비 분야 확대",
@@ -46,10 +47,7 @@ export const historyText = {
       {
         year: "2014",
         label: "창업 단계",
-        items: [
-          "⦁  자동차 정밀가공 사업 진출",
-          "(주) 수만 설립 (2014년 4월)",
-        ],
+        items: ["⦁  자동차 정밀가공 사업 진출", "(주) 수만 설립 (2014년 4월)"],
       },
     ],
   },
@@ -58,7 +56,8 @@ export const historyText = {
     title: "History",
     //subtitle: "History",
     breadcrumb: "Company > History",
-    summaryTitle: "SUMAN has grown into a reliable company\nthrough continuous innovation and market expansion.",
+    summaryTitle:
+      "SUMAN has grown into a reliable company\nthrough continuous innovation and market expansion.",
     bulletList: [
       "Entered the new industry processing / equipment and modularization business",
       "Expanded into automotive / electronics precision processing / equipment sectors",

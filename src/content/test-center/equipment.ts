@@ -164,13 +164,11 @@ const ko = {
     "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
   consentDamage:
     "(필수) 시험 과정에서 시료가 손상되거나 파손될 수 있음을 이해합니다.",
-  missingApi:
-    "시험 접수 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
+  missingApi: "시험 접수 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
   retry: "접수에 실패했습니다. 입력 내용은 그대로입니다. 다시 시도해 주세요.",
   successTitle: "접수가 완료되었습니다",
   receiptLabel: "접수번호",
-  successEmail: (email: string) =>
-    `확인 메일이 이메일(${email})로 발송됩니다.`,
+  successEmail: (email: string) => `확인 메일이 이메일(${email})로 발송됩니다.`,
   empty: "없음",
   requiredNote: "* 은 필수입력 항목입니다. 반드시 입력해 주시기 바랍니다.",
   sampleName: "시료명",
@@ -228,7 +226,13 @@ const ko = {
   contactName: "담당자명",
   phone: "담당자 연락처",
   email: "담당자 이메일",
-  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomains: [
+    "naver.com",
+    "daum.net",
+    "gmail.com",
+    "hanmail.net",
+    "nate.com",
+  ],
   emailDomainDirect: "직접입력",
   address: "주소",
   addressPlaceholder: "주소",
@@ -263,6 +267,7 @@ const ko = {
     copyCountRequired: "발급매수를 입력해 주세요.",
     copyCountInvalid: "발급매수는 1 이상의 정수로 입력해 주세요.",
     receiveMethod: "수령방법을 선택해 주세요.",
+
     shippingName: "우송처명을 입력해 주세요.",
     recipientName: "수령자를 입력해 주세요.",
     recipientPhone: "수령자 전화번호를 입력해 주세요.",
@@ -319,7 +324,8 @@ const en = {
     "(Required) I understand that a test may damage or destroy the sample.",
   missingApi:
     "The test request address is not configured. Please contact the administrator.",
-  retry: "The request could not be submitted. Your entries are unchanged. Please try again.",
+  retry:
+    "The request could not be submitted. Your entries are unchanged. Please try again.",
   successTitle: "Your request has been received",
   receiptLabel: "Request number",
   successEmail: (email: string) =>
@@ -348,8 +354,7 @@ const en = {
   receptionTypeGeneral: "General report",
   receptionTypeKolasNote: "To be filled after KOLAS certification",
   purpose: "Report purpose",
-  purposeDetailPlaceholder:
-    "If submitting to a customer, enter the recipient.",
+  purposeDetailPlaceholder: "If submitting to a customer, enter the recipient.",
   purposeHint: "If none apply, select Other.",
   copyCount: "Number of copies",
   copyCountUnit: "copies",
@@ -382,7 +387,13 @@ const en = {
   contactName: "Contact name",
   phone: "Contact phone",
   email: "Contact email",
-  emailDomains: ["naver.com", "daum.net", "gmail.com", "hanmail.net", "nate.com"],
+  emailDomains: [
+    "naver.com",
+    "daum.net",
+    "gmail.com",
+    "hanmail.net",
+    "nate.com",
+  ],
   emailDomainDirect: "Enter directly",
   address: "Address",
   addressPlaceholder: "Address",
@@ -410,12 +421,14 @@ const en = {
     sizeRequired: "Enter the sample size.",
     sizeInvalid: "Enter the sample size as a number greater than 0.",
     sizeIncomplete: "Enter all sample size values (W, D, H).",
-    customSpecIncomplete: "Enter both the label and value for each specification.",
+    customSpecIncomplete:
+      "Enter both the label and value for each specification.",
     receptionType: "Select a reception type.",
     purpose: "Select a report purpose.",
     purposeDetail: "Enter the submission recipient.",
     copyCountRequired: "Enter the number of copies.",
-    copyCountInvalid: "Enter the number of copies as a whole number of 1 or more.",
+    copyCountInvalid:
+      "Enter the number of copies as a whole number of 1 or more.",
     receiveMethod: "Select a receiving method.",
     shippingName: "Enter the mail recipient name.",
     recipientName: "Enter the recipient name.",
@@ -477,8 +490,7 @@ const statusKo = {
   passwordLabel: "비밀번호",
   submit: "조회",
   submitting: "조회 중...",
-  missingApi:
-    "진행 조회 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
+  missingApi: "진행 조회 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
   retry: "조회에 실패했습니다. 다시 시도해 주세요.",
   statusLabel: "진행 상태",
   receivedDate: "접수일자",
@@ -525,7 +537,7 @@ export const testRequestStatusCopy = { ko: statusKo, en: statusEn };
 export function optionLabel(
   options: ChoiceOption[],
   value: string,
-  empty: string
+  empty: string,
 ) {
   return options.find((option) => option.value === value)?.label ?? empty;
 }

@@ -1,8 +1,8 @@
 // index.tsx Props 타입 정의
 export interface HomePageProps {
-  content:{
+  content: {
     section1Text: {
-       lines: string[];
+      lines: string[];
       subtitle?: string;
     };
     section2: {
@@ -13,7 +13,7 @@ export interface HomePageProps {
       keywords: string[];
       translations?: string[];
     };
-  
+
     section3: {
       title: string;
       subtitle: string;
@@ -36,5 +36,5 @@ export interface HomePageProps {
     };
 
     footer_banner: string[];
-  }
+  };
 }

@@ -9,14 +9,14 @@ import Head from "next/head";
 import Link from "next/link";
 import {
   philosophyPage,
-  philosophyPageContent
+  philosophyPageContent,
 } from "@/lib/strapi/careers/philosophyPage";
 
 // TalentCard component
 function TalentCard({
   traitData,
   bgImage,
-  className = ""
+  className = "",
 }: {
   traitData: { title: string; desc: string };
   bgImage: string;
@@ -51,15 +51,15 @@ function TalentCard({
 export const getStaticProps = async () => {
   const content = await philosophyPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "keywords"]
+    populate: ["pageInfo", "section1", "keywords"],
   });
   return {
-    props: { content: content?.data }
+    props: { content: content?.data },
   };
 };
 
 export default function TalentPage({
-  content
+  content,
 }: {
   content: philosophyPageContent;
 }) {
@@ -72,8 +72,8 @@ export default function TalentPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const staggerContainerVariants = {
@@ -82,9 +82,9 @@ export default function TalentPage({
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
+        delayChildren: 0.3,
+      },
+    },
   };
 
   const itemRiseVariants = {
@@ -92,8 +92,8 @@ export default function TalentPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.7, ease: "easeOut" } as Transition,
+    },
   };
 
   return (
@@ -237,7 +237,7 @@ export default function TalentPage({
                     <TalentCard
                       traitData={{
                         title: trait.title,
-                        desc: trait.description
+                        desc: trait.description,
                       }}
                       bgImage={
                         trait.hero || "/images/careers/philosophy/sincerity.png"

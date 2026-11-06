@@ -7,7 +7,7 @@ import {
 export function buildTestRequestPayload(
   values: TestRequestValues,
   copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
-  locale: "ko" | "en" = "ko"
+  locale: "ko" | "en" = "ko",
 ) {
   const { sample, report, client } = values;
   const mail = report.receiveMethod === "mail";

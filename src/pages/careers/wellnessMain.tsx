@@ -6,7 +6,7 @@ import Layout from "@/components/Layout";
 import { wellnessContent, WellnessData } from "@/data/wellnessData";
 import {
   wellnessPage,
-  wellnessPageContent
+  wellnessPageContent,
 } from "@/lib/strapi/careers/wellnessPage";
 import { useLangStore } from "@/stores/langStore";
 import { Icon } from "@iconify/react";
@@ -17,7 +17,7 @@ import Image from "next/image";
 
 // --- Wellness Card Component (keep style & effect) ---
 const WellnessCard = ({
-  item
+  item,
 }: {
   item: wellnessPageContent["section2"]["benefits"][0];
 }) => {
@@ -56,13 +56,13 @@ const WellnessCard = ({
 export const getStaticProps = async () => {
   const content = await wellnessPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section2", "section2.benefits"]
+    populate: ["pageInfo", "section1", "section2", "section2.benefits"],
   });
   return { props: { content: content?.data } };
 };
 
 export default function WellnessPage({
-  content
+  content,
 }: {
   content: wellnessPageContent;
 }) {
@@ -77,8 +77,8 @@ export default function WellnessPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } // UPDATED
-    }
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }, // UPDATED
+    },
   };
 
   return (
@@ -160,12 +160,12 @@ export default function WellnessPage({
                     {content?.section2?.benefits?.map(
                       (
                         item: wellnessPageContent["section2"]["benefits"][0],
-                        idx
+                        idx,
                       ) => (
                         <div key={idx}>
                           <WellnessCard item={item} />
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 ) : (
@@ -178,25 +178,25 @@ export default function WellnessPage({
                       hidden: { opacity: 0 },
                       visible: {
                         opacity: 1,
-                        transition: { staggerChildren: 0.1 }
-                      }
+                        transition: { staggerChildren: 0.1 },
+                      },
                     }}
                   >
                     {content?.section2?.benefits?.map(
                       (
                         item: wellnessPageContent["section2"]["benefits"][0],
-                        idx
+                        idx,
                       ) => (
                         <motion.div
                           key={idx}
                           variants={{
                             hidden: { opacity: 0, y: 20 },
-                            visible: { opacity: 1, y: 0 }
+                            visible: { opacity: 1, y: 0 },
                           }}
                         >
                           <WellnessCard item={item} />
                         </motion.div>
-                      )
+                      ),
                     )}
                   </motion.div>
                 )}

@@ -197,7 +197,7 @@ export default function VisionPage() {
                     viewBox="0 0 1047 900"
                     preserveAspectRatio="xMidYMid meet"
                     className="vision-infographic-svg"
-                    style={{ transform: 'scale(0.9)' }} // Changed from 0.8 to 0.9 (10% bigger)
+                    style={{ transform: "scale(0.9)" }} // Changed from 0.8 to 0.9 (10% bigger)
                   >
                     {isClient &&
                       milestones.map((milestone, idx) => (
@@ -211,15 +211,21 @@ export default function VisionPage() {
                             href={`/images/company/vision/vision_arrow${3 - idx}.png`}
                             x={idx === 0 ? "-6" : idx === 1 ? "79" : "486"}
                             y={idx === 0 ? "169" : idx === 1 ? "499" : "0"}
-                            width={idx === 0 ? "270" : idx === 1 ? "470" : "578"}
-                            height={idx === 0 ? "420" : idx === 1 ? "415" : "827"}
+                            width={
+                              idx === 0 ? "270" : idx === 1 ? "470" : "578"
+                            }
+                            height={
+                              idx === 0 ? "420" : idx === 1 ? "415" : "827"
+                            }
                             className="transition-all duration-300 group-hover:opacity-70 group-hover:scale-[1.02] filter brightness-50"
                           />
                           <text
                             x={idx === 0 ? "110" : idx === 1 ? "310" : "750"}
                             y={idx === 0 ? "350" : idx === 1 ? "650" : "400"}
                             fill="white"
-                            fontSize={idx === 2 ? "70" : idx === 1 ? "60" : "50"}
+                            fontSize={
+                              idx === 2 ? "70" : idx === 1 ? "60" : "50"
+                            }
                             fontWeight="bold"
                             textAnchor="middle"
                             className="transition-all duration-300 group-hover:fill-gray-200"
@@ -234,7 +240,9 @@ export default function VisionPage() {
                                 ? "opacity-0"
                                 : "opacity-100"
                             }`}
-                            arrowLength={idx === 0 ? 130 : idx === 1 ? 160 : 190}
+                            arrowLength={
+                              idx === 0 ? 130 : idx === 1 ? 160 : 190
+                            }
                           />
                           <foreignObject
                             x={idx === 0 ? "0" : idx === 1 ? "210" : "650"}
@@ -417,7 +425,10 @@ export default function VisionPage() {
               <div className="md:w-1/2 flex flex-col justify-center pl-0">
                 <motion.div
                   className="relative w-full h-[300px] md:h-[400px] bg-cover bg-center rounded-lg overflow-hidden"
-                  style={{ backgroundImage: 'url("/images/company/vision/vision_dev.png")' }}
+                  style={{
+                    backgroundImage:
+                      'url("/images/company/vision/vision_dev.png")',
+                  }}
                   variants={rndBoxRightInVariants}
                 >
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/100 via-[79%] to-transparent p-4">

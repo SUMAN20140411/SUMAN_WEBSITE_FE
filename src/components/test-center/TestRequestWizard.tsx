@@ -9,23 +9,23 @@ import {
   type Control,
   type FieldErrors,
   type UseFormRegister,
-  type UseFormSetValue
+  type UseFormSetValue,
 } from "react-hook-form";
 import {
   formatReceivedDate,
   optionLabel,
   testCenterCopy,
-  type TestCenterCopy
+  type TestCenterCopy,
 } from "@/content/test-center/equipment";
 import type {
   TestEquipmentCatalog,
   TestEquipmentCategory,
-  TestEquipmentItem
+  TestEquipmentItem,
 } from "@/lib/strapi/collections/testEquipment";
 import { buildTestRequestPayload } from "@/lib/test-center/payload";
 import {
   searchEpostAddresses,
-  type PostalCodeResult
+  type PostalCodeResult,
 } from "@/lib/test-center/postalCode";
 import {
   MAX_CUSTOM_SPECS,
@@ -34,7 +34,7 @@ import {
   buildTestRequestSchema,
   emptyTestRequest,
   isVibrationCategoryLabel,
-  type TestRequestValues
+  type TestRequestValues,
 } from "@/lib/test-center/schema";
 import { useLangStore } from "@/stores/langStore";
 
@@ -50,7 +50,7 @@ function fieldClass(invalid: boolean) {
 }
 
 function messageOf(
-  error: { message?: unknown; root?: { message?: unknown } } | undefined
+  error: { message?: unknown; root?: { message?: unknown } } | undefined,
 ) {
   if (!error) return undefined;
   if (typeof error.message === "string" && error.message) return error.message;
@@ -84,7 +84,7 @@ function TextInput({
   autoComplete,
   hint,
   min,
-  step
+  step,
 }: {
   label: string;
   error?: string;
@@ -143,10 +143,10 @@ function displayValue(value: string, empty: string) {
 function classificationLines(
   items: TestEquipmentItem[],
   categories: TestEquipmentCategory[],
-  equipmentIds: string[]
+  equipmentIds: string[],
 ) {
   const categoryById = new Map(
-    categories.map((category) => [category.id, category.label])
+    categories.map((category) => [category.id, category.label]),
   );
   return items
     .filter((item) => equipmentIds.includes(item.id))
@@ -194,7 +194,7 @@ async function readJson(response: Response) {
 }
 
 function SummaryRows({
-  rows
+  rows,
 }: {
   rows: { label: string; value: string; key?: string }[];
 }) {
@@ -213,7 +213,7 @@ function SummaryRows({
 }
 
 export default function TestRequestWizard({
-  catalog
+  catalog,
 }: {
   catalog: TestEquipmentCatalog;
 }) {
@@ -223,13 +223,13 @@ export default function TestRequestWizard({
   const schema = useMemo(
     () =>
       buildTestRequestSchema(copy, {
-        vibrationRequired: () => vibrationRequiredRef.current
+        vibrationRequired: () => vibrationRequiredRef.current,
       }),
-    [copy]
+    [copy],
   );
   const resolver = useMemo(
     () => zodResolver(schema, undefined, { raw: true }),
-    [schema]
+    [schema],
   );
   const {
     register,
@@ -239,11 +239,11 @@ export default function TestRequestWizard({
     watch,
     setValue,
     getValues,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<TestRequestValues>({
     defaultValues: emptyTestRequest,
     resolver,
-    mode: "onSubmit"
+    mode: "onSubmit",
   });
   const [step, setStep] = useState(0);
   const stepRef = useRef(step);
@@ -255,14 +255,14 @@ export default function TestRequestWizard({
   const receiveMethod = watch("report.receiveMethod");
   const classifications = useMemo(
     () => classificationLines(catalog.items, catalog.categories, selectedIds),
-    [catalog.items, catalog.categories, selectedIds]
+    [catalog.items, catalog.categories, selectedIds],
   );
 
   vibrationRequiredRef.current = selectedIds.some((id) => {
     const item = catalog.items.find((entry) => entry.id === id);
     if (!item) return false;
     const category = catalog.categories.find(
-      (entry) => entry.id === item.categoryId
+      (entry) => entry.id === item.categoryId,
     );
     return category ? isVibrationCategoryLabel(category.label) : false;
   });
@@ -287,7 +287,7 @@ export default function TestRequestWizard({
       : [...current, id];
     setValue("equipmentIds", next, {
       shouldDirty: true,
-      shouldValidate: Boolean(errors.equipmentIds)
+      shouldValidate: Boolean(errors.equipmentIds),
     });
   };
 
@@ -308,17 +308,17 @@ export default function TestRequestWizard({
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(
-          buildTestRequestPayload(values, copy, lang === "ENG" ? "en" : "ko")
-        )
+          buildTestRequestPayload(values, copy, lang === "ENG" ? "en" : "ko"),
+        ),
       });
       const payload = await readJson(response);
       if (response.status === 201 && isReceipt(payload)) {
         setReceipt({
           receiptNo: payload.receiptNo.trim(),
-          email: values.client.email.trim()
+          email: values.client.email.trim(),
         });
         return;
       }
@@ -502,7 +502,7 @@ function Stepper({
   copy,
   step,
   disabled,
-  onStep
+  onStep,
 }: {
   copy: TestCenterCopy;
   step: number;
@@ -528,8 +528,8 @@ function Stepper({
                   current
                     ? "bg-blue-600 text-white"
                     : done
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-gray-100 text-gray-500"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {index + 1}
@@ -557,7 +557,7 @@ function EquipmentStep({
   categories,
   selectedIds,
   error,
-  onToggle
+  onToggle,
 }: {
   copy: TestCenterCopy;
   items: TestEquipmentItem[];
@@ -571,7 +571,7 @@ function EquipmentStep({
   const [previewId, setPreviewId] = useState(items[0]?.id ?? "");
   const categoryItems = useMemo(
     () => items.filter((item) => item.categoryId === activeCategory),
-    [items, activeCategory]
+    [items, activeCategory],
   );
   const previewItem =
     categoryItems.find((item) => item.id === previewId) ?? categoryItems[0];
@@ -609,7 +609,7 @@ function EquipmentStep({
               const selectedInCategory = items.filter(
                 (item) =>
                   item.categoryId === category.id &&
-                  selectedIds.includes(item.id)
+                  selectedIds.includes(item.id),
               ).length;
               return (
                 <li key={category.id}>
@@ -672,8 +672,8 @@ function EquipmentStep({
                       selected
                         ? "text-white"
                         : previewing
-                        ? "bg-slate-100 text-gray-900"
-                        : "text-gray-800 hover:bg-slate-50"
+                          ? "bg-slate-100 text-gray-900"
+                          : "text-gray-800 hover:bg-slate-50"
                     }`}
                     style={
                       selected ? { backgroundColor: EQUIPMENT_NAVY } : undefined
@@ -812,7 +812,7 @@ function RequiredAsterisk() {
 function SampleFieldLabel({
   htmlFor,
   label,
-  required
+  required,
 }: {
   htmlFor: string;
   label: string;
@@ -834,7 +834,7 @@ function SampleStep({
   control,
   register,
   errors,
-  classifications
+  classifications,
 }: {
   copy: TestCenterCopy;
   control: Control<TestRequestValues>;
@@ -850,7 +850,7 @@ function SampleStep({
   const heightId = useId();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "sample.customSpecs"
+    name: "sample.customSpecs",
   });
 
   const nameError = messageOf(errors.sample?.sampleName);
@@ -1100,7 +1100,7 @@ function SampleStep({
 function ReportFieldLabel({
   htmlFor,
   label,
-  required
+  required,
 }: {
   htmlFor?: string;
   label: string;
@@ -1130,7 +1130,7 @@ function ReportStep({
   errors,
   setValue,
   receiveMethod,
-  lang
+  lang,
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
@@ -1173,11 +1173,11 @@ function ReportStep({
   const onSelectAddress = (result: PostalCodeResult) => {
     setValue("report.postalCode", result.zipCode, {
       shouldDirty: true,
-      shouldValidate: true
+      shouldValidate: true,
     });
     setValue("report.deliveryAddress", result.roadAddress, {
       shouldDirty: true,
-      shouldValidate: true
+      shouldValidate: true,
     });
     setAddressOpen(false);
   };
@@ -1302,7 +1302,7 @@ function ReportStep({
               id={receiveMethodId}
               aria-invalid={Boolean(receiveMethodError)}
               className={`${fieldClass(
-                Boolean(receiveMethodError)
+                Boolean(receiveMethodError),
               )} sm:max-w-xs`}
               {...register("report.receiveMethod")}
             >
@@ -1405,7 +1405,7 @@ function ReportStep({
                       readOnly
                       aria-invalid={Boolean(postalCodeError)}
                       className={`${fieldClass(
-                        Boolean(postalCodeError)
+                        Boolean(postalCodeError),
                       )} sm:w-28`}
                       {...register("report.postalCode")}
                     />
@@ -1527,7 +1527,7 @@ function ReportStep({
 function PostalAddressDialog({
   copy,
   onClose,
-  onSelect
+  onSelect,
 }: {
   copy: TestCenterCopy;
   onClose: () => void;
@@ -1663,7 +1663,7 @@ function splitParts(value: string, lengths: readonly number[]) {
   const pieces = value.split("-");
   if (pieces.length === lengths.length) {
     return lengths.map((length, index) =>
-      digitsOnly(pieces[index] ?? "", length)
+      digitsOnly(pieces[index] ?? "", length),
     );
   }
   const digits = value.replace(/\D/g, "");
@@ -1710,7 +1710,7 @@ function DigitParts({
   widths,
   invalid,
   describedBy,
-  onPart
+  onPart,
 }: {
   id: string;
   label: string;
@@ -1754,7 +1754,7 @@ function ClientStep({
   register,
   errors,
   setValue,
-  control
+  control,
 }: {
   copy: TestCenterCopy;
   register: UseFormRegister<TestRequestValues>;
@@ -1777,7 +1777,7 @@ function ClientStep({
 
   const businessNumber = useWatch({
     control,
-    name: "client.businessRegistrationNumber"
+    name: "client.businessRegistrationNumber",
   });
   const phoneValue = useWatch({ control, name: "client.phone" });
   const emailValue = useWatch({ control, name: "client.email" });
@@ -1789,7 +1789,7 @@ function ClientStep({
   const companyNameError = messageOf(errors.client?.companyName);
   const representativeError = messageOf(errors.client?.representativeName);
   const businessNumberError = messageOf(
-    errors.client?.businessRegistrationNumber
+    errors.client?.businessRegistrationNumber,
   );
   const contactNameError = messageOf(errors.client?.contactName);
   const phoneError = messageOf(errors.client?.phone);
@@ -1803,7 +1803,7 @@ function ClientStep({
   const writeText = (
     name: "client.businessRegistrationNumber" | "client.phone" | "client.email",
     value: string,
-    invalid: boolean
+    invalid: boolean,
   ) => {
     setValue(name, value, { shouldDirty: true, shouldValidate: invalid });
   };
@@ -1814,7 +1814,7 @@ function ClientStep({
     writeText(
       "client.businessRegistrationNumber",
       joinParts(next),
-      Boolean(businessNumberError)
+      Boolean(businessNumberError),
     );
   };
 
@@ -1831,11 +1831,11 @@ function ClientStep({
   const onSelectAddress = (result: PostalCodeResult) => {
     setValue("client.companyPostalCode", result.zipCode, {
       shouldDirty: true,
-      shouldValidate: true
+      shouldValidate: true,
     });
     setValue("client.address", result.roadAddress, {
       shouldDirty: true,
-      shouldValidate: true
+      shouldValidate: true,
     });
     setAddressOpen(false);
   };
@@ -1974,10 +1974,10 @@ function ClientStep({
                   placeholder={copy.addressDetail}
                   autoComplete="address-line2"
                   aria-invalid={Boolean(
-                    messageOf(errors.client?.companyAddressDetail)
+                    messageOf(errors.client?.companyAddressDetail),
                   )}
                   className={fieldClass(
-                    Boolean(messageOf(errors.client?.companyAddressDetail))
+                    Boolean(messageOf(errors.client?.companyAddressDetail)),
                   )}
                   {...register("client.companyAddressDetail")}
                 />
@@ -2079,7 +2079,7 @@ function ClientStep({
                   if (choice === DIRECT_EMAIL_DOMAIN) {
                     writeEmail(
                       emailParts.local,
-                      domainIsPreset ? "" : emailParts.domain
+                      domainIsPreset ? "" : emailParts.domain,
                     );
                     return;
                   }
@@ -2136,7 +2136,7 @@ function ReviewStep({
   values,
   register,
   errors,
-  onEdit
+  onEdit,
 }: {
   copy: TestCenterCopy;
   items: TestEquipmentItem[];
@@ -2147,7 +2147,7 @@ function ReviewStep({
   onEdit: (step: number) => void;
 }) {
   const selected = items.filter((item) =>
-    values.equipmentIds.includes(item.id)
+    values.equipmentIds.includes(item.id),
   );
   return (
     <div className="mt-6 space-y-4">
@@ -2162,7 +2162,7 @@ function ReviewStep({
         <div className="space-y-4">
           {categories.map((category) => {
             const categoryItems = selected.filter(
-              (item) => item.categoryId === category.id
+              (item) => item.categoryId === category.id,
             );
             if (categoryItems.length === 0) return null;
             return (
@@ -2192,13 +2192,13 @@ function ReviewStep({
           rows={[
             {
               label: copy.sampleName,
-              value: displayValue(values.sample.sampleName, copy.empty)
+              value: displayValue(values.sample.sampleName, copy.empty),
             },
             {
               label: copy.quantity,
               value: values.sample.quantity.trim()
                 ? `${values.sample.quantity.trim()} ${copy.quantityUnit}`
-                : copy.empty
+                : copy.empty,
             },
             {
               label: copy.classification,
@@ -2206,17 +2206,17 @@ function ReviewStep({
                 classificationLines(
                   items,
                   categories,
-                  values.equipmentIds
-                ).join("\n") || copy.empty
+                  values.equipmentIds,
+                ).join("\n") || copy.empty,
             },
             ...buildSampleSpecs(values.sample, {
               weight: copy.sampleWeight,
-              size: copy.sampleSize
+              size: copy.sampleSize,
             }).map((spec, index) => ({
               key: `spec-${index}-${spec.label}`,
               label: spec.label,
-              value: spec.value
-            }))
+              value: spec.value,
+            })),
           ]}
         />
       </ReviewSection>
@@ -2233,47 +2233,50 @@ function ReviewStep({
               value:
                 values.report.receptionType === "general"
                   ? copy.receptionTypeGeneral
-                  : copy.empty
+                  : copy.empty,
             },
             {
               label: copy.purpose,
               value: [
                 optionLabel(copy.purposes, values.report.purpose, copy.empty),
-                values.report.purposeDetail.trim()
+                values.report.purposeDetail.trim(),
               ]
                 .filter(Boolean)
-                .join(" / ")
+                .join(" / "),
             },
             {
               label: copy.copyCount,
               value: values.report.copyCount.trim()
                 ? `${values.report.copyCount.trim()} ${copy.copyCountUnit}`
-                : copy.empty
+                : copy.empty,
             },
             {
               label: copy.receiveMethod,
               value: optionLabel(
                 copy.receiveMethods,
                 values.report.receiveMethod,
-                copy.empty
-              )
+                copy.empty,
+              ),
             },
             ...(values.report.receiveMethod === "mail"
               ? [
                   {
                     label: copy.shippingName,
-                    value: displayValue(values.report.shippingName, copy.empty)
+                    value: displayValue(values.report.shippingName, copy.empty),
                   },
                   {
                     label: copy.recipientName,
-                    value: displayValue(values.report.recipientName, copy.empty)
+                    value: displayValue(
+                      values.report.recipientName,
+                      copy.empty,
+                    ),
                   },
                   {
                     label: copy.recipientPhone,
                     value: displayValue(
                       values.report.recipientPhone,
-                      copy.empty
-                    )
+                      copy.empty,
+                    ),
                   },
                   {
                     label: copy.deliveryAddress,
@@ -2281,11 +2284,11 @@ function ReviewStep({
                       [
                         values.report.postalCode.trim(),
                         values.report.deliveryAddress.trim(),
-                        values.report.addressDetail.trim()
+                        values.report.addressDetail.trim(),
                       ]
                         .filter(Boolean)
-                        .join(" ") || copy.empty
-                  }
+                        .join(" ") || copy.empty,
+                  },
                 ]
               : []),
             {
@@ -2294,8 +2297,8 @@ function ReviewStep({
                 values.report.samplePhoto === "attach"
                   ? copy.samplePhotoAttach
                   : values.report.samplePhoto === "skip"
-                  ? copy.samplePhotoSkip
-                  : copy.empty
+                    ? copy.samplePhotoSkip
+                    : copy.empty,
             },
             {
               label: copy.sampleHandling,
@@ -2303,9 +2306,9 @@ function ReviewStep({
                 values.report.sampleHandling === "dispose"
                   ? copy.sampleHandlingDispose
                   : values.report.sampleHandling === "return"
-                  ? copy.sampleHandlingReturn
-                  : copy.empty
-            }
+                    ? copy.sampleHandlingReturn
+                    : copy.empty,
+            },
           ]}
         />
       </ReviewSection>
@@ -2319,30 +2322,30 @@ function ReviewStep({
           rows={[
             {
               label: copy.companyName,
-              value: displayValue(values.client.companyName, copy.empty)
+              value: displayValue(values.client.companyName, copy.empty),
             },
             {
               label: copy.representativeName,
-              value: displayValue(values.client.representativeName, copy.empty)
+              value: displayValue(values.client.representativeName, copy.empty),
             },
             {
               label: copy.businessRegistrationNumber,
               value: displayValue(
                 values.client.businessRegistrationNumber,
-                copy.empty
-              )
+                copy.empty,
+              ),
             },
             {
               label: copy.contactName,
-              value: displayValue(values.client.contactName, copy.empty)
+              value: displayValue(values.client.contactName, copy.empty),
             },
             {
               label: copy.phone,
-              value: displayValue(values.client.phone, copy.empty)
+              value: displayValue(values.client.phone, copy.empty),
             },
             {
               label: copy.email,
-              value: displayValue(values.client.email, copy.empty)
+              value: displayValue(values.client.email, copy.empty),
             },
             {
               label: copy.address,
@@ -2350,15 +2353,15 @@ function ReviewStep({
                 [
                   values.client.companyPostalCode.trim(),
                   values.client.address.trim(),
-                  values.client.companyAddressDetail.trim()
+                  values.client.companyAddressDetail.trim(),
                 ]
                   .filter(Boolean)
-                  .join(" ") || copy.empty
+                  .join(" ") || copy.empty,
             },
             {
               label: copy.remarks,
-              value: displayValue(values.client.remarks, copy.empty)
-            }
+              value: displayValue(values.client.remarks, copy.empty),
+            },
           ]}
         />
       </ReviewSection>
@@ -2381,7 +2384,7 @@ function ReviewSection({
   title,
   editLabel,
   onEdit,
-  children
+  children,
 }: {
   title: string;
   editLabel: string;
@@ -2408,7 +2411,7 @@ function ReviewSection({
 function ConsentBox({
   label,
   error,
-  registration
+  registration,
 }: {
   label: string;
   error?: string;

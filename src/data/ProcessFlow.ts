@@ -13,31 +13,31 @@ export const processFlowContent = {
         id: "concept",
         type: "card",
         title: "Concept\n설계",
-        hasNGFrom: ["dr"]
+        hasNGFrom: ["dr"],
       },
       {
         id: "dr",
         type: "diamond",
         title: "D/R",
-        ngTarget: "concept"
+        ngTarget: "concept",
       },
       {
         id: "development",
         type: "card",
         title: "개발/가공\n설계",
-        hasNGFrom: ["review"]
+        hasNGFrom: ["review"],
       },
       {
         id: "review",
         type: "diamond",
         title: "검토승인",
-        ngTarget: "development"
+        ngTarget: "development",
       },
       {
         id: "po",
         type: "card",
         title: "발주\n(소재/부품)",
-      }
+      },
     ],
 
     middleSection: [
@@ -46,14 +46,14 @@ export const processFlowContent = {
         type: "diamond",
         title: "수입검사",
         connectsTo: ["partner", "processing"],
-        ngTarget: "partner"
+        ngTarget: "partner",
       },
       {
         id: "partner",
         type: "card",
         title: "협력사",
-        isEndPoint: true
-      }
+        isEndPoint: true,
+      },
     ],
 
     bottomLane: [
@@ -61,35 +61,35 @@ export const processFlowContent = {
         id: "processing",
         type: "card",
         title: "가공/제작",
-        hasNGFrom: ["shipping"]
+        hasNGFrom: ["shipping"],
       },
       {
         id: "shipping",
         type: "diamond",
         title: "출하 및 조립/\n측정검사",
-        ngTarget: "processing"
+        ngTarget: "processing",
       },
       {
         id: "packaging",
         type: "card",
-        title: "포장"
+        title: "포장",
       },
       {
         id: "delivery",
         type: "card",
-        title: "고객사 납품"
+        title: "고객사 납품",
       },
       {
         id: "feedback",
         type: "diamond",
-        title: "고객 Feedback"
+        title: "고객 Feedback",
       },
       {
         id: "reorder",
         type: "card",
-        title: "Re-Order\n개선/반영"
-      }
-    ]
+        title: "Re-Order\n개선/반영",
+      },
+    ],
   },
 
   ENG: {
@@ -106,31 +106,31 @@ export const processFlowContent = {
         id: "concept",
         type: "card",
         title: "Concept\nDesign",
-        hasNGFrom: ["dr"]
+        hasNGFrom: ["dr"],
       },
       {
         id: "dr",
         type: "diamond",
         title: "D/R",
-        ngTarget: "concept"
+        ngTarget: "concept",
       },
       {
         id: "development",
         type: "card",
         title: "Development /\nProcessing Design",
-        hasNGFrom: ["review"]
+        hasNGFrom: ["review"],
       },
       {
         id: "review",
         type: "diamond",
         title: "Review\nApproval",
-        ngTarget: "development"
+        ngTarget: "development",
       },
       {
         id: "po",
         type: "card",
         title: "Purchase Order\n(Materials / Parts)",
-      }
+      },
     ],
 
     middleSection: [
@@ -139,14 +139,14 @@ export const processFlowContent = {
         type: "diamond",
         title: "Incoming\nInspection",
         connectsTo: ["partner", "processing"],
-        ngTarget: "partner"
+        ngTarget: "partner",
       },
       {
         id: "partner",
         type: "card",
         title: "Partner\n(Vendor)",
-        isEndPoint: true
-      }
+        isEndPoint: true,
+      },
     ],
 
     bottomLane: [
@@ -154,34 +154,34 @@ export const processFlowContent = {
         id: "processing",
         type: "card",
         title: "Processing /\nManufacturing",
-        hasNGFrom: ["shipping"]
+        hasNGFrom: ["shipping"],
       },
       {
         id: "shipping",
         type: "diamond",
         title: "Shipping & Assembly /\nMeasurement Inspection",
-        ngTarget: "processing"
+        ngTarget: "processing",
       },
       {
         id: "packaging",
         type: "card",
-        title: "Packaging"
+        title: "Packaging",
       },
       {
         id: "delivery",
         type: "card",
-        title: "Customer\nDelivery"
+        title: "Customer\nDelivery",
       },
       {
         id: "feedback",
         type: "diamond",
-        title: "Customer\nFeedback"
+        title: "Customer\nFeedback",
       },
       {
         id: "reorder",
         type: "card",
-        title: "Re-Order /\nImprovement"
-      }
-    ]
-  }
+        title: "Re-Order /\nImprovement",
+      },
+    ],
+  },
 };

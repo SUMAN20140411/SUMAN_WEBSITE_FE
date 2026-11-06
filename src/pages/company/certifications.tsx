@@ -11,11 +11,11 @@ import { useState } from "react";
 import { GetStaticProps } from "next";
 import {
   certificatePage,
-  certificatePageContent
+  certificatePageContent,
 } from "@/lib/strapi/company/certificatePage";
 import {
   certificates,
-  certificatesContent
+  certificatesContent,
 } from "@/lib/strapi/collections/certificate";
 
 const fadeInVariants = {
@@ -23,31 +23,31 @@ const fadeInVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: "easeOut" } as Transition
-  }
+    transition: { duration: 0.8, ease: "easeOut" } as Transition,
+  },
 };
 
 export const getStaticProps: GetStaticProps = async () => {
   const content = await certificatePage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section1.keywords", "certificates"]
+    populate: ["pageInfo", "section1", "section1.keywords", "certificates"],
   });
   const certificatesData = await certificates.find({
     locale: "ko-KR",
     filters: {
       publishedAt: {
-        $notNull: true
-      }
-    }
+        $notNull: true,
+      },
+    },
   });
   return {
-    props: { content: content?.data, certificatesData: certificatesData?.data }
+    props: { content: content?.data, certificatesData: certificatesData?.data },
   };
 };
 
 export default function CertificationsPage({
   content,
-  certificatesData
+  certificatesData,
 }: {
   content: certificatePageContent;
   certificatesData: certificatesContent;
@@ -60,61 +60,61 @@ export default function CertificationsPage({
     {
       labelKOR: "ISO 9001",
       labelENG: "ISO 9001",
-      img: "/images/company/Certifications/ISO_9001.png"
+      img: "/images/company/Certifications/ISO_9001.png",
     },
     {
       labelKOR: "ISO 14001",
       labelENG: "ISO 14001",
-      img: "/images/company/Certifications/ISO_14001.png"
+      img: "/images/company/Certifications/ISO_14001.png",
     },
     {
       labelKOR: "ISO 45001",
       labelENG: "ISO 45001",
-      img: "/images/company/Certifications/ISO_45001.png"
+      img: "/images/company/Certifications/ISO_45001.png",
     },
     {
       labelKOR: "기업부설연구소",
       labelENG: "Company Research Institute",
-      img: "/images/company/Certifications/기업부설연구소 인정서.png"
+      img: "/images/company/Certifications/기업부설연구소 인정서.png",
     },
     {
       labelKOR: "소재 부품 장비 전문기업",
       labelENG: "Materials & Equipment Specialist",
-      img: "/images/company/Certifications/소재부품장비 전문기업확인서.png"
+      img: "/images/company/Certifications/소재부품장비 전문기업확인서.png",
     },
     {
       labelKOR: "피스톤링 제조기술 특허",
       labelENG: "Piston Ring Patent",
-      img: "/images/company/Certifications/특허_피스톤제조.png"
+      img: "/images/company/Certifications/특허_피스톤제조.png",
     },
     {
       labelKOR: "스웰링 측정용 지그 특허",
       labelENG: "Swelling Jig Patent",
-      img: "/images/company/Certifications/특허_스웰링측정용지그.png"
+      img: "/images/company/Certifications/특허_스웰링측정용지그.png",
     },
     {
       labelKOR: "전력관리시스템 특허",
       labelENG: "Power System Patent",
-      img: "/images/company/Certifications/특허_전력관리시스템.png"
+      img: "/images/company/Certifications/특허_전력관리시스템.png",
     },
     {
       labelKOR: "전선가공장치 특허",
       labelENG: "Cable Processing Patent",
-      img: "/images/company/Certifications/특허_전선가공장치.png"
+      img: "/images/company/Certifications/특허_전선가공장치.png",
     },
     {
       labelKOR: "주물성형분리장치 특허",
       labelENG: "Casting Separation Patent",
-      img: "/images/company/Certifications/특허_주물성형분리장치.png"
-    }
+      img: "/images/company/Certifications/특허_주물성형분리장치.png",
+    },
   ];
 
   const certDataToUse =
     content.certificates?.length > 0
       ? content.certificates
       : certificatesData?.length > 0
-      ? certificatesData
-      : certData.map((cert) => ({ name: cert.labelKOR, file: cert.img }));
+        ? certificatesData
+        : certData.map((cert) => ({ name: cert.labelKOR, file: cert.img }));
 
   const visibleCerts = certDataToUse.slice(0, 8);
   const moreCerts = certDataToUse.slice(8);
@@ -177,7 +177,7 @@ export default function CertificationsPage({
               >
                 {(
                   content.section1?.keywords?.map(
-                    (keyword) => keyword.title
+                    (keyword) => keyword.title,
                   ) || ["Technology Certification", "Quality Assurance"]
                 ).map((tag, i) => (
                   <span
@@ -212,7 +212,7 @@ export default function CertificationsPage({
                 {[0, 1].map((rowIndex) => {
                   const certGroup = visibleCerts.slice(
                     rowIndex * 4,
-                    rowIndex * 4 + 4
+                    rowIndex * 4 + 4,
                   );
                   const fromLeft = rowIndex % 2 === 0;
                   return (

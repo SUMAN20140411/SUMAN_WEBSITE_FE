@@ -2,32 +2,32 @@ import { GetStaticProps } from "next";
 import ProductPage from "@/pages/business/product";
 import {
   productPage,
-  productPageContent
+  productPageContent,
 } from "@/lib/strapi/business/productPage";
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const content = await productPage.find({
       locale: "en",
-      populate: ["pageInfo", "section1", "section1.products"]
+      populate: ["pageInfo", "section1", "section1.products"],
     });
 
     return {
       props: {
-        content: content?.data
-      }
+        content: content?.data,
+      },
     };
   } catch {
     const fallback = await productPage.find({
       locale: "ko-KR",
-      populate: ["pageInfo", "section1", "section1.products"]
+      populate: ["pageInfo", "section1", "section1.products"],
     });
     return { props: { content: fallback?.data } };
   }
 };
 
 export default function EngProductPage({
-  content
+  content,
 }: Readonly<{ content: productPageContent }>) {
   return <ProductPage content={content} />;
 }

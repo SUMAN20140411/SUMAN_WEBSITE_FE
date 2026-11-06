@@ -76,7 +76,7 @@ function byOrderThenText(
   textA: string,
   orderB: number,
   textB: string,
-  locale: string
+  locale: string,
 ) {
   if (orderA !== orderB) return orderA - orderB;
   return textA.localeCompare(textB, locale);
@@ -89,7 +89,7 @@ function categoryOf(value: TestEquipmentDocument["test_equipment_category"]) {
 }
 
 export async function loadTestEquipment(
-  locale: string
+  locale: string,
 ): Promise<TestEquipmentCatalog> {
   const response = await testEquipments.find({
     locale,
@@ -125,10 +125,10 @@ export async function loadTestEquipment(
   }
 
   items.sort((a, b) =>
-    byOrderThenText(a.order, a.name, b.order, b.name, locale)
+    byOrderThenText(a.order, a.name, b.order, b.name, locale),
   );
   categories.sort((a, b) =>
-    byOrderThenText(a.order, a.label, b.order, b.label, locale)
+    byOrderThenText(a.order, a.label, b.order, b.label, locale),
   );
 
   return { items, categories };

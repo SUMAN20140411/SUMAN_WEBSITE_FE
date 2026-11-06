@@ -3,7 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
 import {
   historyPage,
-  historyPageContent
+  historyPageContent,
 } from "@/lib/strapi/company/historyPage";
 import { useLangStore } from "@/stores/langStore";
 import { motion, type Transition } from "framer-motion";
@@ -31,7 +31,7 @@ const headerComponent: Components["h2"] = ({ children }) => (
     transition={{
       duration: 0.25,
       delay: 0.05,
-      ease: "easeOut"
+      ease: "easeOut",
     }}
     viewport={{ once: true }}
   >
@@ -40,8 +40,8 @@ const headerComponent: Components["h2"] = ({ children }) => (
         children?.toString()?.includes("⦁")
           ? "text-black font-bold"
           : children?.toString()?.includes("➔")
-          ? "text-[#8C8C8C] text-sm sm:text-base"
-          : "text-[#4C4C4C]"
+            ? "text-[#8C8C8C] text-sm sm:text-base"
+            : "text-[#4C4C4C]"
       }`}
     >
       {children}
@@ -58,14 +58,14 @@ export const getStaticProps: GetStaticProps = async () => {
       "section1.keywords",
       "section1.salesRecords",
       "section2",
-      "section2.historyList"
-    ]
+      "section2.historyList",
+    ],
   });
   return { props: { content: content?.data } };
 };
 
 export default function HistoryPage({
-  content
+  content,
 }: {
   content: historyPageContent;
 }) {
@@ -80,8 +80,8 @@ export default function HistoryPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.7, ease: "easeOut" } as Transition,
+    },
   };
 
   const staggerContainerVariants = {
@@ -90,9 +90,9 @@ export default function HistoryPage({
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   const growthPoints = useMemo(
@@ -102,21 +102,21 @@ export default function HistoryPage({
           { amount: 45, unit: "억", year: "2021" },
           { amount: 72, unit: "억", year: "2022" },
           { amount: 77, unit: "억", year: "2023" },
-          { amount: 88, unit: "억", year: "2024" }
+          { amount: 88, unit: "억", year: "2024" },
         ]
       ).map((record, index) => ({
         t: (0.92 / (content.section1.salesRecords?.length || 4)) * (index + 1),
         year: record.year,
-        value: `${record.amount} ${record.unit}`
+        value: `${record.amount} ${record.unit}`,
       })),
-    [content.section1.salesRecords]
+    [content.section1.salesRecords],
   );
 
   // Base shift (≈ previously 5cm) & lift up ≈ 3cm -> net ≈ 2cm down.
   // 3cm ≈ 114px (approx). Use clamp to stay responsive across screens.
   const arrowShiftStyle = {
     ["--arrow-shift-down" as any]: "clamp(80px, 10vw, 190px)", // base down shift (~up to 5cm)
-    ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)" // lift up (~3cm)
+    ["--arrow-shift-up" as any]: "clamp(60px, 6vw, 114px)", // lift up (~3cm)
   } as React.CSSProperties;
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function HistoryPage({
                 content.section1.hero ||
                 "/images/company/history/history_suman.png"
               })`,
-              backgroundPosition: "center 70%"
+              backgroundPosition: "center 70%",
             }}
           >
             <div className="absolute inset-0 bg-[#020c23]/85 z-10" />
@@ -199,7 +199,7 @@ export default function HistoryPage({
                         transition={{
                           duration: 0.5,
                           delay: 0.5 + index * 0.2,
-                          ease: "easeOut"
+                          ease: "easeOut",
                         }}
                         viewport={{ once: true }}
                       >
@@ -223,7 +223,7 @@ export default function HistoryPage({
                     ? "translateY(clamp(36px, 6vw, 108px)) translateX(clamp(28px, 4vw, 76px))"
                     : "translateY(clamp(28px, 4vw, 76px))"
                 }`,
-                ...arrowShiftStyle
+                ...arrowShiftStyle,
               }}
             >
               <defs>
@@ -312,7 +312,7 @@ export default function HistoryPage({
                 animate={{ pathLength: 1, opacity: [0.85, 1, 0.85] }}
                 transition={{
                   duration: 2,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               />
               {points.map((p, i) => (
@@ -329,7 +329,7 @@ export default function HistoryPage({
                       delay: 0.45 + i * 0.25,
                       duration: 1.8,
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      ease: "easeInOut",
                     }}
                     style={{ transformOrigin: `${p.x}px ${p.y}px` }}
                   />
@@ -473,7 +473,7 @@ export default function HistoryPage({
                           components={{
                             h2: headerComponent,
                             h3: headerComponent,
-                            h4: headerComponent
+                            h4: headerComponent,
                           }}
                         >
                           {history.description}

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const cardAppearTransition: Transition = {
   duration: 0.7,
-  ease: [0.22, 1, 0.36, 1]
+  ease: [0.22, 1, 0.36, 1],
 };
 
 const MAX_RESUME_BYTES = 5 * 1024 * 1024;
@@ -36,7 +36,7 @@ const formatBytes = (bytes: number) => {
 };
 
 export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
-  lang
+  lang,
 }) => {
   const t = useMemo(() => {
     if (lang === "ENG") {
@@ -45,7 +45,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
         subtitle:
           "Upload your resume and submit your application. HR will review and contact you by email.",
         hint: `Allowed formats: PDF/DOC/DOCX/HWP (max ${formatBytes(
-          MAX_RESUME_BYTES
+          MAX_RESUME_BYTES,
         )}).`,
         name: "Name",
         email: "Email",
@@ -63,7 +63,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
         invalidFileSize: `File must be <= ${formatBytes(MAX_RESUME_BYTES)}.`,
         invalidFileExt: "File type not allowed.",
         fileSelected: "Selected",
-        clear: "Clear"
+        clear: "Clear",
       } as const;
     }
 
@@ -72,7 +72,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
       subtitle:
         "이력서(서류)를 업로드하여 지원하실 수 있습니다. 접수 후 담당자가 이메일로 안내드립니다.",
       hint: `가능한 형식: PDF/DOC/DOCX/HWP (최대 ${formatBytes(
-        MAX_RESUME_BYTES
+        MAX_RESUME_BYTES,
       )}).`,
       name: "이름",
       email: "이메일",
@@ -88,11 +88,11 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
       invalidEmail: "이메일 형식을 확인해 주세요.",
       invalidFileRequired: "이력서/서류 파일을 첨부해 주세요.",
       invalidFileSize: `파일은 ${formatBytes(
-        MAX_RESUME_BYTES
+        MAX_RESUME_BYTES,
       )} 이하여야 합니다.`,
       invalidFileExt: "허용되지 않는 파일 형식입니다.",
       fileSelected: "선택됨",
-      clear: "초기화"
+      clear: "초기화",
     } as const;
   }, [lang]);
 
@@ -126,7 +126,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
         .any()
         .refine(
           (files: unknown) => files instanceof FileList && files.length === 1,
-          t.invalidFileRequired
+          t.invalidFileRequired,
         )
         .refine((files: FileList) => {
           const file = files.item(0);
@@ -137,7 +137,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
           if (!file) return false;
           const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
           return allowedExts.has(ext);
-        }, t.invalidFileExt)
+        }, t.invalidFileExt),
     });
   }, [t]);
 
@@ -147,7 +147,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
     reset,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm<JobApplicationFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -156,8 +156,8 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
       phone: "",
       position: "",
       message: "",
-      website: ""
-    } as any
+      website: "",
+    } as any,
   });
 
   const resumeFiles = watch("resume");
@@ -176,7 +176,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
       phone: "",
       position: "",
       message: "",
-      website: ""
+      website: "",
     } as any);
     setValue("resume", undefined as any, { shouldValidate: false });
   }, [reset, setValue]);
@@ -202,7 +202,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
 
         const res = await fetch(endpoint, {
           method: "POST",
-          body: fd
+          body: fd,
         });
 
         const data = await res.json().catch(() => null);
@@ -218,7 +218,7 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
         setSubmitLoading(false);
       }
     },
-    [clearForm, endpoint, t]
+    [clearForm, endpoint, t],
   );
 
   return (

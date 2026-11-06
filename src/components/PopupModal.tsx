@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
 
 interface PopupModalProps {
   title: string;
   content: string;
   onClose: () => void;
 }
-
 
 const PopupModal: React.FC<PopupModalProps> = ({ title, content, onClose }) => {
   return (
@@ -18,7 +17,9 @@ const PopupModal: React.FC<PopupModalProps> = ({ title, content, onClose }) => {
           ×
         </button>
         <h2 className="text-2xl font-semibold mb-4">{title}</h2>
-        <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700">{content}</div>
+        <div className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+          {content}
+        </div>
       </div>
     </div>
   );

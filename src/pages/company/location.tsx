@@ -8,21 +8,21 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import { GetStaticProps } from "next";
 import {
   locationPage,
-  locationPageContent
+  locationPageContent,
 } from "@/lib/strapi/company/locationPage";
 
 export const getStaticProps: GetStaticProps = async () => {
   const content = await locationPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section1.locations"]
+    populate: ["pageInfo", "section1", "section1.locations"],
   });
   return {
-    props: { content: content?.data }
+    props: { content: content?.data },
   };
 };
 
 export default function LocationPage({
-  content
+  content,
 }: {
   content: locationPageContent;
 }) {
@@ -30,7 +30,7 @@ export default function LocationPage({
   const mapRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const kakaoMaps = useRef<{ [key: string]: kakao.maps.Map | null }>({});
   const infoWindows = useRef<{ [key: string]: kakao.maps.InfoWindow | null }>(
-    {}
+    {},
   );
   const currentOpenInfowindow = useRef<kakao.maps.InfoWindow | null>(null);
 
@@ -39,8 +39,8 @@ export default function LocationPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const mapTransition = useMemo(
@@ -49,9 +49,9 @@ export default function LocationPage({
         type: "spring",
         stiffness: 200,
         damping: 20,
-        duration: 0.5
-      } as Transition),
-    []
+        duration: 0.5,
+      }) as Transition,
+    [],
   );
 
   const KAKAO_MAP_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
@@ -71,9 +71,9 @@ export default function LocationPage({
         const options: kakao.maps.MapOptions = {
           center: new window.kakao.maps.LatLng(
             location.latitude,
-            location.longitude
+            location.longitude,
           ),
-          level: 3
+          level: 3,
         };
         const map = new window.kakao.maps.Map(container, options);
         kakaoMaps.current[location.name] = map;
@@ -84,9 +84,9 @@ export default function LocationPage({
         const marker = new window.kakao.maps.Marker({
           position: new window.kakao.maps.LatLng(
             location.latitude,
-            location.longitude
+            location.longitude,
           ),
-          map
+          map,
         });
 
         const infowindow = new window.kakao.maps.InfoWindow({
@@ -94,7 +94,7 @@ export default function LocationPage({
                     <div style="margin-bottom:5px;">${location.name}</div>
                     <div style="font-size:12px;color:#666;">${location.address}</div>
                   </div>`,
-          removable: true
+          removable: true,
         });
 
         infoWindows.current[location.name] = infowindow;
@@ -115,7 +115,7 @@ export default function LocationPage({
         });
       }
     },
-    []
+    [],
   );
 
   const handleToggleMap = useCallback(
@@ -130,21 +130,24 @@ export default function LocationPage({
         }
 
         if (nextOpenMap && kakaoMaps.current[nextOpenMap]) {
-          setTimeout(() => {
-            kakaoMaps.current[nextOpenMap]?.relayout();
-            kakaoMaps.current[nextOpenMap]?.setCenter(
-              new window.kakao.maps.LatLng(
-                location.latitude,
-                location.longitude
-              )
-            );
-          }, (mapTransition.duration ?? 0.5) * 1000 + 50);
+          setTimeout(
+            () => {
+              kakaoMaps.current[nextOpenMap]?.relayout();
+              kakaoMaps.current[nextOpenMap]?.setCenter(
+                new window.kakao.maps.LatLng(
+                  location.latitude,
+                  location.longitude,
+                ),
+              );
+            },
+            (mapTransition.duration ?? 0.5) * 1000 + 50,
+          );
         }
 
         return nextOpenMap;
       });
     },
-    [mapTransition]
+    [mapTransition],
   );
 
   useEffect(() => {
@@ -242,7 +245,7 @@ export default function LocationPage({
                       initial={false}
                       animate={{
                         height: openMap === location.name ? "250px" : "0px",
-                        opacity: openMap === location.name ? 1 : 0
+                        opacity: openMap === location.name ? 1 : 0,
                       }}
                       transition={mapTransition}
                       className="mt-4 overflow-hidden relative"

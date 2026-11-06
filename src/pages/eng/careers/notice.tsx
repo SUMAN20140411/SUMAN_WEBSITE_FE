@@ -11,14 +11,14 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1",
         "section1.jobSites",
         "section2",
-        "section2.forms"
-      ]
+        "section2.forms",
+      ],
     });
 
     return {
       props: {
-        content: content?.data
-      }
+        content: content?.data,
+      },
     };
   } catch {
     const fallback = await noticePage.find({
@@ -28,20 +28,20 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1",
         "section1.jobSites",
         "section2",
-        "section2.forms"
-      ]
+        "section2.forms",
+      ],
     });
 
     return {
       props: {
-        content: fallback?.data
-      }
+        content: fallback?.data,
+      },
     };
   }
 };
 
 export default function EngNoticePage({
-  content
+  content,
 }: Readonly<{ content: noticePageContent }>) {
   return <RecruitmentBoard content={content} />;
 }

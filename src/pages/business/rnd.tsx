@@ -24,12 +24,12 @@ const h2Component: Components["h2"] = ({ children }) => (
 export const getStaticProps = async () => {
   const rndPageContent = await rndPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section1.researchItems", "section2"]
+    populate: ["pageInfo", "section1", "section1.researchItems", "section2"],
   });
   return {
     props: {
-      content: rndPageContent?.data
-    }
+      content: rndPageContent?.data,
+    },
   };
 };
 
@@ -48,13 +48,13 @@ export default function App({ content }: { content: rndPageContent }) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
   };
 
   const itemVariants = {
@@ -62,13 +62,13 @@ export default function App({ content }: { content: rndPageContent }) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.5, ease: "easeOut" } as Transition,
+    },
   };
 
   const cardHover = {
     rest: { scale: 1, y: 0 },
-    hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition }
+    hover: { scale: 1.02, y: -5, transition: { duration: 0.3 } as Transition },
   };
 
   return (
@@ -172,7 +172,7 @@ export default function App({ content }: { content: rndPageContent }) {
                                 </span>
                               </div>
                             ),
-                            hr: () => <hr className="my-4 border-gray-200" />
+                            hr: () => <hr className="my-4 border-gray-200" />,
                           }}
                         >
                           {item.description}

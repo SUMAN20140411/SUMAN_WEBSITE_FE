@@ -8,7 +8,7 @@ import {
   type Edge,
   MarkerType,
   type NodeTypes,
-  SmoothStepEdgeProps
+  SmoothStepEdgeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -23,7 +23,7 @@ interface ReactFlowProcessDiagramProps {
 
 const nodeTypes: NodeTypes = {
   process: ProcessNode,
-  decision: DecisionNode
+  decision: DecisionNode,
 };
 
 // ─── Layout constants ───────────────────────────────────────────────────────
@@ -58,13 +58,13 @@ const normalMarker = {
   type: MarkerType.ArrowClosed,
   color: "#9CA3AF",
   width: 14,
-  height: 14
+  height: 14,
 };
 const ngMarker = {
   type: MarkerType.ArrowClosed,
   color: "#EF4444",
   width: 14,
-  height: 14
+  height: 14,
 };
 
 // ─── Bilingual labels ────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ const labels = {
     packaging: "Packaging",
     delivery: "Delivery",
     feedback: "Customer\nFeedback",
-    reorder: "Re-Order"
+    reorder: "Re-Order",
   },
   KOR: {
     customer: "CUSTOMER",
@@ -99,8 +99,8 @@ const labels = {
     packaging: "포장",
     delivery: "고객사 납품",
     feedback: "고객\nFeedback",
-    reorder: "Re-Order\n개선/반영"
-  }
+    reorder: "Re-Order\n개선/반영",
+  },
 } as const;
 
 function buildNodes(lang: Language): Node[] {
@@ -112,37 +112,37 @@ function buildNodes(lang: Language): Node[] {
       id: "customer",
       type: "process",
       position: { x: X_CUSTOMER, y: ROW1_Y },
-      data: { label: l.customer }
+      data: { label: l.customer },
     },
     {
       id: "concept",
       type: "process",
       position: { x: X_CONCEPT, y: ROW1_Y },
-      data: { label: l.concept }
+      data: { label: l.concept },
     },
     {
       id: "dr",
       type: "decision",
       position: { x: X_DR, y: ROW1_Y },
-      data: { label: l.dr }
+      data: { label: l.dr },
     },
     {
       id: "development",
       type: "process",
       position: { x: X_DEV, y: ROW1_Y },
-      data: { label: l.development }
+      data: { label: l.development },
     },
     {
       id: "review",
       type: "decision",
       position: { x: X_REVIEW, y: ROW1_Y },
-      data: { label: l.review }
+      data: { label: l.review },
     },
     {
       id: "po",
       type: "process",
       position: { x: X_PO, y: ROW1_Y },
-      data: { label: l.po }
+      data: { label: l.po },
     },
 
     // ── Row 2 ──────────────────────────────────────────────────────
@@ -150,13 +150,13 @@ function buildNodes(lang: Language): Node[] {
       id: "supplier",
       type: "process",
       position: { x: X_SUPPLIER, y: ROW2_Y },
-      data: { label: l.supplier }
+      data: { label: l.supplier },
     },
     {
       id: "inspection",
       type: "decision",
       position: { x: X_INSPECTION, y: ROW2_Y },
-      data: { label: l.inspection }
+      data: { label: l.inspection },
     },
 
     // ── Row 3 ──────────────────────────────────────────────────────
@@ -164,38 +164,38 @@ function buildNodes(lang: Language): Node[] {
       id: "manufacturing",
       type: "process",
       position: { x: X_MANUFACTURING, y: ROW3_Y },
-      data: { label: l.manufacturing }
+      data: { label: l.manufacturing },
     },
     {
       id: "fqc",
       type: "decision",
       position: { x: X_FQC, y: ROW3_Y },
-      data: { label: l.fqc }
+      data: { label: l.fqc },
     },
     {
       id: "packaging",
       type: "process",
       position: { x: X_PACKAGING, y: ROW3_Y },
-      data: { label: l.packaging }
+      data: { label: l.packaging },
     },
     {
       id: "delivery",
       type: "process",
       position: { x: X_DELIVERY, y: ROW3_Y },
-      data: { label: l.delivery }
+      data: { label: l.delivery },
     },
     {
       id: "feedback",
       type: "decision",
       position: { x: X_FEEDBACK, y: ROW3_Y },
-      data: { label: l.feedback }
+      data: { label: l.feedback },
     },
     {
       id: "reorder",
       type: "process",
       position: { x: X_REORDER, y: ROW3_Y },
-      data: { label: l.reorder }
-    }
+      data: { label: l.reorder },
+    },
   ];
 }
 
@@ -210,7 +210,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-left",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
     {
       id: "e-concept-dr",
@@ -219,7 +219,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       sourceHandle: "source-right",
       targetHandle: "target-left",
       style: normalEdgeStyle,
-      animated: true
+      animated: true,
     },
     {
       id: "e-dr-development",
@@ -229,7 +229,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-left",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
     {
       id: "e-development-review",
@@ -238,7 +238,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       sourceHandle: "source-right",
       targetHandle: "target-left",
       style: normalEdgeStyle,
-      animated: true
+      animated: true,
     },
     {
       id: "e-review-po",
@@ -248,7 +248,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-left",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
 
     // ── Vertical: PO → Inspection (via supplier side) ─────────────
@@ -260,7 +260,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       sourceHandle: "source-bottom",
       targetHandle: "target-top",
       style: normalEdgeStyle,
-      animated: true
+      animated: true,
     },
 
     // ── Vertical: Inspection → Manufacturing ─────────────────────
@@ -273,7 +273,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-top",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
 
     // ── Row 3: right → left ───────────────────────────────────────
@@ -284,7 +284,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       sourceHandle: "source-left",
       targetHandle: "target-right",
       style: normalEdgeStyle,
-      animated: true
+      animated: true,
     },
     {
       id: "e-fqc-packaging",
@@ -294,7 +294,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-right",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
     {
       id: "e-packaging-delivery",
@@ -304,7 +304,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-right",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
     {
       id: "e-delivery-feedback",
@@ -313,7 +313,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       sourceHandle: "source-left",
       targetHandle: "target-right",
       style: normalEdgeStyle,
-      animated: true
+      animated: true,
     },
     {
       id: "e-feedback-reorder",
@@ -323,7 +323,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       targetHandle: "target-right",
       style: normalEdgeStyle,
       markerEnd: normalMarker,
-      animated: true
+      animated: true,
     },
 
     // ── NG: D/R → Concept Design (arc above row 1) ───────────────
@@ -333,7 +333,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       target: "concept",
       type: "smoothstep",
       pathOptions: {
-        offset: 35
+        offset: 35,
       },
       sourceHandle: "source-top",
       targetHandle: "target-top",
@@ -343,7 +343,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
-      animated: true
+      animated: true,
     },
 
     // ── NG: Review Approval → Development (arc above row 1) ──────
@@ -353,7 +353,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       target: "development",
       type: "smoothstep",
       pathOptions: {
-        offset: 35
+        offset: 35,
       },
       sourceHandle: "source-top",
       targetHandle: "target-top",
@@ -363,7 +363,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
-      animated: true
+      animated: true,
     },
 
     // ── NG: Inspection → Supplier ─────────────────────────────────
@@ -380,7 +380,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
-      animated: true
+      animated: true,
     },
 
     // ── NG: FQC & Shipping → Manufacturing (arc below row 3) ─────
@@ -390,7 +390,7 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       target: "manufacturing",
       type: "smoothstep",
       pathOptions: {
-        offset: 35
+        offset: 35,
       },
       sourceHandle: "source-bottom",
       targetHandle: "target-bottom",
@@ -400,13 +400,13 @@ function buildEdges(): (Edge | SmoothStepEdgeProps)[] {
       labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
-      animated: true
-    }
+      animated: true,
+    },
   ];
 }
 
 export default function ReactFlowProcessDiagram({
-  language = "ENG"
+  language = "ENG",
 }: ReactFlowProcessDiagramProps) {
   const nodes = useMemo(() => buildNodes(language), [language]);
   const edges = useMemo(() => buildEdges(), []);
@@ -418,7 +418,7 @@ export default function ReactFlowProcessDiagram({
         height: "560px",
         background: "transparent",
         borderRadius: "12px",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       <ReactFlow

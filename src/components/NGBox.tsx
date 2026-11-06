@@ -1,12 +1,13 @@
-import React from 'react';
+import React from "react";
 
 interface NGBoxProps {
   className?: string;
 }
 
-const NGBox: React.FC<NGBoxProps> = ({ className = '' }) => {
+const NGBox: React.FC<NGBoxProps> = ({ className = "" }) => {
   return (
-    <div className={`
+    <div
+      className={`
       bg-[#EF4444] 
       text-white 
       px-2 py-1 
@@ -15,7 +16,8 @@ const NGBox: React.FC<NGBoxProps> = ({ className = '' }) => {
       font-medium
       shadow-sm
       ${className}
-    `}>
+    `}
+    >
       NG
     </div>
   );

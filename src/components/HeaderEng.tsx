@@ -48,7 +48,9 @@ const navItemsEng = [
 export default function Header() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(null);
+  const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(
+    null,
+  );
   const NAV_ITEMS = navItemsEng;
 
   // Match KOR header: close mobile menu when >= lg
@@ -88,7 +90,10 @@ export default function Header() {
           style={{ height: "90px" }}
         >
           {/* Logo — same ml-10 and alignment */}
-          <Link href="/" className="flex items-center h-full mr-auto lg:mr-0 ml-10">
+          <Link
+            href="/"
+            className="flex items-center h-full mr-auto lg:mr-0 ml-10"
+          >
             <Image
               src="/images/logo_suman.png"
               alt="SUMAN CO., Ltd company logo"
@@ -186,7 +191,9 @@ export default function Header() {
                   <div
                     className="flex justify-between items-center py-2 text-lg font-medium cursor-pointer"
                     onClick={() =>
-                      setExpandedMobileIndex(expandedMobileIndex === index ? null : index)
+                      setExpandedMobileIndex(
+                        expandedMobileIndex === index ? null : index,
+                      )
                     }
                   >
                     <Link href={item.href} onClick={closeMobileMenu}>

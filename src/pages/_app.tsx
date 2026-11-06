@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const handleRouteChange = (url: string) => {
     if (typeof window.gtag !== "undefined") {
       window.gtag("config", "G-HMD20SMTK5", {
-        page_path: url
+        page_path: url,
       });
     }
   };
