@@ -60,11 +60,21 @@ export type ClientValues = {
   remarks: string;
 };
 
+export type BillingValues = {
+  sameAsClient: boolean;
+  companyName: string;
+  contactName: string;
+  businessRegistrationNumber: string;
+  email: string;
+  phone: string;
+};
+
 export type TestRequestValues = {
   equipmentIds: string[];
   sample: SampleValues;
   report: ReportValues;
   client: ClientValues;
+  billing: BillingValues;
   privacyConsent: boolean;
   damageConsent: boolean;
   website: string;
@@ -108,6 +118,14 @@ export const emptyTestRequest: TestRequestValues = {
     companyAddressDetail: "",
     remarks: "",
   },
+  billing: {
+    sameAsClient: true,
+    companyName: "",
+    contactName: "",
+    businessRegistrationNumber: "",
+    email: "",
+    phone: "",
+  },
   privacyConsent: false,
   damageConsent: false,
   website: "",
@@ -117,7 +135,7 @@ export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
   ["equipmentIds"],
   ["sample"],
   ["report"],
-  ["client"],
+  ["client", "billing"],
   ["privacyConsent", "damageConsent"],
 ];
 
@@ -398,6 +416,71 @@ export function buildClientSchema(copy: TestCenterCopy) {
   });
 }
 
+export function buildBillingSchema(copy: TestCenterCopy) {
+  const messages = copy.errors;
+  return z
+    .object({
+      sameAsClient: z.boolean(),
+      companyName: z.string(),
+      contactName: z.string(),
+      businessRegistrationNumber: z.string(),
+      email: z.string(),
+      phone: z.string(),
+    })
+    .superRefine((values, ctx) => {
+      if (values.sameAsClient) return;
+
+      const companyName = values.companyName.trim();
+      const contactName = values.contactName.trim();
+      const businessRegistrationNumber =
+        values.businessRegistrationNumber.trim();
+      const email = values.email.trim();
+      const phone = values.phone.trim();
+
+      if (!companyName) {
+        issue(ctx, ["companyName"], messages.billingCompanyName);
+      } else if (companyName.length > 200) {
+        issue(ctx, ["companyName"], messages.tooLong);
+      }
+
+      if (!contactName) {
+        issue(ctx, ["contactName"], messages.billingContactName);
+      } else if (contactName.length > 200) {
+        issue(ctx, ["contactName"], messages.tooLong);
+      }
+
+      if (
+        !businessRegistrationNumber ||
+        businessRegistrationNumber.length > 20 ||
+        !isBusinessRegistrationNumber(businessRegistrationNumber)
+      ) {
+        issue(
+          ctx,
+          ["businessRegistrationNumber"],
+          businessRegistrationNumber.length > 20
+            ? messages.tooLong
+            : messages.businessNumberInvalid,
+        );
+      }
+
+      if (!email) {
+        issue(ctx, ["email"], messages.emailRequired);
+      } else if (email.length > 254) {
+        issue(ctx, ["email"], messages.tooLong);
+      } else if (!emailSchema.safeParse(email).success) {
+        issue(ctx, ["email"], messages.emailInvalid);
+      }
+
+      if (!phone) {
+        issue(ctx, ["phone"], messages.billingPhone);
+      } else if (phone.length > 40) {
+        issue(ctx, ["phone"], messages.tooLong);
+      } else if (!/^\d{2,4}-\d{3,4}-\d{4}$/.test(phone)) {
+        issue(ctx, ["phone"], messages.phoneInvalid);
+      }
+    });
+}
+
 export function buildTestRequestSchema(
   copy: TestCenterCopy,
   options?: { vibrationRequired?: () => boolean },
@@ -410,6 +493,7 @@ export function buildTestRequestSchema(
     sample: buildSampleSchema(copy, options),
     report: buildReportSchema(copy),
     client: buildClientSchema(copy),
+    billing: buildBillingSchema(copy),
     privacyConsent: z
       .boolean()
       .refine((value) => value, messages.consentRequired),

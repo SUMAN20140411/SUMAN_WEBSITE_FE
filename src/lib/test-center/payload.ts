@@ -9,7 +9,16 @@ export function buildTestRequestPayload(
   copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
   locale: "ko" | "en" = "ko",
 ) {
-  const { sample, report, client } = values;
+  const { sample, report, client, billing } = values;
+  const payer = billing.sameAsClient
+    ? {
+        companyName: client.companyName,
+        contactName: client.contactName,
+        businessRegistrationNumber: client.businessRegistrationNumber,
+        email: client.email,
+        phone: client.phone,
+      }
+    : billing;
   const mail = report.receiveMethod === "mail";
 
   return {
@@ -56,6 +65,14 @@ export function buildTestRequestPayload(
       address: client.address.trim(),
       companyAddressDetail: client.companyAddressDetail.trim(),
       remarks: client.remarks.trim(),
+    },
+    billing: {
+      sameAsClient: billing.sameAsClient,
+      companyName: payer.companyName.trim(),
+      contactName: payer.contactName.trim(),
+      businessRegistrationNumber: payer.businessRegistrationNumber.trim(),
+      email: payer.email.trim(),
+      phone: payer.phone.trim(),
     },
   };
 }
