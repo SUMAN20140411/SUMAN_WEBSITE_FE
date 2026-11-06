@@ -8,7 +8,8 @@ import Head from "next/head";
 
 export default function TestCenterStatusPage() {
   const { lang } = useLangStore();
-  const copy = lang === "ENG" ? testRequestStatusCopy.en : testRequestStatusCopy.ko;
+  const copy =
+    lang === "ENG" ? testRequestStatusCopy.en : testRequestStatusCopy.ko;
 
   return (
     <Layout>

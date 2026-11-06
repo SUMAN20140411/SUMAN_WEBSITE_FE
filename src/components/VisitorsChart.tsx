@@ -1,5 +1,13 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useEffect, useState } from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useEffect, useState } from "react";
 
 interface VisitorData {
   yearMonth: number;
@@ -13,7 +21,7 @@ interface Props {
 const formatMonth = (yearMonth: number) => {
   const year = Math.floor(yearMonth / 100);
   const month = yearMonth % 100;
-  return `${year}.${month.toString().padStart(2, '0')}`;
+  return `${year}.${month.toString().padStart(2, "0")}`;
 };
 
 // 커스텀 툴팁 컴포넌트
@@ -57,10 +65,16 @@ export default function MonthlyVisitorsChart({ data }: Props) {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={formattedData}>
           <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-          <XAxis dataKey="label" tick={{ fill: '#ffffff' }} /> {/* X축 글씨색 */}
-          <YAxis tick={{ fill: '#ffffff' }} /> {/* Y축 글씨색 */}
+          <XAxis dataKey="label" tick={{ fill: "#ffffff" }} />{" "}
+          {/* X축 글씨색 */}
+          <YAxis tick={{ fill: "#ffffff" }} /> {/* Y축 글씨색 */}
           <Tooltip content={<CustomTooltip />} />
-          <Line type="monotone" dataKey="visitors" stroke="#8884d8" strokeWidth={2} />
+          <Line
+            type="monotone"
+            dataKey="visitors"
+            stroke="#8884d8"
+            strokeWidth={2}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>

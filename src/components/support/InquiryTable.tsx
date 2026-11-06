@@ -72,7 +72,7 @@ export default function InquiryTable(props: InquiryTableProps) {
     canGoNext,
     totalPages,
     onPrev,
-    onNext
+    onNext,
   } = props;
 
   const [unlocked, setUnlocked] = useState(false);

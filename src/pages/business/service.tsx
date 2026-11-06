@@ -16,12 +16,12 @@ import { useLangStore } from "@/stores/langStore";
 
 const ReactFlowProcessDiagram = dynamic(
   () => import("@/components/ReactFlowProcessDiagram"),
-  { ssr: false }
+  { ssr: false },
 );
 import { GetStaticProps } from "next";
 import {
   servicePage,
-  servicePageContent
+  servicePageContent,
 } from "@/lib/strapi/business/servicePage";
 
 // flow components (named exports)
@@ -68,7 +68,7 @@ function SVGVisualSection() {
           transition={{
             duration: 0.8,
             ease: [0.16, 1, 0.3, 1],
-            delay: 0.1
+            delay: 0.1,
           }}
           className="relative mx-auto w-full max-w-6xl"
         >
@@ -124,8 +124,8 @@ export const getStaticProps: GetStaticProps = async () => {
       "section2",
       "section3",
       "section2.deviceCategories",
-      "section2.deviceCategories.equipment"
-    ]
+      "section2.deviceCategories.equipment",
+    ],
   });
 
   return { props: { content: content?.data } };
@@ -135,7 +135,7 @@ export const getStaticProps: GetStaticProps = async () => {
         Page content
    ========================= */
 export default function ServicePage({
-  content
+  content,
 }: {
   content: servicePageContent;
 }) {
@@ -146,7 +146,7 @@ export default function ServicePage({
 
   const pageVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
   };
 
   const fadeUp: Record<"hidden" | "visible", any> = {
@@ -156,16 +156,16 @@ export default function ServicePage({
       y: 0,
       transition: {
         duration: 0.6,
-        ease: cubicBezier(0.16, 1, 0.3, 1)
-      } as Transition
-    }
+        ease: cubicBezier(0.16, 1, 0.3, 1),
+      } as Transition,
+    },
   };
 
   const floatTransition: Transition = {
     duration: 12,
     repeat: Infinity,
     repeatType: "mirror",
-    ease: "easeInOut"
+    ease: "easeInOut",
   };
 
   return (
@@ -179,38 +179,38 @@ export default function ServicePage({
         <motion.div
           animate={{
             y: [0, -20, 0],
-            x: [0, 10, 0]
+            x: [0, 10, 0],
           }}
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
           className="pointer-events-none absolute -top-32 -left-20 h-[120vh] w-[120vh] -z-10 rounded-full bg-slate-200/70 blur-3xl"
         />
         <motion.div
           animate={{
             y: [0, 20, 0],
-            x: [0, -15, 0]
+            x: [0, -15, 0],
           }}
           transition={{
             duration: 10,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 2
+            delay: 2,
           }}
           className="pointer-events-none absolute top-[30vh] left-[30%] h-[80vh] w-[80vh] -z-10 rounded-full bg-slate-300/50 blur-3xl"
         />
         <motion.div
           animate={{
             y: [0, -15, 0],
-            x: [0, 20, 0]
+            x: [0, 20, 0],
           }}
           transition={{
             duration: 12,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 4
+            delay: 4,
           }}
           className="pointer-events-none absolute top-[60vh] right-[20%] h-[60vh] w-[60vh] -z-10 rounded-full bg-emerald-200/50 blur-3xl"
         />
@@ -264,7 +264,7 @@ export default function ServicePage({
                   transition={{
                     duration: 0.6,
                     ease: [0.16, 1, 0.3, 1],
-                    delay: 0.05
+                    delay: 0.05,
                   }}
                   className="group relative mx-auto max-w-[74rem] w-[100%] -mt-8"
                 >
@@ -318,7 +318,7 @@ export default function ServicePage({
                         className="inline-block rounded-full px-6 py-2 text-base font-medium sm:text-lg"
                         style={{
                           backgroundColor: "rgba(75, 85, 99, 0.1)",
-                          color: "#4B5563"
+                          color: "#4B5563",
                         }}
                         variants={fadeUp}
                       >
@@ -356,7 +356,7 @@ export default function ServicePage({
 
                               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
                             </motion.div>
-                          )
+                          ),
                         )}
                       </div>
                     </div>
@@ -388,7 +388,7 @@ export default function ServicePage({
                   transition={{
                     duration: 0.6,
                     ease: [0.16, 1, 0.3, 1],
-                    delay: 0.05
+                    delay: 0.05,
                   }}
                   className="relative mx-auto max-w-6xl"
                 >

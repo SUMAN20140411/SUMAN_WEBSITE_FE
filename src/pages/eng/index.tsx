@@ -17,8 +17,8 @@ export const getStaticProps: GetStaticProps = async () => {
       "section3",
       "section3.solutions",
       "section4",
-      "section4.services"
-    ] // populates all relations/media 1 level deep
+      "section4.services",
+    ], // populates all relations/media 1 level deep
   });
   return { props: { content: content?.data } };
 };
@@ -35,8 +35,8 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const circleVariants = {
@@ -44,12 +44,12 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.6, ease: "easeOut" } as Transition,
+    },
   };
   const heroContainerVariants = {
     hidden: {},
-    visible: { transition: { staggerChildren: 0.18 } }
+    visible: { transition: { staggerChildren: 0.18 } },
   };
 
   const heroLineVariants = {
@@ -58,7 +58,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
       y: 48,
       x: index % 2 === 0 ? -28 : 28,
       scale: 0.94,
-      filter: "blur(8px)"
+      filter: "blur(8px)",
     }),
     visible: (index: number) => ({
       opacity: 1,
@@ -69,9 +69,9 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
       transition: {
         duration: 0.9,
         ease: [0.22, 1, 0.36, 1],
-        delay: index * 0.08
-      } as Transition
-    })
+        delay: index * 0.08,
+      } as Transition,
+    }),
   };
 
   const heroSheenVariants = {
@@ -82,9 +82,9 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
       transition: {
         duration: 1.1,
         ease: "easeInOut",
-        delay: index * 0.08 + 0.26
-      } as Transition
-    })
+        delay: index * 0.08 + 0.26,
+      } as Transition,
+    }),
   };
 
   return (
@@ -236,7 +236,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
                   transition={{
                     duration: 0.6,
                     delay: idx * 0.3,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                   viewport={{ once: true, amount: 0.3 }}
                 >

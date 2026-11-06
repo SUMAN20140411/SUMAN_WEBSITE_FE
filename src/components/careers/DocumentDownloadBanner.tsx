@@ -7,7 +7,7 @@ import type { noticePageContent } from "@/lib/strapi/careers/noticePage";
 const accentColors = [
   "from-[#3B82F6] via-[#2563EB] to-[#1D4ED8]",
   "from-[#FB923C] via-[#FB7185] to-[#F43F5E]",
-  "from-[#6366F1] via-[#4F46E5] to-[#4338CA]"
+  "from-[#6366F1] via-[#4F46E5] to-[#4338CA]",
 ];
 
 const getFileExtension = (name: string) => {
@@ -16,7 +16,7 @@ const getFileExtension = (name: string) => {
 
 const cardAppearTransition: Transition = {
   duration: 0.7,
-  ease: [0.22, 1, 0.36, 1]
+  ease: [0.22, 1, 0.36, 1],
 };
 
 // 📎 Download Banner Section (KOR/ENG Support)
@@ -28,7 +28,7 @@ export const DocumentDownloadBanner: React.FC<{
     highlight: content?.subtitle || "지원서 양식",
     description:
       content?.description ||
-      "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요."
+      "지원서를 준비할 때 필요한 양식을 원하는 포맷으로 다운로드하세요.",
   };
 
   const documents = content?.forms?.map((form, index) => ({
@@ -38,7 +38,7 @@ export const DocumentDownloadBanner: React.FC<{
     description: form.description,
     badge: form.file ? getFileExtension(form.file || "") : "DOCX",
     accent: accentColors[index % accentColors.length],
-    buttonLabel: form.downloadText
+    buttonLabel: form.downloadText,
   }));
 
   return (
@@ -58,7 +58,7 @@ export const DocumentDownloadBanner: React.FC<{
               duration: 9,
               repeat: Infinity,
               repeatType: "mirror",
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
           <motion.span
@@ -70,7 +70,7 @@ export const DocumentDownloadBanner: React.FC<{
               repeat: Infinity,
               repeatType: "mirror",
               ease: "easeInOut",
-              delay: 0.8
+              delay: 0.8,
             }}
           />
 
@@ -99,7 +99,7 @@ export const DocumentDownloadBanner: React.FC<{
                   whileInView={{
                     opacity: 1,
                     y: 0,
-                    transition: cardAppearTransition
+                    transition: cardAppearTransition,
                   }}
                   viewport={{ once: true, amount: 0.3 }}
                 >
@@ -142,4 +142,3 @@ export const DocumentDownloadBanner: React.FC<{
     </section>
   );
 };
-

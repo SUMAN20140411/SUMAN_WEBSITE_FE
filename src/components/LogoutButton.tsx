@@ -1,6 +1,6 @@
 // 로그아웃 컴포넌트
-import { useAuthStore } from '@/stores/useAuthStore';
-import { useRouter } from 'next/router';
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useRouter } from "next/router";
 
 const LogoutButton = () => {
   const { logout } = useAuthStore();
@@ -8,8 +8,8 @@ const LogoutButton = () => {
 
   const handleLogout = () => {
     logout(); // 상태 및 localStorage 정리
-    alert('로그아웃 되었습니다.');
-    router.replace('/admin/login'); // 로그인 페이지로 이동
+    alert("로그아웃 되었습니다.");
+    router.replace("/admin/login"); // 로그인 페이지로 이동
   };
 
   return (

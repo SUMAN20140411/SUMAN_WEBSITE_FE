@@ -30,7 +30,7 @@ export function parseEpostResults(html: string): PostalCodeResult[] {
 }
 
 export async function searchEpostAddresses(
-  keyword: string
+  keyword: string,
 ): Promise<PostalCodeResult[]> {
   const trimmed = keyword.trim();
   if (!trimmed) return [];

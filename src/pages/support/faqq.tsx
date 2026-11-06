@@ -46,13 +46,13 @@ const FAQPage = () => {
           question: "질문1",
           answer: "답변1",
           category: "카테고리1",
-          is_published: true
-        }
+          is_published: true,
+        },
       ];
       setFaqs(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "FAQ를 불러오는데 실패했습니다."
+        err instanceof Error ? err.message : "FAQ를 불러오는데 실패했습니다.",
       );
     } finally {
       setLoading(false);
@@ -81,8 +81,8 @@ const FAQPage = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   if (loading) {

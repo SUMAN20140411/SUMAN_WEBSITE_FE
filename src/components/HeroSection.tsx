@@ -6,10 +6,9 @@ interface HeroSectionProps {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   backgroundImage: string;
-  trimTopCm?: number;           // default 0
-  trimBottomCm?: number;        // default 0
+  trimTopCm?: number; // default 0
+  trimBottomCm?: number; // default 0
 }
-
 
 export default function HeroSection({
   title,

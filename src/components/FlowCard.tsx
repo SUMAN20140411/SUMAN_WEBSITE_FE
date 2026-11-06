@@ -1,33 +1,33 @@
-import React from 'react';
+import React from "react";
 
 interface FlowCardProps {
   title: string;
   subtitle?: string;
-  variant?: 'light' | 'navy';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "light" | "navy";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
-const FlowCard: React.FC<FlowCardProps> = ({ 
-  title, 
-  subtitle, 
-  variant = 'light', 
-  size = 'md',
-  className = '' 
+const FlowCard: React.FC<FlowCardProps> = ({
+  title,
+  subtitle,
+  variant = "light",
+  size = "md",
+  className = "",
 }) => {
   const sizeClasses = {
-    sm: 'px-3 py-2 min-w-[100px]',
-    md: 'px-5 py-3 min-w-[140px]',
-    lg: 'px-7 py-5 min-w-[180px]'
+    sm: "px-3 py-2 min-w-[100px]",
+    md: "px-5 py-3 min-w-[140px]",
+    lg: "px-7 py-5 min-w-[180px]",
   };
 
   const variantClasses = {
-    light: 'bg-[#F3F4F6] border border-[#D1D5DB] text-[#0A1633]',
-    navy: 'bg-[#0A1633] border border-[#1B2B57] text-white'
+    light: "bg-[#F3F4F6] border border-[#D1D5DB] text-[#0A1633]",
+    navy: "bg-[#0A1633] border border-[#1B2B57] text-white",
   };
 
   return (
-    <div 
+    <div
       className={`
         ${sizeClasses[size]}
         ${variantClasses[variant]}
@@ -40,22 +40,26 @@ const FlowCard: React.FC<FlowCardProps> = ({
         ${className}
       `}
     >
-      <div className={`
-        ${size === 'sm' ? 'text-sm' : size === 'md' ? 'text-base' : 'text-lg'}
+      <div
+        className={`
+        ${size === "sm" ? "text-sm" : size === "md" ? "text-base" : "text-lg"}
         font-semibold
         leading-tight
         mb-1
-      `}>
+      `}
+      >
         {title}
       </div>
-      
+
       {subtitle && (
-        <div className={`
-          ${size === 'sm' ? 'text-xs' : 'text-xs'}
+        <div
+          className={`
+          ${size === "sm" ? "text-xs" : "text-xs"}
           text-[#4B5563]
-          ${variant === 'navy' ? 'text-gray-300' : ''}
+          ${variant === "navy" ? "text-gray-300" : ""}
           leading-tight
-        `}>
+        `}
+        >
           {subtitle}
         </div>
       )}

@@ -1,9 +1,6 @@
 import { GetStaticProps } from "next";
 import CiPage from "@/pages/company/ci";
-import {
-  ciPage,
-  ciPageContent,
-} from "@/lib/strapi/company/ciPage";
+import { ciPage, ciPageContent } from "@/lib/strapi/company/ciPage";
 
 export const getStaticProps: GetStaticProps = async () => {
   try {

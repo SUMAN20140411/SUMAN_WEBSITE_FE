@@ -1,5 +1,5 @@
 export const traits = {
-    KOR: [
+  KOR: [
     {
       key: "sincerity",
       title: "성실함의 가치",
@@ -34,37 +34,37 @@ export const traits = {
 
   ENG: [
     {
-        key: "sincerity",
-        title: "The Value of Sincerity",
-        desc: "Talent who fulfills responsibilities\nand works with integrity",
-        bgImage: "/images/careers/philosophy/sincerity.png",
+      key: "sincerity",
+      title: "The Value of Sincerity",
+      desc: "Talent who fulfills responsibilities\nand works with integrity",
+      bgImage: "/images/careers/philosophy/sincerity.png",
     },
     {
-        key: "challenge",
-        title: "Belief in Challenge",
-        desc: "Talent who explores new possibilities\nand constantly takes on challenges",
-        bgImage: "/images/careers/philosophy/challenge.png",
+      key: "challenge",
+      title: "Belief in Challenge",
+      desc: "Talent who explores new possibilities\nand constantly takes on challenges",
+      bgImage: "/images/careers/philosophy/challenge.png",
     },
     {
-        key: "creativity",
-        title: "Creative Perspective",
-        desc: "Talent who creates new value\nthrough flexible thinking",
-        bgImage: "/images/careers/philosophy/creative.png",
+      key: "creativity",
+      title: "Creative Perspective",
+      desc: "Talent who creates new value\nthrough flexible thinking",
+      bgImage: "/images/careers/philosophy/creative.png",
     },
     {
-        key: "communication",
-        title: "Power of Communication",
-        desc: "Talent who communicates openly\nand values teamwork",
-        bgImage: "/images/careers/philosophy/communication.png",
+      key: "communication",
+      title: "Power of Communication",
+      desc: "Talent who communicates openly\nand values teamwork",
+      bgImage: "/images/careers/philosophy/communication.png",
     },
     {
-        key: "passion",
-        title: "Energy of Passion",
-        desc: "Talent who is immersed in their work\nand achieves results with passion",
-        bgImage: "/images/careers/philosophy/passion.png",
+      key: "passion",
+      title: "Energy of Passion",
+      desc: "Talent who is immersed in their work\nand achieves results with passion",
+      bgImage: "/images/careers/philosophy/passion.png",
     },
   ],
-}
+};
 
 export const Herotext = {
   KOR: {
@@ -78,5 +78,5 @@ export const Herotext = {
     desc: "We are looking for passionate talents who continuously grow through challenges and innovations and contribute to our customers and society.",
     state: "Now Hiring",
     position: "Various Positions",
-  }
-}
+  },
+};

@@ -1,9 +1,6 @@
 import { GetStaticProps } from "next";
 import OrgPage from "@/pages/company/org";
-import {
-  orgPage,
-  orgPageContent,
-} from "@/lib/strapi/company/orgPage";
+import { orgPage, orgPageContent } from "@/lib/strapi/company/orgPage";
 
 export const getStaticProps: GetStaticProps = async () => {
   try {

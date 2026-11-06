@@ -59,7 +59,9 @@ function textOf(value: unknown) {
 function isStatusResult(value: unknown): value is StatusResult {
   if (typeof value !== "object" || value === null) return false;
   const record = value as Record<string, unknown>;
-  return textOf(record.receiptNo).length > 0 && typeof record.status === "string";
+  return (
+    textOf(record.receiptNo).length > 0 && typeof record.status === "string"
+  );
 }
 
 function statusLabel(copy: TestRequestStatusCopy, status: string) {
@@ -93,7 +95,8 @@ function displayValue(value: string, empty: string) {
 export default function TestRequestStatus() {
   const router = useRouter();
   const { lang } = useLangStore();
-  const copy = lang === "ENG" ? testRequestStatusCopy.en : testRequestStatusCopy.ko;
+  const copy =
+    lang === "ENG" ? testRequestStatusCopy.en : testRequestStatusCopy.ko;
   const dateLang = lang === "ENG" ? "en" : "ko";
   const receiptId = useId();
   const passwordId = useId();
@@ -162,7 +165,9 @@ export default function TestRequestStatus() {
 
   return (
     <div className="mx-auto max-w-2xl rounded-lg border border-gray-100 bg-white p-4 shadow-lg sm:p-6 md:p-8">
-      <h2 className="text-xl font-bold text-gray-900 md:text-2xl">{copy.title}</h2>
+      <h2 className="text-xl font-bold text-gray-900 md:text-2xl">
+        {copy.title}
+      </h2>
       <p className="mt-3 text-sm leading-relaxed text-gray-600">{copy.intro}</p>
 
       <form className="mt-8 space-y-5" noValidate onSubmit={onSubmit}>
@@ -227,19 +232,25 @@ export default function TestRequestStatus() {
           role="status"
         >
           <div>
-            <dt className="text-sm font-semibold text-gray-500">{copy.receiptLabel}</dt>
+            <dt className="text-sm font-semibold text-gray-500">
+              {copy.receiptLabel}
+            </dt>
             <dd className="mt-1 break-all text-lg font-bold text-blue-700">
               {result.receiptNo}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-semibold text-gray-500">{copy.statusLabel}</dt>
+            <dt className="text-sm font-semibold text-gray-500">
+              {copy.statusLabel}
+            </dt>
             <dd className="mt-1 text-lg font-bold text-gray-900">
               {statusLabel(copy, result.status)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-semibold text-gray-500">{copy.receivedDate}</dt>
+            <dt className="text-sm font-semibold text-gray-500">
+              {copy.receivedDate}
+            </dt>
             <dd className="mt-1 text-base text-gray-900">
               {received
                 ? formatReceivedDate(received, dateLang)
@@ -247,13 +258,17 @@ export default function TestRequestStatus() {
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-semibold text-gray-500">{copy.sampleName}</dt>
+            <dt className="text-sm font-semibold text-gray-500">
+              {copy.sampleName}
+            </dt>
             <dd className="mt-1 text-base text-gray-900">
               {displayValue(result.sampleName, copy.empty)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-semibold text-gray-500">{copy.companyName}</dt>
+            <dt className="text-sm font-semibold text-gray-500">
+              {copy.companyName}
+            </dt>
             <dd className="mt-1 text-base text-gray-900">
               {displayValue(result.companyName, copy.empty)}
             </dd>

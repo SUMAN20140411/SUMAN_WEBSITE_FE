@@ -17,8 +17,8 @@ const navItemsKor = [
       { label: "조직도", href: "/company/org" },
       { label: "CI", href: "/company/ci" },
       { label: "오시는 길", href: "/company/location" },
-      { label: "인증 현황", href: "/company/certifications" }
-    ]
+      { label: "인증 현황", href: "/company/certifications" },
+    ],
   },
   {
     label: "기술 및 연구분야",
@@ -26,8 +26,8 @@ const navItemsKor = [
     submenu: [
       { label: "기술 소개", href: "/business/service" },
       { label: "제품 소개", href: "/business/product" },
-      { label: "연구 분야", href: "/business/rnd" }
-    ]
+      { label: "연구 분야", href: "/business/rnd" },
+    ],
   },
   {
     label: "인재채용",
@@ -35,22 +35,22 @@ const navItemsKor = [
     submenu: [
       { label: "인재상", href: "/careers/philosophy" },
       { label: "채용공고", href: "/careers/notice" },
-      { label: "복리후생", href: "/careers/wellnessMain" }
-    ]
+      { label: "복리후생", href: "/careers/wellnessMain" },
+    ],
   },
   {
     label: "고객지원",
     href: "/support/contact",
-    submenu: [{ label: "문의하기", href: "/support/contact" }]
+    submenu: [{ label: "문의하기", href: "/support/contact" }],
   },
   {
     label: "시험 접수",
     href: "/test-center/apply",
     submenu: [
       { label: "시험 접수", href: "/test-center/apply" },
-      { label: "진행 조회", href: "/test-center/status" }
-    ]
-  }
+      { label: "진행 조회", href: "/test-center/status" },
+    ],
+  },
 ];
 
 const navItemsEng = [
@@ -64,8 +64,8 @@ const navItemsEng = [
       { label: "Organization", href: "/eng/company/org" },
       { label: "CI", href: "/eng/company/ci" },
       { label: "Directions", href: "/eng/company/location" },
-      { label: "Certifications", href: "/eng/company/certifications" }
-    ]
+      { label: "Certifications", href: "/eng/company/certifications" },
+    ],
   },
   {
     label: "Business",
@@ -73,8 +73,8 @@ const navItemsEng = [
     submenu: [
       { label: "Technology", href: "/eng/business/service" },
       { label: "Product", href: "/eng/business/product" },
-      { label: "Research field", href: "/eng/business/rnd" }
-    ]
+      { label: "Research field", href: "/eng/business/rnd" },
+    ],
   },
   {
     label: "Recruitment",
@@ -82,29 +82,29 @@ const navItemsEng = [
     submenu: [
       { label: "Ideal Candidate", href: "/eng/careers/philosophy" },
       { label: "Recruit Notice", href: "/eng/careers/notice" },
-      { label: "Employee Benefits", href: "/eng/careers/wellnessMain" }
-    ]
+      { label: "Employee Benefits", href: "/eng/careers/wellnessMain" },
+    ],
   },
   {
     label: "Support",
     href: "/eng/support/contact",
-    submenu: [{ label: "Contact Us", href: "/eng/support/contact" }]
+    submenu: [{ label: "Contact Us", href: "/eng/support/contact" }],
   },
   {
     label: "Test Center",
     href: "/eng/test-center/apply",
     submenu: [
       { label: "Test Request", href: "/eng/test-center/apply" },
-      { label: "Check Progress", href: "/eng/test-center/status" }
-    ]
-  }
+      { label: "Check Progress", href: "/eng/test-center/status" },
+    ],
+  },
 ];
 
 export default function Header() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedMobileIndex, setExpandedMobileIndex] = useState<number | null>(
-    null
+    null,
   );
   const { lang } = useLangStore();
   const NAV_ITEMS = lang === "KOR" ? navItemsKor : navItemsEng;
@@ -248,7 +248,7 @@ export default function Header() {
                     className="flex justify-between items-center py-2 text-lg font-medium cursor-pointer"
                     onClick={() =>
                       setExpandedMobileIndex(
-                        expandedMobileIndex === index ? null : index
+                        expandedMobileIndex === index ? null : index,
                       )
                     }
                   >

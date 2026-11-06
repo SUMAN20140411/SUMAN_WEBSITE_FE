@@ -9,7 +9,7 @@ import {
   visionMainText,
   visionMilestones,
   visionRndText,
-  visionStrategyText
+  visionStrategyText,
 } from "@/data/vision2";
 import { visionPage, visionPageContent } from "@/lib/strapi/company/visionPage";
 import { useLangStore } from "@/stores/langStore";
@@ -25,7 +25,7 @@ import {
   LineChart,
   Star,
   Target,
-  Zap
+  Zap,
 } from "lucide-react";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -34,7 +34,7 @@ import { useEffect, useState } from "react";
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
 const staggerChildren: Variants = {
@@ -44,9 +44,9 @@ const staggerChildren: Variants = {
     transition: {
       staggerChildren: 0.2,
       delayChildren: 0.3,
-      duration: 0.6
-    }
-  }
+      duration: 0.6,
+    },
+  },
 };
 
 const zoomIn: Variants = {
@@ -55,8 +55,8 @@ const zoomIn: Variants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.7, ease: "easeOut" }
-  }
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
 };
 
 const slideInLeft: Variants = {
@@ -64,8 +64,8 @@ const slideInLeft: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: "easeOut" }
-  }
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
 };
 
 const slideInRight: Variants = {
@@ -73,15 +73,15 @@ const slideInRight: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.8, ease: "easeOut", delay: 0.4 }
-  }
+    transition: { duration: 0.8, ease: "easeOut", delay: 0.4 },
+  },
 };
 
 const floatTransition: Transition = {
   duration: 12,
   repeat: Infinity,
   repeatType: "mirror",
-  ease: "easeInOut"
+  ease: "easeInOut",
 };
 
 type AnimatedCounterProps = {
@@ -106,7 +106,7 @@ type KpiCard = {
 const AnimatedCounter = ({
   end,
   duration = 2,
-  suffix = ""
+  suffix = "",
 }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const [seen, setSeen] = useState(false);
@@ -154,14 +154,14 @@ export const getStaticProps: GetStaticProps = async () => {
       "section2.subsection",
       "section3",
       "section3.subsection",
-      "section4"
-    ] // populates all relations/media 1 level deep
+      "section4",
+    ], // populates all relations/media 1 level deep
   });
   return { props: { content: content?.data } };
 };
 
 export default function Vision2Page({
-  content
+  content,
 }: {
   content: visionPageContent;
 }) {
@@ -180,45 +180,45 @@ export default function Vision2Page({
           {
             icon: Globe2,
             title: "글로벌 기술 확장",
-            desc: "핵심 역량을 기반으로 글로벌 솔루션 네트워크를 구축합니다."
+            desc: "핵심 역량을 기반으로 글로벌 솔루션 네트워크를 구축합니다.",
           },
           {
             icon: Handshake,
             title: "파트너십 강화",
-            desc: "산학연 협업으로 혁신적인 비즈니스 기회를 발굴합니다."
+            desc: "산학연 협업으로 혁신적인 비즈니스 기회를 발굴합니다.",
           },
           {
             icon: Cpu,
             title: "스마트 제조 혁신",
-            desc: "스마트 공정과 데이터 기반 운영으로 생산성을 높입니다."
+            desc: "스마트 공정과 데이터 기반 운영으로 생산성을 높입니다.",
           },
           {
             icon: Leaf,
             title: "지속 가능한 가치",
-            desc: "ESG와 품질 중심 경영으로 장기적인 신뢰를 만들어갑니다."
-          }
+            desc: "ESG와 품질 중심 경영으로 장기적인 신뢰를 만들어갑니다.",
+          },
         ]
       : [
           {
             icon: Globe2,
             title: "Global Technology Reach",
-            desc: "Build a worldwide solution network anchored in our core capabilities."
+            desc: "Build a worldwide solution network anchored in our core capabilities.",
           },
           {
             icon: Handshake,
             title: "Stronger Partnerships",
-            desc: "Create innovative business opportunities through strategic collaborations."
+            desc: "Create innovative business opportunities through strategic collaborations.",
           },
           {
             icon: Cpu,
             title: "Smart Manufacturing",
-            desc: "Boost productivity with smart processes and data-driven operations."
+            desc: "Boost productivity with smart processes and data-driven operations.",
           },
           {
             icon: Leaf,
             title: "Sustainable Value",
-            desc: "Deliver long-term trust with ESG- and quality-focused management."
-          }
+            desc: "Deliver long-term trust with ESG- and quality-focused management.",
+          },
         ];
 
   const kpiCards: KpiCard[] =
@@ -228,28 +228,28 @@ export default function Vision2Page({
             icon: Target,
             value: parseInt(content.section1.targetSales),
             suffix: "억원",
-            label: "목표 매출액"
+            label: "목표 매출액",
           },
           {
             icon: LineChart,
             value: parseInt(content.section1.targetIncome),
             suffix: "억원",
-            label: "목표 순이익"
-          }
+            label: "목표 순이익",
+          },
         ]
       : [
           {
             icon: Target,
             value: parseInt(content.section1.targetSales),
             suffix: "B KRW",
-            label: "Target Revenue"
+            label: "Target Revenue",
           },
           {
             icon: LineChart,
             value: parseInt(content.section1.targetIncome),
             suffix: "B KRW",
-            label: "Target Net Profit"
-          }
+            label: "Target Net Profit",
+          },
         ];
 
   const overviewDescription =
@@ -428,14 +428,14 @@ export default function Vision2Page({
                               index === 0
                                 ? "0"
                                 : index ===
-                                  content.section2.subsection.length - 1
-                                ? "100%"
-                                : `calc(${
-                                    (index /
-                                      (content.section2.subsection.length -
-                                        1)) *
-                                    100
-                                  }% - 16px)`
+                                    content.section2.subsection.length - 1
+                                  ? "100%"
+                                  : `calc(${
+                                      (index /
+                                        (content.section2.subsection.length -
+                                          1)) *
+                                      100
+                                    }% - 16px)`,
                           }}
                         >
                           <div className="w-3 h-3 rounded-full bg-[#2c5282] border-2 border-white shadow-md"></div>
@@ -472,7 +472,7 @@ export default function Vision2Page({
                                     <p className="whitespace-pre-line text-md 2xl:text-lg text-black leading-relaxed">
                                       {children}
                                     </p>
-                                  )
+                                  ),
                                 }}
                               />
                             ) : (
@@ -566,7 +566,7 @@ export default function Vision2Page({
                           className="bg-gradient-to-r from-[#3D4655] to-[#5A6B7F] bg-clip-text text-transparent"
                           style={{
                             WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent"
+                            WebkitTextFillColor: "transparent",
                           }}
                         ></span>
                         <span className="text-[#2c5282] font-bold">

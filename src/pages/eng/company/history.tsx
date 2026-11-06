@@ -2,7 +2,7 @@ import { GetStaticProps } from "next";
 import HistoryPage from "@/pages/company/history";
 import {
   historyPage,
-  historyPageContent
+  historyPageContent,
 } from "@/lib/strapi/company/historyPage";
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -15,14 +15,14 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1.keywords",
         "section1.salesRecords",
         "section2",
-        "section2.historyList"
-      ]
+        "section2.historyList",
+      ],
     });
 
     return {
       props: {
-        content: content?.data
-      }
+        content: content?.data,
+      },
     };
   } catch {
     const fallback = await historyPage.find({
@@ -33,15 +33,15 @@ export const getStaticProps: GetStaticProps = async () => {
         "section1.keywords",
         "section1.salesRecords",
         "section2",
-        "section2.historyList"
-      ]
+        "section2.historyList",
+      ],
     });
     return { props: { content: fallback?.data } };
   }
 };
 
 export default function EngHistoryPage({
-  content
+  content,
 }: Readonly<{ content: historyPageContent }>) {
   return <HistoryPage content={content} />;
 }

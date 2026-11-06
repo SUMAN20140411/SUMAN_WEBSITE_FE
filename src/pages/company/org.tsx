@@ -10,12 +10,12 @@ import { orgPage, orgPageContent } from "@/lib/strapi/company/orgPage";
 
 const fadeIn = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 1 } as Transition }
+  visible: { opacity: 1, transition: { duration: 1 } as Transition },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } as Transition }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } as Transition },
 };
 
 // Organization data
@@ -26,25 +26,25 @@ const orgData = {
     departments: [
       {
         name: "경영본부",
-        teams: ["인사 / 총무"]
+        teams: ["인사 / 총무"],
       },
       {
         name: "영업본부",
-        teams: ["영업 / 영업지원", "영업 / 충방전기"]
+        teams: ["영업 / 영업지원", "영업 / 충방전기"],
       },
       {
         name: "제조본부",
-        teams: ["설계", "생산 1 (가공)", "생산 2 (조립)"]
+        teams: ["설계", "생산 1 (가공)", "생산 2 (조립)"],
       },
       {
         name: "신사업개발본부",
-        teams: ["신사업개발"]
+        teams: ["신사업개발"],
       },
       {
         name: "연구소",
-        teams: ["연구개발"]
-      }
-    ]
+        teams: ["연구개발"],
+      },
+    ],
   },
   ENG: {
     ceo: "CEO",
@@ -52,44 +52,44 @@ const orgData = {
     departments: [
       {
         name: "Management",
-        teams: ["HR / General Affairs"]
+        teams: ["HR / General Affairs"],
       },
       {
         name: "Sales",
-        teams: ["Sales / Sales Support", "Sales / Charging Equipment"]
+        teams: ["Sales / Sales Support", "Sales / Charging Equipment"],
       },
       {
         name: "Manufacturing",
         teams: [
           "Design",
           "Production 1 (Processing)",
-          "Production 2 (Assembly)"
-        ]
+          "Production 2 (Assembly)",
+        ],
       },
       {
         name: "New Business",
-        teams: ["New Business Development"]
+        teams: ["New Business Development"],
       },
       {
         name: "R&D Center",
-        teams: ["R&D"]
-      }
-    ]
-  }
+        teams: ["R&D"],
+      },
+    ],
+  },
 };
 
 export const getStaticProps: GetStaticProps = async () => {
   const content = await orgPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "orgChart", "orgChart.departments.teams"]
+    populate: ["pageInfo", "orgChart", "orgChart.departments.teams"],
   });
   return {
-    props: { content: content?.data }
+    props: { content: content?.data },
   };
 };
 
 export default function OrgPage({
-  content: orgContent
+  content: orgContent,
 }: {
   content: orgPageContent;
 }) {
@@ -100,13 +100,13 @@ export default function OrgPage({
     KOR: {
       title: "조직도",
       breadcrumb: "회사소개 > 조직도",
-      pageTitle: "조직도 | 수만"
+      pageTitle: "조직도 | 수만",
     },
     ENG: {
       title: "Organization Chart",
       breadcrumb: "Company > Organization",
-      pageTitle: "Organization | SUMAN"
-    }
+      pageTitle: "Organization | SUMAN",
+    },
   };
 
   const currentContent = content[lang];
@@ -114,7 +114,7 @@ export default function OrgPage({
   currentOrgData.departments =
     orgContent.orgChart?.departments.map((dept) => ({
       name: dept.name,
-      teams: dept.teams.map((team) => team.text)
+      teams: dept.teams.map((team) => team.text),
     })) || currentOrgData.departments;
 
   return (

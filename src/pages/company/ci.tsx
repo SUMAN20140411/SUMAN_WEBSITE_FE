@@ -11,7 +11,7 @@ import convert from "color-convert";
 
 const fadeIn = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 1 } as Transition }
+  visible: { opacity: 1, transition: { duration: 1 } as Transition },
 };
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -22,11 +22,11 @@ export const getStaticProps: GetStaticProps = async () => {
       "section1",
       "section2",
       "section2.logoFiles",
-      "colors"
-    ]
+      "colors",
+    ],
   });
   return {
-    props: { content: content?.data }
+    props: { content: content?.data },
   };
 };
 

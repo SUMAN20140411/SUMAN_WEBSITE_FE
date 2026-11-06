@@ -18,7 +18,7 @@ declare namespace kakao.maps {
     getCenter(): LatLng;
     setLevel(
       level: number,
-      options?: { animate?: boolean; around?: LatLng }
+      options?: { animate?: boolean; around?: LatLng },
     ): void;
     getLevel(): number;
     setMapTypeId(mapTypeId: MapTypeId): void;
@@ -26,7 +26,7 @@ declare namespace kakao.maps {
     setBounds(
       bounds: LatLngBounds,
       paddingTopBottom?: number,
-      paddingLeftRight?: number
+      paddingLeftRight?: number,
     ): void;
     getBounds(): LatLngBounds;
     relayout(): void; // 지도의 크기가 변경되었을 때 호출하여 지도를 다시 그리는 메서드
@@ -138,17 +138,17 @@ declare namespace kakao.maps {
     function addListener(
       target: Map | Marker | InfoWindow,
       type: string,
-      handler: (...args: unknown[]) => void // `any[]` 대신 `unknown[]` 사용
+      handler: (...args: unknown[]) => void, // `any[]` 대신 `unknown[]` 사용
     ): void;
     function removeListener(
       target: Map | Marker | InfoWindow,
       type: string,
-      handler: (...args: unknown[]) => void // `any[]` 대신 `unknown[]` 사용
+      handler: (...args: unknown[]) => void, // `any[]` 대신 `unknown[]` 사용
     ): void;
     function trigger(
       target: Map | Marker | InfoWindow,
       type: string,
-      data?: object // `any` 대신 `object` 또는 더 구체적인 타입 사용 (이벤트 데이터는 주로 객체 형태)
+      data?: object, // `any` 대신 `object` 또는 더 구체적인 타입 사용 (이벤트 데이터는 주로 객체 형태)
     ): void;
   }
 
@@ -208,14 +208,14 @@ declare namespace kakao.maps {
         address: string,
         // result: 정확한 타입은 Kakao API 문서를 참조해야 하지만, 일반적으로 배열이므로 `unknown[]`으로 변경
         callback: (result: unknown[], status: Status) => void,
-        options?: { region_type?: string; query?: string }
+        options?: { region_type?: string; query?: string },
       ): void;
       coord2Address(
         x: number,
         y: number,
         // result: 정확한 타입은 Kakao API 문서를 참조해야 하지만, 일반적으로 배열이므로 `unknown[]`으로 변경
         callback: (result: unknown[], status: Status) => void,
-        options?: { input_coord?: Coords; output_coord?: Coords }
+        options?: { input_coord?: Coords; output_coord?: Coords },
       ): void;
     }
 
@@ -228,9 +228,9 @@ declare namespace kakao.maps {
         callback: (
           result: unknown[],
           status: Status,
-          pagination: Pagination
+          pagination: Pagination,
         ) => void,
-        options?: PlaceSearchOptions
+        options?: PlaceSearchOptions,
       ): void;
       categorySearch(
         categoryCode: string,
@@ -238,9 +238,9 @@ declare namespace kakao.maps {
         callback: (
           result: unknown[],
           status: Status,
-          pagination: Pagination
+          pagination: Pagination,
         ) => void,
-        options?: PlaceSearchOptions
+        options?: PlaceSearchOptions,
       ): void;
     }
 

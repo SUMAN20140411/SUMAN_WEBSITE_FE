@@ -18,8 +18,8 @@ export const getStaticProps: GetStaticProps = async () => {
       "section3",
       "section3.solutions",
       "section4",
-      "section4.services"
-    ] // populates all relations/media 1 level deep
+      "section4.services",
+    ], // populates all relations/media 1 level deep
   });
   return { props: { content: content?.data } };
 };
@@ -35,8 +35,8 @@ export default function HomePage({ content }: { content: homePageContent }) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const circleVariants = {
@@ -44,12 +44,12 @@ export default function HomePage({ content }: { content: homePageContent }) {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.6, ease: "easeOut" } as Transition,
+    },
   };
   const heroContainerVariants = {
     hidden: {},
-    visible: { transition: { staggerChildren: 0.18 } }
+    visible: { transition: { staggerChildren: 0.18 } },
   };
 
   const heroLineVariants = {
@@ -58,7 +58,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
       y: 52,
       x: index % 2 === 0 ? -32 : 32,
       scale: 0.94,
-      filter: "blur(8px)"
+      filter: "blur(8px)",
     }),
     visible: (index: number) => ({
       opacity: 1,
@@ -69,9 +69,9 @@ export default function HomePage({ content }: { content: homePageContent }) {
       transition: {
         duration: 0.9,
         ease: [0.22, 1, 0.36, 1],
-        delay: index * 0.08
-      } as Transition
-    })
+        delay: index * 0.08,
+      } as Transition,
+    }),
   };
 
   const heroSheenVariants = {
@@ -82,9 +82,9 @@ export default function HomePage({ content }: { content: homePageContent }) {
       transition: {
         duration: 1.2,
         ease: "easeInOut",
-        delay: index * 0.08 + 0.28
-      } as Transition
-    })
+        delay: index * 0.08 + 0.28,
+      } as Transition,
+    }),
   };
 
   return (
@@ -140,7 +140,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
                   className="font-semibold tracking-[0.45em] uppercase text-white/70 mb-3
                              text-[0.825rem] sm:text-[0.9625rem] md:text-[1.1rem]" /* why: +10% */
                   style={{
-                    fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif"
+                    fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif",
                   }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -153,7 +153,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
               <motion.div
                 className="text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
                 style={{
-                  fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif"
+                  fontFamily: "'Malgun Gothic', '맑은 고딕', sans-serif",
                 }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -231,7 +231,7 @@ export default function HomePage({ content }: { content: homePageContent }) {
                   transition={{
                     duration: 0.6,
                     delay: idx * 0.3,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                   viewport={{ once: true, amount: 0.3 }}
                 >

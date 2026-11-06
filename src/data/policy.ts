@@ -2,9 +2,8 @@
 //                 개인정보 정책
 // --------------------------------------------
 export const PRIVACY_POLICY_TEXT = {
-
-// 한국어
-    KOR:`
+  // 한국어
+  KOR: `
 ㈜수만(이하 ‘회사’)는 이용자의 개인정보 보호를 매우 중요시하며, 「개인정보 보호법」 등 관련 법령을 준수하고 있습니다. 회사는 개인정보 처리방침을 통해 수집하는 개인정보의 항목, 수집 목적 및 이용 방법 등을 명확히 안내드립니다.
 
 1. 수집하는 개인정보 항목
@@ -32,8 +31,8 @@ export const PRIVACY_POLICY_TEXT = {
 
 `,
 
-// 영어
-    ENG:`
+  // 영어
+  ENG: `
 Privacy Policy
 
 SUMAN Co., Ltd. (hereinafter referred to as the "Company") places great importance on protecting users' personal information and complies with relevant laws and regulations, including the Personal Information Protection Act. Through this Privacy Policy, we clearly inform you of the items of personal information we collect, the purposes of collection, and how we use such information.
@@ -69,16 +68,14 @@ Rights of Data Subjects
 Users have the right to request access, correction, deletion, or suspension of the processing of their personal information.
 
 This policy may be subject to change in accordance with applicable laws or Company policy. In the event of any changes, such changes will be announced on the website.`,
-
 };
 
 // --------------------------------------------
 //              이메일 수집거부 정책
 // --------------------------------------------
 export const EMAIL_REFUSAL_TEXT = {
-
-// 한국어
-    KOR:`
+  // 한국어
+  KOR: `
 본 웹사이트에 게시된 이메일 주소는 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부합니다.
 
 이를 위반 시 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」에 의해 형사처벌될 수 있습니다.
@@ -87,8 +84,8 @@ export const EMAIL_REFUSAL_TEXT = {
 
 `,
 
-// 영어
-    ENG:`
+  // 영어
+  ENG: `
 Refusal of Unauthorized Email Collection
 
 Email addresses posted on this website are strictly prohibited from being collected without authorization through email harvesting programs or other technical means.

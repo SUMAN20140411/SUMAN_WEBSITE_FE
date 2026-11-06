@@ -5,7 +5,7 @@ import Layout from "@/components/Layout";
 import { serviceContent } from "@/data/product";
 import {
   productPage,
-  productPageContent
+  productPageContent,
 } from "@/lib/strapi/business/productPage";
 import { useLangStore } from "@/stores/langStore";
 import { motion, type Transition } from "framer-motion";
@@ -16,17 +16,17 @@ import { useState } from "react";
 export const getStaticProps = async () => {
   const productPageContent = await productPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "section1", "section1.products"]
+    populate: ["pageInfo", "section1", "section1.products"],
   });
   return {
     props: {
-      content: productPageContent?.data
-    }
+      content: productPageContent?.data,
+    },
   };
 };
 
 export default function ProductPage({
-  content
+  content,
 }: {
   content: productPageContent;
 }) {
@@ -40,8 +40,8 @@ export default function ProductPage({
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.5, ease: "easeOut" } as Transition,
+    },
   };
 
   const leftAlignTextVariants = {
@@ -49,8 +49,8 @@ export default function ProductPage({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } as Transition
-    }
+      transition: { duration: 0.8, ease: "easeOut" } as Transition,
+    },
   };
 
   const productTitle = lang === "KOR" ? "제품" : "Products"; // bilingual title
@@ -109,7 +109,7 @@ export default function ProductPage({
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
                 variants={{
-                  visible: { transition: { staggerChildren: 0.1 } }
+                  visible: { transition: { staggerChildren: 0.1 } },
                 }}
               >
                 {content?.section1?.products.map((product, index) => (

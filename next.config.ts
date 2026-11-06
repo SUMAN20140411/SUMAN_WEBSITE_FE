@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Static export configuration (enabled for production deployment)
-  output: 'export',
-  
+  output: "export",
+
   // Image optimization disabled (required for static sites)
   images: {
     unoptimized: true,
@@ -14,10 +14,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  
+
   // Add trailing slash (optional)
   trailingSlash: true,
-  
+
   // Base path configuration (if needed)
   // basePath: '',
   // assetPrefix: '',
@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Enable only when needed
   },
-}
+};
 
 module.exports = nextConfig;
 

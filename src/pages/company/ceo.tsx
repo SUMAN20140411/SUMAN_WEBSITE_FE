@@ -17,8 +17,8 @@ const slideInRight = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 2, ease: "easeOut" } as Transition
-  }
+    transition: { duration: 2, ease: "easeOut" } as Transition,
+  },
 };
 
 const textReveal = {
@@ -26,14 +26,14 @@ const textReveal = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 1.6, ease: "easeOut" } as Transition
-  }
+    transition: { duration: 1.6, ease: "easeOut" } as Transition,
+  },
 };
 
 export const getStaticProps: GetStaticProps = async () => {
   const content = await ceoPage.find({
     locale: "ko-KR",
-    populate: ["pageInfo", "signatures"] // populates all relations/media 1 level deep
+    populate: ["pageInfo", "signatures"], // populates all relations/media 1 level deep
   });
   return { props: { content: content?.data } };
 };
@@ -102,7 +102,7 @@ export default function CeoPage({ content }: { content: ceoPageContent }) {
                         <p className="text-gray-700 text-sm md:text-base xl:text-lg leading-relaxed">
                           {children}
                         </p>
-                      )
+                      ),
                     }}
                   >
                     {content.message}

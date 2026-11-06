@@ -44,7 +44,13 @@ const CARD_IMG_H = 32;
 const TANGENT_GAP = 10;
 
 // --- Helper: SVG arc path ---
-function describeArc(cx: number, cy: number, r: number, start: number, end: number) {
+function describeArc(
+  cx: number,
+  cy: number,
+  r: number,
+  start: number,
+  end: number,
+) {
   const startRad = ((start - 90) * Math.PI) / 180;
   const endRad = ((end - 90) * Math.PI) / 180;
   const x1 = cx + r * Math.cos(startRad);
@@ -56,23 +62,26 @@ function describeArc(cx: number, cy: number, r: number, start: number, end: numb
 }
 
 // --- Card positions mapping ---
-const CARD_PLACEMENTS: Record<string, { angle: number; anchor: "br" | "mr" | "tr" | "tl" | "ml" | "bl" }> = {
+const CARD_PLACEMENTS: Record<
+  string,
+  { angle: number; anchor: "br" | "mr" | "tr" | "tl" | "ml" | "bl" }
+> = {
   tl: { angle: 150, anchor: "br" }, // Left Top
-  l: { angle: 180, anchor: "mr" },  // Left Middle
+  l: { angle: 180, anchor: "mr" }, // Left Middle
   bl: { angle: 210, anchor: "tr" }, // Left Bottom
-  tr: { angle: 30, anchor: "tl" },  // Right Top
-  r: { angle: 0, anchor: "ml" },    // Right Middle
+  tr: { angle: 30, anchor: "tl" }, // Right Top
+  r: { angle: 0, anchor: "ml" }, // Right Middle
   br: { angle: 330, anchor: "bl" }, // Right Bottom
 };
 
 // --- Mobile grid layout ---
 const CARD_GRID: Record<string, string> = {
-  tl: "1 / 1",    // Top row, left column
-  tr: "1 / 2",    // Top row, right column
-  l: "2 / 1",     // Middle row, left column
-  r: "2 / 2",     // Middle row, right column
-  bl: "3 / 1",    // Bottom row, left column
-  br: "3 / 2",    // Bottom row, right column
+  tl: "1 / 1", // Top row, left column
+  tr: "1 / 2", // Top row, right column
+  l: "2 / 1", // Middle row, left column
+  r: "2 / 2", // Middle row, right column
+  bl: "3 / 1", // Bottom row, left column
+  br: "3 / 2", // Bottom row, right column
 };
 
 function getCardStyle(pos: string, wheelSize: number): React.CSSProperties {
@@ -139,7 +148,7 @@ export default function CapabilityWheel({
   return (
     <div
       className={`relative flex flex-col items-center justify-center w-full ${className || ""}`}
-      style={{ 
+      style={{
         minHeight: isMobile ? 680 : wheelSize + 40,
         padding: isMobile ? "1rem" : "0.5rem",
       }}
@@ -169,7 +178,7 @@ export default function CapabilityWheel({
                   wheelSize / 2,
                   ARC_RADIUS,
                   arc.start,
-                  arc.end
+                  arc.end,
                 )}
                 stroke={arc.color}
                 strokeWidth={ARC_WIDTH}
@@ -225,7 +234,10 @@ export default function CapabilityWheel({
                   boxShadow: "0 4px 16px 0 rgba(31,41,55,0.08)",
                 }}
               >
-                <h4 className="font-bold text-base mb-2" style={{ color: card.color }}>
+                <h4
+                  className="font-bold text-base mb-2"
+                  style={{ color: card.color }}
+                >
                   {card.title}
                 </h4>
                 {card.image && (
@@ -309,7 +321,10 @@ export default function CapabilityWheel({
                     borderTop: `3px solid ${card.color}`,
                   }}
                 >
-                  <h4 className="text-sm font-bold mb-2" style={{ color: card.color }}>
+                  <h4
+                    className="text-sm font-bold mb-2"
+                    style={{ color: card.color }}
+                  >
                     {card.title}
                   </h4>
                   {card.image && (
