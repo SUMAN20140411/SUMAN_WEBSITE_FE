@@ -2118,6 +2118,14 @@ function ClientStep({
         </div>
       </div>
 
+      <BillingSection
+        copy={copy}
+        register={register}
+        errors={errors}
+        setValue={setValue}
+        control={control}
+      />
+
       {addressOpen ? (
         <PostalAddressDialog
           copy={copy}
@@ -2125,6 +2133,283 @@ function ClientStep({
           onSelect={onSelectAddress}
         />
       ) : null}
+    </div>
+  );
+}
+
+function BillingSection({
+  copy,
+  register,
+  errors,
+  setValue,
+  control,
+}: {
+  copy: TestCenterCopy;
+  register: UseFormRegister<TestRequestValues>;
+  errors: FieldErrors<TestRequestValues>;
+  setValue: UseFormSetValue<TestRequestValues>;
+  control: Control<TestRequestValues>;
+}) {
+  const sameAsClientId = useId();
+  const companyNameId = useId();
+  const businessNumberId = useId();
+  const contactNameId = useId();
+  const phoneId = useId();
+  const emailLocalId = useId();
+  const emailDomainId = useId();
+  const emailDomainChoiceId = useId();
+
+  const sameAsClient = useWatch({ control, name: "billing.sameAsClient" });
+  const businessNumber = useWatch({
+    control,
+    name: "billing.businessRegistrationNumber",
+  });
+  const phoneValue = useWatch({ control, name: "billing.phone" });
+  const emailValue = useWatch({ control, name: "billing.email" });
+  const businessParts = splitParts(businessNumber, BUSINESS_PART_LENGTHS);
+  const phoneParts = splitParts(phoneValue, PHONE_PART_LENGTHS);
+  const emailParts = splitEmail(emailValue);
+  const domainIsPreset = copy.emailDomains.includes(emailParts.domain);
+
+  const companyNameError = messageOf(errors.billing?.companyName);
+  const businessNumberError = messageOf(
+    errors.billing?.businessRegistrationNumber,
+  );
+  const contactNameError = messageOf(errors.billing?.contactName);
+  const phoneError = messageOf(errors.billing?.phone);
+  const emailError = messageOf(errors.billing?.email);
+
+  const writeText = (
+    name:
+      "billing.businessRegistrationNumber" | "billing.phone" | "billing.email",
+    value: string,
+    invalid: boolean,
+  ) => {
+    setValue(name, value, { shouldDirty: true, shouldValidate: invalid });
+  };
+
+  const onBusinessPart = (index: number, raw: string) => {
+    const next = [...businessParts];
+    next[index] = digitsOnly(raw, BUSINESS_PART_LENGTHS[index] ?? 0);
+    writeText(
+      "billing.businessRegistrationNumber",
+      joinParts(next),
+      Boolean(businessNumberError),
+    );
+  };
+
+  const onPhonePart = (index: number, raw: string) => {
+    const next = [...phoneParts];
+    next[index] = digitsOnly(raw, PHONE_PART_LENGTHS[index] ?? 0);
+    writeText("billing.phone", joinParts(next), Boolean(phoneError));
+  };
+
+  const writeEmail = (local: string, domain: string) => {
+    writeText("billing.email", joinEmail(local, domain), Boolean(emailError));
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-base font-bold text-gray-900">
+        {copy.billingSectionTitle}
+      </h3>
+      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
+        <label
+          htmlFor={sameAsClientId}
+          className="flex items-center gap-3 text-sm font-semibold text-gray-800"
+        >
+          <input
+            id={sameAsClientId}
+            type="checkbox"
+            className="h-4 w-4 shrink-0 accent-blue-600"
+            {...register("billing.sameAsClient")}
+          />
+          {copy.billingSameAsClient}
+        </label>
+
+        {sameAsClient === false ? (
+          <>
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={companyNameId}
+                  label={copy.billingCompanyName}
+                  required
+                />
+                <input
+                  id={companyNameId}
+                  type="text"
+                  autoComplete="organization"
+                  aria-invalid={Boolean(companyNameError)}
+                  aria-describedby={
+                    companyNameError ? `${companyNameId}-error` : undefined
+                  }
+                  className={fieldClass(Boolean(companyNameError))}
+                  {...register("billing.companyName")}
+                />
+              </div>
+              <FieldErrorText
+                id={`${companyNameId}-error`}
+                message={companyNameError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={contactNameId}
+                  label={copy.billingContactName}
+                  required
+                />
+                <input
+                  id={contactNameId}
+                  type="text"
+                  autoComplete="name"
+                  aria-invalid={Boolean(contactNameError)}
+                  aria-describedby={
+                    contactNameError ? `${contactNameId}-error` : undefined
+                  }
+                  className={fieldClass(Boolean(contactNameError))}
+                  {...register("billing.contactName")}
+                />
+              </div>
+              <FieldErrorText
+                id={`${contactNameId}-error`}
+                message={contactNameError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={businessNumberId}
+                  label={copy.businessRegistrationNumber}
+                  required
+                />
+                <DigitParts
+                  id={businessNumberId}
+                  label={copy.businessRegistrationNumber}
+                  parts={businessParts}
+                  lengths={BUSINESS_PART_LENGTHS}
+                  widths={["w-16", "w-12", "w-24"]}
+                  invalid={Boolean(businessNumberError)}
+                  describedBy={
+                    businessNumberError
+                      ? `${businessNumberId}-error`
+                      : undefined
+                  }
+                  onPart={onBusinessPart}
+                />
+              </div>
+              <FieldErrorText
+                id={`${businessNumberId}-error`}
+                message={businessNumberError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={emailLocalId}
+                  label={copy.billingEmail}
+                  required
+                />
+                <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    id={emailLocalId}
+                    type="text"
+                    inputMode="email"
+                    autoComplete="off"
+                    aria-invalid={Boolean(emailError)}
+                    aria-describedby={
+                      emailError ? `${emailLocalId}-error` : undefined
+                    }
+                    value={emailParts.local}
+                    onChange={(event) =>
+                      writeEmail(
+                        emailPart(event.target.value),
+                        emailParts.domain,
+                      )
+                    }
+                    className={fieldClass(Boolean(emailError))}
+                  />
+                  <span className="shrink-0 text-sm text-gray-700">@</span>
+                  <input
+                    id={emailDomainId}
+                    type="text"
+                    inputMode="email"
+                    autoComplete="off"
+                    readOnly={domainIsPreset}
+                    placeholder={copy.emailDomains[0]}
+                    aria-invalid={Boolean(emailError)}
+                    value={emailParts.domain}
+                    onChange={(event) =>
+                      writeEmail(
+                        emailParts.local,
+                        emailPart(event.target.value),
+                      )
+                    }
+                    className={fieldClass(Boolean(emailError))}
+                  />
+                  <select
+                    id={emailDomainChoiceId}
+                    aria-label={copy.emailDomainDirect}
+                    value={
+                      domainIsPreset ? emailParts.domain : DIRECT_EMAIL_DOMAIN
+                    }
+                    onChange={(event) => {
+                      const choice = event.target.value;
+                      if (choice === DIRECT_EMAIL_DOMAIN) {
+                        writeEmail(
+                          emailParts.local,
+                          domainIsPreset ? "" : emailParts.domain,
+                        );
+                        return;
+                      }
+                      writeEmail(emailParts.local, choice);
+                    }}
+                    className={`${fieldClass(false)} sm:w-40 sm:shrink-0`}
+                  >
+                    {copy.emailDomains.map((domain) => (
+                      <option key={domain} value={domain}>
+                        {domain}
+                      </option>
+                    ))}
+                    <option value={DIRECT_EMAIL_DOMAIN}>
+                      {copy.emailDomainDirect}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <FieldErrorText
+                id={`${emailLocalId}-error`}
+                message={emailError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
+                  htmlFor={phoneId}
+                  label={copy.billingPhone}
+                  required
+                />
+                <DigitParts
+                  id={phoneId}
+                  label={copy.billingPhone}
+                  parts={phoneParts}
+                  lengths={PHONE_PART_LENGTHS}
+                  widths={["w-16", "w-20", "w-20"]}
+                  invalid={Boolean(phoneError)}
+                  describedBy={phoneError ? `${phoneId}-error` : undefined}
+                  onPart={onPhonePart}
+                />
+              </div>
+              <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
+            </div>
+          </>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -2364,6 +2649,44 @@ function ReviewStep({
             },
           ]}
         />
+        <div className="mt-6 border-t border-gray-100 pt-4">
+          <h4 className="mb-3 text-sm font-bold text-gray-900">
+            {copy.billingSectionTitle}
+          </h4>
+          {values.billing.sameAsClient ? (
+            <p className="text-sm font-medium text-gray-900">
+              {copy.billingSameAsClient}
+            </p>
+          ) : (
+            <SummaryRows
+              rows={[
+                {
+                  label: copy.billingCompanyName,
+                  value: displayValue(values.billing.companyName, copy.empty),
+                },
+                {
+                  label: copy.billingContactName,
+                  value: displayValue(values.billing.contactName, copy.empty),
+                },
+                {
+                  label: copy.businessRegistrationNumber,
+                  value: displayValue(
+                    values.billing.businessRegistrationNumber,
+                    copy.empty,
+                  ),
+                },
+                {
+                  label: copy.billingEmail,
+                  value: displayValue(values.billing.email, copy.empty),
+                },
+                {
+                  label: copy.billingPhone,
+                  value: displayValue(values.billing.phone, copy.empty),
+                },
+              ]}
+            />
+          )}
+        </div>
       </ReviewSection>
 
       <ConsentBox
