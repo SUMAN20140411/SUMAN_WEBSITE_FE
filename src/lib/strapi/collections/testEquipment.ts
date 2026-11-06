@@ -14,11 +14,13 @@ export type TestEquipmentItem = {
   summary: string;
   image: string;
   specs: TestEquipmentSpec[];
+  order: number;
 };
 
 export type TestEquipmentCategory = {
   id: string;
   label: string;
+  order: number;
 };
 
 export type TestEquipmentCatalog = {
@@ -32,9 +34,11 @@ type TestEquipmentDocument = {
   summary?: string | null;
   image?: unknown;
   specs?: unknown;
+  order?: number | null;
   test_equipment_category?: {
     documentId?: string;
     name?: string | null;
+    order?: number | null;
   } | null;
 };
 
@@ -63,10 +67,25 @@ function specsOf(value: unknown): TestEquipmentSpec[] {
   });
 }
 
+function orderOf(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function byOrderThenText(
+  orderA: number,
+  textA: string,
+  orderB: number,
+  textB: string,
+  locale: string
+) {
+  if (orderA !== orderB) return orderA - orderB;
+  return textA.localeCompare(textB, locale);
+}
+
 function categoryOf(value: TestEquipmentDocument["test_equipment_category"]) {
   const id = textOf(value?.documentId);
   if (!id) return null;
-  return { id, label: textOf(value?.name) };
+  return { id, label: textOf(value?.name), order: orderOf(value?.order) };
 }
 
 export async function loadTestEquipment(
@@ -77,7 +96,7 @@ export async function loadTestEquipment(
     status: "published",
     populate: ["specs", "test_equipment_category"],
     pagination: { pageSize: 100 },
-    sort: ["name:asc"],
+    sort: ["order:asc", "name:asc"],
   });
 
   const items: TestEquipmentItem[] = [];
@@ -96,6 +115,7 @@ export async function loadTestEquipment(
       summary: textOf(document.summary),
       image: imageUrl(document.image),
       specs: specsOf(document.specs),
+      order: orderOf(document.order),
     });
 
     if (!seen.has(category.id)) {
@@ -103,6 +123,13 @@ export async function loadTestEquipment(
       categories.push(category);
     }
   }
+
+  items.sort((a, b) =>
+    byOrderThenText(a.order, a.name, b.order, b.name, locale)
+  );
+  categories.sort((a, b) =>
+    byOrderThenText(a.order, a.label, b.order, b.label, locale)
+  );
 
   return { items, categories };
 }
