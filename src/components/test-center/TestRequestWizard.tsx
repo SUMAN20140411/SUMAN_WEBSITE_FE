@@ -2153,11 +2153,14 @@ function BillingSection({
   const sameAsClientId = useId();
   const companyNameId = useId();
   const businessNumberId = useId();
+  const addressId = useId();
+  const addressDetailId = useId();
   const contactNameId = useId();
   const phoneId = useId();
   const emailLocalId = useId();
   const emailDomainId = useId();
   const emailDomainChoiceId = useId();
+  const [addressOpen, setAddressOpen] = useState(false);
 
   const sameAsClient = useWatch({ control, name: "billing.sameAsClient" });
   const businessNumber = useWatch({
@@ -2178,10 +2181,16 @@ function BillingSection({
   const contactNameError = messageOf(errors.billing?.contactName);
   const phoneError = messageOf(errors.billing?.phone);
   const emailError = messageOf(errors.billing?.email);
+  const addressError =
+    messageOf(errors.billing?.address) ||
+    messageOf(errors.billing?.companyPostalCode) ||
+    messageOf(errors.billing?.companyAddressDetail);
 
   const writeText = (
     name:
-      "billing.businessRegistrationNumber" | "billing.phone" | "billing.email",
+      | "billing.businessRegistrationNumber"
+      | "billing.phone"
+      | "billing.email",
     value: string,
     invalid: boolean,
   ) => {
@@ -2206,6 +2215,18 @@ function BillingSection({
 
   const writeEmail = (local: string, domain: string) => {
     writeText("billing.email", joinEmail(local, domain), Boolean(emailError));
+  };
+
+  const onSelectAddress = (result: PostalCodeResult) => {
+    setValue("billing.companyPostalCode", result.zipCode, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setValue("billing.address", result.roadAddress, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setAddressOpen(false);
   };
 
   return (
@@ -2257,6 +2278,98 @@ function BillingSection({
             <div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <ReportFieldLabel
+                  htmlFor={businessNumberId}
+                  label={copy.businessRegistrationNumber}
+                  required
+                />
+                <DigitParts
+                  id={businessNumberId}
+                  label={copy.businessRegistrationNumber}
+                  parts={businessParts}
+                  lengths={BUSINESS_PART_LENGTHS}
+                  widths={["w-16", "w-12", "w-24"]}
+                  invalid={Boolean(businessNumberError)}
+                  describedBy={
+                    businessNumberError
+                      ? `${businessNumberId}-error`
+                      : undefined
+                  }
+                  onPart={onBusinessPart}
+                />
+              </div>
+              <FieldErrorText
+                id={`${businessNumberId}-error`}
+                message={businessNumberError}
+              />
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                <ReportFieldLabel
+                  htmlFor={addressId}
+                  label={copy.address}
+                  required
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      onClick={() => setAddressOpen(true)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-violet-700 text-white hover:bg-violet-800"
+                      aria-label={copy.addressSearch}
+                    >
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <input
+                      id={addressId}
+                      type="text"
+                      readOnly
+                      placeholder={copy.addressPlaceholder}
+                      aria-invalid={Boolean(addressError)}
+                      aria-describedby={
+                        addressError ? `${addressId}-error` : undefined
+                      }
+                      className={fieldClass(Boolean(addressError))}
+                      {...register("billing.address")}
+                    />
+                    <input
+                      id={addressDetailId}
+                      type="text"
+                      placeholder={copy.addressDetail}
+                      autoComplete="address-line2"
+                      aria-invalid={Boolean(
+                        messageOf(errors.billing?.companyAddressDetail),
+                      )}
+                      className={fieldClass(
+                        Boolean(
+                          messageOf(errors.billing?.companyAddressDetail),
+                        ),
+                      )}
+                      {...register("billing.companyAddressDetail")}
+                    />
+                  </div>
+                  <FieldErrorText
+                    id={`${addressId}-error`}
+                    message={addressError}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <ReportFieldLabel
                   htmlFor={contactNameId}
                   label={copy.billingContactName}
                   required
@@ -2282,29 +2395,22 @@ function BillingSection({
             <div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <ReportFieldLabel
-                  htmlFor={businessNumberId}
-                  label={copy.businessRegistrationNumber}
+                  htmlFor={phoneId}
+                  label={copy.billingPhone}
                   required
                 />
                 <DigitParts
-                  id={businessNumberId}
-                  label={copy.businessRegistrationNumber}
-                  parts={businessParts}
-                  lengths={BUSINESS_PART_LENGTHS}
-                  widths={["w-16", "w-12", "w-24"]}
-                  invalid={Boolean(businessNumberError)}
-                  describedBy={
-                    businessNumberError
-                      ? `${businessNumberId}-error`
-                      : undefined
-                  }
-                  onPart={onBusinessPart}
+                  id={phoneId}
+                  label={copy.billingPhone}
+                  parts={phoneParts}
+                  lengths={PHONE_PART_LENGTHS}
+                  widths={["w-16", "w-20", "w-20"]}
+                  invalid={Boolean(phoneError)}
+                  describedBy={phoneError ? `${phoneId}-error` : undefined}
+                  onPart={onPhonePart}
                 />
               </div>
-              <FieldErrorText
-                id={`${businessNumberId}-error`}
-                message={businessNumberError}
-              />
+              <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
             </div>
 
             <div>
@@ -2386,30 +2492,17 @@ function BillingSection({
                 message={emailError}
               />
             </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={phoneId}
-                  label={copy.billingPhone}
-                  required
-                />
-                <DigitParts
-                  id={phoneId}
-                  label={copy.billingPhone}
-                  parts={phoneParts}
-                  lengths={PHONE_PART_LENGTHS}
-                  widths={["w-16", "w-20", "w-20"]}
-                  invalid={Boolean(phoneError)}
-                  describedBy={phoneError ? `${phoneId}-error` : undefined}
-                  onPart={onPhonePart}
-                />
-              </div>
-              <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
-            </div>
           </>
         ) : null}
       </div>
+
+      {addressOpen ? (
+        <PostalAddressDialog
+          copy={copy}
+          onClose={() => setAddressOpen(false)}
+          onSelect={onSelectAddress}
+        />
+      ) : null}
     </div>
   );
 }
@@ -2665,10 +2758,6 @@ function ReviewStep({
                   value: displayValue(values.billing.companyName, copy.empty),
                 },
                 {
-                  label: copy.billingContactName,
-                  value: displayValue(values.billing.contactName, copy.empty),
-                },
-                {
                   label: copy.businessRegistrationNumber,
                   value: displayValue(
                     values.billing.businessRegistrationNumber,
@@ -2676,12 +2765,27 @@ function ReviewStep({
                   ),
                 },
                 {
-                  label: copy.billingEmail,
-                  value: displayValue(values.billing.email, copy.empty),
+                  label: copy.address,
+                  value:
+                    [
+                      values.billing.companyPostalCode.trim(),
+                      values.billing.address.trim(),
+                      values.billing.companyAddressDetail.trim(),
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || copy.empty,
+                },
+                {
+                  label: copy.billingContactName,
+                  value: displayValue(values.billing.contactName, copy.empty),
                 },
                 {
                   label: copy.billingPhone,
                   value: displayValue(values.billing.phone, copy.empty),
+                },
+                {
+                  label: copy.billingEmail,
+                  value: displayValue(values.billing.email, copy.empty),
                 },
               ]}
             />
