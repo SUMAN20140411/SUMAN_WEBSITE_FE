@@ -17,10 +17,11 @@ import {
   testCenterCopy,
   type TestCenterCopy,
 } from "@/content/test-center/equipment";
-import type {
-  TestEquipmentCatalog,
-  TestEquipmentCategory,
-  TestEquipmentItem,
+import {
+  equipmentDisplayName,
+  type TestEquipmentCatalog,
+  type TestEquipmentCategory,
+  type TestEquipmentItem,
 } from "@/lib/strapi/collections/testEquipment";
 import { buildTestRequestPayload } from "@/lib/test-center/payload";
 import {
@@ -739,7 +740,7 @@ function EquipmentStep({
                   {previewItem.image ? (
                     <Image
                       src={previewItem.image}
-                      alt={previewItem.name}
+                      alt={equipmentDisplayName(previewItem)}
                       fill
                       objectFit="contain"
                       sizes="(min-width: 1024px) 28rem, 100vw"
@@ -752,7 +753,7 @@ function EquipmentStep({
                   className="block px-3 py-2.5 text-center text-sm font-semibold text-white"
                   style={{ backgroundColor: EQUIPMENT_NAVY }}
                 >
-                  {previewItem.name}
+                  {equipmentDisplayName(previewItem)}
                 </span>
               </div>
               {previewItem.summary ? (

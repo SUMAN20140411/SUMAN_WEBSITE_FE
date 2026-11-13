@@ -11,11 +11,19 @@ export type TestEquipmentItem = {
   id: string;
   categoryId: string;
   name: string;
+  equipmentName: string;
   summary: string;
   image: string;
   specs: TestEquipmentSpec[];
   order: number;
 };
+
+export function equipmentDisplayName(
+  item: Pick<TestEquipmentItem, "name" | "equipmentName">,
+) {
+  const equipmentName = item.equipmentName.trim();
+  return equipmentName || item.name;
+}
 
 export type TestEquipmentCategory = {
   id: string;
@@ -31,6 +39,7 @@ export type TestEquipmentCatalog = {
 type TestEquipmentDocument = {
   documentId?: string;
   name?: string | null;
+  equipmentName?: string | null;
   summary?: string | null;
   image?: unknown;
   specs?: unknown;
@@ -112,6 +121,7 @@ export async function loadTestEquipment(
       id,
       categoryId: category.id,
       name: textOf(document.name),
+      equipmentName: textOf(document.equipmentName),
       summary: textOf(document.summary),
       image: imageUrl(document.image),
       specs: specsOf(document.specs),
