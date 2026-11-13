@@ -97,15 +97,10 @@ export const JobApplicationUploadForm: React.FC<{ lang: "KOR" | "ENG" }> = ({
   }, [lang]);
 
   const endpoint = useMemo(() => {
-    const wpUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL;
-    if (!wpUrl) return "/wp-json/suman/v1/job-applications";
-
-    try {
-      const origin = new URL(wpUrl).origin;
-      return `${origin}/wp-json/suman/v1/job-applications`;
-    } catch {
-      return "/wp-json/suman/v1/job-applications";
-    }
+    const base = process.env.NEXT_PUBLIC_STRAPI_URL?.replace(/\/$/, "");
+    return base
+      ? `${base}/job-applications`
+      : "http://localhost:1337/api/job-applications";
   }, []);
 
   const schema = useMemo(() => {
