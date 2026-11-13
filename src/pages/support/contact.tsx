@@ -16,6 +16,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+const ADMIN_PASSWORD_KEY = "suman_inquiries_admin_password";
+
 const inquirySchema = z.object({
   name: z.string().trim().min(1, "이름을 입력해 주세요.").max(100),
   affiliation: z.string().trim().max(120).optional(),
@@ -52,16 +54,8 @@ export default function HistoryPage({
     lang === "ENG" ? "Sales / Marketing" : "영업 / 마케팅";
 
   const inquiriesEndpoint = useMemo(() => {
-    const wpUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL;
-    if (!wpUrl) return "/wp-json/suman/v1/inquiries";
-
-    try {
-      const origin = new URL(wpUrl).origin;
-      return `${origin}/wp-json/suman/v1/inquiries`;
-    } catch {
-      // Fallback to relative URL if parsing fails (same-origin deployments).
-      return "/wp-json/suman/v1/inquiries";
-    }
+    const base = process.env.NEXT_PUBLIC_STRAPI_URL?.replace(/\/$/, "");
+    return base ? `${base}/inquiries` : "http://localhost:1337/api/inquiries";
   }, []);
 
   const departmentOptions = useMemo(() => {
@@ -114,6 +108,10 @@ export default function HistoryPage({
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [inquiriesError, setInquiriesError] = useState<string | null>(null);
   const [inquiriesPage, setInquiriesPage] = useState(1);
+  const [adminPassword, setAdminPassword] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [authAttempt, setAuthAttempt] = useState(0);
 
   const totalPages = inquiries?.total_pages ?? 1;
   const canGoPrev = inquiriesPage > 1;
@@ -191,7 +189,7 @@ export default function HistoryPage({
   }, [lang]);
 
   const loadInquiries = useCallback(
-    async (page: number) => {
+    async (page: number, password: string) => {
       setInquiriesLoading(true);
       setInquiriesError(null);
 
@@ -201,18 +199,28 @@ export default function HistoryPage({
           method: "GET",
           headers: {
             Accept: "application/json",
+            "x-inquiry-admin-password": password,
           },
         });
 
-        const data = (await res.json()) as InquiryListResponse;
+        if (res.status === 401) {
+          return "unauthorized" as const;
+        }
 
-        if (!res.ok) {
-          throw new Error((data as any)?.error ?? t.fetchError);
+        const data = (await res.json().catch(() => null)) as
+          | (InquiryListResponse & { error?: string })
+          | { error?: string }
+          | null;
+
+        if (!res.ok || !data || !("items" in data)) {
+          throw new Error(data?.error ?? t.fetchError);
         }
 
         setInquiries(data);
+        return "ok" as const;
       } catch (err) {
         setInquiriesError(err instanceof Error ? err.message : t.fetchError);
+        return "error" as const;
       } finally {
         setInquiriesLoading(false);
       }
@@ -221,8 +229,75 @@ export default function HistoryPage({
   );
 
   useEffect(() => {
-    loadInquiries(inquiriesPage);
-  }, [inquiriesPage, loadInquiries]);
+    try {
+      const saved = window.sessionStorage.getItem(ADMIN_PASSWORD_KEY);
+      if (saved) {
+        setAdminPassword(saved);
+        setUnlocked(true);
+      }
+    } catch {
+      setUnlocked(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!adminPassword) return;
+    let cancelled = false;
+    loadInquiries(inquiriesPage, adminPassword).then((outcome) => {
+      if (cancelled) return;
+      if (outcome === "ok") {
+        setUnlocked(true);
+        setUnlockError(null);
+        try {
+          window.sessionStorage.setItem(ADMIN_PASSWORD_KEY, adminPassword);
+        } catch {
+          // ignore storage failures
+        }
+        return;
+      }
+      if (outcome === "unauthorized") {
+        setUnlocked(false);
+        setAdminPassword(null);
+        setInquiries(null);
+        setUnlockError(t.incorrectPassword);
+        try {
+          window.sessionStorage.removeItem(ADMIN_PASSWORD_KEY);
+        } catch {
+          // ignore storage failures
+        }
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    adminPassword,
+    inquiriesPage,
+    authAttempt,
+    loadInquiries,
+    t.incorrectPassword,
+  ]);
+
+  const onUnlock = useCallback((password: string) => {
+    setUnlockError(null);
+    setInquiriesError(null);
+    setInquiriesPage(1);
+    setAdminPassword(password);
+    setAuthAttempt((attempt) => attempt + 1);
+  }, []);
+
+  const onLock = useCallback(() => {
+    setAdminPassword(null);
+    setUnlocked(false);
+    setUnlockError(null);
+    setInquiries(null);
+    setInquiriesError(null);
+    try {
+      window.sessionStorage.removeItem(ADMIN_PASSWORD_KEY);
+    } catch {
+      // ignore storage failures
+    }
+  }, []);
 
   const onInquirySubmit = useCallback(
     async (values: InquiryFormValues) => {
@@ -266,7 +341,10 @@ export default function HistoryPage({
           message: "",
           website: "",
         });
-        setInquiriesPage(1);
+        if (adminPassword) {
+          setInquiriesPage(1);
+          setAuthAttempt((attempt) => attempt + 1);
+        }
       } catch (err) {
         setSubmitError(err instanceof Error ? err.message : t.submitError);
       } finally {
@@ -278,7 +356,7 @@ export default function HistoryPage({
       lang,
       initialDepartment,
       reset,
-      setInquiriesPage,
+      adminPassword,
       t.success,
       t.submitError,
     ],
@@ -535,6 +613,11 @@ export default function HistoryPage({
                     canGoPrev={canGoPrev}
                     canGoNext={canGoNext}
                     totalPages={totalPages}
+                    unlocked={unlocked}
+                    unlockError={unlockError}
+                    unlocking={inquiriesLoading && !unlocked}
+                    onUnlock={onUnlock}
+                    onLock={onLock}
                     onPrev={() => setInquiriesPage((p) => Math.max(1, p - 1))}
                     onNext={() =>
                       setInquiriesPage((p) => Math.min(totalPages, p + 1))
