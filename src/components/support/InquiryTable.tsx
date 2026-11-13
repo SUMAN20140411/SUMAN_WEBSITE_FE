@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 export type InquiryItem = {
   id: number;
@@ -52,13 +52,14 @@ export type InquiryTableProps = {
   canGoPrev: boolean;
   canGoNext: boolean;
   totalPages: number;
+  unlocked: boolean;
+  unlockError: string | null;
+  unlocking: boolean;
+  onUnlock: (password: string) => void;
+  onLock: () => void;
   onPrev: () => void;
   onNext: () => void;
 };
-
-const ADMIN_UNLOCKED_KEY = "suman_inquiries_admin_unlocked";
-const ADMIN_PASSWORD =
-  process.env.NEXT_PUBLIC_INQUIRIES_ADMIN_PASSWORD ?? "SUMAN20140411@";
 
 export default function InquiryTable(props: InquiryTableProps) {
   const {
@@ -71,21 +72,19 @@ export default function InquiryTable(props: InquiryTableProps) {
     canGoPrev,
     canGoNext,
     totalPages,
+    unlocked,
+    unlockError,
+    unlocking,
+    onUnlock,
+    onLock,
     onPrev,
     onNext,
   } = props;
 
-  const [unlocked, setUnlocked] = useState(false);
   const [pw, setPw] = useState("");
-  const [unlockError, setUnlockError] = useState<string | null>(null);
-
-  useEffect(() => {
-    try {
-      setUnlocked(window.sessionStorage.getItem(ADMIN_UNLOCKED_KEY) === "1");
-    } catch {
-      setUnlocked(false);
-    }
-  }, []);
+  const [localUnlockError, setLocalUnlockError] = useState<string | null>(
+    null,
+  );
 
   const hasInquiries = Boolean(inquiries?.items?.length);
   const pageDisplay = inquiries?.page ?? inquiriesPage;
@@ -96,37 +95,15 @@ export default function InquiryTable(props: InquiryTableProps) {
     return unlocked ? inquiriesError : null;
   }, [unlocked, inquiriesError]);
 
-  const onUnlock = useCallback(() => {
+  const requestUnlock = useCallback(() => {
     const candidate = pw.trim();
     if (!candidate) {
-      setUnlockError(labels.passwordRequired);
+      setLocalUnlockError(labels.passwordRequired);
       return;
     }
-    if (candidate !== ADMIN_PASSWORD) {
-      setUnlockError(labels.incorrectPassword);
-      return;
-    }
-
-    setUnlockError(null);
-    setUnlocked(true);
-    setPw("");
-    try {
-      window.sessionStorage.setItem(ADMIN_UNLOCKED_KEY, "1");
-    } catch {
-      // ignore storage failures (private mode / locked storage)
-    }
-  }, [pw, labels.passwordRequired, labels.incorrectPassword]);
-
-  const onLock = useCallback(() => {
-    setUnlocked(false);
-    setUnlockError(null);
-    setPw("");
-    try {
-      window.sessionStorage.removeItem(ADMIN_UNLOCKED_KEY);
-    } catch {
-      // ignore
-    }
-  }, []);
+    setLocalUnlockError(null);
+    onUnlock(candidate);
+  }, [pw, labels.passwordRequired, onUnlock]);
 
   if (!unlocked) {
     return (
@@ -146,25 +123,29 @@ export default function InquiryTable(props: InquiryTableProps) {
               value={pw}
               onChange={(e) => setPw(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") onUnlock();
+                if (e.key === "Enter") requestUnlock();
               }}
               type="password"
               placeholder={labels.adminPasswordPlaceholder}
               className="w-full sm:w-64 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
               autoComplete="current-password"
+              disabled={unlocking}
             />
             <button
               type="button"
-              onClick={onUnlock}
-              className="px-4 py-2 rounded-md bg-gray-900 text-white text-sm font-medium hover:bg-gray-800"
+              onClick={requestUnlock}
+              disabled={unlocking}
+              className="px-4 py-2 rounded-md bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-60"
             >
               {labels.unlock}
             </button>
           </div>
         </div>
 
-        {unlockError && (
-          <div className="mt-3 text-sm text-red-700">{unlockError}</div>
+        {(localUnlockError || unlockError || inquiriesError) && (
+          <div className="mt-3 text-sm text-red-700">
+            {localUnlockError || unlockError || inquiriesError}
+          </div>
         )}
       </div>
     );
