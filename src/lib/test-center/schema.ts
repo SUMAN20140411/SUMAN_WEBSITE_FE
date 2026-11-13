@@ -67,6 +67,9 @@ export type BillingValues = {
   businessRegistrationNumber: string;
   email: string;
   phone: string;
+  companyPostalCode: string;
+  address: string;
+  companyAddressDetail: string;
 };
 
 export type TestRequestValues = {
@@ -125,6 +128,9 @@ export const emptyTestRequest: TestRequestValues = {
     businessRegistrationNumber: "",
     email: "",
     phone: "",
+    companyPostalCode: "",
+    address: "",
+    companyAddressDetail: "",
   },
   privacyConsent: false,
   damageConsent: false,
@@ -426,6 +432,9 @@ export function buildBillingSchema(copy: TestCenterCopy) {
       businessRegistrationNumber: z.string(),
       email: z.string(),
       phone: z.string(),
+      companyPostalCode: z.string(),
+      address: z.string(),
+      companyAddressDetail: z.string(),
     })
     .superRefine((values, ctx) => {
       if (values.sameAsClient) return;
@@ -436,17 +445,14 @@ export function buildBillingSchema(copy: TestCenterCopy) {
         values.businessRegistrationNumber.trim();
       const email = values.email.trim();
       const phone = values.phone.trim();
+      const companyPostalCode = values.companyPostalCode.trim();
+      const address = values.address.trim();
+      const companyAddressDetail = values.companyAddressDetail.trim();
 
       if (!companyName) {
         issue(ctx, ["companyName"], messages.billingCompanyName);
       } else if (companyName.length > 200) {
         issue(ctx, ["companyName"], messages.tooLong);
-      }
-
-      if (!contactName) {
-        issue(ctx, ["contactName"], messages.billingContactName);
-      } else if (contactName.length > 200) {
-        issue(ctx, ["contactName"], messages.tooLong);
       }
 
       if (
@@ -463,12 +469,26 @@ export function buildBillingSchema(copy: TestCenterCopy) {
         );
       }
 
-      if (!email) {
-        issue(ctx, ["email"], messages.emailRequired);
-      } else if (email.length > 254) {
-        issue(ctx, ["email"], messages.tooLong);
-      } else if (!emailSchema.safeParse(email).success) {
-        issue(ctx, ["email"], messages.emailInvalid);
+      if (!companyPostalCode) {
+        issue(ctx, ["companyPostalCode"], messages.companyPostalCode);
+      } else if (companyPostalCode.length > 10) {
+        issue(ctx, ["companyPostalCode"], messages.tooLong);
+      }
+
+      if (!address) {
+        issue(ctx, ["address"], messages.address);
+      } else if (address.length > 300) {
+        issue(ctx, ["address"], messages.tooLong);
+      }
+
+      if (companyAddressDetail.length > 200) {
+        issue(ctx, ["companyAddressDetail"], messages.tooLong);
+      }
+
+      if (!contactName) {
+        issue(ctx, ["contactName"], messages.billingContactName);
+      } else if (contactName.length > 200) {
+        issue(ctx, ["contactName"], messages.tooLong);
       }
 
       if (!phone) {
@@ -477,6 +497,14 @@ export function buildBillingSchema(copy: TestCenterCopy) {
         issue(ctx, ["phone"], messages.tooLong);
       } else if (!/^\d{2,4}-\d{3,4}-\d{4}$/.test(phone)) {
         issue(ctx, ["phone"], messages.phoneInvalid);
+      }
+
+      if (!email) {
+        issue(ctx, ["email"], messages.emailRequired);
+      } else if (email.length > 254) {
+        issue(ctx, ["email"], messages.tooLong);
+      } else if (!emailSchema.safeParse(email).success) {
+        issue(ctx, ["email"], messages.emailInvalid);
       }
     });
 }
