@@ -17,6 +17,9 @@ export function buildTestRequestPayload(
         businessRegistrationNumber: client.businessRegistrationNumber,
         email: client.email,
         phone: client.phone,
+        companyPostalCode: client.companyPostalCode,
+        address: client.address,
+        companyAddressDetail: client.companyAddressDetail,
       }
     : billing;
   const mail = report.receiveMethod === "mail";
@@ -73,6 +76,9 @@ export function buildTestRequestPayload(
       businessRegistrationNumber: payer.businessRegistrationNumber.trim(),
       email: payer.email.trim(),
       phone: payer.phone.trim(),
+      companyPostalCode: payer.companyPostalCode.trim(),
+      address: payer.address.trim(),
+      companyAddressDetail: payer.companyAddressDetail.trim(),
     },
   };
 }

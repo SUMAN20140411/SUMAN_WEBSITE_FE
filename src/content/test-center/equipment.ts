@@ -170,7 +170,7 @@ const ko = {
   selectPlaceholder: "선택해 주세요",
   businessNumberHint: "숫자 10자리, 하이픈 입력 가능",
   consentPrivacy:
-    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보, 매출처 정보(매출처명, 담당자, 사업자등록번호, 전자계산서 수신 이메일, 담당자 휴대폰번호)입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 전자계산서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
+    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보, 매출처 정보(매출처명, 사업자등록번호, 주소, 담당자, 전자계산서 수신 이메일, 담당자 휴대폰번호)입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 전자계산서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
   consentDamage:
     "(필수) 시험 과정에서 시료가 손상되거나 파손될 수 있음을 이해합니다.",
   missingApi: "시험 접수 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
@@ -336,7 +336,7 @@ const en = {
   selectPlaceholder: "Select",
   businessNumberHint: "10 digits, hyphens allowed",
   consentPrivacy:
-    "(Required) I agree to the collection and use of personal information. Items collected: company name, representative name, business registration number, contact details (name, phone, email), address, sample information, and billing details (billing company name, contact, business registration number, electronic invoice email, contact mobile). Purposes: receiving the test request, contacting the applicant, issuing the report, issuing the electronic invoice, and sending the receipt email. Retention period: 3 years.",
+    "(Required) I agree to the collection and use of personal information. Items collected: company name, representative name, business registration number, contact details (name, phone, email), address, sample information, and billing details (billing company name, business registration number, address, contact, electronic invoice email, contact mobile). Purposes: receiving the test request, contacting the applicant, issuing the report, issuing the electronic invoice, and sending the receipt email. Retention period: 3 years.",
   consentDamage:
     "(Required) I understand that a test may damage or destroy the sample.",
   missingApi:
