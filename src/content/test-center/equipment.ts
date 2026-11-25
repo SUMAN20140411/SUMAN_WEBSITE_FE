@@ -67,6 +67,7 @@ export type TestCenterCopy = {
   analysisPurpose: string;
   analysisPurposePlaceholder: string;
   analysisPurposeHint: string;
+  analysisPurposes: ChoiceOption[];
   copyCount: string;
   copyCountUnit: string;
   receiveMethod: string;
@@ -128,6 +129,7 @@ export type TestCenterCopy = {
     purpose: string;
     purposeDetail: string;
     analysisPurpose: string;
+    analysisPurposeOther: string;
     desiredCompletionDateRequired: string;
     desiredCompletionDateInvalid: string;
     copyCountRequired: string;
@@ -230,10 +232,16 @@ const ko = {
   purposeDetailPlaceholder: "거래처 제출용일 경우 제출처를 작성해 주세요.",
   purposeHint: "성적서 용도가 해당 없을 경우 기타를 선택하세요.",
   analysisPurpose: "분석 용도",
-  analysisPurposePlaceholder:
-    "분석 결과를 어디에 사용하시는지 시험 목적을 입력해 주세요. (예: 회사 발전에 사용, 제품 내구성 검증 등)",
+  analysisPurposePlaceholder: "기타 분석 용도를 직접 입력해 주세요.",
   analysisPurposeHint:
-    "성적서 용도와 별개로, 이 분석 결과를 어디에 사용하려는 지(시험 목적)를 입력해 주세요.",
+    "해당하는 항목을 모두 선택해 주세요. 목록에 없는 경우 기타를 선택해 직접 입력할 수 있습니다.",
+  analysisPurposes: [
+    { value: "rnd", label: "연구개발 / 개발 검증" },
+    { value: "failure", label: "불량 / 고장 원인 분석" },
+    { value: "reliability", label: "신뢰성 평가 / 양산 품질 확인" },
+    { value: "certification", label: "인증 / 규격 대응" },
+    { value: "other", label: "기타" },
+  ],
   copyCount: "성적서 발급매수",
   copyCountUnit: "매",
   receiveMethod: "성적서 수령방법",
@@ -306,16 +314,19 @@ const ko = {
     sizeInvalid: "시료 크기는 0보다 큰 숫자로 입력해 주세요.",
     sizeIncomplete: "시료 크기(W, D, H)를 모두 입력해 주세요.",
     customSpecIncomplete: "사양의 항목과 내용을 모두 입력해 주세요.",
-    applicationFilesTooMany: "신청서 첨부파일은 최대 5개까지 첨부할 수 있습니다.",
+    applicationFilesTooMany:
+      "신청서 첨부파일은 최대 5개까지 첨부할 수 있습니다.",
     fileEmpty: "빈 파일은 첨부할 수 없습니다.",
     fileTooLarge: "첨부파일은 개당 10MB 이하만 업로드할 수 있습니다.",
     fileTypeInvalid: "허용되지 않는 파일 형식입니다.",
     receptionType: "접수 구분을 선택해 주세요.",
     purpose: "성적서 용도를 선택해 주세요.",
     purposeDetail: "제출처를 입력해 주세요.",
-    analysisPurpose: "분석 용도를 입력해 주세요.",
+    analysisPurpose: "분석 용도를 1개 이상 선택해 주세요.",
+    analysisPurposeOther: "기타 분석 용도를 입력해 주세요.",
     desiredCompletionDateRequired: "희망 완료일을 선택해 주세요.",
-    desiredCompletionDateInvalid: "희망 완료일은 오늘 이후 날짜로 선택해 주세요.",
+    desiredCompletionDateInvalid:
+      "희망 완료일은 오늘 이후 날짜로 선택해 주세요.",
     copyCountRequired: "발급매수를 입력해 주세요.",
     copyCountInvalid: "발급매수는 1 이상의 정수로 입력해 주세요.",
     receiveMethod: "수령방법을 선택해 주세요.",
@@ -420,10 +431,16 @@ const en = {
   purposeDetailPlaceholder: "If submitting to a customer, enter the recipient.",
   purposeHint: "If none apply, select Other.",
   analysisPurpose: "Analysis purpose",
-  analysisPurposePlaceholder:
-    "Enter how the analysis results will be used (e.g., internal development, product reliability testing).",
+  analysisPurposePlaceholder: "Enter the other analysis purpose.",
   analysisPurposeHint:
-    "Separately from the report purpose, describe how you intend to use the analysis results.",
+    "Select all that apply. Choose Other to enter a custom purpose.",
+  analysisPurposes: [
+    { value: "rnd", label: "R&D / Development verification" },
+    { value: "failure", label: "Failure / Defect cause analysis" },
+    { value: "reliability", label: "Reliability / Mass-production QC" },
+    { value: "certification", label: "Certification / Standard compliance" },
+    { value: "other", label: "Other" },
+  ],
   copyCount: "Number of copies",
   copyCountUnit: "copies",
   receiveMethod: "Receiving method",
@@ -504,7 +521,8 @@ const en = {
     receptionType: "Select a reception type.",
     purpose: "Select a report purpose.",
     purposeDetail: "Enter the submission recipient.",
-    analysisPurpose: "Enter the analysis purpose.",
+    analysisPurpose: "Select at least one analysis purpose.",
+    analysisPurposeOther: "Enter the other analysis purpose.",
     desiredCompletionDateRequired: "Select a desired completion date.",
     desiredCompletionDateInvalid:
       "Select today or a future date for the desired completion date.",

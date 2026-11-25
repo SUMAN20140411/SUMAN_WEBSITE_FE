@@ -37,6 +37,7 @@ import {
   buildSampleSpecs,
   buildTestRequestSchema,
   emptyTestRequest,
+  formatAnalysisPurpose,
   formatFileSize,
   isVibrationCategoryLabel,
   todayInputValue,
@@ -1219,10 +1220,12 @@ function SampleStep({
 }
 
 function ReportFieldLabel({
+  id,
   htmlFor,
   label,
   required,
 }: {
+  id?: string;
   htmlFor?: string;
   label: string;
   required?: boolean;
@@ -1231,7 +1234,7 @@ function ReportFieldLabel({
     "shrink-0 text-sm font-semibold text-gray-800 md:w-44 lg:w-52";
   if (!htmlFor) {
     return (
-      <span className={className}>
+      <span id={id} className={className}>
         {label}
         {required ? <RequiredAsterisk /> : null}
       </span>
@@ -1265,7 +1268,8 @@ function ReportStep({
   const desiredCompletionDateId = useId();
   const purposeId = useId();
   const purposeDetailId = useId();
-  const analysisPurposeId = useId();
+  const analysisPurposeGroupId = useId();
+  const analysisPurposeOtherId = useId();
   const copyCountId = useId();
   const receiveMethodId = useId();
   const shippingNameId = useId();
@@ -1277,10 +1281,15 @@ function ReportStep({
   const additionalAnalysisDetailId = useId();
   const [addressOpen, setAddressOpen] = useState(false);
 
+  const analysisPurposeChoices = useWatch({
+    control,
+    name: "report.analysisPurposeChoices",
+  });
   const additionalAnalysis = useWatch({
     control,
     name: "report.additionalAnalysis",
   });
+  const otherAnalysisSelected = analysisPurposeChoices.includes("other");
   const showMail = receiveMethod === "mail";
   const showEmailNote = receiveMethod === "email";
   const receivedDateLabel = formatReceivedDate(new Date(), lang);
@@ -1290,7 +1299,10 @@ function ReportStep({
   );
   const purposeError = messageOf(errors.report?.purpose);
   const purposeDetailError = messageOf(errors.report?.purposeDetail);
-  const analysisPurposeError = messageOf(errors.report?.analysisPurpose);
+  const analysisPurposeError = messageOf(errors.report?.analysisPurposeChoices);
+  const analysisPurposeOtherError = messageOf(
+    errors.report?.analysisPurposeOther,
+  );
   const copyCountError = messageOf(errors.report?.copyCount);
   const receiveMethodError = messageOf(errors.report?.receiveMethod);
   const shippingNameError = messageOf(errors.report?.shippingName);
@@ -1318,6 +1330,23 @@ function ReportStep({
       shouldValidate: true,
     });
     setAddressOpen(false);
+  };
+
+  const toggleAnalysisPurpose = (value: string) => {
+    const exists = analysisPurposeChoices.includes(value);
+    const next = exists
+      ? analysisPurposeChoices.filter((item) => item !== value)
+      : [...analysisPurposeChoices, value];
+    setValue("report.analysisPurposeChoices", next, {
+      shouldDirty: true,
+      shouldValidate: Boolean(analysisPurposeError),
+    });
+    if (exists && value === "other") {
+      setValue("report.analysisPurposeOther", "", {
+        shouldDirty: true,
+        shouldValidate: Boolean(analysisPurposeOtherError),
+      });
+    }
   };
 
   return (
@@ -1439,31 +1468,87 @@ function ReportStep({
         <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
             <ReportFieldLabel
-              htmlFor={analysisPurposeId}
+              id={analysisPurposeGroupId}
               label={copy.analysisPurpose}
               required
             />
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <textarea
-                id={analysisPurposeId}
-                rows={2}
-                placeholder={copy.analysisPurposePlaceholder}
-                aria-invalid={Boolean(analysisPurposeError)}
+            <div className="min-w-0 flex-1 space-y-2">
+              <div
+                role="group"
+                aria-labelledby={analysisPurposeGroupId}
                 aria-describedby={
                   analysisPurposeError
-                    ? `${analysisPurposeId}-error`
+                    ? `${analysisPurposeGroupId}-error`
                     : undefined
                 }
-                className={fieldClass(Boolean(analysisPurposeError))}
-                {...register("report.analysisPurpose")}
+                className="flex flex-wrap gap-2"
+              >
+                {copy.analysisPurposes.map((option) => {
+                  const selected = analysisPurposeChoices.includes(
+                    option.value,
+                  );
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleAnalysisPurpose(option.value)}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                        selected
+                          ? "border-blue-600 bg-blue-600 text-white shadow-xs"
+                          : analysisPurposeError
+                            ? "border-red-300 bg-white text-gray-800 hover:border-blue-400 hover:bg-blue-50/50"
+                            : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50/50"
+                      }`}
+                    >
+                      {selected ? (
+                        <svg
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          className="h-3.5 w-3.5 shrink-0"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : null}
+                      <span>{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <FieldErrorText
+                id={`${analysisPurposeGroupId}-error`}
+                message={analysisPurposeError}
               />
+              {otherAnalysisSelected ? (
+                <div className="space-y-1">
+                  <input
+                    id={analysisPurposeOtherId}
+                    type="text"
+                    placeholder={copy.analysisPurposePlaceholder}
+                    aria-label={copy.analysisPurposePlaceholder}
+                    aria-invalid={Boolean(analysisPurposeOtherError)}
+                    aria-describedby={
+                      analysisPurposeOtherError
+                        ? `${analysisPurposeOtherId}-error`
+                        : undefined
+                    }
+                    className={fieldClass(Boolean(analysisPurposeOtherError))}
+                    {...register("report.analysisPurposeOther")}
+                  />
+                  <FieldErrorText
+                    id={`${analysisPurposeOtherId}-error`}
+                    message={analysisPurposeOtherError}
+                  />
+                </div>
+              ) : null}
               <p className="text-xs text-gray-500">
                 {copy.analysisPurposeHint}
               </p>
-              <FieldErrorText
-                id={`${analysisPurposeId}-error`}
-                message={analysisPurposeError}
-              />
             </div>
           </div>
         </div>
@@ -2515,7 +2600,9 @@ function ReviewStep({
               value:
                 values.sample.applicationFiles.length > 0
                   ? values.sample.applicationFiles
-                      .map((file) => `${file.name} (${formatFileSize(file.size)})`)
+                      .map(
+                        (file) => `${file.name} (${formatFileSize(file.size)})`,
+                      )
                       .join("\n")
                   : copy.empty,
             },
@@ -2554,7 +2641,14 @@ function ReviewStep({
             },
             {
               label: copy.analysisPurpose,
-              value: displayValue(values.report.analysisPurpose, copy.empty),
+              value: displayValue(
+                formatAnalysisPurpose(
+                  values.report.analysisPurposeChoices,
+                  values.report.analysisPurposeOther,
+                  copy.analysisPurposes,
+                ),
+                copy.empty,
+              ),
             },
             {
               label: copy.copyCount,

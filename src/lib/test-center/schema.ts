@@ -33,6 +33,14 @@ export const APPLICATION_EXTENSIONS = [
 ] as const;
 
 export const PURPOSES = ["reference", "quality", "customer", "other"] as const;
+export const ANALYSIS_PURPOSES = [
+  "rnd",
+  "failure",
+  "reliability",
+  "certification",
+  "other",
+] as const;
+export const MAX_ANALYSIS_PURPOSE_LENGTH = 500;
 export const RECEPTION_TYPES = ["general"] as const;
 export const RECEIVE_METHODS = ["visit", "mail", "email"] as const;
 export const SAMPLE_HANDLINGS = ["dispose", "return"] as const;
@@ -65,7 +73,8 @@ export type ReportValues = {
   receptionType: string;
   purpose: string;
   purposeDetail: string;
-  analysisPurpose: string;
+  analysisPurposeChoices: string[];
+  analysisPurposeOther: string;
   desiredCompletionDate: string;
   copyCount: string;
   receiveMethod: string;
@@ -119,7 +128,8 @@ export const emptyTestRequest: TestRequestValues = {
     receptionType: "general",
     purpose: "",
     purposeDetail: "",
-    analysisPurpose: "",
+    analysisPurposeChoices: [],
+    analysisPurposeOther: "",
     desiredCompletionDate: "",
     copyCount: "1",
     receiveMethod: "",
@@ -244,6 +254,22 @@ export function buildSampleSpecs(
   });
 
   return specs;
+}
+
+export function formatAnalysisPurpose(
+  choices: readonly string[],
+  otherText: string,
+  options: TestCenterCopy["analysisPurposes"],
+) {
+  const trimmedOther = otherText.trim();
+  return options
+    .filter((option) => choices.includes(option.value))
+    .map((option) =>
+      option.value === "other" && trimmedOther
+        ? `${option.label}: ${trimmedOther}`
+        : option.label,
+    )
+    .join(", ");
 }
 
 function requiredText(required: string, tooLong: string, max = 200) {
@@ -408,11 +434,10 @@ export function buildReportSchema(copy: TestCenterCopy) {
       receptionType: choiceField(RECEPTION_TYPES, messages.receptionType),
       purpose: choiceField(PURPOSES, messages.purpose),
       purposeDetail: z.string().trim().max(200, messages.tooLong),
-      analysisPurpose: requiredText(
-        messages.analysisPurpose,
-        messages.tooLong,
-        500,
-      ),
+      analysisPurposeChoices: z
+        .array(choiceField(ANALYSIS_PURPOSES, messages.analysisPurpose))
+        .min(1, messages.analysisPurpose),
+      analysisPurposeOther: z.string().trim().max(300, messages.tooLong),
       desiredCompletionDate: z
         .string()
         .trim()
@@ -439,6 +464,26 @@ export function buildReportSchema(copy: TestCenterCopy) {
     .superRefine((values, ctx) => {
       if (values.purpose === "customer" && !values.purposeDetail.trim()) {
         issue(ctx, ["purposeDetail"], messages.purposeDetail);
+      }
+
+      const hasOtherAnalysis = values.analysisPurposeChoices.includes("other");
+      if (hasOtherAnalysis && !values.analysisPurposeOther.trim()) {
+        issue(ctx, ["analysisPurposeOther"], messages.analysisPurposeOther);
+      }
+      if (
+        formatAnalysisPurpose(
+          values.analysisPurposeChoices,
+          values.analysisPurposeOther,
+          copy.analysisPurposes,
+        ).length > MAX_ANALYSIS_PURPOSE_LENGTH
+      ) {
+        issue(
+          ctx,
+          hasOtherAnalysis
+            ? ["analysisPurposeOther"]
+            : ["analysisPurposeChoices"],
+          messages.tooLong,
+        );
       }
 
       if (values.receiveMethod === "mail") {

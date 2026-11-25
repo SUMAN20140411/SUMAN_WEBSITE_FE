@@ -1,12 +1,16 @@
 import type { TestCenterCopy } from "@/content/test-center/equipment";
 import {
   buildSampleSpecs,
+  formatAnalysisPurpose,
   type TestRequestValues,
 } from "@/lib/test-center/schema";
 
 export function buildTestRequestPayload(
   values: TestRequestValues,
-  copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
+  copy: Pick<
+    TestCenterCopy,
+    "sampleWeight" | "sampleSize" | "analysisPurposes"
+  >,
   locale: "ko" | "en" = "ko",
 ) {
   const { sample, report, client } = values;
@@ -31,7 +35,11 @@ export function buildTestRequestPayload(
       receptionType: report.receptionType.trim(),
       purpose: report.purpose.trim(),
       purposeDetail: report.purposeDetail.trim(),
-      analysisPurpose: report.analysisPurpose.trim(),
+      analysisPurpose: formatAnalysisPurpose(
+        report.analysisPurposeChoices,
+        report.analysisPurposeOther,
+        copy.analysisPurposes,
+      ),
       desiredCompletionDate: report.desiredCompletionDate.trim(),
       copyCount: report.copyCount.trim(),
       receiveMethod: report.receiveMethod.trim(),
@@ -67,7 +75,10 @@ export function buildTestRequestPayload(
 
 export function buildTestRequestFormData(
   values: TestRequestValues,
-  copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
+  copy: Pick<
+    TestCenterCopy,
+    "sampleWeight" | "sampleSize" | "analysisPurposes"
+  >,
   locale: "ko" | "en" = "ko",
 ) {
   const formData = new FormData();
