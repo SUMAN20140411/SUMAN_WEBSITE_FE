@@ -9,20 +9,9 @@ export function buildTestRequestPayload(
   copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
   locale: "ko" | "en" = "ko",
 ) {
-  const { sample, report, client, billing } = values;
-  const payer = billing.sameAsClient
-    ? {
-        companyName: client.companyName,
-        contactName: client.contactName,
-        businessRegistrationNumber: client.businessRegistrationNumber,
-        email: client.email,
-        phone: client.phone,
-        companyPostalCode: client.companyPostalCode,
-        address: client.address,
-        companyAddressDetail: client.companyAddressDetail,
-      }
-    : billing;
+  const { sample, report, client } = values;
   const mail = report.receiveMethod === "mail";
+  const hasAdditionalAnalysis = report.additionalAnalysis === "yes";
 
   return {
     equipmentIds: [...new Set(values.equipmentIds)],
@@ -42,10 +31,15 @@ export function buildTestRequestPayload(
       receptionType: report.receptionType.trim(),
       purpose: report.purpose.trim(),
       purposeDetail: report.purposeDetail.trim(),
+      analysisPurpose: report.analysisPurpose.trim(),
+      desiredCompletionDate: report.desiredCompletionDate.trim(),
       copyCount: report.copyCount.trim(),
       receiveMethod: report.receiveMethod.trim(),
-      samplePhoto: report.samplePhoto.trim(),
       sampleHandling: report.sampleHandling.trim(),
+      hasAdditionalAnalysis,
+      additionalAnalysisDetail: hasAdditionalAnalysis
+        ? report.additionalAnalysisDetail.trim()
+        : "",
       ...(mail
         ? {
             shippingName: report.shippingName.trim(),
@@ -59,7 +53,6 @@ export function buildTestRequestPayload(
     },
     client: {
       companyName: client.companyName.trim(),
-      representativeName: client.representativeName.trim(),
       businessRegistrationNumber: client.businessRegistrationNumber.trim(),
       contactName: client.contactName.trim(),
       phone: client.phone.trim(),
@@ -69,16 +62,29 @@ export function buildTestRequestPayload(
       companyAddressDetail: client.companyAddressDetail.trim(),
       remarks: client.remarks.trim(),
     },
-    billing: {
-      sameAsClient: billing.sameAsClient,
-      companyName: payer.companyName.trim(),
-      contactName: payer.contactName.trim(),
-      businessRegistrationNumber: payer.businessRegistrationNumber.trim(),
-      email: payer.email.trim(),
-      phone: payer.phone.trim(),
-      companyPostalCode: payer.companyPostalCode.trim(),
-      address: payer.address.trim(),
-      companyAddressDetail: payer.companyAddressDetail.trim(),
-    },
   };
+}
+
+export function buildTestRequestFormData(
+  values: TestRequestValues,
+  copy: Pick<TestCenterCopy, "sampleWeight" | "sampleSize">,
+  locale: "ko" | "en" = "ko",
+) {
+  const formData = new FormData();
+  const payload = buildTestRequestPayload(values, copy, locale);
+  formData.append("data", JSON.stringify(payload));
+
+  if (values.client.businessRegistrationFile) {
+    formData.append(
+      "businessRegistrationFile",
+      values.client.businessRegistrationFile,
+      values.client.businessRegistrationFile.name,
+    );
+  }
+
+  values.sample.applicationFiles.forEach((file) => {
+    formData.append("applicationFiles", file, file.name);
+  });
+
+  return formData;
 }

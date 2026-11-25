@@ -2,12 +2,41 @@ import { z } from "zod";
 import type { TestCenterCopy } from "@/content/test-center/equipment";
 
 export const MAX_CUSTOM_SPECS = 10;
+export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+export const MAX_APPLICATION_FILES = 5;
+
+export const BUSINESS_REG_EXTENSIONS = [
+  ".pdf",
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".webp",
+] as const;
+
+export const APPLICATION_EXTENSIONS = [
+  ".pdf",
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".webp",
+  ".doc",
+  ".docx",
+  ".xls",
+  ".xlsx",
+  ".ppt",
+  ".pptx",
+  ".hwp",
+  ".hwpx",
+  ".zip",
+] as const;
 
 export const PURPOSES = ["reference", "quality", "customer", "other"] as const;
 export const RECEPTION_TYPES = ["general"] as const;
-export const RECEIVE_METHODS = ["visit", "mail", "electronic"] as const;
-export const SAMPLE_PHOTOS = ["attach", "skip"] as const;
+export const RECEIVE_METHODS = ["visit", "mail", "email"] as const;
 export const SAMPLE_HANDLINGS = ["dispose", "return"] as const;
+export const ADDITIONAL_ANALYSIS_CHOICES = ["yes", "no"] as const;
 
 const emailSchema = z.email();
 
@@ -29,12 +58,15 @@ export type SampleValues = {
   sampleSizeD: string;
   sampleSizeH: string;
   customSpecs: CustomSpecValues[];
+  applicationFiles: File[];
 };
 
 export type ReportValues = {
   receptionType: string;
   purpose: string;
   purposeDetail: string;
+  analysisPurpose: string;
+  desiredCompletionDate: string;
   copyCount: string;
   receiveMethod: string;
   shippingName: string;
@@ -43,14 +75,15 @@ export type ReportValues = {
   postalCode: string;
   deliveryAddress: string;
   addressDetail: string;
-  samplePhoto: string;
   sampleHandling: string;
+  additionalAnalysis: string;
+  additionalAnalysisDetail: string;
 };
 
 export type ClientValues = {
   companyName: string;
-  representativeName: string;
   businessRegistrationNumber: string;
+  businessRegistrationFile: File | null;
   contactName: string;
   phone: string;
   email: string;
@@ -60,24 +93,11 @@ export type ClientValues = {
   remarks: string;
 };
 
-export type BillingValues = {
-  sameAsClient: boolean;
-  companyName: string;
-  contactName: string;
-  businessRegistrationNumber: string;
-  email: string;
-  phone: string;
-  companyPostalCode: string;
-  address: string;
-  companyAddressDetail: string;
-};
-
 export type TestRequestValues = {
   equipmentIds: string[];
   sample: SampleValues;
   report: ReportValues;
   client: ClientValues;
-  billing: BillingValues;
   privacyConsent: boolean;
   damageConsent: boolean;
   website: string;
@@ -93,11 +113,14 @@ export const emptyTestRequest: TestRequestValues = {
     sampleSizeD: "",
     sampleSizeH: "",
     customSpecs: [],
+    applicationFiles: [],
   },
   report: {
     receptionType: "general",
     purpose: "",
     purposeDetail: "",
+    analysisPurpose: "",
+    desiredCompletionDate: "",
     copyCount: "1",
     receiveMethod: "",
     shippingName: "",
@@ -106,13 +129,14 @@ export const emptyTestRequest: TestRequestValues = {
     postalCode: "",
     deliveryAddress: "",
     addressDetail: "",
-    samplePhoto: "",
     sampleHandling: "",
+    additionalAnalysis: "",
+    additionalAnalysisDetail: "",
   },
   client: {
     companyName: "",
-    representativeName: "",
     businessRegistrationNumber: "",
+    businessRegistrationFile: null,
     contactName: "",
     phone: "",
     email: "",
@@ -120,17 +144,6 @@ export const emptyTestRequest: TestRequestValues = {
     address: "",
     companyAddressDetail: "",
     remarks: "",
-  },
-  billing: {
-    sameAsClient: true,
-    companyName: "",
-    contactName: "",
-    businessRegistrationNumber: "",
-    email: "",
-    phone: "",
-    companyPostalCode: "",
-    address: "",
-    companyAddressDetail: "",
   },
   privacyConsent: false,
   damageConsent: false,
@@ -141,9 +154,26 @@ export const TEST_REQUEST_STEP_FIELDS: (keyof TestRequestValues)[][] = [
   ["equipmentIds"],
   ["sample"],
   ["report"],
-  ["client", "billing"],
+  ["client"],
   ["privacyConsent", "damageConsent"],
 ];
+
+export function hasAllowedExtension(
+  filename: string,
+  allowed: readonly string[],
+) {
+  const dot = filename.lastIndexOf(".");
+  if (dot < 0) return false;
+  const ext = filename.slice(dot).toLowerCase();
+  return allowed.includes(ext);
+}
+
+export function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
 
 export function isBusinessRegistrationNumber(value: string) {
   if (!/^[\d-]+$/.test(value)) return false;
@@ -254,6 +284,26 @@ function isPositiveNumber(value: string) {
   return Number.isFinite(parsed) && parsed > 0;
 }
 
+function isBrowserFile(value: unknown): value is File {
+  return typeof File !== "undefined" && value instanceof File;
+}
+
+function validateFileConstraints(
+  file: File,
+  allowedExtensions: readonly string[],
+  messages: Pick<
+    TestCenterCopy["errors"],
+    "fileEmpty" | "fileTooLarge" | "fileTypeInvalid"
+  >,
+) {
+  if (file.size <= 0) return messages.fileEmpty;
+  if (file.size > MAX_FILE_SIZE_BYTES) return messages.fileTooLarge;
+  if (!hasAllowedExtension(file.name, allowedExtensions)) {
+    return messages.fileTypeInvalid;
+  }
+  return null;
+}
+
 function issue(
   ctx: z.RefinementCtx,
   path: (string | number)[],
@@ -286,6 +336,7 @@ export function buildSampleSchema(
           }),
         )
         .max(MAX_CUSTOM_SPECS),
+      applicationFiles: z.array(z.custom<File>()),
     })
     .superRefine((values, ctx) => {
       const vibrationRequired = options?.vibrationRequired?.() ?? false;
@@ -328,6 +379,25 @@ export function buildSampleSchema(
           issue(ctx, ["customSpecs", index], messages.customSpecIncomplete);
         }
       });
+
+      if (values.applicationFiles.length > MAX_APPLICATION_FILES) {
+        issue(ctx, ["applicationFiles"], messages.applicationFilesTooMany);
+      }
+
+      values.applicationFiles.forEach((file, index) => {
+        if (!isBrowserFile(file)) {
+          issue(ctx, ["applicationFiles", index], messages.fileTypeInvalid);
+          return;
+        }
+        const fileError = validateFileConstraints(
+          file,
+          APPLICATION_EXTENSIONS,
+          messages,
+        );
+        if (fileError) {
+          issue(ctx, ["applicationFiles", index], fileError);
+        }
+      });
     });
 }
 
@@ -338,6 +408,16 @@ export function buildReportSchema(copy: TestCenterCopy) {
       receptionType: choiceField(RECEPTION_TYPES, messages.receptionType),
       purpose: choiceField(PURPOSES, messages.purpose),
       purposeDetail: z.string().trim().max(200, messages.tooLong),
+      analysisPurpose: requiredText(
+        messages.analysisPurpose,
+        messages.tooLong,
+        500,
+      ),
+      desiredCompletionDate: z
+        .string()
+        .trim()
+        .min(1, messages.desiredCompletionDateRequired)
+        .refine(isOnOrAfterToday, messages.desiredCompletionDateInvalid),
       copyCount: quantityField(
         messages.copyCountRequired,
         messages.copyCountInvalid,
@@ -349,8 +429,12 @@ export function buildReportSchema(copy: TestCenterCopy) {
       postalCode: z.string().trim().max(10, messages.tooLong),
       deliveryAddress: z.string().trim().max(300, messages.tooLong),
       addressDetail: z.string().trim().max(200, messages.tooLong),
-      samplePhoto: choiceField(SAMPLE_PHOTOS, messages.samplePhoto),
       sampleHandling: choiceField(SAMPLE_HANDLINGS, messages.sampleHandling),
+      additionalAnalysis: choiceField(
+        ADDITIONAL_ANALYSIS_CHOICES,
+        messages.additionalAnalysis,
+      ),
+      additionalAnalysisDetail: z.string().trim().max(1000, messages.tooLong),
     })
     .superRefine((values, ctx) => {
       if (values.purpose === "customer" && !values.purposeDetail.trim()) {
@@ -377,6 +461,17 @@ export function buildReportSchema(copy: TestCenterCopy) {
           issue(ctx, ["addressDetail"], messages.addressDetail);
         }
       }
+
+      if (
+        values.additionalAnalysis === "yes" &&
+        !values.additionalAnalysisDetail.trim()
+      ) {
+        issue(
+          ctx,
+          ["additionalAnalysisDetail"],
+          messages.additionalAnalysisDetail,
+        );
+      }
     });
 }
 
@@ -384,10 +479,6 @@ export function buildClientSchema(copy: TestCenterCopy) {
   const messages = copy.errors;
   return z.object({
     companyName: requiredText(messages.companyName, messages.tooLong),
-    representativeName: requiredText(
-      messages.representativeName,
-      messages.tooLong,
-    ),
     businessRegistrationNumber: z
       .string()
       .trim()
@@ -396,6 +487,22 @@ export function buildClientSchema(copy: TestCenterCopy) {
         (value) => value === "" || isBusinessRegistrationNumber(value),
         messages.businessNumberInvalid,
       ),
+    businessRegistrationFile: z
+      .custom<File | null>()
+      .superRefine((file, ctx) => {
+        if (!isBrowserFile(file)) {
+          issue(ctx, [], messages.businessRegFileRequired);
+          return;
+        }
+        const fileError = validateFileConstraints(
+          file,
+          BUSINESS_REG_EXTENSIONS,
+          messages,
+        );
+        if (fileError) {
+          issue(ctx, [], fileError);
+        }
+      }),
     contactName: requiredText(messages.contactName, messages.tooLong),
     phone: z
       .string()
@@ -422,93 +529,6 @@ export function buildClientSchema(copy: TestCenterCopy) {
   });
 }
 
-export function buildBillingSchema(copy: TestCenterCopy) {
-  const messages = copy.errors;
-  return z
-    .object({
-      sameAsClient: z.boolean(),
-      companyName: z.string(),
-      contactName: z.string(),
-      businessRegistrationNumber: z.string(),
-      email: z.string(),
-      phone: z.string(),
-      companyPostalCode: z.string(),
-      address: z.string(),
-      companyAddressDetail: z.string(),
-    })
-    .superRefine((values, ctx) => {
-      if (values.sameAsClient) return;
-
-      const companyName = values.companyName.trim();
-      const contactName = values.contactName.trim();
-      const businessRegistrationNumber =
-        values.businessRegistrationNumber.trim();
-      const email = values.email.trim();
-      const phone = values.phone.trim();
-      const companyPostalCode = values.companyPostalCode.trim();
-      const address = values.address.trim();
-      const companyAddressDetail = values.companyAddressDetail.trim();
-
-      if (!companyName) {
-        issue(ctx, ["companyName"], messages.billingCompanyName);
-      } else if (companyName.length > 200) {
-        issue(ctx, ["companyName"], messages.tooLong);
-      }
-
-      if (
-        !businessRegistrationNumber ||
-        businessRegistrationNumber.length > 20 ||
-        !isBusinessRegistrationNumber(businessRegistrationNumber)
-      ) {
-        issue(
-          ctx,
-          ["businessRegistrationNumber"],
-          businessRegistrationNumber.length > 20
-            ? messages.tooLong
-            : messages.businessNumberInvalid,
-        );
-      }
-
-      if (!companyPostalCode) {
-        issue(ctx, ["companyPostalCode"], messages.companyPostalCode);
-      } else if (companyPostalCode.length > 10) {
-        issue(ctx, ["companyPostalCode"], messages.tooLong);
-      }
-
-      if (!address) {
-        issue(ctx, ["address"], messages.address);
-      } else if (address.length > 300) {
-        issue(ctx, ["address"], messages.tooLong);
-      }
-
-      if (companyAddressDetail.length > 200) {
-        issue(ctx, ["companyAddressDetail"], messages.tooLong);
-      }
-
-      if (!contactName) {
-        issue(ctx, ["contactName"], messages.billingContactName);
-      } else if (contactName.length > 200) {
-        issue(ctx, ["contactName"], messages.tooLong);
-      }
-
-      if (!phone) {
-        issue(ctx, ["phone"], messages.billingPhone);
-      } else if (phone.length > 40) {
-        issue(ctx, ["phone"], messages.tooLong);
-      } else if (!/^\d{2,4}-\d{3,4}-\d{4}$/.test(phone)) {
-        issue(ctx, ["phone"], messages.phoneInvalid);
-      }
-
-      if (!email) {
-        issue(ctx, ["email"], messages.emailRequired);
-      } else if (email.length > 254) {
-        issue(ctx, ["email"], messages.tooLong);
-      } else if (!emailSchema.safeParse(email).success) {
-        issue(ctx, ["email"], messages.emailInvalid);
-      }
-    });
-}
-
 export function buildTestRequestSchema(
   copy: TestCenterCopy,
   options?: { vibrationRequired?: () => boolean },
@@ -521,7 +541,6 @@ export function buildTestRequestSchema(
     sample: buildSampleSchema(copy, options),
     report: buildReportSchema(copy),
     client: buildClientSchema(copy),
-    billing: buildBillingSchema(copy),
     privacyConsent: z
       .boolean()
       .refine((value) => value, messages.consentRequired),

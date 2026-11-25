@@ -48,16 +48,29 @@ export type TestCenterCopy = {
   removeSpec: string;
   specLabel: string;
   specValue: string;
+  applicationFiles: string;
+  applicationFilesHint: string;
+  filesAddButton: string;
+  fileSelectButton: string;
+  fileRemove: string;
+  fileCountStatus: (count: number, max: number) => string;
   receivedDate: string;
+  desiredCompletionDate: string;
+  desiredCompletionDateBadge: string;
+  desiredCompletionDateNotice: string;
   receptionType: string;
   receptionTypeGeneral: string;
   receptionTypeKolasNote: string;
   purpose: string;
   purposeDetailPlaceholder: string;
   purposeHint: string;
+  analysisPurpose: string;
+  analysisPurposePlaceholder: string;
+  analysisPurposeHint: string;
   copyCount: string;
   copyCountUnit: string;
   receiveMethod: string;
+  receiveMethodEmailNote: string;
   shippingName: string;
   recipientName: string;
   recipientPhone: string;
@@ -73,16 +86,18 @@ export type TestCenterCopy = {
   addressSearchError: string;
   addressSearchClose: string;
   addressSelect: string;
-  samplePhoto: string;
-  samplePhotoAttach: string;
-  samplePhotoSkip: string;
   sampleHandling: string;
   sampleHandlingDispose: string;
   sampleHandlingReturn: string;
+  additionalAnalysis: string;
+  additionalAnalysisYes: string;
+  additionalAnalysisNo: string;
+  additionalAnalysisPlaceholder: string;
   clientSectionTitle: string;
   companyName: string;
-  representativeName: string;
   businessRegistrationNumber: string;
+  businessRegistrationFile: string;
+  businessRegistrationFileHint: string;
   contactName: string;
   phone: string;
   email: string;
@@ -92,12 +107,6 @@ export type TestCenterCopy = {
   addressPlaceholder: string;
   remarks: string;
   remarksPlaceholder: string;
-  billingSectionTitle: string;
-  billingSameAsClient: string;
-  billingCompanyName: string;
-  billingContactName: string;
-  billingEmail: string;
-  billingPhone: string;
   purposes: ChoiceOption[];
   receiveMethods: ChoiceOption[];
   errors: {
@@ -111,9 +120,16 @@ export type TestCenterCopy = {
     sizeInvalid: string;
     sizeIncomplete: string;
     customSpecIncomplete: string;
+    applicationFilesTooMany: string;
+    fileEmpty: string;
+    fileTooLarge: string;
+    fileTypeInvalid: string;
     receptionType: string;
     purpose: string;
     purposeDetail: string;
+    analysisPurpose: string;
+    desiredCompletionDateRequired: string;
+    desiredCompletionDateInvalid: string;
     copyCountRequired: string;
     copyCountInvalid: string;
     receiveMethod: string;
@@ -123,16 +139,14 @@ export type TestCenterCopy = {
     postalCode: string;
     deliveryAddress: string;
     addressDetail: string;
-    samplePhoto: string;
     sampleHandling: string;
+    additionalAnalysis: string;
+    additionalAnalysisDetail: string;
     emailRequired: string;
     emailInvalid: string;
     companyName: string;
-    representativeName: string;
     businessNumberInvalid: string;
-    billingCompanyName: string;
-    billingContactName: string;
-    billingPhone: string;
+    businessRegFileRequired: string;
     contactName: string;
     phone: string;
     phoneInvalid: string;
@@ -170,7 +184,7 @@ const ko = {
   selectPlaceholder: "선택해 주세요",
   businessNumberHint: "숫자 10자리, 하이픈 입력 가능",
   consentPrivacy:
-    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 대표자명, 사업자등록번호, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보, 매출처 정보(매출처명, 사업자등록번호, 주소, 담당자, 전자계산서 수신 이메일, 담당자 휴대폰번호)입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 전자계산서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
+    "(필수) 개인정보 수집 및 이용에 동의합니다. 수집 항목은 업체명, 사업자등록번호, 사업자등록증, 담당자 연락처(성명, 전화번호, 이메일), 주소, 시료 정보(신청서 첨부파일 포함)입니다. 이용 목적은 시험 접수, 신청인 연락, 성적서 발급, 접수 확인 메일 발송이며, 보유 기간은 3년입니다.",
   consentDamage:
     "(필수) 시험 과정에서 시료가 손상되거나 파손될 수 있음을 이해합니다.",
   missingApi: "시험 접수 주소가 설정되지 않았습니다. 관리자에게 문의해 주세요.",
@@ -197,16 +211,34 @@ const ko = {
   removeSpec: "삭제",
   specLabel: "항목",
   specValue: "내용",
+  applicationFiles: "신청서 첨부파일",
+  applicationFilesHint:
+    "PDF, 이미지, 오피스 문서, HWP/HWPX, ZIP 파일 · 최대 5개 · 개당 10MB 이하",
+  filesAddButton: "파일 추가",
+  fileSelectButton: "파일 선택",
+  fileRemove: "삭제",
+  fileCountStatus: (count: number, max: number) => `${count} / ${max}개`,
   receivedDate: "접수일자",
+  desiredCompletionDate: "희망 완료일",
+  desiredCompletionDateBadge: "* 협의 필수",
+  desiredCompletionDateNotice:
+    "희망 완료일은 시험 일정 및 장비 상황에 따라 접수 후 담당자와 협의가 반드시 필요합니다.",
   receptionType: "접수 구분",
   receptionTypeGeneral: "일반성적서",
   receptionTypeKolasNote: "추후에 KOLAS 인증받으면 기재 예정",
   purpose: "성적서 용도",
   purposeDetailPlaceholder: "거래처 제출용일 경우 제출처를 작성해 주세요.",
   purposeHint: "성적서 용도가 해당 없을 경우 기타를 선택하세요.",
+  analysisPurpose: "분석 용도",
+  analysisPurposePlaceholder:
+    "분석 결과를 어디에 사용하시는지 시험 목적을 입력해 주세요. (예: 회사 발전에 사용, 제품 내구성 검증 등)",
+  analysisPurposeHint:
+    "성적서 용도와 별개로, 이 분석 결과를 어디에 사용하려는 지(시험 목적)를 입력해 주세요.",
   copyCount: "성적서 발급매수",
   copyCountUnit: "매",
   receiveMethod: "성적서 수령방법",
+  receiveMethodEmailNote:
+    "이메일 수령 시 4단계에서 입력한 담당자 이메일로 성적서가 발송됩니다.",
   shippingName: "우송처명",
   recipientName: "수령자",
   recipientPhone: "수령자 전화번호",
@@ -222,16 +254,20 @@ const ko = {
   addressSearchError: "주소 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.",
   addressSearchClose: "닫기",
   addressSelect: "선택",
-  samplePhoto: "성적서 시료 사진 첨부 여부",
-  samplePhotoAttach: "시료 사진 첨부",
-  samplePhotoSkip: "미첨부",
   sampleHandling: "시험 후 시료 처리방법",
   sampleHandlingDispose: "폐기",
   sampleHandlingReturn: "반환",
+  additionalAnalysis: "추가 분석 요구사항 여부",
+  additionalAnalysisYes: "있음",
+  additionalAnalysisNo: "없음",
+  additionalAnalysisPlaceholder:
+    "추가로 진행하고 싶은 분석시험 내용을 구체적으로 입력해 주세요.",
   clientSectionTitle: "의뢰업체 정보(성적서 기입)",
   companyName: "업체명",
-  representativeName: "대표자명",
   businessRegistrationNumber: "사업자 등록번호",
+  businessRegistrationFile: "사업자등록증 첨부",
+  businessRegistrationFileHint:
+    "PDF 또는 이미지(JPG, PNG, GIF, WEBP) · 1개 · 10MB 이하",
   contactName: "담당자명",
   phone: "담당자 연락처",
   email: "담당자 이메일",
@@ -248,12 +284,6 @@ const ko = {
   remarks: "비고",
   remarksPlaceholder:
     "신청서 작성란에 없는 내용 중, 전달해야 할 사항이나 요청 사항이 있을 경우 작성해주시기 바랍니다.(300자 내외)",
-  billingSectionTitle: "매출처 정보",
-  billingSameAsClient: "의뢰업체와 동일",
-  billingCompanyName: "매출처명",
-  billingContactName: "담당자",
-  billingEmail: "전자계산서 수신용 이메일",
-  billingPhone: "담당자 휴대폰번호",
   purposes: [
     { value: "reference", label: "참고용" },
     { value: "quality", label: "품질관리" },
@@ -262,7 +292,8 @@ const ko = {
   ],
   receiveMethods: [
     { value: "visit", label: "방문" },
-    { value: "mail", label: "우송" },
+    { value: "mail", label: "우편" },
+    { value: "email", label: "이메일" },
   ],
   errors: {
     equipmentRequired: "시험 항목을 1개 이상 선택해 주세요.",
@@ -275,30 +306,34 @@ const ko = {
     sizeInvalid: "시료 크기는 0보다 큰 숫자로 입력해 주세요.",
     sizeIncomplete: "시료 크기(W, D, H)를 모두 입력해 주세요.",
     customSpecIncomplete: "사양의 항목과 내용을 모두 입력해 주세요.",
+    applicationFilesTooMany: "신청서 첨부파일은 최대 5개까지 첨부할 수 있습니다.",
+    fileEmpty: "빈 파일은 첨부할 수 없습니다.",
+    fileTooLarge: "첨부파일은 개당 10MB 이하만 업로드할 수 있습니다.",
+    fileTypeInvalid: "허용되지 않는 파일 형식입니다.",
     receptionType: "접수 구분을 선택해 주세요.",
     purpose: "성적서 용도를 선택해 주세요.",
     purposeDetail: "제출처를 입력해 주세요.",
+    analysisPurpose: "분석 용도를 입력해 주세요.",
+    desiredCompletionDateRequired: "희망 완료일을 선택해 주세요.",
+    desiredCompletionDateInvalid: "희망 완료일은 오늘 이후 날짜로 선택해 주세요.",
     copyCountRequired: "발급매수를 입력해 주세요.",
     copyCountInvalid: "발급매수는 1 이상의 정수로 입력해 주세요.",
     receiveMethod: "수령방법을 선택해 주세요.",
-
     shippingName: "우송처명을 입력해 주세요.",
     recipientName: "수령자를 입력해 주세요.",
     recipientPhone: "수령자 전화번호를 입력해 주세요.",
     postalCode: "주소 검색으로 우편번호를 선택해 주세요.",
     deliveryAddress: "수령지 주소를 선택해 주세요.",
     addressDetail: "상세주소를 입력해 주세요.",
-    samplePhoto: "시료 사진 첨부 여부를 선택해 주세요.",
     sampleHandling: "시료 처리방법을 선택해 주세요.",
+    additionalAnalysis: "추가 분석 요구사항 여부를 선택해 주세요.",
+    additionalAnalysisDetail: "추가 분석 요구사항 내용을 입력해 주세요.",
     emailRequired: "담당자 이메일을 입력해 주세요.",
     emailInvalid: "이메일 형식을 확인해 주세요.",
     companyName: "업체명을 입력해 주세요.",
-    representativeName: "대표자명을 입력해 주세요.",
     businessNumberInvalid:
       "사업자등록번호는 숫자 10자리입니다. 하이픈은 사용할 수 있습니다.",
-    billingCompanyName: "매출처명을 입력해 주세요.",
-    billingContactName: "매출처 담당자를 입력해 주세요.",
-    billingPhone: "담당자 휴대폰번호를 입력해 주세요.",
+    businessRegFileRequired: "사업자등록증 파일을 첨부해 주세요.",
     contactName: "담당자명을 입력해 주세요.",
     phone: "담당자 연락처를 입력해 주세요.",
     phoneInvalid: "담당자 연락처 형식을 확인해 주세요.",
@@ -336,7 +371,7 @@ const en = {
   selectPlaceholder: "Select",
   businessNumberHint: "10 digits, hyphens allowed",
   consentPrivacy:
-    "(Required) I agree to the collection and use of personal information. Items collected: company name, representative name, business registration number, contact details (name, phone, email), address, sample information, and billing details (billing company name, business registration number, address, contact, electronic invoice email, contact mobile). Purposes: receiving the test request, contacting the applicant, issuing the report, issuing the electronic invoice, and sending the receipt email. Retention period: 3 years.",
+    "(Required) I agree to the collection and use of personal information. Items collected: company name, business registration number, business registration certificate, contact details (name, phone, email), address, and sample information (including application attachments). Purposes: receiving the test request, contacting the applicant, issuing the report, and sending the receipt email. Retention period: 3 years.",
   consentDamage:
     "(Required) I understand that a test may damage or destroy the sample.",
   missingApi:
@@ -366,16 +401,34 @@ const en = {
   removeSpec: "Remove",
   specLabel: "Label",
   specValue: "Value",
+  applicationFiles: "Application attachments",
+  applicationFilesHint:
+    "PDF, images, Office docs, HWP/HWPX, or ZIP · Up to 5 files · Max 10MB each",
+  filesAddButton: "Add files",
+  fileSelectButton: "Select file",
+  fileRemove: "Remove",
+  fileCountStatus: (count: number, max: number) => `${count} / ${max} files`,
   receivedDate: "Reception date",
+  desiredCompletionDate: "Desired completion date",
+  desiredCompletionDateBadge: "* Consultation required",
+  desiredCompletionDateNotice:
+    "The desired completion date must be confirmed through consultation with our manager based on testing schedules.",
   receptionType: "Reception type",
   receptionTypeGeneral: "General report",
   receptionTypeKolasNote: "To be filled after KOLAS certification",
   purpose: "Report purpose",
   purposeDetailPlaceholder: "If submitting to a customer, enter the recipient.",
   purposeHint: "If none apply, select Other.",
+  analysisPurpose: "Analysis purpose",
+  analysisPurposePlaceholder:
+    "Enter how the analysis results will be used (e.g., internal development, product reliability testing).",
+  analysisPurposeHint:
+    "Separately from the report purpose, describe how you intend to use the analysis results.",
   copyCount: "Number of copies",
   copyCountUnit: "copies",
   receiveMethod: "Receiving method",
+  receiveMethodEmailNote:
+    "When Email is selected, the report will be sent to the contact email entered in Step 4.",
   shippingName: "Mail recipient name",
   recipientName: "Recipient",
   recipientPhone: "Recipient phone",
@@ -391,16 +444,20 @@ const en = {
   addressSearchError: "Address search failed. Please try again shortly.",
   addressSearchClose: "Close",
   addressSelect: "Select",
-  samplePhoto: "Attach sample photos to report",
-  samplePhotoAttach: "Attach sample photos",
-  samplePhotoSkip: "Do not attach",
   sampleHandling: "Sample handling after testing",
   sampleHandlingDispose: "Dispose",
   sampleHandlingReturn: "Return",
+  additionalAnalysis: "Additional analysis requirements",
+  additionalAnalysisYes: "Yes",
+  additionalAnalysisNo: "No",
+  additionalAnalysisPlaceholder:
+    "Please describe any additional analysis or tests you would like to request.",
   clientSectionTitle: "Requesting company (printed on the report)",
   companyName: "Company name",
-  representativeName: "Representative",
   businessRegistrationNumber: "Business registration number",
+  businessRegistrationFile: "Business registration certificate",
+  businessRegistrationFileHint:
+    "PDF or image (JPG, PNG, GIF, WEBP) · 1 file · Max 10MB",
   contactName: "Contact name",
   phone: "Contact phone",
   email: "Contact email",
@@ -417,12 +474,6 @@ const en = {
   remarks: "Remarks",
   remarksPlaceholder:
     "If you need to pass along or request something that is not covered by this form, please write it here. (About 300 characters)",
-  billingSectionTitle: "Billing company",
-  billingSameAsClient: "Same as the requesting company",
-  billingCompanyName: "Billing company name",
-  billingContactName: "Contact",
-  billingEmail: "Email for the electronic invoice",
-  billingPhone: "Contact mobile number",
   purposes: [
     { value: "reference", label: "Reference" },
     { value: "quality", label: "Quality control" },
@@ -432,6 +483,7 @@ const en = {
   receiveMethods: [
     { value: "visit", label: "Visit" },
     { value: "mail", label: "Mail" },
+    { value: "email", label: "Email" },
   ],
   errors: {
     equipmentRequired: "Select at least one test.",
@@ -445,9 +497,17 @@ const en = {
     sizeIncomplete: "Enter all sample size values (W, D, H).",
     customSpecIncomplete:
       "Enter both the label and value for each specification.",
+    applicationFilesTooMany: "You can attach up to 5 application files.",
+    fileEmpty: "Empty files cannot be uploaded.",
+    fileTooLarge: "Each file must be 10MB or smaller.",
+    fileTypeInvalid: "This file type is not supported.",
     receptionType: "Select a reception type.",
     purpose: "Select a report purpose.",
     purposeDetail: "Enter the submission recipient.",
+    analysisPurpose: "Enter the analysis purpose.",
+    desiredCompletionDateRequired: "Select a desired completion date.",
+    desiredCompletionDateInvalid:
+      "Select today or a future date for the desired completion date.",
     copyCountRequired: "Enter the number of copies.",
     copyCountInvalid:
       "Enter the number of copies as a whole number of 1 or more.",
@@ -458,16 +518,14 @@ const en = {
     postalCode: "Select a postal code via address search.",
     deliveryAddress: "Select a delivery address.",
     addressDetail: "Enter the detail address.",
-    samplePhoto: "Select whether to attach sample photos.",
     sampleHandling: "Select sample handling after testing.",
+    additionalAnalysis: "Select whether additional analysis is required.",
+    additionalAnalysisDetail: "Enter the additional analysis details.",
     emailRequired: "Enter the contact email.",
     emailInvalid: "Check the email format.",
     companyName: "Enter the company name.",
-    representativeName: "Enter the representative name.",
     businessNumberInvalid: "Enter 10 digits. Hyphens are allowed.",
-    billingCompanyName: "Enter the billing company name.",
-    billingContactName: "Enter the billing contact.",
-    billingPhone: "Enter the contact mobile number.",
+    businessRegFileRequired: "Attach the business registration certificate.",
     contactName: "Enter the contact name.",
     phone: "Enter the contact phone number.",
     phoneInvalid: "Check the contact phone number.",
