@@ -23,18 +23,23 @@ import {
   type TestEquipmentCategory,
   type TestEquipmentItem,
 } from "@/lib/strapi/collections/testEquipment";
-import { buildTestRequestPayload } from "@/lib/test-center/payload";
+import { buildTestRequestFormData } from "@/lib/test-center/payload";
 import {
   searchEpostAddresses,
   type PostalCodeResult,
 } from "@/lib/test-center/postalCode";
 import {
+  APPLICATION_EXTENSIONS,
+  BUSINESS_REG_EXTENSIONS,
+  MAX_APPLICATION_FILES,
   MAX_CUSTOM_SPECS,
   TEST_REQUEST_STEP_FIELDS,
   buildSampleSpecs,
   buildTestRequestSchema,
   emptyTestRequest,
+  formatFileSize,
   isVibrationCategoryLabel,
+  todayInputValue,
   type TestRequestValues,
 } from "@/lib/test-center/schema";
 import { useLangStore } from "@/stores/langStore";
@@ -57,6 +62,23 @@ function messageOf(
   if (typeof error.message === "string" && error.message) return error.message;
   if (typeof error.root?.message === "string" && error.root.message)
     return error.root.message;
+  return undefined;
+}
+
+function firstFileArrayError(error: unknown): string | undefined {
+  if (!error) return undefined;
+  const direct = messageOf(
+    error as { message?: unknown; root?: { message?: unknown } },
+  );
+  if (direct) return direct;
+  if (Array.isArray(error)) {
+    for (const item of error) {
+      const itemMessage = messageOf(
+        item as { message?: unknown; root?: { message?: unknown } } | undefined,
+      );
+      if (itemMessage) return itemMessage;
+    }
+  }
   return undefined;
 }
 
@@ -309,10 +331,11 @@ export default function TestRequestWizard({
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify(
-          buildTestRequestPayload(values, copy, lang === "ENG" ? "en" : "ko"),
+        body: buildTestRequestFormData(
+          values,
+          copy,
+          lang === "ENG" ? "en" : "ko",
         ),
       });
       const payload = await readJson(response);
@@ -416,6 +439,7 @@ export default function TestRequestWizard({
               copy={copy}
               control={control}
               register={register}
+              setValue={setValue}
               errors={errors}
               classifications={classifications}
             />
@@ -424,6 +448,7 @@ export default function TestRequestWizard({
           {step === 2 ? (
             <ReportStep
               copy={copy}
+              control={control}
               register={register}
               errors={errors}
               setValue={setValue}
@@ -834,12 +859,14 @@ function SampleStep({
   copy,
   control,
   register,
+  setValue,
   errors,
   classifications,
 }: {
   copy: TestCenterCopy;
   control: Control<TestRequestValues>;
   register: UseFormRegister<TestRequestValues>;
+  setValue: UseFormSetValue<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
   classifications: string[];
 }) {
@@ -849,10 +876,14 @@ function SampleStep({
   const widthId = useId();
   const depthId = useId();
   const heightId = useId();
+  const applicationFilesId = useId();
+  const appFileInputRef = useRef<HTMLInputElement>(null);
   const { fields, append, remove } = useFieldArray({
     control,
     name: "sample.customSpecs",
   });
+  const applicationFiles =
+    useWatch({ control, name: "sample.applicationFiles" }) ?? [];
 
   const nameError = messageOf(errors.sample?.sampleName);
   const quantityError = messageOf(errors.sample?.quantity);
@@ -862,6 +893,26 @@ function SampleStep({
   const heightError = messageOf(errors.sample?.sampleSizeH);
   const sizeError = widthError || depthError || heightError;
   const customSpecsError = messageOf(errors.sample?.customSpecs);
+  const applicationFilesError = firstFileArrayError(
+    errors.sample?.applicationFiles,
+  );
+
+  const onAddApplicationFiles = (selected: FileList | null) => {
+    if (!selected || selected.length === 0) return;
+    const next = [...applicationFiles, ...Array.from(selected)];
+    setValue("sample.applicationFiles", next, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onRemoveApplicationFile = (index: number) => {
+    const next = applicationFiles.filter((_, idx) => idx !== index);
+    setValue("sample.applicationFiles", next, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
 
   return (
     <div className="mt-6 space-y-4">
@@ -1093,6 +1144,75 @@ function SampleStep({
           ) : null}
           <FieldErrorText id="custom-specs-error" message={customSpecsError} />
         </div>
+
+        <div className="mt-5 border-t border-gray-100 pt-5">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <label
+              htmlFor={applicationFilesId}
+              className="text-sm font-semibold text-gray-800"
+            >
+              {copy.applicationFiles}
+              <OptionalMark label={copy.optional} />
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                {copy.fileCountStatus(
+                  applicationFiles.length,
+                  MAX_APPLICATION_FILES,
+                )}
+              </span>
+            </label>
+            <input
+              ref={appFileInputRef}
+              id={applicationFilesId}
+              type="file"
+              multiple
+              accept={APPLICATION_EXTENSIONS.join(",")}
+              className="sr-only"
+              onChange={(event) => {
+                onAddApplicationFiles(event.target.files);
+                event.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              disabled={applicationFiles.length >= MAX_APPLICATION_FILES}
+              onClick={() => appFileInputRef.current?.click()}
+              className="rounded border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {copy.filesAddButton}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500">{copy.applicationFilesHint}</p>
+          {applicationFiles.length > 0 ? (
+            <ul className="mt-3 space-y-2">
+              {applicationFiles.map((file, index) => (
+                <li
+                  key={`${file.name}-${file.size}-${index}`}
+                  className="flex items-center justify-between gap-3 rounded border border-gray-200 bg-slate-50 px-3 py-2 text-sm"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-gray-900">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveApplicationFile(index)}
+                    className="shrink-0 rounded border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                  >
+                    {copy.fileRemove}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <FieldErrorText
+            id={`${applicationFilesId}-error`}
+            message={applicationFilesError}
+          />
+        </div>
       </div>
     </div>
   );
@@ -1127,6 +1247,7 @@ function ReportFieldLabel({
 
 function ReportStep({
   copy,
+  control,
   register,
   errors,
   setValue,
@@ -1134,14 +1255,17 @@ function ReportStep({
   lang,
 }: {
   copy: TestCenterCopy;
+  control: Control<TestRequestValues>;
   register: UseFormRegister<TestRequestValues>;
   errors: FieldErrors<TestRequestValues>;
   setValue: UseFormSetValue<TestRequestValues>;
   receiveMethod: string;
   lang: "ko" | "en";
 }) {
+  const desiredCompletionDateId = useId();
   const purposeId = useId();
   const purposeDetailId = useId();
+  const analysisPurposeId = useId();
   const copyCountId = useId();
   const receiveMethodId = useId();
   const shippingNameId = useId();
@@ -1150,13 +1274,23 @@ function ReportStep({
   const postalCodeId = useId();
   const deliveryAddressId = useId();
   const addressDetailId = useId();
+  const additionalAnalysisDetailId = useId();
   const [addressOpen, setAddressOpen] = useState(false);
 
+  const additionalAnalysis = useWatch({
+    control,
+    name: "report.additionalAnalysis",
+  });
   const showMail = receiveMethod === "mail";
+  const showEmailNote = receiveMethod === "email";
   const receivedDateLabel = formatReceivedDate(new Date(), lang);
 
+  const desiredCompletionDateError = messageOf(
+    errors.report?.desiredCompletionDate,
+  );
   const purposeError = messageOf(errors.report?.purpose);
   const purposeDetailError = messageOf(errors.report?.purposeDetail);
+  const analysisPurposeError = messageOf(errors.report?.analysisPurpose);
   const copyCountError = messageOf(errors.report?.copyCount);
   const receiveMethodError = messageOf(errors.report?.receiveMethod);
   const shippingNameError = messageOf(errors.report?.shippingName);
@@ -1165,8 +1299,11 @@ function ReportStep({
   const postalCodeError = messageOf(errors.report?.postalCode);
   const deliveryAddressError = messageOf(errors.report?.deliveryAddress);
   const addressDetailError = messageOf(errors.report?.addressDetail);
-  const samplePhotoError = messageOf(errors.report?.samplePhoto);
   const sampleHandlingError = messageOf(errors.report?.sampleHandling);
+  const additionalAnalysisError = messageOf(errors.report?.additionalAnalysis);
+  const additionalAnalysisDetailError = messageOf(
+    errors.report?.additionalAnalysisDetail,
+  );
   const receptionTypeError = messageOf(errors.report?.receptionType);
   const addressError =
     postalCodeError || deliveryAddressError || addressDetailError;
@@ -1193,6 +1330,40 @@ function ReportStep({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <ReportFieldLabel label={copy.receivedDate} />
           <p className="text-sm text-gray-900">{receivedDateLabel}</p>
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={desiredCompletionDateId}
+              label={copy.desiredCompletionDate}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <input
+                  id={desiredCompletionDateId}
+                  type="date"
+                  min={todayInputValue()}
+                  aria-invalid={Boolean(desiredCompletionDateError)}
+                  className={`${fieldClass(
+                    Boolean(desiredCompletionDateError),
+                  )} sm:max-w-xs`}
+                  {...register("report.desiredCompletionDate")}
+                />
+                <span className="inline-flex items-center rounded border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-700">
+                  {copy.desiredCompletionDateBadge}
+                </span>
+              </div>
+              <p className="text-xs text-gray-600">
+                {copy.desiredCompletionDateNotice}
+              </p>
+              <FieldErrorText
+                id={`${desiredCompletionDateId}-error`}
+                message={desiredCompletionDateError}
+              />
+            </div>
+          </div>
         </div>
 
         <div>
@@ -1266,6 +1437,38 @@ function ReportStep({
         </div>
 
         <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={analysisPurposeId}
+              label={copy.analysisPurpose}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <textarea
+                id={analysisPurposeId}
+                rows={2}
+                placeholder={copy.analysisPurposePlaceholder}
+                aria-invalid={Boolean(analysisPurposeError)}
+                aria-describedby={
+                  analysisPurposeError
+                    ? `${analysisPurposeId}-error`
+                    : undefined
+                }
+                className={fieldClass(Boolean(analysisPurposeError))}
+                {...register("report.analysisPurpose")}
+              />
+              <p className="text-xs text-gray-500">
+                {copy.analysisPurposeHint}
+              </p>
+              <FieldErrorText
+                id={`${analysisPurposeId}-error`}
+                message={analysisPurposeError}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <ReportFieldLabel
               htmlFor={copyCountId}
@@ -1293,32 +1496,39 @@ function ReportStep({
         </div>
 
         <div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
             <ReportFieldLabel
               htmlFor={receiveMethodId}
               label={copy.receiveMethod}
               required
             />
-            <select
-              id={receiveMethodId}
-              aria-invalid={Boolean(receiveMethodError)}
-              className={`${fieldClass(
-                Boolean(receiveMethodError),
-              )} sm:max-w-xs`}
-              {...register("report.receiveMethod")}
-            >
-              <option value="">{copy.selectPlaceholder}</option>
-              {copy.receiveMethods.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <div className="min-w-0 flex-1 space-y-2">
+              <select
+                id={receiveMethodId}
+                aria-invalid={Boolean(receiveMethodError)}
+                className={`${fieldClass(
+                  Boolean(receiveMethodError),
+                )} sm:max-w-xs`}
+                {...register("report.receiveMethod")}
+              >
+                <option value="">{copy.selectPlaceholder}</option>
+                {copy.receiveMethods.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {showEmailNote ? (
+                <p className="rounded border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-900">
+                  {copy.receiveMethodEmailNote}
+                </p>
+              ) : null}
+              <FieldErrorText
+                id={`${receiveMethodId}-error`}
+                message={receiveMethodError}
+              />
+            </div>
           </div>
-          <FieldErrorText
-            id={`${receiveMethodId}-error`}
-            message={receiveMethodError}
-          />
         </div>
 
         {showMail ? (
@@ -1458,33 +1668,6 @@ function ReportStep({
 
         <div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <ReportFieldLabel label={copy.samplePhoto} required />
-            <div className="flex flex-wrap items-center gap-4">
-              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
-                <input
-                  type="radio"
-                  value="attach"
-                  className="accent-blue-600"
-                  {...register("report.samplePhoto")}
-                />
-                {copy.samplePhotoAttach}
-              </label>
-              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
-                <input
-                  type="radio"
-                  value="skip"
-                  className="accent-blue-600"
-                  {...register("report.samplePhoto")}
-                />
-                {copy.samplePhotoSkip}
-              </label>
-            </div>
-          </div>
-          <FieldErrorText id="sample-photo-error" message={samplePhotoError} />
-        </div>
-
-        <div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <ReportFieldLabel label={copy.sampleHandling} required />
             <div className="flex flex-wrap items-center gap-4">
               <label className="inline-flex items-center gap-2 text-sm text-gray-900">
@@ -1511,6 +1694,62 @@ function ReportStep({
             id="sample-handling-error"
             message={sampleHandlingError}
           />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel label={copy.additionalAnalysis} required />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-wrap items-center gap-4">
+                <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                  <input
+                    type="radio"
+                    value="yes"
+                    className="accent-blue-600"
+                    {...register("report.additionalAnalysis")}
+                  />
+                  {copy.additionalAnalysisYes}
+                </label>
+                <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                  <input
+                    type="radio"
+                    value="no"
+                    className="accent-blue-600"
+                    {...register("report.additionalAnalysis")}
+                  />
+                  {copy.additionalAnalysisNo}
+                </label>
+              </div>
+              <FieldErrorText
+                id="additional-analysis-error"
+                message={additionalAnalysisError}
+              />
+              {additionalAnalysis === "yes" ? (
+                <div className="space-y-1">
+                  <textarea
+                    id={additionalAnalysisDetailId}
+                    rows={3}
+                    placeholder={copy.additionalAnalysisPlaceholder}
+                    aria-label={copy.additionalAnalysis}
+                    aria-invalid={Boolean(additionalAnalysisDetailError)}
+                    aria-describedby={
+                      additionalAnalysisDetailError
+                        ? `${additionalAnalysisDetailId}-error`
+                        : undefined
+                    }
+                    className={fieldClass(
+                      Boolean(additionalAnalysisDetailError),
+                    )}
+                    {...register("report.additionalAnalysisDetail")}
+                  />
+                  <FieldErrorText
+                    id={`${additionalAnalysisDetailId}-error`}
+                    message={additionalAnalysisDetailError}
+                  />
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1764,8 +2003,8 @@ function ClientStep({
   control: Control<TestRequestValues>;
 }) {
   const companyNameId = useId();
-  const representativeId = useId();
   const businessNumberId = useId();
+  const businessFileId = useId();
   const addressId = useId();
   const addressDetailId = useId();
   const contactNameId = useId();
@@ -1774,11 +2013,16 @@ function ClientStep({
   const emailDomainId = useId();
   const emailDomainChoiceId = useId();
   const remarksId = useId();
+  const businessFileInputRef = useRef<HTMLInputElement>(null);
   const [addressOpen, setAddressOpen] = useState(false);
 
   const businessNumber = useWatch({
     control,
     name: "client.businessRegistrationNumber",
+  });
+  const businessFile = useWatch({
+    control,
+    name: "client.businessRegistrationFile",
   });
   const phoneValue = useWatch({ control, name: "client.phone" });
   const emailValue = useWatch({ control, name: "client.email" });
@@ -1788,10 +2032,10 @@ function ClientStep({
   const domainIsPreset = copy.emailDomains.includes(emailParts.domain);
 
   const companyNameError = messageOf(errors.client?.companyName);
-  const representativeError = messageOf(errors.client?.representativeName);
   const businessNumberError = messageOf(
     errors.client?.businessRegistrationNumber,
   );
+  const businessFileError = messageOf(errors.client?.businessRegistrationFile);
   const contactNameError = messageOf(errors.client?.contactName);
   const phoneError = messageOf(errors.client?.phone);
   const emailError = messageOf(errors.client?.email);
@@ -1817,6 +2061,22 @@ function ClientStep({
       joinParts(next),
       Boolean(businessNumberError),
     );
+  };
+
+  const onBusinessFileChange = (selected: FileList | null) => {
+    const file = selected?.[0] ?? null;
+    if (!file) return;
+    setValue("client.businessRegistrationFile", file, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
+
+  const onRemoveBusinessFile = () => {
+    setValue("client.businessRegistrationFile", null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const onPhonePart = (index: number, raw: string) => {
@@ -1853,55 +2113,29 @@ function ClientStep({
       </div>
 
       <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <ReportFieldLabel
-                htmlFor={companyNameId}
-                label={copy.companyName}
-                required
-              />
-              <input
-                id={companyNameId}
-                type="text"
-                autoComplete="organization"
-                aria-invalid={Boolean(companyNameError)}
-                aria-describedby={
-                  companyNameError ? `${companyNameId}-error` : undefined
-                }
-                className={fieldClass(Boolean(companyNameError))}
-                {...register("client.companyName")}
-              />
-            </div>
-            <FieldErrorText
-              id={`${companyNameId}-error`}
-              message={companyNameError}
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ReportFieldLabel
+              htmlFor={companyNameId}
+              label={copy.companyName}
+              required
+            />
+            <input
+              id={companyNameId}
+              type="text"
+              autoComplete="organization"
+              aria-invalid={Boolean(companyNameError)}
+              aria-describedby={
+                companyNameError ? `${companyNameId}-error` : undefined
+              }
+              className={fieldClass(Boolean(companyNameError))}
+              {...register("client.companyName")}
             />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <ReportFieldLabel
-                htmlFor={representativeId}
-                label={copy.representativeName}
-                required
-              />
-              <input
-                id={representativeId}
-                type="text"
-                autoComplete="name"
-                aria-invalid={Boolean(representativeError)}
-                aria-describedby={
-                  representativeError ? `${representativeId}-error` : undefined
-                }
-                className={fieldClass(Boolean(representativeError))}
-                {...register("client.representativeName")}
-              />
-            </div>
-            <FieldErrorText
-              id={`${representativeId}-error`}
-              message={representativeError}
-            />
-          </div>
+          <FieldErrorText
+            id={`${companyNameId}-error`}
+            message={companyNameError}
+          />
         </div>
 
         <div>
@@ -1927,6 +2161,64 @@ function ClientStep({
             id={`${businessNumberId}-error`}
             message={businessNumberError}
           />
+        </div>
+
+        <div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+            <ReportFieldLabel
+              htmlFor={businessFileId}
+              label={copy.businessRegistrationFile}
+              required
+            />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <input
+                  ref={businessFileInputRef}
+                  id={businessFileId}
+                  type="file"
+                  accept={BUSINESS_REG_EXTENSIONS.join(",")}
+                  className="sr-only"
+                  onChange={(event) => {
+                    onBusinessFileChange(event.target.files);
+                    event.target.value = "";
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => businessFileInputRef.current?.click()}
+                  className="rounded border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800 hover:bg-blue-100"
+                >
+                  {copy.fileSelectButton}
+                </button>
+                <span className="text-xs text-gray-500">
+                  {copy.businessRegistrationFileHint}
+                </span>
+              </div>
+              {businessFile ? (
+                <div className="flex items-center justify-between gap-3 rounded border border-gray-200 bg-slate-50 px-3 py-2 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-gray-900">
+                      {businessFile.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatFileSize(businessFile.size)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onRemoveBusinessFile}
+                    className="shrink-0 rounded border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                  >
+                    {copy.fileRemove}
+                  </button>
+                </div>
+              ) : null}
+              <FieldErrorText
+                id={`${businessFileId}-error`}
+                message={businessFileError}
+              />
+            </div>
+          </div>
         </div>
 
         <div>
@@ -2119,384 +2411,6 @@ function ClientStep({
         </div>
       </div>
 
-      <BillingSection
-        copy={copy}
-        register={register}
-        errors={errors}
-        setValue={setValue}
-        control={control}
-      />
-
-      {addressOpen ? (
-        <PostalAddressDialog
-          copy={copy}
-          onClose={() => setAddressOpen(false)}
-          onSelect={onSelectAddress}
-        />
-      ) : null}
-    </div>
-  );
-}
-
-function BillingSection({
-  copy,
-  register,
-  errors,
-  setValue,
-  control,
-}: {
-  copy: TestCenterCopy;
-  register: UseFormRegister<TestRequestValues>;
-  errors: FieldErrors<TestRequestValues>;
-  setValue: UseFormSetValue<TestRequestValues>;
-  control: Control<TestRequestValues>;
-}) {
-  const sameAsClientId = useId();
-  const companyNameId = useId();
-  const businessNumberId = useId();
-  const addressId = useId();
-  const addressDetailId = useId();
-  const contactNameId = useId();
-  const phoneId = useId();
-  const emailLocalId = useId();
-  const emailDomainId = useId();
-  const emailDomainChoiceId = useId();
-  const [addressOpen, setAddressOpen] = useState(false);
-
-  const sameAsClient = useWatch({ control, name: "billing.sameAsClient" });
-  const businessNumber = useWatch({
-    control,
-    name: "billing.businessRegistrationNumber",
-  });
-  const phoneValue = useWatch({ control, name: "billing.phone" });
-  const emailValue = useWatch({ control, name: "billing.email" });
-  const businessParts = splitParts(businessNumber, BUSINESS_PART_LENGTHS);
-  const phoneParts = splitParts(phoneValue, PHONE_PART_LENGTHS);
-  const emailParts = splitEmail(emailValue);
-  const domainIsPreset = copy.emailDomains.includes(emailParts.domain);
-
-  const companyNameError = messageOf(errors.billing?.companyName);
-  const businessNumberError = messageOf(
-    errors.billing?.businessRegistrationNumber,
-  );
-  const contactNameError = messageOf(errors.billing?.contactName);
-  const phoneError = messageOf(errors.billing?.phone);
-  const emailError = messageOf(errors.billing?.email);
-  const addressError =
-    messageOf(errors.billing?.address) ||
-    messageOf(errors.billing?.companyPostalCode) ||
-    messageOf(errors.billing?.companyAddressDetail);
-
-  const writeText = (
-    name:
-      | "billing.businessRegistrationNumber"
-      | "billing.phone"
-      | "billing.email",
-    value: string,
-    invalid: boolean,
-  ) => {
-    setValue(name, value, { shouldDirty: true, shouldValidate: invalid });
-  };
-
-  const onBusinessPart = (index: number, raw: string) => {
-    const next = [...businessParts];
-    next[index] = digitsOnly(raw, BUSINESS_PART_LENGTHS[index] ?? 0);
-    writeText(
-      "billing.businessRegistrationNumber",
-      joinParts(next),
-      Boolean(businessNumberError),
-    );
-  };
-
-  const onPhonePart = (index: number, raw: string) => {
-    const next = [...phoneParts];
-    next[index] = digitsOnly(raw, PHONE_PART_LENGTHS[index] ?? 0);
-    writeText("billing.phone", joinParts(next), Boolean(phoneError));
-  };
-
-  const writeEmail = (local: string, domain: string) => {
-    writeText("billing.email", joinEmail(local, domain), Boolean(emailError));
-  };
-
-  const onSelectAddress = (result: PostalCodeResult) => {
-    setValue("billing.companyPostalCode", result.zipCode, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-    setValue("billing.address", result.roadAddress, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-    setAddressOpen(false);
-  };
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-base font-bold text-gray-900">
-        {copy.billingSectionTitle}
-      </h3>
-      <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 md:p-6">
-        <label
-          htmlFor={sameAsClientId}
-          className="flex items-center gap-3 text-sm font-semibold text-gray-800"
-        >
-          <input
-            id={sameAsClientId}
-            type="checkbox"
-            className="h-4 w-4 shrink-0 accent-blue-600"
-            {...register("billing.sameAsClient")}
-          />
-          {copy.billingSameAsClient}
-        </label>
-
-        {sameAsClient === false ? (
-          <>
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={companyNameId}
-                  label={copy.billingCompanyName}
-                  required
-                />
-                <input
-                  id={companyNameId}
-                  type="text"
-                  autoComplete="organization"
-                  aria-invalid={Boolean(companyNameError)}
-                  aria-describedby={
-                    companyNameError ? `${companyNameId}-error` : undefined
-                  }
-                  className={fieldClass(Boolean(companyNameError))}
-                  {...register("billing.companyName")}
-                />
-              </div>
-              <FieldErrorText
-                id={`${companyNameId}-error`}
-                message={companyNameError}
-              />
-            </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={businessNumberId}
-                  label={copy.businessRegistrationNumber}
-                  required
-                />
-                <DigitParts
-                  id={businessNumberId}
-                  label={copy.businessRegistrationNumber}
-                  parts={businessParts}
-                  lengths={BUSINESS_PART_LENGTHS}
-                  widths={["w-16", "w-12", "w-24"]}
-                  invalid={Boolean(businessNumberError)}
-                  describedBy={
-                    businessNumberError
-                      ? `${businessNumberId}-error`
-                      : undefined
-                  }
-                  onPart={onBusinessPart}
-                />
-              </div>
-              <FieldErrorText
-                id={`${businessNumberId}-error`}
-                message={businessNumberError}
-              />
-            </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                <ReportFieldLabel
-                  htmlFor={addressId}
-                  label={copy.address}
-                  required
-                />
-                <div className="min-w-0 flex-1 space-y-2">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <button
-                      type="button"
-                      onClick={() => setAddressOpen(true)}
-                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded bg-violet-700 text-white hover:bg-violet-800"
-                      aria-label={copy.addressSearch}
-                    >
-                      <svg
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M9 3.5a5.5 5.5 0 1 0 3.473 9.8l3.613 3.614a.75.75 0 1 0 1.06-1.06l-3.613-3.614A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <input
-                      id={addressId}
-                      type="text"
-                      readOnly
-                      placeholder={copy.addressPlaceholder}
-                      aria-invalid={Boolean(addressError)}
-                      aria-describedby={
-                        addressError ? `${addressId}-error` : undefined
-                      }
-                      className={fieldClass(Boolean(addressError))}
-                      {...register("billing.address")}
-                    />
-                    <input
-                      id={addressDetailId}
-                      type="text"
-                      placeholder={copy.addressDetail}
-                      autoComplete="address-line2"
-                      aria-invalid={Boolean(
-                        messageOf(errors.billing?.companyAddressDetail),
-                      )}
-                      className={fieldClass(
-                        Boolean(
-                          messageOf(errors.billing?.companyAddressDetail),
-                        ),
-                      )}
-                      {...register("billing.companyAddressDetail")}
-                    />
-                  </div>
-                  <FieldErrorText
-                    id={`${addressId}-error`}
-                    message={addressError}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={contactNameId}
-                  label={copy.billingContactName}
-                  required
-                />
-                <input
-                  id={contactNameId}
-                  type="text"
-                  autoComplete="name"
-                  aria-invalid={Boolean(contactNameError)}
-                  aria-describedby={
-                    contactNameError ? `${contactNameId}-error` : undefined
-                  }
-                  className={fieldClass(Boolean(contactNameError))}
-                  {...register("billing.contactName")}
-                />
-              </div>
-              <FieldErrorText
-                id={`${contactNameId}-error`}
-                message={contactNameError}
-              />
-            </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={phoneId}
-                  label={copy.billingPhone}
-                  required
-                />
-                <DigitParts
-                  id={phoneId}
-                  label={copy.billingPhone}
-                  parts={phoneParts}
-                  lengths={PHONE_PART_LENGTHS}
-                  widths={["w-16", "w-20", "w-20"]}
-                  invalid={Boolean(phoneError)}
-                  describedBy={phoneError ? `${phoneId}-error` : undefined}
-                  onPart={onPhonePart}
-                />
-              </div>
-              <FieldErrorText id={`${phoneId}-error`} message={phoneError} />
-            </div>
-
-            <div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <ReportFieldLabel
-                  htmlFor={emailLocalId}
-                  label={copy.billingEmail}
-                  required
-                />
-                <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
-                  <input
-                    id={emailLocalId}
-                    type="text"
-                    inputMode="email"
-                    autoComplete="off"
-                    aria-invalid={Boolean(emailError)}
-                    aria-describedby={
-                      emailError ? `${emailLocalId}-error` : undefined
-                    }
-                    value={emailParts.local}
-                    onChange={(event) =>
-                      writeEmail(
-                        emailPart(event.target.value),
-                        emailParts.domain,
-                      )
-                    }
-                    className={fieldClass(Boolean(emailError))}
-                  />
-                  <span className="shrink-0 text-sm text-gray-700">@</span>
-                  <input
-                    id={emailDomainId}
-                    type="text"
-                    inputMode="email"
-                    autoComplete="off"
-                    readOnly={domainIsPreset}
-                    placeholder={copy.emailDomains[0]}
-                    aria-invalid={Boolean(emailError)}
-                    value={emailParts.domain}
-                    onChange={(event) =>
-                      writeEmail(
-                        emailParts.local,
-                        emailPart(event.target.value),
-                      )
-                    }
-                    className={fieldClass(Boolean(emailError))}
-                  />
-                  <select
-                    id={emailDomainChoiceId}
-                    aria-label={copy.emailDomainDirect}
-                    value={
-                      domainIsPreset ? emailParts.domain : DIRECT_EMAIL_DOMAIN
-                    }
-                    onChange={(event) => {
-                      const choice = event.target.value;
-                      if (choice === DIRECT_EMAIL_DOMAIN) {
-                        writeEmail(
-                          emailParts.local,
-                          domainIsPreset ? "" : emailParts.domain,
-                        );
-                        return;
-                      }
-                      writeEmail(emailParts.local, choice);
-                    }}
-                    className={`${fieldClass(false)} sm:w-40 sm:shrink-0`}
-                  >
-                    {copy.emailDomains.map((domain) => (
-                      <option key={domain} value={domain}>
-                        {domain}
-                      </option>
-                    ))}
-                    <option value={DIRECT_EMAIL_DOMAIN}>
-                      {copy.emailDomainDirect}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <FieldErrorText
-                id={`${emailLocalId}-error`}
-                message={emailError}
-              />
-            </div>
-          </>
-        ) : null}
-      </div>
-
       {addressOpen ? (
         <PostalAddressDialog
           copy={copy}
@@ -2596,6 +2510,15 @@ function ReviewStep({
               label: spec.label,
               value: spec.value,
             })),
+            {
+              label: copy.applicationFiles,
+              value:
+                values.sample.applicationFiles.length > 0
+                  ? values.sample.applicationFiles
+                      .map((file) => `${file.name} (${formatFileSize(file.size)})`)
+                      .join("\n")
+                  : copy.empty,
+            },
           ]}
         />
       </ReviewSection>
@@ -2607,6 +2530,12 @@ function ReviewStep({
       >
         <SummaryRows
           rows={[
+            {
+              label: copy.desiredCompletionDate,
+              value: values.report.desiredCompletionDate.trim()
+                ? `${values.report.desiredCompletionDate.trim()} (${copy.desiredCompletionDateBadge.replace(/^\*\s*/, "")})`
+                : copy.empty,
+            },
             {
               label: copy.receptionType,
               value:
@@ -2622,6 +2551,10 @@ function ReviewStep({
               ]
                 .filter(Boolean)
                 .join(" / "),
+            },
+            {
+              label: copy.analysisPurpose,
+              value: displayValue(values.report.analysisPurpose, copy.empty),
             },
             {
               label: copy.copyCount,
@@ -2671,21 +2604,25 @@ function ReviewStep({
                 ]
               : []),
             {
-              label: copy.samplePhoto,
-              value:
-                values.report.samplePhoto === "attach"
-                  ? copy.samplePhotoAttach
-                  : values.report.samplePhoto === "skip"
-                    ? copy.samplePhotoSkip
-                    : copy.empty,
-            },
-            {
               label: copy.sampleHandling,
               value:
                 values.report.sampleHandling === "dispose"
                   ? copy.sampleHandlingDispose
                   : values.report.sampleHandling === "return"
                     ? copy.sampleHandlingReturn
+                    : copy.empty,
+            },
+            {
+              label: copy.additionalAnalysis,
+              value:
+                values.report.additionalAnalysis === "yes"
+                  ? `${copy.additionalAnalysisYes}${
+                      values.report.additionalAnalysisDetail.trim()
+                        ? ` — ${values.report.additionalAnalysisDetail.trim()}`
+                        : ""
+                    }`
+                  : values.report.additionalAnalysis === "no"
+                    ? copy.additionalAnalysisNo
                     : copy.empty,
             },
           ]}
@@ -2704,15 +2641,17 @@ function ReviewStep({
               value: displayValue(values.client.companyName, copy.empty),
             },
             {
-              label: copy.representativeName,
-              value: displayValue(values.client.representativeName, copy.empty),
-            },
-            {
               label: copy.businessRegistrationNumber,
               value: displayValue(
                 values.client.businessRegistrationNumber,
                 copy.empty,
               ),
+            },
+            {
+              label: copy.businessRegistrationFile,
+              value: values.client.businessRegistrationFile
+                ? `${values.client.businessRegistrationFile.name} (${formatFileSize(values.client.businessRegistrationFile.size)})`
+                : copy.empty,
             },
             {
               label: copy.contactName,
@@ -2743,55 +2682,6 @@ function ReviewStep({
             },
           ]}
         />
-        <div className="mt-6 border-t border-gray-100 pt-4">
-          <h4 className="mb-3 text-sm font-bold text-gray-900">
-            {copy.billingSectionTitle}
-          </h4>
-          {values.billing.sameAsClient ? (
-            <p className="text-sm font-medium text-gray-900">
-              {copy.billingSameAsClient}
-            </p>
-          ) : (
-            <SummaryRows
-              rows={[
-                {
-                  label: copy.billingCompanyName,
-                  value: displayValue(values.billing.companyName, copy.empty),
-                },
-                {
-                  label: copy.businessRegistrationNumber,
-                  value: displayValue(
-                    values.billing.businessRegistrationNumber,
-                    copy.empty,
-                  ),
-                },
-                {
-                  label: copy.address,
-                  value:
-                    [
-                      values.billing.companyPostalCode.trim(),
-                      values.billing.address.trim(),
-                      values.billing.companyAddressDetail.trim(),
-                    ]
-                      .filter(Boolean)
-                      .join(" ") || copy.empty,
-                },
-                {
-                  label: copy.billingContactName,
-                  value: displayValue(values.billing.contactName, copy.empty),
-                },
-                {
-                  label: copy.billingPhone,
-                  value: displayValue(values.billing.phone, copy.empty),
-                },
-                {
-                  label: copy.billingEmail,
-                  value: displayValue(values.billing.email, copy.empty),
-                },
-              ]}
-            />
-          )}
-        </div>
       </ReviewSection>
 
       <ConsentBox
