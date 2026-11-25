@@ -289,11 +289,11 @@ export default function HomePage({ content }: { content: homePageContent }) {
           </motion.div>
 
           <div className="w-full px-[60px] md:px-[120px] lg:px-[160px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-10">
+            <div className="flex flex-row flex-wrap justify-center gap-2 md:gap-10">
               {content.section3.solutions.map((solution, index) => (
                 <motion.div
                   key={index}
-                  className="relative w-full h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
+                  className="relative basis-full md:basis-[20rem] h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
                   initial={{ x: -100, opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.2 }}
@@ -347,8 +347,8 @@ export default function HomePage({ content }: { content: homePageContent }) {
               </p>
             </motion.div>
 
-            <div className="w-full max-w-5xl flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
-              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
+            <div className="w-full max-w-6xl flex flex-col items-center justify-center relative z-10 ">
+              <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-8 justify-items-center mb-10">
                 {content.section4.services.map((service, index) => (
                   <motion.div
                     key={index}
