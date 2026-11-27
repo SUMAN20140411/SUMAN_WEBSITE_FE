@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   useReactFlow,
@@ -17,6 +17,31 @@ import { DecisionNode } from "./flow/DecisionNode";
 import { SectionFrameNode, SectionPillNode } from "./flow/SectionFrameNode";
 
 type Language = "KOR" | "ENG";
+type ScaleTier = "base" | "md" | "lg" | "xl" | "2xl";
+
+interface EdgeFontSizes {
+  ng: number;
+  ok: number;
+  feedback: number;
+}
+
+const EDGE_FONT_BY_TIER: Record<ScaleTier, EdgeFontSizes> = {
+  base: { ng: 14, ok: 13, feedback: 13 },
+  md: { ng: 15, ok: 14, feedback: 14 },
+  lg: { ng: 16, ok: 15, feedback: 15 },
+  xl: { ng: 17, ok: 16, feedback: 16 },
+  "2xl": { ng: 18, ok: 17, feedback: 17 },
+};
+
+function getScaleTier(): ScaleTier {
+  if (typeof window === "undefined") return "base";
+  const width = window.innerWidth;
+  if (width >= 1536) return "2xl";
+  if (width >= 1280) return "xl";
+  if (width >= 1024) return "lg";
+  if (width >= 768) return "md";
+  return "base";
+}
 
 interface ReactFlowProcessDiagramProps {
   readonly language?: Language;
@@ -343,7 +368,10 @@ function buildNodes(lang: Language): Node[] {
   ];
 }
 
-function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
+function buildEdges(
+  lang: Language,
+  edgeFonts: EdgeFontSizes,
+): (Edge | SmoothStepEdgeProps)[] {
   const l = labels[lang];
 
   return [
@@ -486,7 +514,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: ngEdgeStyle,
       markerEnd: ngMarker,
       label: "NG",
-      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
+      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: edgeFonts.ng },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
       animated: true,
@@ -506,7 +534,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: ngEdgeStyle,
       markerEnd: ngMarker,
       label: "NG",
-      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
+      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: edgeFonts.ng },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
       animated: true,
@@ -523,7 +551,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: ngEdgeStyle,
       markerEnd: ngMarker,
       label: "NG",
-      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
+      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: edgeFonts.ng },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
       animated: true,
@@ -543,7 +571,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: ngEdgeStyle,
       markerEnd: ngMarker,
       label: "NG",
-      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
+      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: edgeFonts.ng },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
       animated: true,
@@ -563,13 +591,17 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: feedbackEdgeStyle,
       markerEnd: feedbackMarker,
       label: l.testingFeedback,
-      labelStyle: { fill: "#1E3A8A", fontWeight: 700, fontSize: 12 },
+      labelStyle: {
+        fill: "#1E3A8A",
+        fontWeight: 700,
+        fontSize: edgeFonts.feedback,
+      },
       labelBgStyle: {
         fill: "#EFF6FF",
         stroke: "#BFDBFE",
         strokeWidth: 1,
       },
-      labelBgPadding: [8, 4],
+      labelBgPadding: [10, 5],
       labelBgBorderRadius: 999,
       animated: true,
     },
@@ -623,7 +655,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: okDashedEdgeStyle,
       markerEnd: okMarker,
       label: "OK",
-      labelStyle: { fill: "#10B981", fontWeight: 700, fontSize: 12 },
+      labelStyle: { fill: "#10B981", fontWeight: 700, fontSize: edgeFonts.ok },
       labelBgStyle: { fill: "white" },
       animated: true,
     },
@@ -652,7 +684,7 @@ function buildEdges(lang: Language): (Edge | SmoothStepEdgeProps)[] {
       style: ngDashedEdgeStyle,
       markerEnd: ngMarker,
       label: "NG",
-      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: 13 },
+      labelStyle: { fill: "#EF4444", fontWeight: 700, fontSize: edgeFonts.ng },
       labelBgStyle: { fill: "white" },
       data: { isNG: true },
       animated: true,
@@ -673,7 +705,7 @@ function FitViewOnResize({
 
     const observer = new ResizeObserver(() => {
       if (el.clientWidth > 0 && el.clientHeight > 0) {
-        fitView({ padding: 0.12 });
+        fitView({ padding: 0.08 });
       }
     });
 
@@ -687,8 +719,23 @@ function FitViewOnResize({
 export default function ReactFlowProcessDiagram({
   language = "ENG",
 }: ReactFlowProcessDiagramProps) {
+  const [scaleTier, setScaleTier] = useState<ScaleTier>(getScaleTier);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const next = getScaleTier();
+      setScaleTier((prev) => (prev === next ? prev : next));
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const nodes = useMemo(() => buildNodes(language), [language]);
-  const edges = useMemo(() => buildEdges(language), [language]);
+  const edges = useMemo(
+    () => buildEdges(language, EDGE_FONT_BY_TIER[scaleTier]),
+    [language, scaleTier],
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -709,13 +756,14 @@ export default function ReactFlowProcessDiagram({
           className="process-flow-scrollable min-w-[900px] md:min-w-0 w-full h-[620px] md:h-[680px] lg:h-[820px] rounded-xl overflow-hidden bg-transparent"
         >
           <ReactFlow
+            key={scaleTier}
             nodes={nodes}
             edges={edges as Edge[]}
             nodeTypes={nodeTypes}
             nodeOrigin={[0.5, 0.5]}
             minZoom={0.2}
             fitView
-            fitViewOptions={{ padding: 0.12 }}
+            fitViewOptions={{ padding: 0.08 }}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={true}

@@ -253,7 +253,7 @@ export default function ServicePage({
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
                     {content.section1?.title || "핵심 역량 및 기술"}
                   </h2>
-                  <p className="mt-3 text-base md:text-lg text-slate-600 -mb-6">
+                  <p className="mt-3 text-base md:text-lg text-slate-600 -mb-6 md:mb-0">
                     {content.section1?.subtitle ||
                       "정밀가공 · 모듈화 · 장비 기술"}
                   </p>
@@ -268,12 +268,12 @@ export default function ServicePage({
                     ease: [0.16, 1, 0.3, 1],
                     delay: 0.05,
                   }}
-                  className="group relative mx-auto max-w-[74rem] w-[100%] -mt-8"
+                  className="group relative mx-auto max-w-[74rem] w-[100%] -mt-8 md:mt-4"
                 >
                   <motion.div
                     whileHover={{ rotateX: 3, rotateY: -3, scale: 1.01 }}
                     transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                    className="relative aspect-[16/9] w-full"
+                    className="relative aspect-[16/9] md:aspect-[32/27] w-full"
                   >
                     <Image
                       src={
