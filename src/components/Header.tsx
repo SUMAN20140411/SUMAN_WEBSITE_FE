@@ -25,9 +25,13 @@ const navItemsKor = [
     href: "/business/service",
     submenu: [
       { label: "기술 소개", href: "/business/service" },
-      { label: "사업 분야", href: "/business/product" },
       { label: "연구 분야", href: "/business/rnd" },
     ],
+  },
+  {
+    label: "사업 분야",
+    href: "/business/product",
+    submenu: [{ label: "사업 분야", href: "/business/product" }],
   },
   {
     label: "인재채용",
@@ -68,16 +72,20 @@ const navItemsEng = [
     ],
   },
   {
-    label: "Technology and Research",
+    label: "Tech & R&D",
     href: "/eng/business/service",
     submenu: [
       { label: "Technology", href: "/eng/business/service" },
-      { label: "Business Areas", href: "/eng/business/product" },
       { label: "Research field", href: "/eng/business/rnd" },
     ],
   },
   {
-    label: "Recruitment",
+    label: "Business",
+    href: "/eng/business/product",
+    submenu: [{ label: "Business Areas", href: "/eng/business/product" }],
+  },
+  {
+    label: "Careers",
     href: "/eng/careers/philosophy",
     submenu: [
       { label: "Ideal Candidate", href: "/eng/careers/philosophy" },
@@ -143,13 +151,13 @@ export default function Header() {
       >
         {/* Main Nav Container (aligned with content) */}
         <div
-          className="w-full mx-auto max-w-7xl px-6 md:px-[60px] lg:px-[0px] flex justify-between items-center text-sm lg:text-base font-medium text-black"
+          className="w-full mx-auto max-w-7xl px-6 md:px-[60px] lg:px-6 xl:px-8 flex justify-between items-center gap-4 xl:gap-6 text-sm lg:text-base font-medium text-black"
           style={{ height: "90px" }}
         >
           {/* Logo (aligned to left edge) */}
           <Link
             href={logoHref}
-            className="flex items-center h-full mr-auto lg:mr-0"
+            className="flex items-center h-full mr-auto lg:mr-0 shrink-0"
           >
             <Image
               src="/images/logo_suman.png"
@@ -163,7 +171,7 @@ export default function Header() {
 
           {/* Desktop Navigation — centered (same gaps) */}
           <div className="hidden lg:flex min-w-0 flex-grow justify-center items-center h-full">
-            <nav className="flex items-center gap-4 xl:gap-8 2xl:gap-14 h-full">
+            <nav className="flex items-center gap-4 xl:gap-7 2xl:gap-10 h-full">
               {NAV_ITEMS.map((item, index) => (
                 <div
                   key={item.label}
@@ -217,7 +225,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Language Switcher (same placement) */}
-          <div className="hidden lg:flex items-center h-full">
+          <div className="hidden lg:flex items-center h-full shrink-0">
             <LanguageSwitcher />
           </div>
         </div>
