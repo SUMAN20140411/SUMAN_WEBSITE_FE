@@ -184,7 +184,7 @@ export default function HistoryPage({
               className="relative z-20 max-w-7xl mx-auto w-full px-4 md:px-8 lg:px-8 xl:px-0 pt-12 pb-6 md:pt-16 md:pb-8 lg:py-24"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-                <div className="lg:col-span-8">
+                <div className="lg:col-span-8 lg:mb-[8rem]">
                   <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-bold mb-3 tracking-wide whitespace-pre-line">
                     {content.section1.title}
                   </h2>
@@ -456,6 +456,17 @@ export default function HistoryPage({
                     <motion.div key={index} variants={fadeInRiseVariants}>
                       <div className="timeline-entry mt-8 mb-6 md:mt-16 md:mb-10 relative">
                         <span className="absolute -left-[19px] top-2.5 h-2.5 w-2.5 rounded-full bg-[#0f172a] border-2 border-white ring-1 ring-gray-200 sm:hidden" />
+                        <motion.div
+                          className="absolute sm:-left-[7px] md:-left-[17px] top-[calc(50%-24px)] z-10 w-12 h-12 bg-[#0f172a] rounded-full border-[12px] border-gray-200 hidden sm:block"
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: 0.2,
+                            ease: "easeOut",
+                          }}
+                          viewport={{ once: true }}
+                        />
                         <div className="flex items-center sm:absolute sm:-left-2 sm:top-[18px] sm:ml-[-24px] mb-3 sm:mb-0">
                           <h3 className="timeline-year text-lg sm:text-3xl md:text-3xl font-bold text-black bg-white pr-4 z-10 sm:-translate-x-full">
                             {history.period}
@@ -482,29 +493,6 @@ export default function HistoryPage({
                     </motion.div>
                   ))}
                 </motion.div>
-
-                {/* dots */}
-                <motion.div
-                  className="absolute left-0 top-[1%] w-12 h-12 bg-[#0f172a] rounded-full border-[12px] border-gray-200 ml-28 md:ml-32 hidden sm:block"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.9, ease: "easeOut" }}
-                  viewport={{ once: true }}
-                />
-                <motion.div
-                  className="absolute left-0 top-[47.3%] w-12 h-12 bg-[#0f172a] rounded-full border-[12px] border-gray-200 ml-28 md:ml-32 hidden sm:block"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1.1, ease: "easeOut" }}
-                  viewport={{ once: true }}
-                />
-                <motion.div
-                  className="absolute left-0 top-[86%] w-12 h-12 bg-[#0f172a] rounded-full border-[12px] border-gray-200 ml-28 md:ml-32 hidden sm:block"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}
-                  viewport={{ once: true }}
-                />
               </div>
             </div>
           </section>
