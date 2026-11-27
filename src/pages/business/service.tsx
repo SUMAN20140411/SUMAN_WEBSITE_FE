@@ -333,7 +333,8 @@ export default function ServicePage({
                           const specifications = (
                             equipment.specification ?? []
                           ).filter(
-                            (spec) => spec?.label?.trim() || spec?.value?.trim(),
+                            (spec) =>
+                              spec?.label?.trim() || spec?.value?.trim(),
                           );
                           const hasDetails =
                             Boolean(description) || specifications.length > 0;
@@ -358,7 +359,7 @@ export default function ServicePage({
                                       src={equipment.img}
                                       alt={equipment.name || ""}
                                       fill
-                                      className="rounded-[10px] object-cover"
+                                      className="rounded-[10px] object-contain"
                                     />
                                   )}
                                 </div>
