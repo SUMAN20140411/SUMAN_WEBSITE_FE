@@ -3,11 +3,12 @@ import { Handle, Position, type NodeProps } from "@xyflow/react";
 
 export interface DecisionNodeData {
   label: string;
+  subLabel?: string;
   [key: string]: unknown;
 }
 
 export function DecisionNode({ data }: NodeProps) {
-  const label = (data as DecisionNodeData).label;
+  const { label, subLabel } = data as DecisionNodeData;
 
   return (
     <div className="decision-node">
@@ -16,7 +17,12 @@ export function DecisionNode({ data }: NodeProps) {
       {/* Inner filled diamond */}
       <div className="decision-node-inner" />
       {/* Text (not rotated) */}
-      <div className="decision-node-label">{label}</div>
+      <div className="decision-node-label">
+        <div>{label}</div>
+        {subLabel ? (
+          <div className="decision-node-sublabel">{subLabel}</div>
+        ) : null}
+      </div>
 
       <Handle
         type="source"

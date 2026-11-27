@@ -3,11 +3,12 @@ import { Handle, Position, type NodeProps } from "@xyflow/react";
 
 export interface ProcessNodeData {
   label: string;
+  subLabel?: string;
   [key: string]: unknown;
 }
 
 export function ProcessNode({ data }: NodeProps) {
-  const label = (data as ProcessNodeData).label;
+  const { label, subLabel } = data as ProcessNodeData;
 
   return (
     <div className="process-node">
@@ -35,7 +36,8 @@ export function ProcessNode({ data }: NodeProps) {
         style={{ opacity: 0 }}
         id={"target-bottom"}
       />
-      {label}
+      <div>{label}</div>
+      {subLabel ? <div className="process-node-sublabel">{subLabel}</div> : null}
       <Handle
         type="source"
         position={Position.Left}
