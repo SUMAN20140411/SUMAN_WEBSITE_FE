@@ -25,6 +25,28 @@ export const getStaticProps = async () => {
   };
 };
 
+/**
+ * Splits items into balanced rows (max `maxPerRow` per row) in pyramid order
+ * so smaller rows appear on top and larger rows on bottom (e.g. 5 -> [2, 3]).
+ */
+function chunkPyramidRows<T>(items: T[], maxPerRow = 4): T[][] {
+  if (items.length === 0) return [];
+
+  const rowCount = Math.ceil(items.length / maxPerRow);
+  const baseSize = Math.floor(items.length / rowCount);
+  const remainder = items.length % rowCount;
+  const rows: T[][] = [];
+
+  let offset = 0;
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+    const rowSize = baseSize + (rowIndex >= rowCount - remainder ? 1 : 0);
+    rows.push(items.slice(offset, offset + rowSize));
+    offset += rowSize;
+  }
+
+  return rows;
+}
+
 export default function ProductPage({
   content,
 }: {
@@ -34,6 +56,7 @@ export default function ProductPage({
   const { lang } = useLangStore();
   const { productCategories, footerText } = serviceContent[lang];
   const section = serviceContent[lang].sectionList?.[0];
+  const productRows = chunkPyramidRows(content?.section1?.products ?? []);
 
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.9 },
@@ -102,45 +125,52 @@ export default function ProductPage({
                 {content?.section1?.description || "제품 소개"}
               </motion.p>
 
-              {/* Grid */}
+              {/* Dynamic Balanced Rows */}
               <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-5"
+                className="flex flex-col gap-8 mt-10"
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.2 }}
                 variants={{
                   visible: { transition: { staggerChildren: 0.1 } },
                 }}
               >
-                {content?.section1?.products.map((product, index) => (
-                  <motion.div
-                    key={index}
-                    className="rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group mt-5"
-                    style={{ backgroundColor: "#ffffff" }}
-                    variants={itemVariants}
+                {productRows.map((row, rowIndex) => (
+                  <div
+                    key={rowIndex}
+                    className="flex flex-wrap justify-center gap-8"
                   >
-                    <div className="relative w-full h-44 mx-auto mt-4">
-                      <Image
-                        src={product.hero}
-                        alt={product.title}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    <div className="p-4">
-                      {product.title && (
-                        <span className="tracking-wide font-light text-slate-500 text-base">
-                          {product.title}
-                        </span>
-                      )}
-                      <h3 className="tracking-wide text-2xl font-semibold text-slate-900 mb-1 mt-5">
-                        {product.korTitle}
-                      </h3>
-                      <p className="tracking-wide font-light text-slate-600 text-sm mb-7">
-                        {product.description}
-                      </p>
-                    </div>
-                  </motion.div>
+                    {row.map((product, productIndex) => (
+                      <motion.div
+                        key={`${rowIndex}-${productIndex}`}
+                        className="w-full md:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-6rem)/4)] rounded-[30px] overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out group"
+                        style={{ backgroundColor: "#ffffff" }}
+                        variants={itemVariants}
+                      >
+                        <div className="relative w-full h-44 mx-auto mt-4">
+                          <Image
+                            src={product.hero}
+                            alt={product.title}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        <div className="p-4">
+                          {product.title && (
+                            <span className="tracking-wide font-light text-slate-500 text-base">
+                              {product.title}
+                            </span>
+                          )}
+                          <h3 className="tracking-wide text-2xl font-semibold text-slate-900 mb-1 mt-5">
+                            {product.korTitle}
+                          </h3>
+                          <p className="tracking-wide font-light text-slate-600 text-sm mb-7">
+                            {product.description}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 ))}
               </motion.div>
 
