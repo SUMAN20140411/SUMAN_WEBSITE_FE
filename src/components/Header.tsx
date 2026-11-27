@@ -25,7 +25,7 @@ const navItemsKor = [
     href: "/business/service",
     submenu: [
       { label: "기술 소개", href: "/business/service" },
-      { label: "제품 소개", href: "/business/product" },
+      { label: "사업 분야", href: "/business/product" },
       { label: "연구 분야", href: "/business/rnd" },
     ],
   },
@@ -68,11 +68,11 @@ const navItemsEng = [
     ],
   },
   {
-    label: "Business",
+    label: "Technology and Research",
     href: "/eng/business/service",
     submenu: [
       { label: "Technology", href: "/eng/business/service" },
-      { label: "Product", href: "/eng/business/product" },
+      { label: "Business Areas", href: "/eng/business/product" },
       { label: "Research field", href: "/eng/business/rnd" },
     ],
   },
