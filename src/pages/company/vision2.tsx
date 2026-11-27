@@ -447,7 +447,7 @@ export default function Vision2Page({
                     </motion.div>
                   </div>
 
-                  <div className="relative grid gap-6 md:grid-cols-3">
+                  <div className="relative grid gap-6 md:grid-cols-4">
                     {content.section2.subsection.map((item, index) => (
                       <motion.div
                         key={item.title}
