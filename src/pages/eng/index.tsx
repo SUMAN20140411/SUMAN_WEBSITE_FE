@@ -297,12 +297,12 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
           </motion.div>
 
           {/* cards */}
-          <div className="w-full px-4 sm:px-[60px] md:px-[120px] lg:px-[160px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-10">
+          <div className="w-full px-[60px] md:px-[120px] lg:px-[160px]">
+            <div className="flex flex-row flex-wrap justify-center gap-2 md:gap-10">
               {content.section3.solutions.map((solution, index) => (
                 <motion.div
                   key={index}
-                  className="relative w-full h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
+                  className="relative basis-full md:basis-[20rem] h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
                   initial={{ x: -100, opacity: 0 }}
                   whileInView={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.2 }}
@@ -310,10 +310,7 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
                 >
                   <div className="relative w-full h-full">
                     <Image
-                      src={
-                        solution.hero ||
-                        "/images/main/solution/index_solution.jpg"
-                      }
+                      src={solution.hero}
                       alt={solution.title}
                       fill
                       className="object-cover"
@@ -341,58 +338,52 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
         </motion.section>
 
         {/* Service */}
-        <motion.section
-          className="relative z-30 bg-white px-4 sm:px-6"
-          initial={{ opacity: 1, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <motion.div
-            className="text-center text-black mb-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-[120px]"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInVariants}
-          >
-            <p className={`${labelClass} mt-12`}>{content.section4.title}</p>
-            <h2 className="text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal mt-5 mb-5">
-              {content.section4.subtitle}
-            </h2>
+        <section className="relative z-30 bg-white px-4 md:px-6">
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center">
+            <motion.div
+              className="text-center text-black mb-10 w-full max-w-3xl text-base sm:text-lg lg:text-2xl font-semibold tracking-wide"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={fadeInVariants}
+            >
+              <p className={`${labelClass} mt-12`}>{content.section4.title}</p>
+              <h2 className="mt-5 mb-5 text-xl md:text-2xl lg:text-4xl font-bold tracking-wide text-black leading-normal">
+                {content.section4.subtitle}
+              </h2>
 
-            <p className="text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed mb-8 whitespace-pre-line">
-              {content.section4.description}
-            </p>
-          </motion.div>
+              <p className="mb-8 text-sm md:text-base lg:text-xl text-black/80 font-medium leading-relaxed">
+                {content.section4.description}
+              </p>
+            </motion.div>
 
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-center relative z-10 lg:h-[400px]">
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center mb-10">
-              {content.section4.services.map((service, index) => (
-                <motion.div
-                  key={index}
-                  className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  variants={circleVariants}
-                >
-                  <Image
-                    src={
-                      service.hero || "/images/main/service/index_solution.jpg"
-                    }
-                    alt={service.title}
-                    fill
-                    className="object-cover rounded-full"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
-                  <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
-                    {service.title}
-                  </h3>
-                </motion.div>
-              ))}
+            <div className="w-full max-w-6xl flex flex-col items-center justify-center relative z-10 ">
+              <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-8 justify-items-center mb-10">
+                {content.section4.services.map((service, index) => (
+                  <motion.div
+                    key={index}
+                    className="relative w-44 h-44 lg:w-64 lg:h-64 aspect-square rounded-full flex flex-col justify-end items-center text-center text-white p-5 shadow-xl hover:shadow-2xl transition-shadow duration-300 cursor-default overflow-hidden"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    variants={circleVariants}
+                  >
+                    <Image
+                      src={service.hero}
+                      alt={service.title}
+                      fill
+                      className="object-cover rounded-full"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent rounded-full z-10" />
+                    <h3 className="sm:text-base md:text-lg lg:text-2xl font-semibold pb-5 z-20">
+                      {service.title}
+                    </h3>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Contact */}
         <section className="relative w-full mt-0">
