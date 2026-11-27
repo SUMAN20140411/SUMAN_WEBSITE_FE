@@ -8,6 +8,9 @@ export type TestCenterCopy = {
   heroTitle: string;
   heroSubtitle: string;
   breadcrumb: string;
+  applicationFormTitle: string;
+  applicationFormDescription: string;
+  applicationFormDownload: string;
   steps: { short: string; title: string }[];
   columnGroup: string;
   columnTests: string;
@@ -164,6 +167,10 @@ const ko = {
   heroTitle: "시험센터",
   heroSubtitle: "시험 접수",
   breadcrumb: "시험센터 > 시험 접수",
+  applicationFormTitle: "시험분석신청서 양식",
+  applicationFormDescription:
+    "오프라인 작성이나 상세 시험 내용 첨부가 필요한 경우 양식을 다운로드하여 작성한 뒤 2단계 '신청서 첨부파일'에 업로드해 주세요.",
+  applicationFormDownload: "시험분석신청서 다운로드",
   steps: [
     { short: "항목", title: "접수 항목 선택" },
     { short: "시료", title: "시료 정보 입력" },
@@ -360,6 +367,10 @@ const en = {
   heroTitle: "Test Center",
   heroSubtitle: "Test Request",
   breadcrumb: "Test Center > Test Request",
+  applicationFormTitle: "Test & Analysis Application Form (KOR)",
+  applicationFormDescription:
+    "Download this form if you need to prepare an offline application, then attach the completed file under Step 2 (Application attachments).",
+  applicationFormDownload: "Download Form",
   steps: [
     { short: "Tests", title: "Select tests" },
     { short: "Sample", title: "Sample information" },
