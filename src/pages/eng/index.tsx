@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { chunkPyramidRows } from "@/lib/chunkPyramidRows";
 import { homePage, homePageContent } from "@/lib/strapi/company/homePage";
 import { motion, type Transition } from "framer-motion";
 import { GetStaticProps } from "next";
@@ -298,41 +299,60 @@ export default function EnHomePage({ content }: { content: homePageContent }) {
 
           {/* cards */}
           <div className="w-full px-[60px] md:px-[120px] lg:px-[160px]">
-            <div className="flex flex-row flex-wrap justify-center gap-2 md:gap-10">
-              {content.section3.solutions.map((solution, index) => (
-                <motion.div
-                  key={index}
-                  className="relative basis-full md:basis-[20rem] h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
-                  initial={{ x: -100, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={solution.hero}
-                      alt={solution.title}
-                      fill
-                      className="object-cover"
-                      sizes="100%"
-                      priority
-                    />
-                    <div className="absolute bottom-0 w-full h-2/3 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
-                  </div>
+            <div className="flex flex-col gap-2 md:gap-10">
+              {chunkPyramidRows(content.section3.solutions ?? [], 4, {
+                reverse: true,
+              }).map((row, rowIndex, rows) => {
+                const rowOffset = rows
+                  .slice(0, rowIndex)
+                  .reduce((sum, r) => sum + r.length, 0);
 
-                  <div className="absolute bottom-0 lg:bottom-3 z-20 w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-xs md:text-sm lg:text-base tracking-wide leading-tight sm:leading-snug">
-                    <p className="text-xs md:text-sm lg:text-lg mb-1 md:mb-2 lg:mb-7 ">
-                      {solution.title}
-                    </p>
-                    <h3 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-1 lg:mb-2">
-                      {solution.korTitle}
-                    </h3>
-                    <p className="text-xs md:text-xs lg:text-base text-gray-300">
-                      {solution.description}
-                    </p>
+                return (
+                  <div
+                    key={rowIndex}
+                    className="flex flex-row flex-wrap justify-center gap-2 md:gap-10"
+                  >
+                    {row.map((solution, itemIndex) => {
+                      const index = rowOffset + itemIndex;
+
+                      return (
+                        <motion.div
+                          key={index}
+                          className="relative basis-full md:basis-[20rem] h-[130px] md:h-[180px] lg:h-[530px] overflow-hidden rounded-xl shadow-md hover:scale-105 transition-transform duration-300 ease-out"
+                          initial={{ x: -100, opacity: 0 }}
+                          whileInView={{ x: 0, opacity: 1 }}
+                          transition={{ duration: 0.6, delay: index * 0.2 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                        >
+                          <div className="relative w-full h-full">
+                            <Image
+                              src={solution.hero}
+                              alt={solution.title}
+                              fill
+                              className="object-cover"
+                              sizes="100%"
+                              priority
+                            />
+                            <div className="absolute bottom-0 w-full h-2/3 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
+                          </div>
+
+                          <div className="absolute bottom-0 lg:bottom-3 z-20 w-full px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-white text-[10px] sm:text-xs md:text-sm lg:text-base tracking-wide leading-tight sm:leading-snug">
+                            <p className="text-xs md:text-sm lg:text-lg mb-1 md:mb-2 lg:mb-7 ">
+                              {solution.title}
+                            </p>
+                            <h3 className="text-base md:text-lg lg:text-2xl font-bold mb-1 md:mb-1 lg:mb-2">
+                              {solution.korTitle}
+                            </h3>
+                            <p className="text-xs md:text-xs lg:text-base text-gray-300">
+                              {solution.description}
+                            </p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
-                </motion.div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </motion.section>

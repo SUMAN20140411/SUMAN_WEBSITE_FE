@@ -3,6 +3,7 @@ import BreadcrumbSection from "@/components/BreadcrumbSection";
 import HeroSection from "@/components/HeroSection";
 import Layout from "@/components/Layout";
 import { serviceContent } from "@/data/product";
+import { chunkPyramidRows } from "@/lib/chunkPyramidRows";
 import {
   productPage,
   productPageContent,
@@ -24,28 +25,6 @@ export const getStaticProps = async () => {
     },
   };
 };
-
-/**
- * Splits items into balanced rows (max `maxPerRow` per row) in pyramid order
- * so smaller rows appear on top and larger rows on bottom (e.g. 5 -> [2, 3]).
- */
-function chunkPyramidRows<T>(items: T[], maxPerRow = 4): T[][] {
-  if (items.length === 0) return [];
-
-  const rowCount = Math.ceil(items.length / maxPerRow);
-  const baseSize = Math.floor(items.length / rowCount);
-  const remainder = items.length % rowCount;
-  const rows: T[][] = [];
-
-  let offset = 0;
-  for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-    const rowSize = baseSize + (rowIndex >= rowCount - remainder ? 1 : 0);
-    rows.push(items.slice(offset, offset + rowSize));
-    offset += rowSize;
-  }
-
-  return rows;
-}
 
 export default function ProductPage({
   content,
