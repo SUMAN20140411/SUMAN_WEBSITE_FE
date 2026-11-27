@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import Header from "@/components/HeaderEng";
+import Header from "@/components/Header";
 import { homePage, homePageContent } from "@/lib/strapi/company/homePage";
 import { motion, type Transition } from "framer-motion";
 import { GetStaticProps } from "next";
