@@ -2,6 +2,7 @@
 "use client";
 
 import { cubicBezier, motion, type Transition } from "framer-motion";
+import { Award, Clock, Handshake, ShieldCheck } from "lucide-react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
@@ -393,6 +394,96 @@ export default function ServicePage({
                   className="relative mx-auto max-w-6xl"
                 >
                   <ReactFlowProcessDiagram language={langCode} />
+                </motion.div>
+
+                {/* Testing & Verification Center Benefits */}
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.1,
+                  }}
+                  className="mx-auto max-w-6xl rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 md:p-8"
+                >
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {(langCode === "KOR"
+                      ? [
+                          {
+                            icon: ShieldCheck,
+                            title: "설계 검증 고도화",
+                            description:
+                              "시험/실증 데이터를 통한 설계 신뢰성 확보",
+                          },
+                          {
+                            icon: Award,
+                            title: "품질 경쟁력 강화",
+                            description:
+                              "양산 전 검증으로 불량 예방 및 품질 수준 향상",
+                          },
+                          {
+                            icon: Clock,
+                            title: "개발 기간 단축",
+                            description:
+                              "신속한 시험/실증 피드백으로 개발 리드타임 단축",
+                          },
+                          {
+                            icon: Handshake,
+                            title: "고객 신뢰 향상",
+                            description:
+                              "객관적 시험 데이터 기반 고객 신뢰 및 만족도 제고",
+                          },
+                        ]
+                      : [
+                          {
+                            icon: ShieldCheck,
+                            title: "Enhanced Design Verification",
+                            description:
+                              "Ensuring design reliability through testing & verification data",
+                          },
+                          {
+                            icon: Award,
+                            title: "Stronger Quality Competitiveness",
+                            description:
+                              "Preventing defects and elevating quality prior to mass production",
+                          },
+                          {
+                            icon: Clock,
+                            title: "Shorter Development Lead Time",
+                            description:
+                              "Reducing development lead time via rapid testing feedback",
+                          },
+                          {
+                            icon: Handshake,
+                            title: "Greater Customer Trust",
+                            description:
+                              "Enhancing customer trust and satisfaction with objective test data",
+                          },
+                        ]
+                    ).map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <div
+                          key={item.title}
+                          className="flex items-start gap-3.5"
+                        >
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-slate-900">
+                              {item.title}
+                            </h3>
+                            <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </motion.div>
               </div>
             </div>
