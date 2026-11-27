@@ -16,6 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "section3",
         "section2.deviceCategories",
         "section2.deviceCategories.equipment",
+        "section2.deviceCategories.equipment.specification",
       ],
     });
 
@@ -34,6 +35,7 @@ export const getStaticProps: GetStaticProps = async () => {
         "section3",
         "section2.deviceCategories",
         "section2.deviceCategories.equipment",
+        "section2.deviceCategories.equipment.specification",
       ],
     });
 

@@ -3,6 +3,21 @@ import strapiClient from "../../api/strapiClient";
 
 export const servicePage = strapiClient.single("service-page");
 
+export type EquipmentSpecification = {
+  id?: number;
+  label: string;
+  value: string;
+};
+
+export type EquipmentItem = {
+  id?: number;
+  documentId?: string;
+  name: string;
+  img?: string | null;
+  description?: string | null;
+  specification?: EquipmentSpecification[] | null;
+};
+
 export type servicePageContent = {
   pageInfo: PageInfo;
   section1: {
@@ -15,10 +30,7 @@ export type servicePageContent = {
     subtitle: string;
     deviceCategories: {
       title: string;
-      equipment: {
-        name: string;
-        img: string;
-      }[];
+      equipment: EquipmentItem[];
     }[];
   };
   section3: {

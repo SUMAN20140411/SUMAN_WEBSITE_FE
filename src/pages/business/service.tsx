@@ -126,6 +126,7 @@ export const getStaticProps: GetStaticProps = async () => {
       "section3",
       "section2.deviceCategories",
       "section2.deviceCategories.equipment",
+      "section2.deviceCategories.equipment.specification",
     ],
   });
 
@@ -327,38 +328,91 @@ export default function ServicePage({
                       </motion.span>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                        {category.equipment.map(
-                          (equipment: any, index: number) => (
+                        {category.equipment.map((equipment, index) => {
+                          const description = equipment.description?.trim();
+                          const specifications = (
+                            equipment.specification ?? []
+                          ).filter(
+                            (spec) => spec?.label?.trim() || spec?.value?.trim(),
+                          );
+                          const hasDetails =
+                            Boolean(description) || specifications.length > 0;
+
+                          return (
                             <motion.div
-                              key={`prod-${index}`}
-                              className="group relative h-[280px] w-full overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
+                              key={
+                                equipment.documentId ??
+                                equipment.id ??
+                                `prod-${index}`
+                              }
+                              className={`group relative flex w-full flex-col overflow-hidden rounded-xl border border-slate-300 bg-gradient-to-br from-slate-50 via-slate-100/70 to-slate-200/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2 ${
+                                hasDetails ? "h-full" : "self-start"
+                              }`}
                               variants={fadeUp}
                               whileHover={{ y: -4 }}
                             >
-                              <div className="relative mb-2 h-[220px] w-full">
-                                {equipment.img && (
-                                  <Image
-                                    src={equipment.img}
-                                    alt={equipment.name || ""}
-                                    fill
-                                    className="rounded-[10px] object-cover"
-                                  />
-                                )}
+                              <div className="p-2">
+                                <div className="relative h-[220px] w-full overflow-hidden rounded-[10px] bg-slate-100">
+                                  {equipment.img && (
+                                    <Image
+                                      src={equipment.img}
+                                      alt={equipment.name || ""}
+                                      fill
+                                      className="rounded-[10px] object-cover"
+                                    />
+                                  )}
+                                </div>
                               </div>
 
                               <div
-                                className="absolute bottom-0 left-0 flex h-10 w-full items-center justify-center px-3 md:h-12"
+                                className="relative flex min-h-10 w-full items-center justify-center px-3 py-2 md:min-h-12"
                                 style={{ backgroundColor: "#4B5563" }}
                               >
                                 <p className="line-clamp-1 text-sm font-medium text-white md:text-base">
                                   {equipment.name}
                                 </p>
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
                               </div>
 
-                              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 bg-white transition-transform duration-300 group-hover:scale-x-100" />
+                              {hasDetails && (
+                                <div className="flex flex-1 flex-col gap-3 bg-white/95 p-3.5 text-left">
+                                  {description && (
+                                    <p className="whitespace-pre-line text-xs leading-relaxed text-slate-600">
+                                      {description}
+                                    </p>
+                                  )}
+
+                                  {specifications.length > 0 && (
+                                    <dl
+                                      className={`space-y-1.5 text-xs ${
+                                        description
+                                          ? "border-t border-slate-200/80 pt-2.5"
+                                          : ""
+                                      }`}
+                                    >
+                                      {specifications.map((spec, specIndex) => (
+                                        <div
+                                          key={
+                                            spec.id ??
+                                            `${spec.label}-${specIndex}`
+                                          }
+                                          className="flex items-start justify-between gap-3"
+                                        >
+                                          <dt className="shrink-0 font-medium text-slate-500">
+                                            {spec.label}
+                                          </dt>
+                                          <dd className="whitespace-pre-line break-words text-right font-semibold text-slate-800">
+                                            {spec.value}
+                                          </dd>
+                                        </div>
+                                      ))}
+                                    </dl>
+                                  )}
+                                </div>
+                              )}
                             </motion.div>
-                          ),
-                        )}
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
